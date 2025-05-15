@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="Gradle: com.github.waffle:waffle-jna:3.3.0" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="com.github.waffle" artifactId="waffle-jna" version="3.3.0" baseVersion="3.3.0" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.waffle/waffle-jna/3.3.0/6c1a06b345702bb1dfd77006af926b091bded851/waffle-jna-3.3.0.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.waffle/waffle-jna/3.3.0/c772ac6d83eb70166556102a55d5ec033f60e695/waffle-jna-3.3.0-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.waffle/waffle-jna/3.3.0/a7c7df38550170fa53d948b09c71cd4f0c0f8bce/waffle-jna-3.3.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
