@@ -2,6 +2,7 @@ package com.realive.domain.seller;
 
 import java.time.LocalDateTime;
 
+import com.realive.domain.common.BaseTimeEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -21,7 +22,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @Builder
 @Table(name = "sellers")
-public class Seller {
+public class Seller extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -52,16 +53,6 @@ public class Seller {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @PrePersist
-    public void onCreate(){
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
-    }
-
-    @PrePersist
-    public void onUpdate(){
-        this.updatedAt = LocalDateTime.now();
-    }
 
 
 }

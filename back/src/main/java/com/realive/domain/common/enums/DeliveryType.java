@@ -5,5 +5,5 @@ package com.realive.domain.common.enums;
  */
 public enum DeliveryType {
     무료배송,
-    유료배송,
+    유료배송
 }
