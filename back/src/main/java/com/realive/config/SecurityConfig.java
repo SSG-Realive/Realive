@@ -24,7 +24,7 @@ public class SecurityConfig {
                 .httpBasic(httpBasic -> httpBasic.disable())
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/app/**").permitAll()
+                        .requestMatchers("/*").permitAll()
                         .anyRequest().permitAll()
                 )
                 .build();  // JwtAuthenticationFilter는 아직 없음
