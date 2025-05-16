@@ -29,7 +29,7 @@ public class DeliveryPolicy {
 
     // 지역 제한 정보 (예: 서울/경기만 가능 등)
     @Column(columnDefinition = "TEXT")
-    private String regionLimit;
+    private String region_Limit;
 
     // 연결된 상품 (N:1)
     @ManyToOne(fetch = FetchType.LAZY)
