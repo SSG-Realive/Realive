@@ -6,6 +6,9 @@ import com.realive.domain.seller.Seller;
 import jakarta.persistence.*;
 import lombok.*;
 
+//import java.util.ArrayList;
+//import java.util.List;
+
 /**
  * 상품 도메인 엔티티
  * 판매자가 등록한 중고 가구 상품 정보
