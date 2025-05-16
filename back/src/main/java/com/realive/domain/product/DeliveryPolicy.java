@@ -12,6 +12,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Table(name = "delivery_policy")
 public class DeliveryPolicy {
 
     @Id
@@ -27,7 +28,7 @@ public class DeliveryPolicy {
     private int cost = 0;
 
     // 지역 제한 정보 (예: 서울/경기만 가능 등)
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT" , name = "region_limit")
     private String regionLimit;
 
     // 연결된 상품 (N:1)
