@@ -2,6 +2,8 @@ package com.realive.domain.seller;
 
 import java.time.LocalDateTime;
 
+import com.realive.domain.common.BaseTimeEntity;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -27,7 +29,7 @@ import lombok.NoArgsConstructor;
         uniqueConstraints = {
             @UniqueConstraint(columnNames = {"order_id"})
         })
-public class SellerReview {
+public class SellerReview extends BaseTimeEntity {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -54,8 +56,4 @@ public class SellerReview {
     @Column(name = "created at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @PrePersist
-    public void onCreate(){
-        this.createdAt = LocalDateTime.now();
-    }
 }
