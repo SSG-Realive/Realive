@@ -43,7 +43,10 @@ public class SellerDocument extends BaseTimeEntity {
     private boolean isVerified = false;
 
     // 승인된 시간 (nullable)
+    @Column(name = "verified_at")
     private LocalDateTime verifiedAt;
+
+    
 
   
 
