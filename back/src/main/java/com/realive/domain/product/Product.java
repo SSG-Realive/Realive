@@ -56,8 +56,7 @@ public class Product extends BaseTimeEntity {
     @Column(nullable = false, name = "is_active")
     private boolean isActive = true;
 
-    // 대표 이미지 1장 (대표 썸네일 경로)
-    private String imageUrl;
+   
 
     // 🔗 판매자 연결 (N:1)
     @ManyToOne(fetch = FetchType.LAZY)
