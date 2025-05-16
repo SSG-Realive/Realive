@@ -1,6 +1,8 @@
 package com.realive.domain.seller;
 
 import com.realive.domain.common.BaseTimeEntity;
+import com.realive.domain.common.enums.SellerFileType;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -28,7 +30,7 @@ public class SellerDocument extends BaseTimeEntity {
     // 파일 유형 (enum: 사업자등록증, 통장사본)
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private FileType fileType;
+    private SellerFileType fileType;
 
     // 승인 여부 (0: 미승인, 1: 승인됨)
     private boolean isVerified = false;
@@ -42,8 +44,5 @@ public class SellerDocument extends BaseTimeEntity {
     private Seller seller;
 
     // 파일 유형 ENUM 정의 (내부 또는 별도 enum 패키지)
-    public enum FileType {
-        사업자등록증,
-        통장사본
-    }
+    
 }

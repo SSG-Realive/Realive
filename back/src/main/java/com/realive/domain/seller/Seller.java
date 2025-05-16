@@ -36,7 +36,7 @@ public class Seller extends BaseTimeEntity{
 
     @Column(length = 20)
     private String phone;
-
+    
     @Column(name = "business_number", length = 50)
     private String businessNumber;
 

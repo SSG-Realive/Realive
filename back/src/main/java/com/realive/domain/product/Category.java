@@ -3,8 +3,7 @@ package com.realive.domain.product;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.ArrayList;
-import java.util.List;
+
 
 /**
  * 상품 카테고리 엔티티
@@ -16,6 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Table(name = "categories")
 public class Category {
 
     @Id
@@ -31,7 +31,5 @@ public class Category {
     @JoinColumn(name = "parent_id")
     private Category parent;
 
-    // 하위 카테고리들 (1:N)
-    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
-    private List<Category> children = new ArrayList<>();
+    
 }

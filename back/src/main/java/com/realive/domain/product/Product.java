@@ -16,6 +16,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Table(name = "products")
 public class Product extends BaseTimeEntity {
 
     @Id
@@ -49,7 +50,7 @@ public class Product extends BaseTimeEntity {
     private ProductStatus status = ProductStatus.상;
 
     // 판매 여부 (true = 판매중)
-    @Column(nullable = false)
+    @Column(nullable = false, name = "is_active")
     private boolean isActive = true;
 
     // 대표 이미지 1장 (대표 썸네일 경로)

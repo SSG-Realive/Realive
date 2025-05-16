@@ -7,7 +7,7 @@ import com.realive.repository.common.EmailLookupRepository;
 
 public interface SellerRepository extends JpaRepository<Seller,Long>, EmailLookupRepository<Seller> {
 
+    
 
-
-
+    
 }
