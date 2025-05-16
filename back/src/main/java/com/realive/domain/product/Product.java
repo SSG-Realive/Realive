@@ -6,9 +6,6 @@ import com.realive.domain.seller.Seller;
 import jakarta.persistence.*;
 import lombok.*;
 
-//import java.util.ArrayList;
-//import java.util.List;
-
 /**
  * 상품 도메인 엔티티
  * 판매자가 등록한 중고 가구 상품 정보
@@ -68,7 +65,4 @@ public class Product extends BaseTimeEntity {
     @JoinColumn(name = "category_id")
     private Category category;
 
-    // 🔗 상품 이미지 리스트 (1:N) 양방향 연관 매핑
-   // @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    // private List<ProductImage> images = new ArrayList<>();
 }
