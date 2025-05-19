@@ -19,5 +19,5 @@ public class ProductListDto {
     private int price;        // 가격
     private String status;    // 상태 (상, 중, 하)
     private boolean isActive; // 판매 여부
-    private String imageUrl;  // 대표 이미지
+    private String thumbnailUrl;
 }

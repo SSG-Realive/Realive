@@ -54,7 +54,6 @@ public class Product extends BaseTimeEntity {
     // 판매 여부 (true = 판매중)
     @Builder.Default
     @Column(nullable = false, name = "is_active")
-
     private boolean isActive = true;
 
    
@@ -70,12 +69,6 @@ public class Product extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
-
-
-
-    // 배송 정책
-    @OneToOne(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    private DeliveryPolicy deliveryPolicy;
 
 }
 

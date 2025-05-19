@@ -24,7 +24,7 @@ public class ProductResponseDto {
     private Integer height;
     private String status;        // 상태 (enum → String)
     private boolean isActive;     // 판매 여부
-    private String imageUrl;      // 대표 이미지 URL
+    private String thumbnailUrl;      // 대표 이미지 URL
     private String categoryName;  // 카테고리 이름 (선택)
     private String sellerName;    // 판매자 이름 (선택)
 }
