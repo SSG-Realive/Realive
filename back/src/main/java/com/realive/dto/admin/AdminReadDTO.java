@@ -5,8 +5,6 @@ import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-
-
 @Getter
 @AllArgsConstructor
 public class AdminReadDTO {
@@ -19,6 +17,6 @@ public class AdminReadDTO {
 
     private String authorities;
 
-    private LocalDateTime createdAt;  //?
+    private LocalDateTime createdAt;
     
 }

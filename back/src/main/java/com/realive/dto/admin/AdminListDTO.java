@@ -1,6 +1,5 @@
 package com.realive.dto.admin;
 
-
 import java.time.LocalDateTime;
 
 import lombok.Data;
