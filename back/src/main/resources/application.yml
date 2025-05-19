@@ -1,0 +1,28 @@
+server:
+  port: 8080
+  servlet:
+    context-path:
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: 12345678
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+    open-in-view: false
+
+jwt:
+  secret: myRealiveSuperSecretKeyThatIsVerySecure123!
+  expiration: 3600000  # 1??
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+    com.realive: DEBUG
