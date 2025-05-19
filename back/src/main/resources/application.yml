@@ -1,0 +1,27 @@
+server:
+  port: 8080
+  servlet:
+    context-path:
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/realive_db
+    username: realive
+    password: realive123
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+    open-in-view: false
+
+jwt:
+  secret: myRealiveSuperSecretKeyThatIsVerySecure123!
+  expiration: 3600000  # 1시간
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+    com.realive: DEBUG
