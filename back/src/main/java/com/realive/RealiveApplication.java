@@ -10,4 +10,5 @@ public class RealiveApplication {
 		SpringApplication.run(RealiveApplication.class, args);
 	}
 
+
 }

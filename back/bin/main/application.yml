@@ -2,12 +2,11 @@ server:
   port: 8080
   servlet:
     context-path:
-
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/postgres
-    username: postgres
-    password: 12345678
+    url: jdbc:postgresql://localhost:5432/realive_db
+    username: realive
+    password: realive123
     driver-class-name: org.postgresql.Driver
 
   jpa:
