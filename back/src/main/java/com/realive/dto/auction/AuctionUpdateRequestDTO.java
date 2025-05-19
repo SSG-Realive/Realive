@@ -6,7 +6,7 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
-// 경매 수정 요청
+// 경매 수정
 @Getter
 @Setter
 @NoArgsConstructor
@@ -17,8 +17,8 @@ public class AuctionUpdateRequestDTO {
     @NotNull(message = "경매 ID는 필수입니다.")
     private Integer id;
 
-    @Future(message = "종료 시간은 미래여야 합니다.")
+    @Future(message = "종료 시간은 현재 시점 이후여야 합니다.")
     private LocalDateTime endTime;
 
-    private Boolean isClosed;
+    private Boolean closed;
 }
