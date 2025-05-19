@@ -29,6 +29,7 @@ public class SellerDocument extends BaseTimeEntity {
     @JoinColumn(name = "seller_id", nullable = false)
     private Seller seller;
 
+
     // 업로드한 파일 URL (S3나 서버 내 경로)
     @Column(nullable = false, name = "file_url")
     private String fileUrl;
@@ -43,13 +44,9 @@ public class SellerDocument extends BaseTimeEntity {
     private boolean isVerified = false;
 
     // 승인된 시간 (nullable)
-    @Column(name = "verified_at")
     private LocalDateTime verifiedAt;
-
-    
 
   
 
-    // 파일 유형 ENUM 정의 (내부 또는 별도 enum 패키지)
     
 }

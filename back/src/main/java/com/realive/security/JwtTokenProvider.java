@@ -17,10 +17,12 @@ public class JwtTokenProvider {
 
     private final long expirationMs = 3600000L; // 1시간
 
+
     public String generateToken(String username) {
         Claims claims = Jwts.claims().setSubject(username);
         Date now = new Date();
         Date validity = new Date(now.getTime() + expirationMs);
+
 
         return Jwts.builder()
                 .setClaims(claims)
