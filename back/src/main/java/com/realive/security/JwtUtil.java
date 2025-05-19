@@ -13,6 +13,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpServletRequest;
 
 @Component
 public class JwtUtil {
@@ -46,7 +47,7 @@ public class JwtUtil {
                 .compact();
     }
 
-    // rt 생성성
+    // rt 생성
     public String generationRefreshToken(Seller seller){
         long refreshExpiration = expiration * 24 * 7;
         return Jwts.builder()
@@ -82,4 +83,13 @@ public class JwtUtil {
                 .parseClaimsJws(token)
                 .getBody();
     }
+
+    // 헤더값 가져와서 조건 확인후 경우에따라 null 리턴
+    public String resolveToken(HttpServletRequest request) {
+    String bearer = request.getHeader("Authorization");
+    if (bearer != null && bearer.startsWith("Bearer ")) {
+        return bearer.substring(7);
+    }
+    return null;
+}
 }

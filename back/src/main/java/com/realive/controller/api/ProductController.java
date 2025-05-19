@@ -2,9 +2,12 @@ package com.realive.controller.api;
 
 import com.realive.dto.product.ProductRequestDto;
 import com.realive.dto.product.ProductResponseDto;
+import com.realive.exception.UnauthorizedException;
 import com.realive.dto.product.ProductListDto;
-import com.realive.security.JwtTokenProvider;
+import com.realive.security.JwtUtil;
 import com.realive.service.product.ProductService;
+
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +22,7 @@ import java.util.List;
 public class ProductController {
 
     private final ProductService productService;
-    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtUtil jwtUtil;
 
     // 🔽 상품 등록
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -27,8 +30,13 @@ public class ProductController {
             @ModelAttribute ProductRequestDto dto,
             HttpServletRequest request
     ) {
-        String token = jwtTokenProvider.resolveToken(request);
-        Long sellerId = jwtTokenProvider.getUserId(token);
+        String token = jwtUtil.resolveToken(request);
+        if (token == null || !jwtUtil.validateToken(token)) {
+            throw new UnauthorizedException("토큰이 유효하지 않습니다.");
+        }
+
+        Claims claims = jwtUtil.getClaims(token);
+        Long sellerId = claims.get("id", Long.class);
 
         Long id = productService.createProduct(dto, sellerId);
         return ResponseEntity.ok(id);
@@ -41,8 +49,12 @@ public class ProductController {
             @ModelAttribute ProductRequestDto dto,
             HttpServletRequest request
     ) {
-        String token = jwtTokenProvider.resolveToken(request);
-        Long sellerId = jwtTokenProvider.getUserId(token);
+        String token = jwtUtil.resolveToken(request);
+        if (token == null || !jwtUtil.validateToken(token)) {
+            throw new UnauthorizedException("토큰이 유효하지 않습니다.");
+        }
+        Claims claims = jwtUtil.getClaims(token);
+        Long sellerId = claims.get("id", Long.class);
 
         productService.updateProduct(id, dto, sellerId);
         return ResponseEntity.ok().build();
@@ -54,8 +66,12 @@ public class ProductController {
             @PathVariable Long id,
             HttpServletRequest request
     ) {
-        String token = jwtTokenProvider.resolveToken(request);
-        Long sellerId = jwtTokenProvider.getUserId(token);
+        String token = jwtUtil.resolveToken(request);
+        if (token == null || !jwtUtil.validateToken(token)) {
+            throw new UnauthorizedException("토큰이 유효하지 않습니다.");
+        }
+        Claims claims = jwtUtil.getClaims(token);
+        Long sellerId = claims.get("id", Long.class);
 
         productService.deleteProduct(id, sellerId);
         return ResponseEntity.ok().build();
@@ -64,8 +80,13 @@ public class ProductController {
     // 🔽 상품 목록 조회 (판매자 전용)
     @GetMapping
     public ResponseEntity<List<ProductListDto>> getMyProducts(HttpServletRequest request) {
-        String token = jwtTokenProvider.resolveToken(request);
-        Long sellerId = jwtTokenProvider.getUserId(token);
+        String token = jwtUtil.resolveToken(request);
+        if (token == null || !jwtUtil.validateToken(token)) {
+            throw new UnauthorizedException("토큰이 유효하지 않습니다.");
+        }
+        
+        Claims claims = jwtUtil.getClaims(token);
+        Long sellerId = claims.get("id", Long.class);
 
         List<ProductListDto> list = productService.getProductsBySeller(sellerId);
         return ResponseEntity.ok(list);
