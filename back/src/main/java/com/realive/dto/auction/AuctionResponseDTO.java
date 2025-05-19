@@ -24,6 +24,10 @@ public class AuctionResponseDTO {
     private AdminProductDTO adminProduct;
 
     public static AuctionResponseDTO fromEntity(com.realive.domain.auction.Auction auction, AdminProductDTO productDTO) {
+        if (auction == null) {
+            throw new IllegalArgumentException("경매 정보는 null일 수 없습니다.");
+        }
+
         return AuctionResponseDTO.builder()
                 .id(auction.getId())
                 .productId(auction.getProductId())
