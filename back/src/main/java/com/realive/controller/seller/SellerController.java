@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.realive.dto.seller.SellerLoginRequestDTO;
 import com.realive.dto.seller.SellerLoginResponseDTO;
+import com.realive.security.JwtUtil;
 import com.realive.service.seller.SellerService;
 
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 public class SellerController {
 
     private final SellerService sellerService;
+    private final JwtUtil jwtUtil;
 
     @PostMapping("/login")
     public ResponseEntity<SellerLoginResponseDTO> login(@RequestBody SellerLoginRequestDTO reqdto){
