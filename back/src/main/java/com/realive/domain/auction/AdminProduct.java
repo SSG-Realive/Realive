@@ -1,10 +1,7 @@
 package com.realive.domain.auction;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -14,6 +11,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class AdminProduct {
 
     @Id
@@ -34,5 +32,6 @@ public class AdminProduct {
 
     @Column(name = "is_auctioned")
     private boolean isAuctioned;
+
 }
 
