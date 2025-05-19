@@ -20,5 +20,8 @@
         <module name="realive.main" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="realive" target="17" />
+    </bytecodeTargetLevel>
   </component>
 </project>
