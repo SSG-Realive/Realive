@@ -21,5 +21,5 @@ public class OrderItem {
     private int price;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id", nullable = false)
-    private OrderEntity order;
+    private Order order;
 }

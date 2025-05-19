@@ -1,5 +1,6 @@
 package com.realive.domain.order;
 
+import com.realive.domain.customer.Customer;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 @Table(name = "orders")
-public class OrderEntity {
+public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,7 +29,7 @@ public class OrderEntity {
     @Column(name = "Ordered_at", nullable =  false, updatable = false, length = 100)
     private LocalDateTime OrderedAt;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "customers_id", nullable = false)
-//    private CustomerEntity customer;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "customers_id", nullable = false)
+    private Customer customer;
 }
