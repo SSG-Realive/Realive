@@ -19,10 +19,4 @@ public class AdminResponseDTO {
     @NotBlank
     private String message;
 
-    AdminResponseDTO dto = AdminResponseDTO.builder()
-    .id(1)
-    .email("admin@domain.com")
-    .name("관리자")
-    .message(" ")
-    .build();
 }

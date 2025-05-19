@@ -16,12 +16,5 @@ public class AdminListDTO {
     private String name;
     
     private LocalDateTime createdAt;
-
-    AdminListDTO dto = AdminListDTO.builder()
-    .id(1)
-    .email("admin@domain.com")
-    .name("관리자")
-    .createdAt(LocalDateTime.now())
-    .build();
     
 }

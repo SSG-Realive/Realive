@@ -18,9 +18,4 @@ public class AdminRequestDTO {
     @NotBlank
     private String name;
 
-    AdminRequestDTO dto = AdminRequestDTO.builder()
-    .id(1)
-    .email("admin@domain.com")
-    .name("관리자")
-    .build();
 }

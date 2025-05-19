@@ -21,13 +21,6 @@ public class AdminReadDTO {
 
     private LocalDateTime createdAt; 
     
-    AdminReadDTO dto = AdminReadDTO.builder()
-    .id(1)
-    .email("admin@domain.com")
-    .name("관리자")
-    .authorities("권한한")
-    .createdAt(LocalDateTime.now())
-    .build();
 }
     
 
