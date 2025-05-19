@@ -4,6 +4,9 @@ import com.realive.domain.common.enums.ProductStatus;
 import lombok.Data;
 
 import com.realive.domain.common.enums.MediaType;
+
+import java.util.List;
+
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -23,7 +26,10 @@ public class ProductRequestDto {
     private Long categoryId;                    // 카테고리 ID
     private Boolean active;                   // 판매 여부 (기본 true)
    
-    private MultipartFile image;                // 대표 이미지
+    private MultipartFile thumbnailImage;                
     private MediaType mediaType;
     private DeliveryPolicyDto deliveryPolicy;   // 배송 정책 정보
+
+     private List<MultipartFile> images;
+     private List<MediaType> imageMediaTypes; 
 }
