@@ -5,7 +5,7 @@ import lombok.Getter;
 
 import java.time.LocalDateTime;
 
-// 입찰 요청
+// 입찰 응답
 @Getter
 @Builder
 public class BidResponseDTO {
