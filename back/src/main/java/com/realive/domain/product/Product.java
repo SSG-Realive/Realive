@@ -54,10 +54,11 @@ public class Product extends BaseTimeEntity {
     // 판매 여부 (true = 판매중)
     @Builder.Default
     @Column(nullable = false, name = "is_active")
-    private boolean active = true;
-    // 이미지
-    @Column(name = "image_url")
-    private String imageUrl;
+    private boolean isActive = true;
+
+   
+
+
 
     // 판매자
     @ManyToOne(fetch = FetchType.LAZY)
@@ -69,7 +70,5 @@ public class Product extends BaseTimeEntity {
     @JoinColumn(name = "category_id")
     private Category category;
 
-    // 배송 정책
-    @OneToOne(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    private DeliveryPolicy deliveryPolicy;
 }
+

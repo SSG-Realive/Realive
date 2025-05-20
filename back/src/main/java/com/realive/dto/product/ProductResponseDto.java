@@ -14,17 +14,18 @@ import lombok.NoArgsConstructor;
 @Builder
 public class ProductResponseDto {
 
-    private Long id;              // 상품 ID
-    private String name;          // 상품명
-    private String description;   // 설명
-    private int price;            // 가격
-    private int stock;            // 재고
-    private Integer width;
-    private Integer depth;
-    private Integer height;
-    private String status;        // 상태 (enum → String)
-    private boolean isActive;     // 판매 여부
-    private String imageUrl;      // 대표 이미지 URL
-    private String categoryName;  // 카테고리 이름 (선택)
-    private String sellerName;    // 판매자 이름 (선택)
+    private Long id;                  // 상품 ID
+    private String name;              // 상품명
+    private String description;       // 설명
+    private int price;                // 가격
+    private int stock;                // 재고
+    private Integer width;            // 가로
+    private Integer depth;            // 세로
+    private Integer height;           // 높이
+    private String status;            // 상태 (enum → String)
+    private boolean isActive;         // 판매 여부
+    private String imageThumbnailUrl; // 대표 이미지 썸네일 (필수)
+    private String videoThumbnailUrl; // 대표 영상 썸네일 (선택)
+    private String categoryName;      // 카테고리 이름 (선택)
+    private String sellerName;        // 판매자 이름 (선택)
 }
