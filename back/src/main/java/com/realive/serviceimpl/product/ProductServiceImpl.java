@@ -1,5 +1,6 @@
 package com.realive.serviceimpl.product;
 
+import com.realive.domain.common.enums.MediaType;
 import com.realive.domain.product.*;
 import com.realive.domain.seller.Seller;
 import com.realive.dto.product.*;
@@ -55,17 +56,42 @@ public class ProductServiceImpl implements ProductService {
 
         productRepository.save(product);
 
-        if (dto.getImage() != null && !dto.getImage().isEmpty()) {
-            String imageUrl = fileUploadService.upload(dto.getImage());
-            ProductImage image = ProductImage.builder()
-                    .url(imageUrl)
+        // 대표 이미지 저장
+        String imageUrl = fileUploadService.upload(dto.getImageThumbnail(), "product", sellerId);
+        productImageRepository.save(ProductImage.builder()
+                .url(imageUrl)
+                .isThumbnail(true)
+                .mediaType(MediaType.IMAGE)
+                .product(product)
+                .build());
+
+        // 대표 영상 저장 (선택)
+        if (dto.getVideoThumbnail() != null && !dto.getVideoThumbnail().isEmpty()) {
+            String videoUrl = fileUploadService.upload(dto.getVideoThumbnail(), "product", sellerId);
+            productImageRepository.save(ProductImage.builder()
+                    .url(videoUrl)
                     .isThumbnail(true)
-                    .mediaType(dto.getMediaType())
+                    .mediaType(MediaType.VIDEO)
                     .product(product)
-                    .build();
-            productImageRepository.save(image);
+                    .build());
         }
 
+        // ✅ 서브 이미지 저장
+        if (dto.getSubImages() != null && !dto.getSubImages().isEmpty()) {
+            for (MultipartFile file : dto.getSubImages()) {
+                if (file != null && !file.isEmpty()) {
+                    String url = fileUploadService.upload(file, "product", sellerId);
+                    productImageRepository.save(ProductImage.builder()
+                            .url(url)
+                            .isThumbnail(false)
+                            .mediaType(MediaType.IMAGE)
+                            .product(product)
+                            .build());
+                }
+            }
+        }
+
+        // 배송 정책 저장
         if (dto.getDeliveryPolicy() != null) {
             DeliveryPolicy policy = DeliveryPolicy.builder()
                     .type(dto.getDeliveryPolicy().getType())
@@ -79,6 +105,9 @@ public class ProductServiceImpl implements ProductService {
         return product.getId();
     }
 
+    /**
+     * 상품 수정
+     */
     @Override
     public void updateProduct(Long productId, ProductRequestDto dto, Long sellerId) {
         Product product = productRepository.findById(productId)
@@ -88,21 +117,49 @@ public class ProductServiceImpl implements ProductService {
             throw new SecurityException("해당 상품에 대한 수정 권한이 없습니다.");
         }
 
-        if (dto.getImage() != null && !dto.getImage().isEmpty()) {
-            productImageRepository.findByProductId(productId).stream()
-                    .filter(ProductImage::isThumbnail)
-                    .forEach(productImageRepository::delete);
+        // 기존 썸네일 이미지/영상 삭제
+        productImageRepository.findByProductId(productId).stream()
+                .filter(ProductImage::isThumbnail)
+                .forEach(productImageRepository::delete);
 
-            String imageUrl = fileUploadService.upload(dto.getImage());
-            ProductImage image = ProductImage.builder()
+        // 대표 이미지 저장
+        if (dto.getImageThumbnail() != null && !dto.getImageThumbnail().isEmpty()) {
+            String imageUrl = fileUploadService.upload(dto.getImageThumbnail(), "product", sellerId);
+            productImageRepository.save(ProductImage.builder()
                     .url(imageUrl)
                     .isThumbnail(true)
-                    .mediaType(dto.getMediaType())
+                    .mediaType(MediaType.IMAGE)
                     .product(product)
-                    .build();
-            productImageRepository.save(image);
+                    .build());
         }
 
+        // 대표 영상 저장 (선택)
+        if (dto.getVideoThumbnail() != null && !dto.getVideoThumbnail().isEmpty()) {
+            String videoUrl = fileUploadService.upload(dto.getVideoThumbnail(), "product", sellerId);
+            productImageRepository.save(ProductImage.builder()
+                    .url(videoUrl)
+                    .isThumbnail(true)
+                    .mediaType(MediaType.VIDEO)
+                    .product(product)
+                    .build());
+        }
+
+        // 서브 이미지 저장 (선택)
+        if (dto.getSubImages() != null && !dto.getSubImages().isEmpty()) {
+            for (MultipartFile file : dto.getSubImages()) {
+                if (file != null && !file.isEmpty()) {
+                    String url = fileUploadService.upload(file, "product", sellerId);
+                    productImageRepository.save(ProductImage.builder()
+                            .url(url)
+                            .isThumbnail(false)
+                            .mediaType(MediaType.IMAGE)
+                            .product(product)
+                            .build());
+                }
+            }
+        }
+
+        // 상품 정보 수정
         product.setName(dto.getName());
         product.setDescription(dto.getDescription());
         product.setPrice(dto.getPrice());
@@ -113,12 +170,14 @@ public class ProductServiceImpl implements ProductService {
         product.setStatus(dto.getStatus());
         product.setActive(dto.getActive() != null ? dto.getActive() : product.isActive());
 
+        // 카테고리 수정
         if (dto.getCategoryId() != null) {
             Category category = categoryRepository.findById(dto.getCategoryId())
                     .orElseThrow(() -> new IllegalArgumentException("카테고리를 찾을 수 없습니다."));
             product.setCategory(category);
         }
 
+        // 배송 정책 수정
         if (dto.getDeliveryPolicy() != null) {
             DeliveryPolicy policy = deliveryPolicyRepository.findByProduct(product)
                     .orElse(new DeliveryPolicy());
@@ -134,6 +193,9 @@ public class ProductServiceImpl implements ProductService {
         productRepository.save(product);
     }
 
+    /**
+     * 상품 삭제
+     */
     @Override
     public void deleteProduct(Long productId, Long sellerId) {
         Product product = productRepository.findById(productId)
@@ -152,6 +214,9 @@ public class ProductServiceImpl implements ProductService {
         productRepository.delete(product);
     }
 
+    /**
+     * 판매자별 상품 목록 조회 (이미지 + 영상 썸네일 모두 포함)
+     */
     @Override
     public List<ProductListDto> getProductsBySeller(Long sellerId) {
         return productRepository.findBySellerId(sellerId).stream()
@@ -161,11 +226,15 @@ public class ProductServiceImpl implements ProductService {
                         .price(product.getPrice())
                         .status(product.getStatus().name())
                         .isActive(product.isActive())
-                        .thumbnailUrl(getThumbnailUrlByProductId(product.getId()))
+                        .imageThumbnailUrl(getThumbnailUrlByType(product.getId(), MediaType.IMAGE))
+                        .videoThumbnailUrl(getThumbnailUrlByType(product.getId(), MediaType.VIDEO))
                         .build()
                 ).collect(Collectors.toList());
     }
 
+    /**
+     * 상품 상세 조회
+     */
     @Override
     public ProductResponseDto getProductDetail(Long productId) {
         Product product = productRepository.findById(productId)
@@ -182,17 +251,19 @@ public class ProductServiceImpl implements ProductService {
                 .height(product.getHeight())
                 .status(product.getStatus().name())
                 .isActive(product.isActive())
-                .thumbnailUrl(getThumbnailUrlByProductId(productId))
+                .imageThumbnailUrl(getThumbnailUrlByType(productId, MediaType.IMAGE))
+                .videoThumbnailUrl(getThumbnailUrlByType(productId, MediaType.VIDEO))
                 .categoryName(product.getCategory() != null ? product.getCategory().getName() : null)
                 .sellerName(product.getSeller().getName())
                 .build();
     }
 
-    @Override
-    public String getThumbnailUrlByProductId(Long productId) {
-        return productImageRepository.findByProductId(productId).stream()
-                .filter(ProductImage::isThumbnail)
-                .findFirst()
+    /**
+     * 썸네일 이미지 or 영상 URL 조회
+     */
+    public String getThumbnailUrlByType(Long productId, MediaType mediaType) {
+        return productImageRepository
+                .findFirstByProductIdAndIsThumbnailTrueAndMediaType(productId, mediaType)
                 .map(ProductImage::getUrl)
                 .orElse(null);
     }

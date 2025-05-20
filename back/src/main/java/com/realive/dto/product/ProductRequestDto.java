@@ -8,6 +8,7 @@ import com.realive.domain.common.enums.MediaType;
 import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
+import java.util.List;
 
 /**
  * 상품 등록/수정 요청 DTO
@@ -15,21 +16,22 @@ import org.springframework.web.multipart.MultipartFile;
 @Data
 public class ProductRequestDto {
 
-    private String name;                        // 상품명
-    private String description;                 // 상품 설명
-    private int price;                          // 가격
-    private Integer stock;                      // 재고 수량 (기본 1)
-    private Integer width;                      // 가로 (cm)
-    private Integer depth;                      // 세로 (cm)
-    private Integer height;                     // 높이 (cm)
-    private ProductStatus status;               // 상태 (상, 중, 하)
-    private Long categoryId;                    // 카테고리 ID
-    private Boolean active;                   // 판매 여부 (기본 true)
-   
-    private MultipartFile thumbnailImage;                
-    private MediaType mediaType;
-    private DeliveryPolicyDto deliveryPolicy;   // 배송 정책 정보
+    private String name;
+    private String description;
+    private int price;
+    private Integer stock;
+    private Integer width;
+    private Integer depth;
+    private Integer height;
+    private ProductStatus status;
+    private Long categoryId;
+    private Boolean active;
 
-     private List<MultipartFile> images;
-     private List<MediaType> imageMediaTypes; 
+    private MultipartFile imageThumbnail;           // 대표 이미지 (필수)
+    private MultipartFile videoThumbnail;           // 대표 영상 (선택)
+
+    private List<MultipartFile> subImages;          // ✅ 상세 이미지 다건 업로드 (선택)
+    // 필요시 추후 확장: private List<MultipartFile> subVideos;
+
+    private DeliveryPolicyDto deliveryPolicy;
 }
