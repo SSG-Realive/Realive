@@ -1,0 +1,117 @@
+# -------------------------------------
+# IDE / Tool 설정
+# -------------------------------------
+.idea/
+*.iml
+.vscode/
+.history/
+*.sublime*
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# -------------------------------------
+# Java / Gradle / Spring Boot
+# -------------------------------------
+*.class
+*.log
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+*.hprof
+.gradle
+.gradle/**/build/
+!src/**/build/
+build/
+out/
+cmake-build-*/
+hs_err_pid*
+replay_pid*
+.mtj.tmp/
+.project
+.classpath
+gradle-app.setting
+.gradletasknamecache
+
+# QueryDSL Q파일 (generated sources)
+build/generated/
+**/generated/
+**/generated-sources/
+**/generated/querydsl/
+**/Q*.java
+
+# IntelliJ cache files
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/**/usage.statistics.xml
+.idea/**/dictionaries
+.idea/**/shelf
+.idea/**/aws.xml
+.idea/**/contentModel.xml
+.idea/**/dataSources/
+.idea/**/dataSources.ids
+.idea/**/dataSources.local.xml
+.idea/**/sqlDataSources.xml
+.idea/**/dynamic.xml
+.idea/**/uiDesigner.xml
+.idea/**/dbnavigator.xml
+.idea/**/gradle.xml
+.idea/**/libraries
+.idea/**/sonarlint/
+.idea/**/sonarIssues.xml
+.idea/**/markdown-navigator*
+.idea/codestream.xml
+.idea/httpRequests
+.idea/**/azureSettings.xml
+.idea/$CACHE_FILE$
+.idea_modules/
+atlassian-ide-plugin.xml
+
+# -------------------------------------
+# Node.js / React / Next.js / Yarn
+# -------------------------------------
+# dependencies
+node_modules/
+.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+bower_components/
+
+# debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# testing
+coverage/
+
+# Next.js build artifacts
+.next/
+out/
+
+# production build
+build/
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# local env files
+.env*
+*.pem
+
+# Vercel deploy
+.vercel
+
+# 기타 백업 파일
+*.backup.*
+*.back.*

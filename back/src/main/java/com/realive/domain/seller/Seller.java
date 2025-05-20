@@ -58,7 +58,6 @@ public class Seller {
         this.updatedAt = LocalDateTime.now();
     }
 
-    @PrePersist
     public void onUpdate(){
         this.updatedAt = LocalDateTime.now();
     }
