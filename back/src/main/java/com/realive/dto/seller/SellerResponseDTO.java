@@ -1,6 +1,8 @@
 package com.realive.dto.seller;
 
-import java.time.LocalDateTime;
+import java.util.List;
+
+import com.realive.dto.product.ProductListDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,6 +26,8 @@ public class SellerResponseDTO {
     private String businessNumber;
 
     private boolean hasBankAccountCopy;
+
+    private List<ProductListDto> products;
  
     
     
