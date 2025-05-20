@@ -8,6 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,7 +20,7 @@ import lombok.ToString;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+//@Builder
 @Table(name = "sellers")
 public class Seller {
 
@@ -58,10 +59,11 @@ public class Seller {
         this.updatedAt = LocalDateTime.now();
     }
 
-    @PrePersist
-    public void onUpdate(){
-        this.updatedAt = LocalDateTime.now();
+    @PreUpdate
+    public void onUpdate() {
+    this.updatedAt = LocalDateTime.now();
     }
+
 
 
 }
