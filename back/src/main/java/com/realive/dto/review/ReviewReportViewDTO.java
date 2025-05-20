@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ReviewReportViewDTO extends BaseTimeEntity{
+public class ReviewReportViewDTO{
     
     private Integer reportId;
 
