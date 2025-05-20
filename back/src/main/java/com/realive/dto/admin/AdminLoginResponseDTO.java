@@ -1,14 +1,11 @@
 package com.realive.dto.admin;
 
-import java.time.LocalDateTime;
-
-import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Data;
 
 @Data
 @Builder
-public class AdminResponseDTO {
+public class AdminLoginResponseDTO {
     
     private Integer id;
 
@@ -16,7 +13,6 @@ public class AdminResponseDTO {
 
     private String name;
 
-    @NotBlank
     private String message;
 
 }
