@@ -1,6 +1,6 @@
 package com.realive.dto.admin;
 
-import com.realive.domain.admin.enums.SellerApprovalStatusByAdmin;
+import com.realive.domain.common.enums.SellerApprovalStatusByAdmin;
 
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotNull;

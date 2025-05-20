@@ -1,4 +1,4 @@
-package com.realive.domain.admin.enums;
+package com.realive.domain.common.enums;
 
 public enum SellerApprovalStatusByAdmin {
     PENDING_REVIEW,
