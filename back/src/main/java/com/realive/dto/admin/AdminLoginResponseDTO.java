@@ -7,10 +7,10 @@ import lombok.Data;
 @Builder
 public class AdminLoginResponseDTO {
     
-    private Integer id;
-
-    private String email;
-
+    private String accessToken; 
+    
+    private String refreshToken; 
+    
     private String name;
 
     private String message;
