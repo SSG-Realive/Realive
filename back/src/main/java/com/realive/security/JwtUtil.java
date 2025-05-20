@@ -91,5 +91,11 @@ public class JwtUtil {
         return bearer.substring(7);
     }
     return null;
-}
+    }
+
+    // 토큰에서 id 만 가져오는 메서드 
+    public Long getUserIdFromToken(String token) {
+    Claims claims = getClaims(token);
+    return Long.parseLong(claims.getSubject());
+    }
 }

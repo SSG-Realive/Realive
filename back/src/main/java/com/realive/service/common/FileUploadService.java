@@ -24,7 +24,7 @@ public class FileUploadService {
      * @param file 업로드할 이미지 파일
      * @return 저장된 파일의 상대 경로 (/uploads/...)
      */
-    public String upload(MultipartFile file) {
+    public String upload(MultipartFile file, String category, Long sellerId ) {
         if (file == null || file.isEmpty()) {
             throw new RuntimeException("업로드할 파일이 존재하지 않습니다.");
         }
@@ -35,13 +35,14 @@ public class FileUploadService {
         String newFilename = uuid + "_" + originalFilename;
 
         // 업로드 디렉토리 없으면 생성
-        File uploadDir = new File(UPLOAD_DIR);
+        String subDirPath = category + "/" + sellerId + "/";
+        File uploadDir = new File(UPLOAD_DIR + subDirPath);
         if (!uploadDir.exists()) {
             uploadDir.mkdirs();
         }
 
         // 저장 위치
-        File dest = new File(UPLOAD_DIR + newFilename);
+        File dest = new File(UPLOAD_DIR + subDirPath + newFilename);
 
         try {
             file.transferTo(dest); // 파일 저장
@@ -50,6 +51,6 @@ public class FileUploadService {
         }
 
         // 나중에 프론트에서 이 경로를 통해 이미지 접근 가능
-        return "/uploads/" + newFilename;
+        return "/uploads/" + subDirPath + newFilename;
     }
 }

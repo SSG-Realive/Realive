@@ -19,4 +19,6 @@ public interface ProductService {
     ProductResponseDto getProductDetail(Long productId);
 
     String getThumbnailUrlByProductId(Long productId);
+
+   
 }

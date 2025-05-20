@@ -19,13 +19,12 @@ public class SellerResponseDTO {
     private String name;
     private String phone;
     
-    private boolean isActive;
     private boolean isApproved;
-    private LocalDateTime approvedAt;  
-
+    
     private String businessNumber;
-    private String businessLicenseUrl;
-    private String bankAccountCopyUrl;
+
+    private boolean hasBankAccountCopy;
+ 
     
     
 }
