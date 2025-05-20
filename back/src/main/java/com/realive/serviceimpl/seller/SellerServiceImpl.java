@@ -30,11 +30,12 @@ public class SellerServiceImpl implements SellerService{
     private final SellerDocumentRepository sellerDocumentRepository;
     private final FileUploadService fileUploadService;
 
+    //로그인인
     @Override
     public SellerLoginResponseDTO login(SellerLoginRequestDTO reqdto){
        
         // email로 사용자 찾기
-        Seller seller = sellerRepository.findByEmail(reqdto.getEmail())
+        Seller seller = sellerRepository.findByEmailAndIsActiveTrue(reqdto.getEmail())
                 .orElseThrow(()-> new IllegalArgumentException("존재하지 않는 이메일입니다."));
             
                 // 비밀번호 확인
@@ -44,7 +45,7 @@ public class SellerServiceImpl implements SellerService{
             } 
             // accesstoken, refreshtoken 생성
             String accessToken = jwtUtil.generateAccessToken(seller);
-            String refreshToken = jwtUtil.generateAccessToken(seller);
+            String refreshToken = jwtUtil.generateRefreshToken(seller);
 
             // dto 반환
             return SellerLoginResponseDTO.builder()

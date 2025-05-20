@@ -48,7 +48,7 @@ public class JwtUtil {
     }
 
     // rt 생성
-    public String generationRefreshToken(Seller seller){
+    public String generateRefreshToken(Seller seller){
         long refreshExpiration = expiration * 24 * 7;
         return Jwts.builder()
                 .setSubject("seller_refresh")
