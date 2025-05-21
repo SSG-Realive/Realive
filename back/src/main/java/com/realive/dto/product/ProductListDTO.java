@@ -1,5 +1,9 @@
 package com.realive.dto.product;
 
+import com.realive.domain.product.Product;
+import com.realive.domain.product.ProductImage;
+
+import io.micrometer.common.lang.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,7 +16,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ProductListDTO {
+public class ProductListDto {
 
     private Long id;                   // 상품 ID
     private String name;               // 상품명
@@ -20,5 +24,16 @@ public class ProductListDTO {
     private String status;             // 상태 (상, 중, 하)
     private boolean isActive;          // 판매 여부
     private String imageThumbnailUrl;  // 대표 이미지 썸네일
-    private String videoThumbnailUrl;  // 대표 영상 썸네일 (선택)
+    
+
+    public static ProductListDto from(Product product, String imageUrl) {
+        return ProductListDto.builder()
+                .id(product.getId())
+                .name(product.getName())
+                .price(product.getPrice())
+                .status(product.getStatus().name())  // enum 처리
+                .isActive(product.isActive())
+                .imageThumbnailUrl(imageUrl)
+                .build();
+    }
 }

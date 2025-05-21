@@ -27,7 +27,7 @@ public class SellerResponseDTO {
 
     private boolean hasBankAccountCopy;
 
-    private List<ProductListDto> products;
+    
  
     
     

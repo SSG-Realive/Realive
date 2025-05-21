@@ -3,6 +3,7 @@ package com.realive.serviceimpl.product;
 import com.realive.domain.common.enums.MediaType;
 import com.realive.domain.product.*;
 import com.realive.domain.seller.Seller;
+import com.realive.dto.page.PageResponseDTO;
 import com.realive.dto.product.*;
 import com.realive.repository.product.*;
 import com.realive.repository.seller.SellerRepository;
@@ -11,10 +12,14 @@ import com.realive.service.product.ProductService;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,7 +36,7 @@ public class ProductServiceImpl implements ProductService {
     private final FileUploadService fileUploadService;
 
     @Override
-    public Long createProduct(ProductRequestDTO dto, Long sellerId) {
+    public Long createProduct(ProductRequestDto dto, Long sellerId) {
         Seller seller = sellerRepository.findById(sellerId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 판매자입니다."));
 
@@ -50,7 +55,7 @@ public class ProductServiceImpl implements ProductService {
                 .depth(dto.getDepth())
                 .height(dto.getHeight())
                 .status(dto.getStatus())
-                .isActive(dto.getActive() != null ? dto.getActive() : true)
+                .active(dto.getActive() != null ? dto.getActive() : true)
                 .category(category)
                 .seller(seller)
                 .build();
@@ -110,7 +115,7 @@ public class ProductServiceImpl implements ProductService {
      * 상품 수정
      */
     @Override
-    public void updateProduct(Long productId, ProductRequestDTO dto, Long sellerId) {
+    public void updateProduct(Long productId, ProductRequestDto dto, Long sellerId) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("상품이 존재하지 않습니다."));
 
@@ -216,32 +221,53 @@ public class ProductServiceImpl implements ProductService {
     }
 
     /**
-     * 판매자별 상품 목록 조회 (이미지 + 영상 썸네일 모두 포함)
+     * 판매자별 상품 목록 조회 (이미지)
      */
     @Override
-    public List<ProductListDTO> getProductsBySeller(Long sellerId) {
-        return productRepository.findBySellerId(sellerId).stream()
-                .map(product -> ProductListDTO.builder()
-                        .id(product.getId())
-                        .name(product.getName())
-                        .price(product.getPrice())
-                        .status(product.getStatus().name())
-                        .isActive(product.isActive())
-                        .imageThumbnailUrl(getThumbnailUrlByType(product.getId(), MediaType.IMAGE))
-                        .videoThumbnailUrl(getThumbnailUrlByType(product.getId(), MediaType.VIDEO))
-                        .build()
-                ).collect(Collectors.toList());
-    }
+    public PageResponseDTO<ProductListDto> getProductsBySeller(Long sellerId, ProductSearchCondition condition) {
+
+    // 🔹 1. 조건 검색 + 페이징 조회
+        Page<Product> result = productRepository.searchProducts(condition, sellerId);
+        List<Product> products = result.getContent();
+
+    // 🔹 2. 상품 ID 추출
+        List<Long> productIds = products.stream()
+            .map(Product::getId)
+            .toList();
+
+    // 🔹 3. 썸네일 이미지 일괄 조회 후 Map 변환
+        List<Object[]> rows = productImageRepository.findThumbnailUrlsByProductIds(productIds, MediaType.IMAGE);
+        Map<Long, String> imageMap = rows.stream()
+            .collect(Collectors.toMap(
+                    row -> (Long) row[0],  // productId
+                    row -> (String) row[1] // 썸네일 URL
+            ));
+
+    // 🔹 4. DTO 변환
+        List<ProductListDto> dtoList = products.stream()
+                .map((Product product) -> ProductListDto.from(
+                product,
+                imageMap.get(product.getId())
+        ))
+                .toList();
+
+    // 🔹 5. 페이징 응답 반환
+    return PageResponseDTO.<ProductListDto>withAll()
+            .pageRequestDTO(condition)
+            .dtoList(dtoList)
+            .total((int) result.getTotalElements())
+            .build();
+}
 
     /**
      * 상품 상세 조회
      */
     @Override
-    public ProductResponseDTO getProductDetail(Long productId) {
+    public ProductResponseDto getProductDetail(Long productId) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
 
-        return ProductResponseDTO.builder()
+        return ProductResponseDto.builder()
                 .id(product.getId())
                 .name(product.getName())
                 .description(product.getDescription())

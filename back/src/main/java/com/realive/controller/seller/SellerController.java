@@ -2,7 +2,6 @@ package com.realive.controller.seller;
 
 import java.util.List;
 
-import com.realive.dto.product.ProductListDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.realive.domain.seller.Seller;
-import com.realive.dto.product.ProductListDTO;
+import com.realive.dto.product.ProductListDto;
 import com.realive.dto.seller.SellerLoginRequestDTO;
 import com.realive.dto.seller.SellerLoginResponseDTO;
 import com.realive.dto.seller.SellerResponseDTO;
@@ -67,15 +66,13 @@ public class SellerController {
         return ResponseEntity.ok().build();
     }
 
-    // 🙋‍♀️ 마이페이지 조회 (판매자 정보 + 상품 목록)
+    // 🙋‍♀️ 마이페이지 조회 (판매자 정보 )
     @GetMapping("/me")
     public ResponseEntity<SellerResponseDTO> getMyInfo(@AuthenticationPrincipal Seller seller) {
         Long sellerId = seller.getId();
 
-        List<ProductListDTO> products = productService.getProductsBySeller(sellerId);
         SellerResponseDTO resdto = sellerService.getMyInfo(sellerId);
-        resdto.setProducts(products);
-
+        
         return ResponseEntity.ok(resdto);
     }
 }

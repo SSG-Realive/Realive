@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class DeliveryPolicyDTO {
+public class DeliveryPolicyDto {
 
     // 배송 유형: 무료배송, 유료배송
     private DeliveryType type;

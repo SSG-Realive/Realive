@@ -2,15 +2,19 @@ package com.realive.dto.product;
 
 import com.realive.domain.common.enums.ProductStatus;
 import lombok.Data;
-import java.util.List;
-import org.springframework.web.multipart.MultipartFile;
 
+import com.realive.domain.common.enums.MediaType;
+
+import java.util.List;
+
+import org.springframework.web.multipart.MultipartFile;
+import java.util.List;
 
 /**
  * 상품 등록/수정 요청 DTO
  */
 @Data
-public class ProductRequestDTO {
+public class ProductRequestDto {
 
     private String name;
     private String description;
@@ -29,5 +33,5 @@ public class ProductRequestDTO {
     private List<MultipartFile> subImages;          // ✅ 상세 이미지 다건 업로드 (선택)
     // 필요시 추후 확장: private List<MultipartFile> subVideos;
 
-    private DeliveryPolicyDTO deliveryPolicy;
+    private DeliveryPolicyDto deliveryPolicy;
 }

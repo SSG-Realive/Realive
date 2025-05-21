@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ProductResponseDTO {
+public class ProductResponseDto {
 
     private Long id;                  // 상품 ID
     private String name;              // 상품명
