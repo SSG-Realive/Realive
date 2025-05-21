@@ -5,10 +5,10 @@ server:
 
 spring:
   datasource:
-    url: jdbc:mariadb://localhost:3305/realive_db
-    username: realive
-    password: realive123
-    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: 12345678
+    driver-class-name: org.postgresql.Driver
 
   jpa:
     hibernate:
