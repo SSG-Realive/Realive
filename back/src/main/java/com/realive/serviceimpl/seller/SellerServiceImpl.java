@@ -30,7 +30,7 @@ public class SellerServiceImpl implements SellerService{
     private final SellerDocumentRepository sellerDocumentRepository;
     private final FileUploadService fileUploadService;
 
-    //로그인인
+    //로그인
     @Override
     public SellerLoginResponseDTO login(SellerLoginRequestDTO reqdto){
        

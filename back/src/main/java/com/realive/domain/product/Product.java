@@ -57,7 +57,7 @@ public class Product extends BaseTimeEntity {
     private boolean active = true;
 
    
-    // 판매자Z
+    // 판매자
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id", nullable = false)
     private Seller seller;

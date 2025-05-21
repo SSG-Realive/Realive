@@ -15,7 +15,7 @@ import lombok.Setter;
 public class SellerSignupDTO {
        
     @NotBlank
-    private String emaill;
+    private String email;
 
     @NotBlank
     private String name;

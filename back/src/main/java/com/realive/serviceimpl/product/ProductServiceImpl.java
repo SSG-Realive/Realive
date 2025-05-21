@@ -19,7 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @Service
@@ -82,7 +81,7 @@ public class ProductServiceImpl implements ProductService {
                     .build());
         }
 
-        // ✅ 서브 이미지 저장
+        // 서브 이미지 저장
         if (dto.getSubImages() != null && !dto.getSubImages().isEmpty()) {
             for (MultipartFile file : dto.getSubImages()) {
                 if (file != null && !file.isEmpty()) {
@@ -111,9 +110,6 @@ public class ProductServiceImpl implements ProductService {
         return product.getId();
     }
 
-    /**
-     * 상품 수정
-     */
     @Override
     public void updateProduct(Long productId, ProductRequestDTO dto, Long sellerId) {
         Product product = productRepository.findById(productId)
@@ -139,7 +135,7 @@ public class ProductServiceImpl implements ProductService {
                     .build());
         }
 
-        // 대표 영상 저장 (선택)
+        // 대표 영상 저장
         if (dto.getVideoThumbnail() != null && !dto.getVideoThumbnail().isEmpty()) {
             String videoUrl = fileUploadService.upload(dto.getVideoThumbnail(), "product", sellerId);
             productImageRepository.save(ProductImage.builder()
@@ -150,7 +146,7 @@ public class ProductServiceImpl implements ProductService {
                     .build());
         }
 
-        // 서브 이미지 저장 (선택)
+        // 서브 이미지 저장
         if (dto.getSubImages() != null && !dto.getSubImages().isEmpty()) {
             for (MultipartFile file : dto.getSubImages()) {
                 if (file != null && !file.isEmpty()) {
@@ -176,14 +172,12 @@ public class ProductServiceImpl implements ProductService {
         product.setStatus(dto.getStatus());
         product.setActive(dto.getActive() != null ? dto.getActive() : product.isActive());
 
-        // 카테고리 수정
         if (dto.getCategoryId() != null) {
             Category category = categoryRepository.findById(dto.getCategoryId())
                     .orElseThrow(() -> new IllegalArgumentException("카테고리를 찾을 수 없습니다."));
             product.setCategory(category);
         }
 
-        // 배송 정책 수정
         if (dto.getDeliveryPolicy() != null) {
             DeliveryPolicy policy = deliveryPolicyRepository.findByProduct(product)
                     .orElse(new DeliveryPolicy());
@@ -199,9 +193,6 @@ public class ProductServiceImpl implements ProductService {
         productRepository.save(product);
     }
 
-    /**
-     * 상품 삭제
-     */
     @Override
     public void deleteProduct(Long productId, Long sellerId) {
         Product product = productRepository.findById(productId)
@@ -220,48 +211,33 @@ public class ProductServiceImpl implements ProductService {
         productRepository.delete(product);
     }
 
-    /**
-     * 판매자별 상품 목록 조회 (이미지)
-     */
     @Override
     public PageResponseDTO<ProductListDTO> getProductsBySeller(Long sellerId, ProductSearchCondition condition) {
-
-    // 🔹 1. 조건 검색 + 페이징 조회
         Page<Product> result = productRepository.searchProducts(condition, sellerId);
         List<Product> products = result.getContent();
 
-    // 🔹 2. 상품 ID 추출
         List<Long> productIds = products.stream()
-            .map(Product::getId)
-            .toList();
-
-    // 🔹 3. 썸네일 이미지 일괄 조회 후 Map 변환
-        List<Object[]> rows = productImageRepository.findThumbnailUrlsByProductIds(productIds, MediaType.IMAGE);
-        Map<Long, String> imageMap = rows.stream()
-            .collect(Collectors.toMap(
-                    row -> (Long) row[0],  // productId
-                    row -> (String) row[1] // 썸네일 URL
-            ));
-
-    // 🔹 4. DTO 변환
-        List<ProductListDTO> dtoList = products.stream()
-                .map((Product product) -> ProductListDTO.from(
-                product,
-                imageMap.get(product.getId())
-        ))
+                .map(Product::getId)
                 .toList();
 
-    // 🔹 5. 페이징 응답 반환
-    return PageResponseDTO.<ProductListDTO>withAll()
-            .pageRequestDTO(condition)
-            .dtoList(dtoList)
-            .total((int) result.getTotalElements())
-            .build();
-}
+        List<Object[]> rows = productImageRepository.findThumbnailUrlsByProductIds(productIds, MediaType.IMAGE);
+        Map<Long, String> imageMap = rows.stream()
+                .collect(Collectors.toMap(
+                        row -> (Long) row[0],
+                        row -> (String) row[1]
+                ));
 
-    /**
-     * 상품 상세 조회
-     */
+        List<ProductListDTO> dtoList = products.stream()
+                .map(product -> ProductListDTO.from(product, imageMap.get(product.getId())))
+                .collect(Collectors.toList());
+
+        return PageResponseDTO.<ProductListDTO>withAll()
+                .pageRequestDTO(condition)
+                .dtoList(dtoList)
+                .total((int) result.getTotalElements())
+                .build();
+    }
+
     @Override
     public ProductResponseDTO getProductDetail(Long productId) {
         Product product = productRepository.findById(productId)
@@ -285,9 +261,6 @@ public class ProductServiceImpl implements ProductService {
                 .build();
     }
 
-    /**
-     * 썸네일 이미지 or 영상 URL 조회
-     */
     public String getThumbnailUrlByType(Long productId, MediaType mediaType) {
         return productImageRepository
                 .findFirstByProductIdAndIsThumbnailTrueAndMediaType(productId, mediaType)
