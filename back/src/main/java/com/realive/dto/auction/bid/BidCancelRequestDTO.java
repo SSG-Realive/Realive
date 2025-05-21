@@ -1,4 +1,4 @@
-package com.realive.dto.auction;
+package com.realive.dto.auction.bid;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
