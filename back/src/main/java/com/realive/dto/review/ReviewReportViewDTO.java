@@ -1,7 +1,5 @@
 package com.realive.dto.review;
 
-
-
 import com.realive.domain.common.BaseTimeEntity;
 import com.realive.domain.common.enums.SellerApprovalStatusByAdmin;
 

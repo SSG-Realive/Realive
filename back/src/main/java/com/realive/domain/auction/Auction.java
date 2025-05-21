@@ -37,6 +37,4 @@ public class Auction extends BaseTimeEntity {
     @Column(name = "is_closed")
     private boolean isClosed;
 
-    public void setIsClosed(Boolean isClosed) {
-    }
 }
