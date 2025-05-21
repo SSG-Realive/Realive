@@ -1,8 +1,9 @@
-package com.realive.service.review;
+package com.realive.service.review.view;
 
+import com.realive.dto.review.ReviewListResponseDTO;
 import com.realive.dto.review.ReviewResponseDTO;
 import com.realive.exception.NotFoundException;
-import com.realive.repository.review.ReviewViewRepository;
+import com.realive.repository.review.view.ReviewViewRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
@@ -19,9 +20,17 @@ public class ReviewViewServiceImpl implements ReviewViewService {
     private final ReviewViewRepository reviewViewRepository;
 
     @Override
-    public Page<ReviewResponseDTO> getReviewList(Long sellerId, Pageable pageable) {
+    public Page<ReviewResponseDTO> getMyReviewList(Pageable pageable) {
+        log.info("Fetching review list for sellerId: {}, page: {}", pageable.getPageNumber());
+        Page<ReviewListResponseDTO> reviews = reviewViewRepository.findSellerReviewsByMe(pageable);
+        log.info("Retrieved {} reviews for sellerId: {}", reviews.getTotalElements());
+        return reviews;
+    }
+
+    @Override
+    public Page<ReviewListResponseDTO> getReviewList(Long sellerId, Pageable pageable) {
         log.info("Fetching review list for sellerId: {}, page: {}", sellerId, pageable.getPageNumber());
-        Page<ReviewResponseDTO> reviews = reviewViewRepository.findSellerReviewsBySellerId(sellerId, pageable);
+        Page<ReviewListResponseDTO> reviews = reviewViewRepository.findSellerReviewsBySellerId(sellerId, pageable);
         log.info("Retrieved {} reviews for sellerId: {}", reviews.getTotalElements(), sellerId);
         return reviews;
     }

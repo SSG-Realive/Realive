@@ -1,4 +1,4 @@
-package com.realive.repository.review;
+package com.realive.repository.review.view;
 
 import com.realive.domain.review.SellerReview;
 import org.springframework.data.jpa.repository.JpaRepository;
