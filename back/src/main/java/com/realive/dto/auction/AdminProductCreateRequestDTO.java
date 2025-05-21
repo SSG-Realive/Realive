@@ -7,7 +7,7 @@ import lombok.Getter;
 
 import java.time.LocalDateTime;
 
-// 상품 등록 요청
+// 경매 상품 등록 요청
 @Getter
 @Builder
 public class AdminProductCreateRequestDTO {

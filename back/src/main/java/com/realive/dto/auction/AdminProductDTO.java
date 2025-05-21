@@ -3,7 +3,7 @@ package com.realive.dto.auction;
 import lombok.*;
 import java.time.LocalDateTime;
 
-// 상품 정보 응답
+// 경매 상품 정보 응답
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
