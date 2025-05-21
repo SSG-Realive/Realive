@@ -1,7 +1,6 @@
 package com.realive.repository.logs;
 
 import com.realive.domain.logs.PayoutLog;
-import com.realive.domain.logs.SalesLog;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
