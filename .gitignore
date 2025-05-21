@@ -37,6 +37,9 @@ replay_pid*
 gradle-app.setting
 .gradletasknamecache
 
+# Spring Boot 설정 파일
+application.yml
+
 # QueryDSL Q파일 (generated sources)
 build/generated/
 **/generated/
