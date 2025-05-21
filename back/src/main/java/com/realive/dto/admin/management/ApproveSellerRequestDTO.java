@@ -1,4 +1,4 @@
-package com.realive.dto.admin;
+package com.realive.dto.admin.management;
 
 import com.realive.domain.common.enums.SellerApprovalStatusByAdmin;
 
