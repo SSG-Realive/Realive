@@ -1,4 +1,4 @@
-package com.realive.dto.auction.bid;
+package com.realive.dto.bid;
 
 import lombok.Builder;
 import lombok.Getter;

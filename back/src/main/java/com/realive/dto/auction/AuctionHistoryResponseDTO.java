@@ -1,6 +1,6 @@
 package com.realive.dto.auction;
 
-import com.realive.dto.auction.bid.BidHistoryDTO;
+import com.realive.dto.bid.BidHistoryDTO;
 import lombok.*;
 import java.time.LocalDateTime;
 import java.util.List;
