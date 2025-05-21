@@ -2,6 +2,8 @@ package com.realive.repository.productview;
 
 import java.util.Optional;
 
+import org.springframework.stereotype.Repository;
+
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.realive.domain.product.QCategory;
@@ -12,6 +14,7 @@ import com.realive.dto.product.ProductResponseDto;
 
 import lombok.RequiredArgsConstructor;
 
+@Repository
 @RequiredArgsConstructor
 public class ProductDetailImpl implements ProductDetail {
     private final JPAQueryFactory queryFactory;

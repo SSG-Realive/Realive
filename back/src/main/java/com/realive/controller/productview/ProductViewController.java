@@ -38,11 +38,11 @@ public class ProductViewController {
         return ResponseEntity.ok(result);
     }   
 
-    // // 상품 상세 조회
-    // @GetMapping("/{id}")
-    // public ResponseEntity<ProductResponseDto> getProductDetail(@PathVariable("id") Long id) {
-    //     ProductResponseDto productDetail = productViewService.getProductDetail(id);
-    //     return ResponseEntity.ok(productDetail);
-    // }
+    // 상품 상세 조회
+    @GetMapping("/{id}")
+    public ResponseEntity<ProductResponseDto> getProductDetail(@PathVariable("id") Long id) {
+        ProductResponseDto productDetail = productViewService.getProductDetail(id);
+        return ResponseEntity.ok(productDetail);
+    }
     
 }
