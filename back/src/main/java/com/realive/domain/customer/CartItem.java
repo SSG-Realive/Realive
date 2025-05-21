@@ -6,6 +6,8 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.realive.domain.product.Product;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -38,10 +40,10 @@ public class CartItem {
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
-    //proudcts테이블의 엔티티 이름으로 추후에 수정
-    // @ManyToOne(fetch = FetchType.LAZY)
-    // @JoinColumn(name = "product_id")
-    // private Product product;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id")
+    private Product product;
 
     //디폴트 1
     private Integer quantity = 1;

@@ -1,6 +1,5 @@
 package com.realive.domain.product;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.realive.domain.common.BaseTimeEntity;
 import com.realive.domain.common.enums.ProductStatus;
 import com.realive.domain.seller.Seller;
