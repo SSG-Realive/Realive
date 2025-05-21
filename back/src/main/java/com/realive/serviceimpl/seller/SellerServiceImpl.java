@@ -136,6 +136,12 @@ public class SellerServiceImpl implements SellerService{
         }//end if     
         
     }
+
+    @Override
+    public Seller getByEmail(String email){
+        return sellerRepository.findByEmail(email)
+                .orElseThrow(()-> new IllegalArgumentException("존재하지 않는 이메일입니다."));
+    }
 }
 
     

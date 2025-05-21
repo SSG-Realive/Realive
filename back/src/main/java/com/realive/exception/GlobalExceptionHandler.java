@@ -23,6 +23,17 @@ public class GlobalExceptionHandler {
                 .build());
     }
 
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<ErrorResponse> handleUnauthorized(UnauthorizedException e) {
+        return ResponseEntity
+            .status(HttpStatus.UNAUTHORIZED)
+            .body(ErrorResponse.builder()
+                .status(HttpStatus.UNAUTHORIZED.value())
+                .code("UNAUTHORIZED")
+                .message(e.getMessage())
+                .build());
+    }
+
 
     //서버 에러 처리하는 코드
     @ExceptionHandler(Exception.class)
