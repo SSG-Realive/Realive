@@ -10,7 +10,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class BidRequestDTO {
+public class BidCreateRequestDTO {
 
     @NotNull(message = "경매 ID는 필수입니다.")
     private Integer auctionId;
