@@ -36,7 +36,7 @@ public class ProductServiceImpl implements ProductService {
     private final FileUploadService fileUploadService;
 
     @Override
-    public Long createProduct(ProductRequestDto dto, Long sellerId) {
+    public Long createProduct(ProductRequestDTO dto, Long sellerId) {
         Seller seller = sellerRepository.findById(sellerId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 판매자입니다."));
 
@@ -115,7 +115,7 @@ public class ProductServiceImpl implements ProductService {
      * 상품 수정
      */
     @Override
-    public void updateProduct(Long productId, ProductRequestDto dto, Long sellerId) {
+    public void updateProduct(Long productId, ProductRequestDTO dto, Long sellerId) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("상품이 존재하지 않습니다."));
 
@@ -224,7 +224,7 @@ public class ProductServiceImpl implements ProductService {
      * 판매자별 상품 목록 조회 (이미지)
      */
     @Override
-    public PageResponseDTO<ProductListDto> getProductsBySeller(Long sellerId, ProductSearchCondition condition) {
+    public PageResponseDTO<ProductListDTO> getProductsBySeller(Long sellerId, ProductSearchCondition condition) {
 
     // 🔹 1. 조건 검색 + 페이징 조회
         Page<Product> result = productRepository.searchProducts(condition, sellerId);
@@ -244,15 +244,15 @@ public class ProductServiceImpl implements ProductService {
             ));
 
     // 🔹 4. DTO 변환
-        List<ProductListDto> dtoList = products.stream()
-                .map((Product product) -> ProductListDto.from(
+        List<ProductListDTO> dtoList = products.stream()
+                .map((Product product) -> ProductListDTO.from(
                 product,
                 imageMap.get(product.getId())
         ))
                 .toList();
 
     // 🔹 5. 페이징 응답 반환
-    return PageResponseDTO.<ProductListDto>withAll()
+    return PageResponseDTO.<ProductListDTO>withAll()
             .pageRequestDTO(condition)
             .dtoList(dtoList)
             .total((int) result.getTotalElements())
@@ -263,11 +263,11 @@ public class ProductServiceImpl implements ProductService {
      * 상품 상세 조회
      */
     @Override
-    public ProductResponseDto getProductDetail(Long productId) {
+    public ProductResponseDTO getProductDetail(Long productId) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
 
-        return ProductResponseDto.builder()
+        return ProductResponseDTO.builder()
                 .id(product.getId())
                 .name(product.getName())
                 .description(product.getDescription())

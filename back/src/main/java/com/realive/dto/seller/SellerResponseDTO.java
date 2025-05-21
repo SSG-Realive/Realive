@@ -2,7 +2,7 @@ package com.realive.dto.seller;
 
 import java.util.List;
 
-import com.realive.dto.product.ProductListDto;
+import com.realive.dto.product.ProductListDTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

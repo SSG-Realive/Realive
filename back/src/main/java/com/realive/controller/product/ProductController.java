@@ -1,11 +1,11 @@
 package com.realive.controller.product;
 
-import com.realive.dto.product.ProductRequestDto;
-import com.realive.dto.product.ProductResponseDto;
+import com.realive.dto.product.ProductRequestDTO;
+import com.realive.dto.product.ProductResponseDTO;
 import com.realive.dto.product.ProductSearchCondition;
 import com.realive.domain.seller.Seller;
 import com.realive.dto.page.PageResponseDTO;
-import com.realive.dto.product.ProductListDto;
+import com.realive.dto.product.ProductListDTO;
 import com.realive.service.product.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +26,7 @@ public class ProductController {
     // 🔽 상품 등록
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Long> createProduct(
-            @ModelAttribute ProductRequestDto dto,
+            @ModelAttribute ProductRequestDTO dto,
             @AuthenticationPrincipal Seller seller
     ) {
         Long sellerId = seller.getId();
@@ -38,7 +38,7 @@ public class ProductController {
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Void> updateProduct(
             @PathVariable Long id,
-            @ModelAttribute ProductRequestDto dto,
+            @ModelAttribute ProductRequestDTO dto,
             @AuthenticationPrincipal Seller seller
     ) {
         Long sellerId = seller.getId();
@@ -59,20 +59,20 @@ public class ProductController {
 
     // 🔽 상품 목록 조회 (판매자 전용)
     @GetMapping
-    public ResponseEntity<PageResponseDTO<ProductListDto>> getMyProducts(
+    public ResponseEntity<PageResponseDTO<ProductListDTO>> getMyProducts(
             @AuthenticationPrincipal Seller seller,
             @ModelAttribute ProductSearchCondition condition) {
 
         Long sellerId = seller.getId();
-        PageResponseDTO<ProductListDto> response = productService.getProductsBySeller(sellerId, condition);
+        PageResponseDTO<ProductListDTO> response = productService.getProductsBySeller(sellerId, condition);
 
         return ResponseEntity.ok(response);
     }
 
     // 🔽 단일 상품 상세 조회 (공개 API 가능)
     @GetMapping("/{id}")
-    public ResponseEntity<ProductResponseDto> getProductDetail(@PathVariable Long id) {
-        ProductResponseDto dto = productService.getProductDetail(id);
+    public ResponseEntity<ProductResponseDTO> getProductDetail(@PathVariable Long id) {
+        ProductResponseDTO dto = productService.getProductDetail(id);
         return ResponseEntity.ok(dto);
     }
 }

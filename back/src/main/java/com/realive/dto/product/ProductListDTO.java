@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ProductListDto {
+public class ProductListDTO {
 
     private Long id;                   // 상품 ID
     private String name;               // 상품명
@@ -26,8 +26,8 @@ public class ProductListDto {
     private String imageThumbnailUrl;  // 대표 이미지 썸네일
     
 
-    public static ProductListDto from(Product product, String imageUrl) {
-        return ProductListDto.builder()
+    public static ProductListDTO from(Product product, String imageUrl) {
+        return ProductListDTO.builder()
                 .id(product.getId())
                 .name(product.getName())
                 .price(product.getPrice())

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.realive.domain.seller.Seller;
-import com.realive.dto.product.ProductListDto;
+import com.realive.dto.product.ProductListDTO;
 import com.realive.dto.seller.SellerLoginRequestDTO;
 import com.realive.dto.seller.SellerLoginResponseDTO;
 import com.realive.dto.seller.SellerResponseDTO;

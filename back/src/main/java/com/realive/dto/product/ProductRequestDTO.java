@@ -14,7 +14,7 @@ import java.util.List;
  * 상품 등록/수정 요청 DTO
  */
 @Data
-public class ProductRequestDto {
+public class ProductRequestDTO {
 
     private String name;
     private String description;
@@ -33,5 +33,5 @@ public class ProductRequestDto {
     private List<MultipartFile> subImages;          // ✅ 상세 이미지 다건 업로드 (선택)
     // 필요시 추후 확장: private List<MultipartFile> subVideos;
 
-    private DeliveryPolicyDto deliveryPolicy;
+    private DeliveryPolicyDTO deliveryPolicy;
 }
