@@ -7,10 +7,10 @@ import lombok.Getter;
 
 import java.time.LocalDateTime;
 
-// 경매 상품 등록 요청
+// 관리자 상품 매입 요청
 @Getter
 @Builder
-public class AdminProductCreateRequestDTO {
+public class AdminPurchaseRequestDTO {
 
     @NotNull(message = "상품 ID는 필수입니다.")
     private final Integer productId;
