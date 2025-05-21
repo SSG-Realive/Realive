@@ -62,6 +62,23 @@ public class SellerController {
         
         return ResponseEntity.ok(resdto);
     }
+    //로그아웃(토큰삭제제)
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(HttpServletResponse response) {
+        
+        ResponseCookie deleteCookie = ResponseCookie.from("refreshToken","")
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("None")
+                .path("/")
+                .maxAge(0)
+                .build();
+        
+        response.setHeader("Set-Cookie", deleteCookie.toString());
+        
+        return ResponseEntity.noContent().build();
+    }
+    
 
     // 📝 회원가입
     @PostMapping("/signup")
