@@ -4,7 +4,43 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ce7cc052-f2d2-404b-a685-22597beee17d" name="Changes" comment="" />
+    <list default="true" id="ce7cc052-f2d2-404b-a685-22597beee17d" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/controller/seller/SellerQnaController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/seller/SellerQna.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/seller/SellerQnaAnswerRequestDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/seller/SellerQnaResponseDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/seller/SellerQnaRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/seller/SellerQnaService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/serviceimpl/seller/SellerQnaServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/gradle.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../back/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/config/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/controller/api/ProductController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/controller/api/ProductController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/controller/seller/SellerController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/controller/seller/SellerController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/seller/Seller.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/seller/Seller.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/product/DeliveryPolicyDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/product/DeliveryPolicyDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/product/ProductListDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/product/ProductListDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/product/ProductRequestDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/product/ProductRequestDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/product/ProductResponseDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/product/ProductResponseDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/product/ProductSearchCondition.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/product/ProductSearchCondition.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/seller/SellerResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/seller/SellerResponseDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/seller/SellerSignupDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/seller/SellerSignupDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/seller/SellerUpdateDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/seller/SellerUpdateDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/product/ProductImageRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/product/ProductImageRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/product/ProductRepositoryCustom.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/product/ProductRepositoryCustom.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/product/ProductRepositoryImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/product/ProductRepositoryImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/seller/SellerRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/seller/SellerRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/security/JwtUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/security/JwtUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/product/ProductService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/product/ProductService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/seller/SellerService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/seller/SellerService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/serviceimpl/product/ProductServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/serviceimpl/product/ProductServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/serviceimpl/seller/SellerServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/serviceimpl/seller/SellerServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/resources/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -33,22 +69,22 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;team2/jaehyun&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/SSG_KDT8/Realive/back&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "team2/jaehyun",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/springex/sb2",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.lookFeel",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -70,6 +106,7 @@
       <workItem from="1747379214051" duration="635000" />
       <workItem from="1747613178116" duration="2202000" />
       <workItem from="1747699155730" duration="613000" />
+      <workItem from="1747717194966" duration="1962000" />
     </task>
     <servers />
   </component>

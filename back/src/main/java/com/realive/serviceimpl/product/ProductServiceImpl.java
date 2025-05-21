@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,6 +22,7 @@ import java.util.stream.Collectors;
 @Transactional
 public class ProductServiceImpl implements ProductService {
 
+        
     private final ProductImageRepository productImageRepository;
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
@@ -30,16 +30,8 @@ public class ProductServiceImpl implements ProductService {
     private final DeliveryPolicyRepository deliveryPolicyRepository;
     private final FileUploadService fileUploadService;
 
-    /**
-     * 상품 등록
-     */
     @Override
-    public Long createProduct(ProductRequestDto dto, Long sellerId) {
-        // ✅ 대표 이미지 유효성 검사
-        if (dto.getImageThumbnail() == null || dto.getImageThumbnail().isEmpty()) {
-            throw new IllegalArgumentException("대표 이미지는 필수입니다.");
-        }
-
+    public Long createProduct(ProductRequestDTO dto, Long sellerId) {
         Seller seller = sellerRepository.findById(sellerId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 판매자입니다."));
 
@@ -118,7 +110,7 @@ public class ProductServiceImpl implements ProductService {
      * 상품 수정
      */
     @Override
-    public void updateProduct(Long productId, ProductRequestDto dto, Long sellerId) {
+    public void updateProduct(Long productId, ProductRequestDTO dto, Long sellerId) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("상품이 존재하지 않습니다."));
 
@@ -227,9 +219,9 @@ public class ProductServiceImpl implements ProductService {
      * 판매자별 상품 목록 조회 (이미지 + 영상 썸네일 모두 포함)
      */
     @Override
-    public List<ProductListDto> getProductsBySeller(Long sellerId) {
+    public List<ProductListDTO> getProductsBySeller(Long sellerId) {
         return productRepository.findBySellerId(sellerId).stream()
-                .map(product -> ProductListDto.builder()
+                .map(product -> ProductListDTO.builder()
                         .id(product.getId())
                         .name(product.getName())
                         .price(product.getPrice())
@@ -245,11 +237,11 @@ public class ProductServiceImpl implements ProductService {
      * 상품 상세 조회
      */
     @Override
-    public ProductResponseDto getProductDetail(Long productId) {
+    public ProductResponseDTO getProductDetail(Long productId) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
 
-        return ProductResponseDto.builder()
+        return ProductResponseDTO.builder()
                 .id(product.getId())
                 .name(product.getName())
                 .description(product.getDescription())
