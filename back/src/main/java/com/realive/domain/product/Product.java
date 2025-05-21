@@ -54,13 +54,10 @@ public class Product extends BaseTimeEntity {
     // 판매 여부 (true = 판매중)
     @Builder.Default
     @Column(nullable = false, name = "is_active")
-    private boolean isActive = true;
+    private boolean active = true;
 
    
-
-
-
-    // 판매자
+    // 판매자Z
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id", nullable = false)
     private Seller seller;

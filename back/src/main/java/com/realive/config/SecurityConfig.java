@@ -33,7 +33,7 @@ public class SecurityConfig {
                         .anyRequest().permitAll()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .build();  // JwtAuthenticationFilter는 아직 없음
+                .build();  
     }
 
 

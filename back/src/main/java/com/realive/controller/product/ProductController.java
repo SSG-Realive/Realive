@@ -1,10 +1,11 @@
-package com.realive.controller.api;
+package com.realive.controller.product;
 
 import com.realive.dto.product.ProductRequestDto;
 import com.realive.dto.product.ProductResponseDto;
+import com.realive.dto.product.ProductSearchCondition;
 import com.realive.domain.seller.Seller;
+import com.realive.dto.page.PageResponseDTO;
 import com.realive.dto.product.ProductListDto;
-import com.realive.security.JwtUtil;
 import com.realive.service.product.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +13,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.MediaType;
 
-import java.util.List;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -22,7 +23,7 @@ public class ProductController {
     private final ProductService productService;
     
 
-    // 🔽 상품 등록록
+    // 🔽 상품 등록
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Long> createProduct(
             @ModelAttribute ProductRequestDto dto,
@@ -58,10 +59,14 @@ public class ProductController {
 
     // 🔽 상품 목록 조회 (판매자 전용)
     @GetMapping
-    public ResponseEntity<List<ProductListDto>> getMyProducts(@AuthenticationPrincipal Seller seller) {
+    public ResponseEntity<PageResponseDTO<ProductListDto>> getMyProducts(
+            @AuthenticationPrincipal Seller seller,
+            @ModelAttribute ProductSearchCondition condition) {
+
         Long sellerId = seller.getId();
-        List<ProductListDto> list = productService.getProductsBySeller(sellerId);
-        return ResponseEntity.ok(list);
+        PageResponseDTO<ProductListDto> response = productService.getProductsBySeller(sellerId, condition);
+
+        return ResponseEntity.ok(response);
     }
 
     // 🔽 단일 상품 상세 조회 (공개 API 가능)

@@ -33,6 +33,7 @@ public class PageResponseDTO<T> {
         this.end = (int)(Math.ceil(this.page/ 10.0)) * 10;
         this.start = this.end - 9;
 
+
         int last = (int) Math.ceil((double) total / size);
         
         if (this.end > last) {
@@ -41,8 +42,7 @@ public class PageResponseDTO<T> {
         }
 
         this.prev = this.start > 1 ;
-        this.next = total > this.end * this.size;
-
+        this.next = end < last;
 
     }
     

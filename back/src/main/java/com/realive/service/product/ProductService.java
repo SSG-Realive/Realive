@@ -1,8 +1,10 @@
 package com.realive.service.product;
 
+import com.realive.dto.page.PageResponseDTO;
 import com.realive.dto.product.ProductListDto;
 import com.realive.dto.product.ProductRequestDto;
 import com.realive.dto.product.ProductResponseDto;
+import com.realive.dto.product.ProductSearchCondition;
 
 import java.util.List;
 
@@ -30,7 +32,7 @@ public interface ProductService {
      * 판매자 ID 기준 상품 목록 조회
      * - imageThumbnailUrl / videoThumbnailUrl 포함
      */
-    List<ProductListDto> getProductsBySeller(Long sellerId);
+    PageResponseDTO<ProductListDto> getProductsBySeller(Long sellerId, ProductSearchCondition condition);
 
     /**
      * 상품 상세 조회

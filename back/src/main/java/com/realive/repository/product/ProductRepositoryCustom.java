@@ -2,9 +2,8 @@ package com.realive.repository.product;
 
 import com.realive.domain.product.Product;
 import com.realive.dto.product.ProductSearchCondition;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
 
 public interface ProductRepositoryCustom {
-    List<Product> searchProducts(ProductSearchCondition condition, Long sellerId);
+    Page<Product> searchProducts(ProductSearchCondition condition, Long sellerId);
 }

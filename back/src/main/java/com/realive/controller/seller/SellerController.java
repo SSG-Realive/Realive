@@ -66,15 +66,13 @@ public class SellerController {
         return ResponseEntity.ok().build();
     }
 
-    // 🙋‍♀️ 마이페이지 조회 (판매자 정보 + 상품 목록)
+    // 🙋‍♀️ 마이페이지 조회 (판매자 정보 )
     @GetMapping("/me")
     public ResponseEntity<SellerResponseDTO> getMyInfo(@AuthenticationPrincipal Seller seller) {
         Long sellerId = seller.getId();
 
-        List<ProductListDto> products = productService.getProductsBySeller(sellerId);
         SellerResponseDTO resdto = sellerService.getMyInfo(sellerId);
-        resdto.setProducts(products);
-
+        
         return ResponseEntity.ok(resdto);
     }
 }
