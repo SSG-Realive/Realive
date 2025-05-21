@@ -1,7 +1,9 @@
 package com.realive.serviceimpl.product;
 
+import com.realive.domain.common.enums.MediaType;
 import com.realive.domain.product.*;
 import com.realive.domain.seller.Seller;
+import com.realive.dto.page.PageResponseDTO;
 import com.realive.dto.product.*;
 import com.realive.repository.product.*;
 import com.realive.repository.seller.SellerRepository;
@@ -10,9 +12,13 @@ import com.realive.service.product.ProductService;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -20,6 +26,7 @@ import java.util.stream.Collectors;
 @Transactional
 public class ProductServiceImpl implements ProductService {
 
+        
     private final ProductImageRepository productImageRepository;
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
@@ -28,7 +35,7 @@ public class ProductServiceImpl implements ProductService {
     private final FileUploadService fileUploadService;
 
     @Override
-    public Long createProduct(ProductRequestDto dto, Long sellerId) {
+    public Long createProduct(ProductRequestDTO dto, Long sellerId) {
         Seller seller = sellerRepository.findById(sellerId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 판매자입니다."));
 
@@ -47,24 +54,49 @@ public class ProductServiceImpl implements ProductService {
                 .depth(dto.getDepth())
                 .height(dto.getHeight())
                 .status(dto.getStatus())
-                .isActive(dto.getActive() != null ? dto.getActive() : true)
+                .active(dto.getActive() != null ? dto.getActive() : true)
                 .category(category)
                 .seller(seller)
                 .build();
 
         productRepository.save(product);
 
-        if (dto.getImage() != null && !dto.getImage().isEmpty()) {
-            String imageUrl = fileUploadService.upload(dto.getImage());
-            ProductImage image = ProductImage.builder()
-                    .url(imageUrl)
+        // 대표 이미지 저장
+        String imageUrl = fileUploadService.upload(dto.getImageThumbnail(), "product", sellerId);
+        productImageRepository.save(ProductImage.builder()
+                .url(imageUrl)
+                .isThumbnail(true)
+                .mediaType(MediaType.IMAGE)
+                .product(product)
+                .build());
+
+        // 대표 영상 저장 (선택)
+        if (dto.getVideoThumbnail() != null && !dto.getVideoThumbnail().isEmpty()) {
+            String videoUrl = fileUploadService.upload(dto.getVideoThumbnail(), "product", sellerId);
+            productImageRepository.save(ProductImage.builder()
+                    .url(videoUrl)
                     .isThumbnail(true)
-                    .mediaType(dto.getMediaType())
+                    .mediaType(MediaType.VIDEO)
                     .product(product)
-                    .build();
-            productImageRepository.save(image);
+                    .build());
         }
 
+        // 서브 이미지 저장
+        if (dto.getSubImages() != null && !dto.getSubImages().isEmpty()) {
+            for (MultipartFile file : dto.getSubImages()) {
+                if (file != null && !file.isEmpty()) {
+                    String url = fileUploadService.upload(file, "product", sellerId);
+                    productImageRepository.save(ProductImage.builder()
+                            .url(url)
+                            .isThumbnail(false)
+                            .mediaType(MediaType.IMAGE)
+                            .product(product)
+                            .build());
+                }
+            }
+        }
+
+        // 배송 정책 저장
         if (dto.getDeliveryPolicy() != null) {
             DeliveryPolicy policy = DeliveryPolicy.builder()
                     .type(dto.getDeliveryPolicy().getType())
@@ -79,7 +111,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void updateProduct(Long productId, ProductRequestDto dto, Long sellerId) {
+    public void updateProduct(Long productId, ProductRequestDTO dto, Long sellerId) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("상품이 존재하지 않습니다."));
 
@@ -87,21 +119,49 @@ public class ProductServiceImpl implements ProductService {
             throw new SecurityException("해당 상품에 대한 수정 권한이 없습니다.");
         }
 
-        if (dto.getImage() != null && !dto.getImage().isEmpty()) {
-            productImageRepository.findByProductId(productId).stream()
-                    .filter(ProductImage::isThumbnail)
-                    .forEach(productImageRepository::delete);
+        // 기존 썸네일 이미지/영상 삭제
+        productImageRepository.findByProductId(productId).stream()
+                .filter(ProductImage::isThumbnail)
+                .forEach(productImageRepository::delete);
 
-            String imageUrl = fileUploadService.upload(dto.getImage());
-            ProductImage image = ProductImage.builder()
+        // 대표 이미지 저장
+        if (dto.getImageThumbnail() != null && !dto.getImageThumbnail().isEmpty()) {
+            String imageUrl = fileUploadService.upload(dto.getImageThumbnail(), "product", sellerId);
+            productImageRepository.save(ProductImage.builder()
                     .url(imageUrl)
                     .isThumbnail(true)
-                    .mediaType(dto.getMediaType())
+                    .mediaType(MediaType.IMAGE)
                     .product(product)
-                    .build();
-            productImageRepository.save(image);
+                    .build());
         }
 
+        // 대표 영상 저장
+        if (dto.getVideoThumbnail() != null && !dto.getVideoThumbnail().isEmpty()) {
+            String videoUrl = fileUploadService.upload(dto.getVideoThumbnail(), "product", sellerId);
+            productImageRepository.save(ProductImage.builder()
+                    .url(videoUrl)
+                    .isThumbnail(true)
+                    .mediaType(MediaType.VIDEO)
+                    .product(product)
+                    .build());
+        }
+
+        // 서브 이미지 저장
+        if (dto.getSubImages() != null && !dto.getSubImages().isEmpty()) {
+            for (MultipartFile file : dto.getSubImages()) {
+                if (file != null && !file.isEmpty()) {
+                    String url = fileUploadService.upload(file, "product", sellerId);
+                    productImageRepository.save(ProductImage.builder()
+                            .url(url)
+                            .isThumbnail(false)
+                            .mediaType(MediaType.IMAGE)
+                            .product(product)
+                            .build());
+                }
+            }
+        }
+
+        // 상품 정보 수정
         product.setName(dto.getName());
         product.setDescription(dto.getDescription());
         product.setPrice(dto.getPrice());
@@ -152,25 +212,38 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductListDto> getProductsBySeller(Long sellerId) {
-        return productRepository.findBySellerId(sellerId).stream()
-                .map(product -> ProductListDto.builder()
-                        .id(product.getId())
-                        .name(product.getName())
-                        .price(product.getPrice())
-                        .status(product.getStatus().name())
-                        .isActive(product.isActive())
-                        .thumbnailUrl(getThumbnailUrlByProductId(product.getId()))
-                        .build()
-                ).collect(Collectors.toList());
+    public PageResponseDTO<ProductListDTO> getProductsBySeller(Long sellerId, ProductSearchCondition condition) {
+        Page<Product> result = productRepository.searchProducts(condition, sellerId);
+        List<Product> products = result.getContent();
+
+        List<Long> productIds = products.stream()
+                .map(Product::getId)
+                .toList();
+
+        List<Object[]> rows = productImageRepository.findThumbnailUrlsByProductIds(productIds, MediaType.IMAGE);
+        Map<Long, String> imageMap = rows.stream()
+                .collect(Collectors.toMap(
+                        row -> (Long) row[0],
+                        row -> (String) row[1]
+                ));
+
+        List<ProductListDTO> dtoList = products.stream()
+                .map(product -> ProductListDTO.from(product, imageMap.get(product.getId())))
+                .collect(Collectors.toList());
+
+        return PageResponseDTO.<ProductListDTO>withAll()
+                .pageRequestDTO(condition)
+                .dtoList(dtoList)
+                .total((int) result.getTotalElements())
+                .build();
     }
 
     @Override
-    public ProductResponseDto getProductDetail(Long productId) {
+    public ProductResponseDTO getProductDetail(Long productId) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
 
-        return ProductResponseDto.builder()
+        return ProductResponseDTO.builder()
                 .id(product.getId())
                 .name(product.getName())
                 .description(product.getDescription())
@@ -181,17 +254,16 @@ public class ProductServiceImpl implements ProductService {
                 .height(product.getHeight())
                 .status(product.getStatus().name())
                 .isActive(product.isActive())
-                .thumbnailUrl(getThumbnailUrlByProductId(productId))
+                .imageThumbnailUrl(getThumbnailUrlByType(productId, MediaType.IMAGE))
+                .videoThumbnailUrl(getThumbnailUrlByType(productId, MediaType.VIDEO))
                 .categoryName(product.getCategory() != null ? product.getCategory().getName() : null)
                 .sellerName(product.getSeller().getName())
                 .build();
     }
 
-    @Override
-    public String getThumbnailUrlByProductId(Long productId) {
-        return productImageRepository.findByProductId(productId).stream()
-                .filter(ProductImage::isThumbnail)
-                .findFirst()
+    public String getThumbnailUrlByType(Long productId, MediaType mediaType) {
+        return productImageRepository
+                .findFirstByProductIdAndIsThumbnailTrueAndMediaType(productId, mediaType)
                 .map(ProductImage::getUrl)
                 .orElse(null);
     }

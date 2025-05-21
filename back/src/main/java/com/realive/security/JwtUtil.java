@@ -48,7 +48,7 @@ public class JwtUtil {
     }
 
     // rt 생성
-    public String generationRefreshToken(Seller seller){
+    public String generateRefreshToken(Seller seller){
         long refreshExpiration = expiration * 24 * 7;
         return Jwts.builder()
                 .setSubject("seller_refresh")
@@ -91,5 +91,11 @@ public class JwtUtil {
         return bearer.substring(7);
     }
     return null;
-}
+    }
+
+    // 토큰에서 id 만 가져오는 메서드 
+    public Long getUserIdFromToken(String token) {
+    Claims claims = getClaims(token);
+    return Long.parseLong(claims.getSubject());
+    }
 }

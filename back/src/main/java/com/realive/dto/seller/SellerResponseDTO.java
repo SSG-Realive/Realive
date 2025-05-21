@@ -1,6 +1,8 @@
 package com.realive.dto.seller;
 
-import java.time.LocalDateTime;
+import java.util.List;
+
+import com.realive.dto.product.ProductListDTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,13 +21,14 @@ public class SellerResponseDTO {
     private String name;
     private String phone;
     
-    private boolean isActive;
     private boolean isApproved;
-    private LocalDateTime approvedAt;  
-
+    
     private String businessNumber;
-    private String businessLicenseUrl;
-    private String bankAccountCopyUrl;
+
+    private boolean hasBankAccountCopy;
+
+    
+ 
     
     
 }
