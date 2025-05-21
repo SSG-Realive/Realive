@@ -11,7 +11,7 @@ Thumbs.db
 desktop.ini
 
 # -------------------------------------
-# Java / Gradle / Spring Boot
+# Java / Gradle / IntelliJ
 # -------------------------------------
 *.class
 *.log
@@ -36,13 +36,6 @@ replay_pid*
 .classpath
 gradle-app.setting
 .gradletasknamecache
-
-# QueryDSL Q파일 (generated sources)
-build/generated/
-**/generated/
-**/generated-sources/
-**/generated/querydsl/
-**/Q*.java
 
 # IntelliJ cache files
 .idea/**/workspace.xml
