@@ -57,7 +57,6 @@ public class SellerQnaServiceImpl implements SellerQnaService {
         qna.setAnswer(dto.getAnswer());
         qna.setAnswered(true);
         qna.setAnsweredAt(LocalDateTime.now());
-        qna.setUpdatedAt(LocalDateTime.now());
 
         qnaRepository.save(qna);
     }

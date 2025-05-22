@@ -30,39 +30,39 @@ public class SellerServiceImpl implements SellerService{
     private final SellerDocumentRepository sellerDocumentRepository;
     private final FileUploadService fileUploadService;
 
-    //로그인인
+    //로그인
     @Override
     public SellerLoginResponseDTO login(SellerLoginRequestDTO reqdto){
-       
+
         // email로 사용자 찾기
         Seller seller = sellerRepository.findByEmailAndIsActiveTrue(reqdto.getEmail())
                 .orElseThrow(()-> new IllegalArgumentException("존재하지 않는 이메일입니다."));
-            
-                // 비밀번호 확인
-            if (!passwordEncoder.matches(reqdto.getPassword(), seller.getPassword())) {
-                throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
 
-            } 
-            // accesstoken, refreshtoken 생성
-            String accessToken = jwtUtil.generateAccessToken(seller);
-            String refreshToken = jwtUtil.generateRefreshToken(seller);
+        // 비밀번호 확인
+        if (!passwordEncoder.matches(reqdto.getPassword(), seller.getPassword())) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
 
-            // dto 반환
-            return SellerLoginResponseDTO.builder()
-                    .accessToken(accessToken)
-                    .refreshToken(refreshToken)
-                    .email(seller.getEmail())
-                    .name(seller.getName())
-                    .build();
-         }
+        }
+        // accesstoken, refreshtoken 생성
+        String accessToken = jwtUtil.generateAccessToken(seller);
+        String refreshToken = jwtUtil.generateRefreshToken(seller);
 
-    // 판매자 정보 조회 and 통장사본 보유 여부 확인 
+        // dto 반환
+        return SellerLoginResponseDTO.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .email(seller.getEmail())
+                .name(seller.getName())
+                .build();
+    }
+
+    // 판매자 정보 조회 and 통장사본 보유 여부 확인
     @Override
     public SellerResponseDTO getMyInfo(Long sellerId){
 
         Seller seller = sellerRepository.findById(sellerId)
                 .orElseThrow(()-> new IllegalArgumentException("존재하지 않는 판매자입니다."));
-        
+
         boolean hasBankAccountCopy = sellerDocumentRepository
                 .existsBySellerIdAndFileType(sellerId, SellerFileType.통장사본);
 
@@ -79,13 +79,17 @@ public class SellerServiceImpl implements SellerService{
 
     @Override
     public void registerSeller(SellerSignupDTO dto, MultipartFile businessLicense, MultipartFile bankAcountCopy){
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> origin/team2/jaehyun
         if (sellerRepository.existsByEmail(dto.getEmail())) {
             throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
-            
+
         }
 
-         if (sellerRepository.existsByName(dto.getName())) {
+        if (sellerRepository.existsByName(dto.getName())) {
             throw new IllegalArgumentException("이미 존재하는 이름입니다.");
         }
 
@@ -118,23 +122,29 @@ public class SellerServiceImpl implements SellerService{
             }
 
             seller.setName(dto.getName());
-            
-        }//end if     
-        
+
+        }//end if
+
         if (!seller.getPhone().equals(dto.getPhone())) {
 
             seller.setPhone(dto.getPhone());
-            
-        }//end if  
-        
+
+        }//end if
+
         if (dto.getNewPassword() != null && !dto.getNewPassword().isBlank()) {
 
             String encodedPassword = passwordEncoder.encode(dto.getNewPassword());
 
             seller.setPassword(encodedPassword);
-            
-        }//end if     
-        
+
+        }//end if
+
+    }
+
+    @Override
+    public Seller getByEmail(String email){
+        return sellerRepository.findByEmail(email)
+                .orElseThrow(()-> new IllegalArgumentException("존재하지 않는 이메일입니다."));
     }
 
     @Override
@@ -144,4 +154,3 @@ public class SellerServiceImpl implements SellerService{
     }
 }
 
-    

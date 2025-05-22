@@ -1,7 +1,10 @@
 package com.realive.controller.seller;
 
 import java.time.Duration;
+<<<<<<< HEAD
 import java.util.List;
+=======
+>>>>>>> origin/team2/jaehyun
 
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.realive.domain.seller.Seller;
-import com.realive.dto.product.ProductListDTO;
 import com.realive.dto.seller.SellerLoginRequestDTO;
 import com.realive.dto.seller.SellerLoginResponseDTO;
 import com.realive.dto.seller.SellerResponseDTO;
@@ -62,7 +64,7 @@ public class SellerController {
         
         return ResponseEntity.ok(resdto);
     }
-    //로그아웃(토큰삭제제)
+    //로그아웃(토큰삭제)
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(HttpServletResponse response) {
         
