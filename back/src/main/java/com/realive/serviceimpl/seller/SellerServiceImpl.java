@@ -79,11 +79,6 @@ public class SellerServiceImpl implements SellerService{
 
     @Override
     public void registerSeller(SellerSignupDTO dto, MultipartFile businessLicense, MultipartFile bankAcountCopy){
-<<<<<<< HEAD
-        
-=======
-
->>>>>>> origin/team2/jaehyun
         if (sellerRepository.existsByEmail(dto.getEmail())) {
             throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
 
@@ -147,10 +142,6 @@ public class SellerServiceImpl implements SellerService{
                 .orElseThrow(()-> new IllegalArgumentException("존재하지 않는 이메일입니다."));
     }
 
-    @Override
-    public Seller getByEmail(String email){
-        return sellerRepository.findByEmail(email)
-                .orElseThrow(()-> new IllegalArgumentException("존재하지 않는 이메일입니다."));
-    }
+  
 }
 

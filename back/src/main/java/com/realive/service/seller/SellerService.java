@@ -49,10 +49,6 @@ public interface SellerService {
      */
     void updateSeller(Long sellerId, SellerUpdateDTO dto);
 
-<<<<<<< HEAD
-    Seller getByEmail(String email);
-}
-=======
     /**
      * 이메일로 판매자 조회
      *
@@ -61,4 +57,3 @@ public interface SellerService {
      */
     Seller getByEmail(String email);
 }
->>>>>>> origin/team2/jaehyun

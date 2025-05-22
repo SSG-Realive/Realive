@@ -15,41 +15,14 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
-<<<<<<< HEAD
-import org.springframework.web.bind.annotation.RequestBody;
-
-
-=======
 /**
  * RefreshController
  * - 클라이언트가 전달한 Refresh Token으로 새로운 Access Token을 발급해주는 컨트롤러
  */
->>>>>>> origin/team2/jaehyun
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class RefreshController {
-<<<<<<< HEAD
-    
-    private final JwtUtil jwtUtil;
-    private final SellerRepository sellerRepository;
-
-    @PostMapping("/refresh")
-    public ResponseEntity<SellerLoginResponseDTO> refreshAcessToken(HttpServletRequest request) {
-       
-        String refreshToken = extractRefreshTokenFromCookie(request);
-        if (refreshToken == null || !jwtUtil.validateToken(refreshToken)) {
-            throw new UnauthorizedException("리프레시 토큰이 유효하지 않습니다.");    
-        }
-
-        Long sellerId = jwtUtil.getUserIdFromToken(refreshToken);
-
-        Seller seller = sellerRepository.findById(sellerId)
-                .orElseThrow(() -> new UnauthorizedException("판매자 정보를 찾을 수 없습니다"));
-        
-        String newAccessToken = jwtUtil.generateAccessToken(seller);
-
-=======
 
     private final JwtUtil jwtUtil;
     private final SellerRepository sellerRepository;
@@ -81,25 +54,11 @@ public class RefreshController {
         String newAccessToken = jwtUtil.generateAccessToken(seller);
 
         // 응답 DTO 생성
->>>>>>> origin/team2/jaehyun
         SellerLoginResponseDTO dto = SellerLoginResponseDTO.builder()
                 .accessToken(newAccessToken)
                 .email(seller.getEmail())
                 .name(seller.getName())
                 .build();
-<<<<<<< HEAD
-        
-        return ResponseEntity.ok(dto);
-    }
-
-    private String extractRefreshTokenFromCookie(HttpServletRequest request){
-        if (request.getCookies() == null) return null; 
-        
-        for(Cookie cookie : request.getCookies()) {
-            if (cookie.getName().equals("refreshToken")) {
-                return cookie.getValue();
-                
-=======
 
         return ResponseEntity.ok(dto);
     }
@@ -116,14 +75,9 @@ public class RefreshController {
         for(Cookie cookie : request.getCookies()) {
             if (cookie.getName().equals("refreshToken")) {
                 return cookie.getValue();
->>>>>>> origin/team2/jaehyun
             }
         }
         return null;
     }
-<<<<<<< HEAD
-    
 }
-=======
-}
->>>>>>> origin/team2/jaehyun
+

@@ -18,12 +18,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class SellerSignupDTO {
-<<<<<<< HEAD
-       
-    @NotBlank
-    private String email;
-=======
->>>>>>> origin/team2/jaehyun
 
     @NotBlank
     private String email;               // 판매자 이메일 (로그인 ID로 사용됨)
