@@ -10,17 +10,14 @@ import lombok.Getter;
 @AllArgsConstructor
 @Builder
 public class AdminReadDTO {
-
     private Integer id;
 
     private String email;
 
     private String name;
 
-    private String authorities;
-
-    private LocalDateTime createdAt; 
-    
+    private LocalDateTime createdAt;
 }
+
     
 
