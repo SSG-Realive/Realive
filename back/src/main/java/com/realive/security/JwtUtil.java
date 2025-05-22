@@ -8,6 +8,9 @@ import org.springframework.stereotype.Component;
 
 import com.realive.domain.seller.Seller;
 
+import com.realive.domain.admin.Admin;
+
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -98,4 +101,27 @@ public class JwtUtil {
     Claims claims = getClaims(token);
     return Long.parseLong(claims.getSubject());
     }
+
+    public String generateAccessToken(Admin admin) {
+        return Jwts.builder()
+                .setSubject("admin")
+                .claim("id", admin.getId())
+                .claim("email", admin.getEmail())
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + expiration))
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    public String generateRefreshToken(Admin admin) {
+        long adminRefreshExpiration = expiration * 24 * 7;
+        return Jwts.builder()
+                .setSubject("admin_refresh")
+                .claim("id", admin.getId())
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + adminRefreshExpiration))
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
+    }
+
 }
