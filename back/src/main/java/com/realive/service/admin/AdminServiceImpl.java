@@ -6,7 +6,7 @@ import com.realive.dto.admin.AdminLoginResponseDTO;
 import com.realive.dto.admin.AdminReadDTO;
 import com.realive.exception.UnauthorizedException;
 import com.realive.repository.admin.AdminRepository;
-import com.realive.security.JwtUtil; // Admin용 메소드가 포함된 JwtUtil 또는 Admin 전용 JwtUtil
+import com.realive.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -46,6 +46,23 @@ public class AdminServiceImpl implements AdminService {
                 .refreshToken(refreshToken)
                 .name(admin.getName())
                 .message("로그인 성공")
+                .build();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public AdminLoginResponseDTO getMyInfo(Integer adminId) {
+        if (adminId == null) {
+            throw new IllegalArgumentException("관리자 ID가 유효하지 않습니다.");
+        }
+        Admin admin = adminRepository.findById(adminId)
+                .orElseThrow(() -> new UnauthorizedException("사용자를 찾을 수 없습니다."));
+
+        return AdminLoginResponseDTO.builder()
+                .accessToken(null) // 마이페이지 조회 시 토큰 재발급 필요 없으면 null
+                .refreshToken(null)
+                .name(admin.getName())
+                .message("관리자 정보 조회 성공")
                 .build();
     }
 
