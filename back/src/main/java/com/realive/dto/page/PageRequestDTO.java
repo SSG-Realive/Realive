@@ -10,8 +10,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * 페이지네이션 요청 DTO
- * - 컨트롤러에서 페이징, 정렬, 검색 키워드를 처리할 때 사용
+ * PageRequestDTO
+ * - 클라이언트에서 요청한 페이징 및 정렬 정보를 담는 DTO
+ * - Spring Data의 Pageable로 변환 가능
  */
 @Data
 @Builder
@@ -19,33 +20,33 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class PageRequestDTO {
 
-    // 요청할 페이지 번호 (기본값: 1)
+    /** 요청한 페이지 번호 (1부터 시작, 내부 로직에서는 0-based로 변환됨) */
     private int page = 1;
 
-    // 한 페이지당 데이터 수 (기본값: 10)
+    /** 페이지당 데이터 개수 (기본값: 10) */
     private int size = 10;
 
-    // 정렬 기준 컬럼명 (기본값: createdAt)
+    /** 정렬 기준 필드명 (기본값: createdAt) */
     private String sort = "createdAt";
 
-    // 정렬 방향 (기본값: DESC)
+    /** 정렬 방향 (ASC 또는 DESC, 기본값: DESC) */
     private String direction = "DESC";
 
-    // 검색 키워드 (선택)
+    /** 검색 키워드 (선택적으로 사용 가능) */
     private String keyword;
 
     /**
-     * 내부적으로 0부터 시작하는 페이지 인덱스로 변환
-     * 예: page가 1이면 index는 0
+     * 0-based 페이지 인덱스를 반환
+     * 클라이언트는 보통 1-based로 요청하므로, 내부적으로는 0으로 변환
      */
     public int getPageIndex() {
         return (page <= 0) ? 0 : page - 1;
     }
 
     /**
-     * Pageable 객체로 변환
-     * - Spring Data JPA에서 페이징 쿼리 작성 시 사용
-     * - 정렬 기준 및 방향 포함
+     * PageRequest (Pageable 구현체)로 변환
+     * - 정렬 방향에 따라 Sort 객체 생성
+     * - getPageIndex()를 통해 0-based 페이지 번호 사용
      */
     public Pageable toPageable() {
         Sort.Direction dir = Sort.Direction.fromOptionalString(direction).orElse(Sort.Direction.DESC);

@@ -18,63 +18,54 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 /**
- * JWT 인증 필터
- * - 모든 HTTP 요청마다 실행되어 Authorization 헤더의 JWT 토큰을 검사하고,
- *   유효한 경우 인증 객체를 SecurityContext에 등록한다.
+ * JwtAuthenticationFilter
+ * - 매 요청마다 실행되는 JWT 인증 필터
+ * - 요청 헤더에서 JWT 토큰을 추출하고 유효성을 검증
+ * - 유효한 경우, 인증 정보를 Spring Security Context에 등록
  */
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    // JWT 유틸리티 클래스 (토큰 검증 및 파싱)
-    private final JwtUtil jwtUtil;
+    private final JwtUtil jwtUtil; // JWT 유틸리티 클래스
+    private final SellerRepository sellerRepository; // 판매자 정보 조회용 리포지토리
 
-    // 판매자 정보 조회용 Repository
-    private final SellerRepository sellerRepository;
-
-    /**
-     * 필터 실행 메서드 - 요청이 올 때마다 한 번만 실행됨
-     *
-     * @param request HTTP 요청
-     * @param response HTTP 응답
-     * @param filterChain 필터 체인
-     */
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
-        // Authorization 헤더에서 JWT 추출
+        // 1. 요청 헤더에서 Authorization 정보 추출
         String authHeader = request.getHeader("Authorization");
 
+        // 2. "Bearer "로 시작하는 경우에만 처리
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            String token = authHeader.substring(7); // "Bearer " 제거
+            String token = authHeader.substring(7); // "Bearer " 제거한 JWT 토큰
 
-            // 토큰 유효성 검증
+            // 3. JWT 유효성 검증
             if (jwtUtil.validateToken(token)) {
-                // 토큰에서 Claims(정보) 추출
-                Claims claims = jwtUtil.getClaims(token);
+                Claims claims = jwtUtil.getClaims(token); // 토큰에서 클레임 추출
+                Long sellerId = claims.get("id", Long.class); // seller ID 추출
 
-                // Claims에서 사용자 ID 추출
-                Long sellerId = claims.get("id", Long.class);
-
-                // DB에서 해당 판매자 조회
+                // 4. 데이터베이스에서 판매자 조회
                 Seller seller = sellerRepository.findById(sellerId)
                         .orElse(null);
 
-                // 판매자 존재 시 SecurityContext에 인증 정보 설정
+                // 5. 판매자가 존재하면 인증 객체 생성 및 등록
                 if (seller != null) {
                     UsernamePasswordAuthenticationToken authentication =
                             new UsernamePasswordAuthenticationToken(
-                                    seller, null, null); // 권한(Authorities) 없음
+                                    seller, null, null); // 권한은 null 처리
+
+                    // SecurityContext에 인증 정보 설정
                     SecurityContextHolder.getContext()
                             .setAuthentication(authentication);
                 }
             }
         }
 
-        // 다음 필터로 요청 전달
+        // 6. 다음 필터 체인으로 전달
         filterChain.doFilter(request, response);
     }
 }

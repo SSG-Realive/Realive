@@ -12,6 +12,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
@@ -20,10 +21,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * 판매자 리뷰 엔티티
- * - 판매자에 대한 평점 및 리뷰를 저장
- * - 주문 1건당 리뷰는 1개만 가능 (uniqueConstraints로 order_id 제한 예정)
- * - 고객이 작성하며, 리뷰는 판매자에게 귀속됨
+ * 판매자 리뷰(SellerReview) 엔티티
+ * - 특정 주문(order_id)에 대해 하나의 리뷰만 작성 가능하도록 unique 제약 설정
+ * - 리뷰는 특정 판매자(seller)에게 작성됨
+ * - BaseTimeEntity를 상속하여 생성/수정 시간 자동 관리
  */
 @Data
 @NoArgsConstructor
@@ -32,39 +33,48 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "seller_reviews",
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"order_id"})  // 주문 1건당 리뷰 1개 제약
+                @UniqueConstraint(columnNames = {"order_id"}) // 주문당 리뷰 하나만 작성 가능
         })
 public class SellerReview extends BaseTimeEntity {
 
-    // 고유 ID (자동 증가)
+    /** 리뷰 고유 ID */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // 주문 연관관계 (현재 주석 처리됨, 추후 복원 예정)
+    /**
+     * 리뷰가 연결된 주문 (미사용 중)
+     * 향후 연결 필요 시 주석 해제
+     */
     // @ManyToOne(fetch = FetchType.LAZY)
     // @JoinColumn(name = "order_id", nullable = false)
     // private Order order;
 
-    // 리뷰 작성자 (고객) 연관관계 (현재 주석 처리됨, 추후 복원 예정)
+    /**
+     * 리뷰 작성한 고객 (미사용 중)
+     * 향후 연결 필요 시 주석 해제
+     */
     // @ManyToOne(fetch = FetchType.LAZY)
     // @JoinColumn(name = "customer_id", nullable = false)
     // private Customer customer;
 
-    // 리뷰 대상 판매자
+    /** 리뷰 대상 판매자 */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id", nullable = false)
     private Seller seller;
 
-    // 평점 (예: 1~5점)
+    /** 평점 (예: 1 ~ 5) */
     @Column(nullable = false)
     private int rating;
 
-    // 리뷰 내용
+    /** 리뷰 본문 내용 */
     @Column(nullable = false, length = 1000)
     private String content;
 
-    // 리뷰 생성일
+    /**
+     * 생성일시 (BaseTimeEntity에도 존재하지만 여기선 별도 정의됨)
+     * -> 중복 정의이므로 삭제 가능
+     */
     @Column(name = "created at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;  // ⚠️ BaseTimeEntity의 createdAt과 중복됨
+    private LocalDateTime createdAt;
 }
