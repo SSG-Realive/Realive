@@ -7,11 +7,12 @@ import org.springframework.data.domain.Pageable;
 
 public interface ReviewViewService {
 
-    Page<ReviewResponseDTO> getMyReviewList(Pageable pageable);
-
     //판매자별 리뷰 조회
     Page<ReviewListResponseDTO> getReviewList(Long sellerId, Pageable pageable);
 
     //상세 보기
     ReviewResponseDTO getReviewDetail(Long id);
+
+    // 내가 작성한 리뷰 목록 조회
+    Page<ReviewListResponseDTO> getMyReviewList(Long customerId, Pageable pageable);
 }

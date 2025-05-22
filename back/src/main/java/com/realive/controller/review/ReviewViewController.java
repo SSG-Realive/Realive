@@ -1,5 +1,6 @@
 package com.realive.controller.review;
 
+import com.realive.dto.review.ReviewListResponseDTO;
 import com.realive.dto.review.ReviewResponseDTO;
 import com.realive.service.review.view.ReviewViewService;
 import lombok.RequiredArgsConstructor;
@@ -22,8 +23,8 @@ public class ReviewViewController {
 
     // 판매자의 판매품 리뷰 리스트 조회
     @GetMapping("/seller/{sellerId}")
-    public ResponseEntity<Page<ReviewResponseDTO>> getReviews(@PathVariable Long sellerId, Pageable pageable) {
-        Page<ReviewResponseDTO> result = reviewViewService.getReviewList(sellerId, pageable);
+    public ResponseEntity<Page<ReviewListResponseDTO>> getReviews(@PathVariable Long sellerId, Pageable pageable) {
+        Page<ReviewListResponseDTO> result = reviewViewService.getReviewList(sellerId, pageable);
         return ResponseEntity.ok(result);
     }
 
@@ -31,6 +32,15 @@ public class ReviewViewController {
     @GetMapping("/{id}")
     public ResponseEntity<ReviewResponseDTO> getReviewDetail(@PathVariable Long id) {
         ReviewResponseDTO result = reviewViewService.getReviewDetail(id);
+        return ResponseEntity.ok(result);
+
+
+    }
+
+    //내가 작성한 리뷰조회(security를 고려하지 않아 {customerId}가 url에 포함)
+    @GetMapping("/customer/{customerId}/my-reviews")
+    public ResponseEntity<Page<ReviewListResponseDTO>> getMyReviews(@PathVariable Long customerId, Pageable pageable) {
+        Page<ReviewListResponseDTO> result = reviewViewService.getMyReviewList(customerId, pageable);
         return ResponseEntity.ok(result);
     }
 }

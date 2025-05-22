@@ -16,13 +16,13 @@ import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
-public class ReviewDetailImpl implements ReviewDetail{
+public class ReviewDetailImpl implements ReviewDetail {
 
     private final JPAQueryFactory queryFactory;
 
+    //리뷰 상세 조회
     @Override
     public Optional<ReviewResponseDTO> findReviewDetailById(Long id) {
-
         QSellerReview sellerReview = QSellerReview.sellerReview;
         QSellerReviewImage sellerReviewImage = QSellerReviewImage.sellerReviewImage;
         QSeller seller = QSeller.seller;
@@ -40,25 +40,25 @@ public class ReviewDetailImpl implements ReviewDetail{
                 .leftJoin(sellerReviewImage).on(sellerReviewImage.review.eq(sellerReview))
                 .leftJoin(sellerReview.seller, seller)
                 .where(sellerReview.id.eq(id))
-                .fetchOne(); // 단일 결과 조회
+                .fetchOne();
 
         return Optional.ofNullable(dto);
     }
 
+    //판매자에 대한 리뷰 리스트 조회
     @Override
     public Page<ReviewListResponseDTO> findSellerReviewsBySellerId(Long sellerId, Pageable pageable) {
         QSellerReview sellerReview = QSellerReview.sellerReview;
         QSellerReviewImage sellerReviewImage = QSellerReviewImage.sellerReviewImage;
         QSeller seller = QSeller.seller;
 
-        // 콘텐츠 조회
         List<ReviewListResponseDTO> content = queryFactory
                 .select(Projections.constructor(ReviewListResponseDTO.class,
                         sellerReview.id,
                         sellerReview.rating,
                         sellerReview.content,
                         sellerReview.createdAt,
-                        seller.name)) // ReviewListResponseDTO에 맞는 필드 선택
+                        seller.name))
                 .from(sellerReview)
                 .leftJoin(sellerReviewImage).on(sellerReviewImage.review.eq(sellerReview))
                 .leftJoin(sellerReview.seller, seller)
@@ -68,7 +68,6 @@ public class ReviewDetailImpl implements ReviewDetail{
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        // 전체 카운트 조회
         long total = queryFactory
                 .selectFrom(sellerReview)
                 .where(sellerReview.seller.id.eq(sellerId))
@@ -77,36 +76,34 @@ public class ReviewDetailImpl implements ReviewDetail{
         return new PageImpl<>(content, pageable, total);
     }
 
+    //내가 작성한 리뷰 리스트 조회
     @Override
-    public Page<ReviewListResponseDTO> findSellerReviewsByMe(Pageable pageable) {
+    public Page<ReviewListResponseDTO> findSellerReviewsByMe(Long customerId, Pageable pageable) {
         QSellerReview sellerReview = QSellerReview.sellerReview;
         QSellerReviewImage sellerReviewImage = QSellerReviewImage.sellerReviewImage;
         QSeller seller = QSeller.seller;
 
-        // 콘텐츠 조회
         List<ReviewListResponseDTO> content = queryFactory
                 .select(Projections.constructor(ReviewListResponseDTO.class,
                         sellerReview.id,
                         sellerReview.rating,
                         sellerReview.content,
                         sellerReview.createdAt,
-                        seller.name)) // ReviewListResponseDTO에 맞는 필드 선택
+                        seller.name))
                 .from(sellerReview)
                 .leftJoin(sellerReviewImage).on(sellerReviewImage.review.eq(sellerReview))
                 .leftJoin(sellerReview.seller, seller)
-                .where(sellerReview.seller.id.eq(sellerId))
+                .where(sellerReview.customer.id.eq(customerId))
                 .orderBy(sellerReview.createdAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        // 전체 카운트 조회
         long total = queryFactory
                 .selectFrom(sellerReview)
-                .where(sellerReview.seller.id.eq(sellerId))
+                .where(sellerReview.customer.id.eq(customerId))
                 .fetchCount();
 
         return new PageImpl<>(content, pageable, total);
     }
-
 }

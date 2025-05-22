@@ -14,5 +14,5 @@ public interface ReviewDetail {
     //판매자가 판매한 물품 리뷰 리스트 보기
     Page<ReviewListResponseDTO> findSellerReviewsBySellerId(Long sellerId, Pageable pageable);
     //내가 작성한 리뷰 리스트 보기
-    Page<ReviewListResponseDTO> findSellerReviewsByMe(Pageable pageable);
+    Page<ReviewListResponseDTO> findSellerReviewsByMe(Long customerId, Pageable pageable);
 }
