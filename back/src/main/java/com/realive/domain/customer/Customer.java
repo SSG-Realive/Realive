@@ -49,6 +49,11 @@ public class Customer {
     @Column(name = "is_active")
     private Boolean isActive = true;
 
+    public Customer(String email, String password) {
+        this.email = email;
+        this.password = password;
+    }
+
     //디폴트 0
     @Column(name = "penalty_score")
     private Integer penaltyScore = 0;
@@ -58,6 +63,7 @@ public class Customer {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
+    //일반/소셜 구분
     @Column(name = "signup_method")
     private SignupMethod signupMethod;
 
