@@ -1,10 +1,11 @@
-package com.realive.service.admin.management;
+package com.realive.service.admin.management.serviceimpl;
 
-import com.realive.dto.admin.management.ApproveSellerRequestDTO;
-import com.realive.dto.admin.management.ApproveSellerResponseDTO;
+import com.realive.dto.admin.approval.ApproveSellerRequestDTO;
+import com.realive.dto.admin.approval.ApproveSellerResponseDTO;
 // import com.realive.repository.SellerRepository; // 실제 프로젝트에서는 필요시 주석 해제
 // import com.realive.repository.AdminRepository; // 실제 프로젝트에서는 필요시 주석 해제
 // import org.springframework.beans.factory.annotation.Autowired; // 실제 프로젝트에서는 필요시 주석 해제
+import com.realive.service.admin.management.service.SellerApprovalService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime; // ApproveSellerResponseDTO 빌더에서 사용 예시
