@@ -47,7 +47,7 @@ public class SellerReview extends BaseTimeEntity {
     private Seller seller;
 
     @Column(nullable = false)
-    private int rating;
+    private double rating;
 
     @Column(nullable = false, length = 3000)
     private String content;
