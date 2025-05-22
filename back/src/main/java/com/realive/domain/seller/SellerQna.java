@@ -1,5 +1,6 @@
 package com.realive.domain.seller;
 
+import com.realive.domain.common.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,7 +18,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class SellerQna {
+public class SellerQna extends BaseTimeEntity {
 
     // QnA 고유 ID
     @Id
@@ -44,26 +45,9 @@ public class SellerQna {
     // 답변 여부 (true: 답변 완료)
     private boolean isAnswered = false;
 
-    // 질문 작성 시간 (변경 불가)
-    @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt;
-
-    // 마지막 수정 시간 (답변 포함)
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
-
     // 답변 작성 시간 (있을 경우)
     @Column(name = "answered_at")
     private LocalDateTime answeredAt;
 
-    @PrePersist
-    public void onCreate() {
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
-    }
 
-    @PreUpdate
-    public void onUpdate() {
-        this.updatedAt = LocalDateTime.now();
-    }
 }

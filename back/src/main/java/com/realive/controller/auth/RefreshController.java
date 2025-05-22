@@ -15,8 +15,6 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-
 /**
  * RefreshController
  * - 클라이언트가 전달한 Refresh Token으로 새로운 Access Token을 발급해주는 컨트롤러

@@ -19,23 +19,19 @@ import lombok.Setter;
 @Builder
 public class SellerSignupDTO {
 
-    /** 판매자 이메일 (로그인 ID로 사용됨) */
     @NotBlank
-    private String email;
+    private String email;               // 판매자 이메일 (로그인 ID로 사용됨)
 
-    /** 판매자 이름 또는 상호명 */
     @NotBlank
-    private String name;
+    private String name;                // 판매자 이름 또는 상호명
 
-    /** 판매자 전화번호 */
     @NotBlank
-    private String phone;
+    private String phone;               // 판매자 전화번호
 
-    /** 비밀번호 (암호화하여 저장됨) */
     @NotBlank
-    private String password;
+    private String password;            // 비밀번호 (암호화하여 저장됨)
 
-    /** 사업자 등록번호 */
     @NotBlank
-    private String businessNumber;
+    private String businessNumber;      // 사업자 등록번호
+
 }

@@ -18,16 +18,9 @@ import lombok.Setter;
 @Builder
 public class SellerLoginResponseDTO {
 
-    /** 액세스 토큰 (JWT) - 인증에 사용됨 */
-    private String accessToken;
-
-    /** 리프레시 토큰 - 액세스 토큰 갱신 시 사용됨 */
-    private String refreshToken;
-
-    /** 로그인한 판매자의 이메일 */
-    private String email;
-
-    /** 로그인한 판매자의 이름 */
-    private String name;
+    private String accessToken;     // 액세스 토큰 (JWT) - 인증에 사용됨
+    private String refreshToken;    // 리프레시 토큰 - 액세스 토큰 갱신 시 사용됨
+    private String email;           // 로그인한 판매자의 이메일
+    private String name;            // 로그인한 판매자의 이름
 
 }

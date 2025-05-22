@@ -1,7 +1,5 @@
 package com.realive.domain.seller;
 
-import java.time.LocalDateTime;
-
 import com.realive.domain.common.BaseTimeEntity;
 
 import jakarta.persistence.Column;
@@ -12,7 +10,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
@@ -58,23 +55,17 @@ public class SellerReview extends BaseTimeEntity {
     // @JoinColumn(name = "customer_id", nullable = false)
     // private Customer customer;
 
-    /** 리뷰 대상 판매자 */
+    // 리뷰 대상 판매자
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id", nullable = false)
     private Seller seller;
 
-    /** 평점 (예: 1 ~ 5) */
+    // 평점 (예: 1 ~ 5)
     @Column(nullable = false)
     private int rating;
 
-    /** 리뷰 본문 내용 */
+    // 리뷰 본문 내용
     @Column(nullable = false, length = 1000)
     private String content;
 
-    /**
-     * 생성일시 (BaseTimeEntity에도 존재하지만 여기선 별도 정의됨)
-     * -> 중복 정의이므로 삭제 가능
-     */
-    @Column(name = "created at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
 }

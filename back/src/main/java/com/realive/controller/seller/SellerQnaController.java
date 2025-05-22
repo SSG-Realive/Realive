@@ -18,9 +18,8 @@ public class SellerQnaController {
 
     private final SellerQnaService sellerQnaService;
 
-    /**
-     * 판매자 QnA 목록 조회 (페이징 포함)
-     */
+
+    // 판매자 QnA 목록 조회 (페이징 포함)
     @GetMapping
     public ResponseEntity<Page<SellerQnaResponseDTO>> getQnaList(
             @AuthenticationPrincipal Seller seller,
@@ -31,9 +30,8 @@ public class SellerQnaController {
         return ResponseEntity.ok(qnaList);
     }
 
-    /**
-     * 판매자 QnA 답변 작성/수정
-     */
+
+    // 판매자 QnA 답변 작성/수정
     @PatchMapping("/{qnaId}/answer")
     public ResponseEntity<Void> answerQna(
             @AuthenticationPrincipal Seller seller,

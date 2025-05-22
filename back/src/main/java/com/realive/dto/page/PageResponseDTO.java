@@ -18,29 +18,14 @@ import lombok.ToString;
 @ToString
 public class PageResponseDTO<T> {
 
-    /** 현재 페이지 번호 */
-    private int page;
-
-    /** 한 페이지당 항목 수 */
-    private int size;
-
-    /** 전체 항목 수 */
-    private int total;
-
-    /** 페이지네이션의 시작 번호 (ex: 1, 11, 21...) */
-    private int start;
-
-    /** 페이지네이션의 끝 번호 (ex: 10, 20, 30...) */
-    private int end;
-
-    /** 이전 페이지 그룹 존재 여부 */
-    private boolean prev;
-
-    /** 다음 페이지 그룹 존재 여부 */
-    private boolean next;
-
-    /** 현재 페이지에 해당하는 데이터 목록 */
-    private List<T> dtoList;
+    private int page;               // 현재 페이지 번호
+    private int size;               // 한 페이지당 항목 수
+    private int total;              // 전체 항목 수
+    private int start;              // 페이지네이션의 시작 번호 (ex: 1, 11, 21...)
+    private int end;                // 이지네이션의 끝 번호 (ex: 10, 20, 30...)
+    private boolean prev;           // 이전 페이지 그룹 존재 여부
+    private boolean next;           // 다음 페이지 그룹 존재 여부
+    private List<T> dtoList;        // 현재 페이지에 해당하는 데이터 목록
 
     /**
      * 생성자 (Builder 사용)

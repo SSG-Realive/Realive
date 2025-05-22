@@ -20,14 +20,12 @@ import lombok.Setter;
 @Builder
 public class SellerUpdateDTO {
 
-    /** 판매자 이름 (필수 입력) */
     @NotBlank
-    private String name;
+    private String name;            // 판매자 이름 (필수 입력)
 
-    /** 판매자 전화번호 (필수 입력) */
     @NotBlank
-    private String phone;
+    private String phone;           // 판매자 전화번호 (필수 입력
 
-    /** 변경할 새 비밀번호 (선택 입력) */
-    private String newPassword;
+    private String newPassword;     // 변경할 새 비밀번호 (선택 입력)
+
 }

@@ -16,10 +16,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class SellerLoginRequestDTO {
 
-    /** 판매자 이메일 (로그인 ID로 사용) */
-    private String email;
-
-    /** 판매자 비밀번호 */
-    private String password;
+    private String email;       // 판매자 이메일 (로그인 ID로 사용)
+    private String password;    // 판매자 비밀번호
 
 }
