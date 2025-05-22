@@ -16,15 +16,16 @@ public class DailyFinancialSummaryDTO {
     //해당일 총 판매액
     private final Long totalSalesAmount;
 
-    //해당일 총 판매 건수
+    //해당일 총 판매 건수//
     private final Long totalSalesCount;
 
-    //해당일에 정산 처리된 총 금액
+    //해당일에 정산 처리된 총 금액//
     private final Long totalPayoutAmountOnDate;
 
     //해당일 총 발생 수수료
     private final Long totalCommissionAmount;
 
+    /// ///
     private final LocalDateTime recordedAt;
 
     @Builder
