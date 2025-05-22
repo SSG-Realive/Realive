@@ -80,7 +80,7 @@ public class SellerServiceImpl implements SellerService{
     @Override
     public void registerSeller(SellerSignupDTO dto, MultipartFile businessLicense, MultipartFile bankAcountCopy){
         
-        if (sellerRepository.existsByEmail(dto.getEmaill())) {
+        if (sellerRepository.existsByEmail(dto.getEmail())) {
             throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
             
         }
@@ -92,7 +92,7 @@ public class SellerServiceImpl implements SellerService{
         String encodedPassword = passwordEncoder.encode(dto.getPassword());
 
         Seller seller = Seller.builder()
-                .email(dto.getEmaill())
+                .email(dto.getEmail())
                 .name(dto.getName())
                 .phone(dto.getPhone())
                 .password(encodedPassword)
