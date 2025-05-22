@@ -1,4 +1,4 @@
-package com.realive.dto.productview;
+package com.realive.dto.product;
 
 import com.realive.domain.common.enums.ProductStatus;
 import lombok.Data;
@@ -13,7 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
  * 상품 등록/수정 요청 DTO
  */
 @Data
-public class ProductRequestDto {
+public class ProductRequestDTO {
 
     private String name;                        // 상품명
     private String description;                 // 상품 설명
@@ -28,7 +28,7 @@ public class ProductRequestDto {
    
     private MultipartFile thumbnailImage;                
     private MediaType mediaType;
-    private DeliveryPolicyDto deliveryPolicy;   // 배송 정책 정보
+    private DeliveryPolicyDTO deliveryPolicy;   // 배송 정책 정보
 
     private List<MultipartFile> images;
     private List<MediaType> imageMediaTypes; 

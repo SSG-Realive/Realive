@@ -1,4 +1,4 @@
-package com.realive.dto.productview;
+package com.realive.dto.product;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ProductResponseDto {
+public class ProductResponseDTO {
 
     private Long id;              // 상품 ID - Product
     private String name;          // 상품명 - Product

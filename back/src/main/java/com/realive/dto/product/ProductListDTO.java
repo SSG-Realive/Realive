@@ -1,6 +1,5 @@
-package com.realive.dto.productview;
+package com.realive.dto.product;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
@@ -16,7 +15,7 @@ import lombok.Setter;
 @Builder
 @Getter
 @Setter
-public class ProductListDto {
+public class ProductListDTO {
 
     private Long id;          // 상품 ID
     private String name;      // 상품명
@@ -27,7 +26,7 @@ public class ProductListDto {
 
    
 	
-    public ProductListDto(Long id, String name, int price, String status, boolean isActive, String thumbnailUrl) {
+    public ProductListDTO(Long id, String name, int price, String status, boolean isActive, String thumbnailUrl) {
 		this.id = id;
 		this.name = name;
 		this.price = price;

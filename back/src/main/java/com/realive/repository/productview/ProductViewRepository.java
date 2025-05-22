@@ -1,13 +1,8 @@
 package com.realive.repository.productview;
 
-import java.util.Optional;
-
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
 import com.realive.domain.product.Product;
-import com.realive.dto.productview.ProductResponseDto;
 
 public interface ProductViewRepository extends JpaRepository<Product, Long>, ProductSearch, ProductDetail {
     // JpaRepository 기본 CRUD + ProductSearch 커스텀 검색 메서드 같이 사용

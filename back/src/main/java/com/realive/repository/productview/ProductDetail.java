@@ -2,8 +2,8 @@ package com.realive.repository.productview;
 
 import java.util.Optional;
 
-import com.realive.dto.productview.ProductResponseDto;
+import com.realive.dto.product.ProductResponseDTO;
 
 public interface ProductDetail {
-    Optional<ProductResponseDto> findProductDetailById(Long id);
+    Optional<ProductResponseDTO> findProductDetailById(Long id);
 }

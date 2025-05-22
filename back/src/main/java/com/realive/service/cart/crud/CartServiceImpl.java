@@ -2,15 +2,15 @@ package com.realive.service.cart.crud;
 
 import com.realive.domain.customer.CartItem;
 import com.realive.domain.customer.Customer;
-import com.realive.domain.product.Product; // Product 엔티티는 여전히 필요 (재고, 활성화 여부 등 체크용)
+import com.realive.domain.product.Product;
 import com.realive.dto.cart.CartItemAddRequestDTO;
 import com.realive.dto.cart.CartItemResponseDTO;
 import com.realive.dto.cart.CartItemUpdateRequestDTO;
-import com.realive.dto.productview.ProductResponseDto; // ProductResponseDto 임포트
+import com.realive.dto.product.ProductResponseDTO;
 import com.realive.repository.cart.CartItemRepository;
 import com.realive.repository.customer.CustomerRepository;
-import com.realive.repository.product.ProductRepository; // Product 엔티티 조회를 위해 유지
-import com.realive.repository.productview.ProductViewRepository; // ProductViewRepository 임포트
+import com.realive.repository.product.ProductRepository;
+import com.realive.repository.productview.ProductViewRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -25,8 +25,8 @@ import java.util.Optional;
 public class CartServiceImpl implements CartService {
 
     private final CartItemRepository cartItemRepository;
-    private final ProductRepository productRepository; // Product 엔티티의 재고 등을 직접 조회하기 위해 유지
-    private final ProductViewRepository productViewRepository; // 상품 상세 정보를 DTO로 가져오기 위해 사용
+    private final ProductRepository productRepository;
+    private final ProductViewRepository productViewRepository;
     private final CustomerRepository customerRepository;
 
     @Override
@@ -35,10 +35,11 @@ public class CartServiceImpl implements CartService {
         Long productId = requestDTO.getProductId();
         int quantityToAdd = requestDTO.getQuantity();
 
-        customerRepository.findById(customerId)
+        // Customer 엔티티 조회
+        Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new EntityNotFoundException("Customer not found with ID: " + customerId));
 
-        // 재고 확인을 위해 Product 엔티티 자체는 여전히 필요 (ProductViewRepository는 DTO를 반환하므로)
+        // Product 엔티티 조회
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new EntityNotFoundException("Product not found with ID: " + productId));
 
@@ -46,8 +47,14 @@ public class CartServiceImpl implements CartService {
             throw new IllegalArgumentException("Not enough stock for product ID: " + productId);
         }
         // TODO: 상품 상태 (isActive, status) 확인 로직 추가
+        if (!product.isActive() || product.getStatus() == null /*|| product.getStatus() == ProductStatus.하*/) { // 예시: ProductStatus.하인 경우 추가 불가
+            throw new IllegalArgumentException("Product is not active or in an unpurchasable state for product ID: " + productId);
+        }
 
-        Optional<CartItem> existingCartItem = cartItemRepository.findByCustomerIdAndProductId(customerId, productId);
+
+        // 기존 장바구니 항목 조회 시 Customer 엔티티와 Product 엔티티를 직접 사용
+        Optional<CartItem> existingCartItem = cartItemRepository.findByCustomer_IdAndProduct_Id(customerId, productId);
+
 
         CartItem cartItem;
         if (existingCartItem.isPresent()) {
@@ -60,17 +67,16 @@ public class CartServiceImpl implements CartService {
             log.info("Updating quantity for existing cart item: {}", cartItem.getId());
         } else {
             cartItem = CartItem.builder()
-                    .customerId(customerId)
-                    .productId(productId)
+                    .customer(customer)
+                    .product(product)
                     .quantity(quantityToAdd)
                     .build();
             log.info("Adding new cart item for customer {} and product {}: Quantity = {}", customerId, productId, quantityToAdd);
         }
 
         CartItem savedCartItem = cartItemRepository.save(cartItem);
-        // ProductViewRepository를 통해 상세 DTO 조회
-        ProductResponseDto productDetailDto = productViewRepository.findProductDetailById(productId)
-                .orElseThrow(() -> new EntityNotFoundException("Product detail not found for ID: " + productId));
+        ProductResponseDTO productDetailDto = productViewRepository.findProductDetailById(savedCartItem.getProduct().getId())
+                .orElseThrow(() -> new EntityNotFoundException("Product detail not found for ID: " + savedCartItem.getProduct().getId()));
 
         return CartItemResponseDTO.from(savedCartItem, productDetailDto);
     }
@@ -80,7 +86,7 @@ public class CartServiceImpl implements CartService {
     public CartItemResponseDTO updateCartItemQuantity(Long customerId, Long cartItemId, CartItemUpdateRequestDTO requestDTO) {
         int newQuantity = requestDTO.getQuantity();
 
-        CartItem cartItem = cartItemRepository.findByIdAndCustomerId(cartItemId, customerId)
+        CartItem cartItem = cartItemRepository.findByIdAndCustomer_Id(cartItemId, customerId)
                 .orElseThrow(() -> new EntityNotFoundException("Cart item not found or unauthorized with ID: " + cartItemId));
 
         if (newQuantity <= 0) {
@@ -89,20 +95,26 @@ public class CartServiceImpl implements CartService {
             return null;
         }
 
-        Product product = productRepository.findById(cartItem.getProductId())
+        // Product 엔티티 조회
+        Product product = productRepository.findById(cartItem.getProduct().getId())
                 .orElseThrow(() -> new EntityNotFoundException("Product associated with cart item not found."));
 
         if (product.getStock() < newQuantity) {
             throw new IllegalArgumentException("Not enough stock for product ID: " + product.getId() + " to update quantity to " + newQuantity);
         }
         // TODO: 상품 상태 (isActive, status) 확인 로직 추가
+        if (!product.isActive() || product.getStatus() == null /*|| product.getStatus() == ProductStatus.하*/) { // 예시: ProductStatus.하인 경우 추가 불가
+            throw new IllegalArgumentException("Product is not active or in an unpurchasable state for product ID: " + product.getId());
+        }
+
 
         cartItem.setQuantity(newQuantity);
         log.info("Updated cart item {} quantity to {}", cartItemId, newQuantity);
 
         CartItem updatedCartItem = cartItemRepository.save(cartItem);
-        ProductResponseDto productDetailDto = productViewRepository.findProductDetailById(cartItem.getProductId())
-                .orElseThrow(() -> new EntityNotFoundException("Product detail not found for ID: " + cartItem.getProductId()));
+        // ProductViewRepository를 통해 상세 DTO 조회
+        ProductResponseDTO productDetailDto = productViewRepository.findProductDetailById(updatedCartItem.getProduct().getId())
+                .orElseThrow(() -> new EntityNotFoundException("Product detail not found for ID: " + updatedCartItem.getProduct().getId()));
 
         return CartItemResponseDTO.from(updatedCartItem, productDetailDto);
     }
@@ -110,7 +122,8 @@ public class CartServiceImpl implements CartService {
     @Override
     @Transactional
     public void removeCartItem(Long customerId, Long cartItemId) {
-        CartItem cartItem = cartItemRepository.findByIdAndCustomerId(cartItemId, customerId)
+        // findByIdAndCustomer_Id로 수정
+        CartItem cartItem = cartItemRepository.findByIdAndCustomer_Id(cartItemId, customerId)
                 .orElseThrow(() -> new EntityNotFoundException("Cart item not found or unauthorized with ID: " + cartItemId));
 
         cartItemRepository.delete(cartItem);
@@ -120,7 +133,7 @@ public class CartServiceImpl implements CartService {
     @Override
     @Transactional
     public void clearCart(Long customerId) {
-        cartItemRepository.deleteByCustomerId(customerId);
+        cartItemRepository.deleteByCustomer_Id(customerId);
         log.info("Cleared cart for customer: {}", customerId);
     }
 }

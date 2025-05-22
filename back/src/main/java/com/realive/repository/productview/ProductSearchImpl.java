@@ -9,10 +9,9 @@ import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.realive.domain.product.Product;
 import com.realive.domain.product.QProduct;
 import com.realive.domain.product.QProductImage;
-import com.realive.dto.productview.ProductListDto;
+import com.realive.dto.product.ProductListDTO;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -24,7 +23,7 @@ public class ProductSearchImpl implements ProductSearch {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<ProductListDto> productList(Pageable pageable) {
+    public List<ProductListDTO> productList(Pageable pageable) {
 
         QProduct product = QProduct.product;
         QProductImage productImage = QProductImage.productImage;
@@ -33,8 +32,8 @@ public class ProductSearchImpl implements ProductSearch {
         int offset = pageable.getPageNumber() * size;
 
         //데이터조회
-        JPQLQuery<ProductListDto> query = queryFactory
-        .select(Projections.bean(ProductListDto.class,
+        JPQLQuery<ProductListDTO> query = queryFactory
+        .select(Projections.bean(ProductListDTO.class,
             product.id.as("id"),
             product.name.as("name"),
             product.price.as("price"),
@@ -52,7 +51,7 @@ public class ProductSearchImpl implements ProductSearch {
 
 
 
-        List<ProductListDto> dtoList = query.fetch();
+        List<ProductListDTO> dtoList = query.fetch();
 
         return dtoList;
     }

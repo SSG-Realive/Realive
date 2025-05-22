@@ -8,7 +8,7 @@ import com.realive.domain.product.QCategory;
 import com.realive.domain.product.QProduct;
 import com.realive.domain.product.QProductImage;
 import com.realive.domain.seller.QSeller;
-import com.realive.dto.productview.ProductResponseDto;
+import com.realive.dto.product.ProductResponseDTO;
 
 import lombok.RequiredArgsConstructor;
 
@@ -17,15 +17,15 @@ public class ProductDetailImpl implements ProductDetail {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Optional<ProductResponseDto> findProductDetailById(Long id) {
+    public Optional<ProductResponseDTO> findProductDetailById(Long id) {
 
         QProduct product = QProduct.product;
         QProductImage productImage = QProductImage.productImage;
         QCategory category = QCategory.category;
         QSeller seller = QSeller.seller;
 
-        ProductResponseDto dto = queryFactory
-            .select(Projections.constructor(ProductResponseDto.class,
+        ProductResponseDTO dto = queryFactory
+            .select(Projections.constructor(ProductResponseDTO.class,
                 product.id,
                 product.name,
                 product.description,

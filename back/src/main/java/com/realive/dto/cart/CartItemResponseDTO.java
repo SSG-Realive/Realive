@@ -2,7 +2,7 @@ package com.realive.dto.cart;
 
 import com.realive.domain.customer.CartItem;
 // import com.realive.domain.product.Product; // 더 이상 Product 엔티티를 직접 받지 않음
-import com.realive.dto.productview.ProductResponseDto; // ProductResponseDto 임포트
+import com.realive.dto.product.ProductResponseDTO; // ProductResponseDto 임포트
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,7 +26,7 @@ public class CartItemResponseDTO {
     private LocalDateTime cartCreatedAt;
 
     // ProductResponseDto를 받아서 DTO를 생성하는 정적 팩토리 메서드
-    public static CartItemResponseDTO from(CartItem cartItem, ProductResponseDto productDetailDto) {
+    public static CartItemResponseDTO from(CartItem cartItem, ProductResponseDTO productDetailDto) {
         return CartItemResponseDTO.builder()
                 .cartItemId(cartItem.getId())
                 .productId(productDetailDto != null ? productDetailDto.getId() : null)

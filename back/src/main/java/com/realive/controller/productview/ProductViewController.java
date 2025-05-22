@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.realive.dto.productview.ProductListDto;
-import com.realive.dto.productview.ProductResponseDto;
+import com.realive.dto.product.ProductListDTO;
+import com.realive.dto.product.ProductResponseDTO;
 import com.realive.service.ProductViewService;
 
 import lombok.RequiredArgsConstructor;
@@ -24,15 +24,15 @@ public class ProductViewController {
     private final ProductViewService productViewService;
 
     @GetMapping
-    public ResponseEntity<Page<ProductListDto>> getProducts(Pageable pageable) {
-        Page<ProductListDto> result = productViewService.getProductList(pageable);
+    public ResponseEntity<Page<ProductListDTO>> getProducts(Pageable pageable) {
+        Page<ProductListDTO> result = productViewService.getProductList(pageable);
         return ResponseEntity.ok(result);
     }   
 
     // 상품 상세 조회
     @GetMapping("/{id}")
-    public ResponseEntity<ProductResponseDto> getProductDetail(@PathVariable("id") Long id) {
-        ProductResponseDto productDetail = productViewService.getProductDetail(id);
+    public ResponseEntity<ProductResponseDTO> getProductDetail(@PathVariable("id") Long id) {
+        ProductResponseDTO productDetail = productViewService.getProductDetail(id);
         return ResponseEntity.ok(productDetail);
     }
     

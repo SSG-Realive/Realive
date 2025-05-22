@@ -1,4 +1,4 @@
-package com.realive.dto.productview;
+package com.realive.dto.product;
 
 import com.realive.domain.common.enums.DeliveryType;
 import lombok.AllArgsConstructor;
@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class DeliveryPolicyDto {
+public class DeliveryPolicyDTO {
 
     // 배송 유형: 무료배송, 유료배송
     private DeliveryType type;
