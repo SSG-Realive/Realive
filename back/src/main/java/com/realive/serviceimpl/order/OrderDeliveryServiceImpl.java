@@ -39,12 +39,12 @@ public class OrderDeliveryServiceImpl implements OrderDeliveryService {
         delivery.setCarrier(dto.getCarrier());
 
         // 배송 시작 시간 기록
-        if (dto.getDeliveryStatus() == DeliveryStatus.SHIPPING && delivery.getStartDate() == null) {
+        if (dto.getDeliveryStatus() == DeliveryStatus.배송중 && delivery.getStartDate() == null) {
             delivery.setStartDate(LocalDateTime.now());
         }
 
         // 배송 완료 시간 기록
-        if (dto.getDeliveryStatus() == DeliveryStatus.DELIVERED && delivery.getCompleteDate() == null) {
+        if (dto.getDeliveryStatus() == DeliveryStatus.배송완료 && delivery.getCompleteDate() == null) {
             delivery.setCompleteDate(LocalDateTime.now());
         }
     }
