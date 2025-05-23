@@ -3,8 +3,10 @@ package com.realive.controller.admin;
 import java.time.Duration;
 
 import com.realive.domain.admin.Admin;
+import com.realive.dto.admin.AdminInfoResponseDTO;
 import com.realive.dto.admin.AdminLoginRequestDTO;
 import com.realive.dto.admin.AdminLoginResponseDTO;
+import com.realive.security.AdminPrincipal;
 import com.realive.security.JwtUtil;
 import com.realive.service.admin.AdminService;
 import org.springframework.http.ResponseCookie;
@@ -23,7 +25,7 @@ public class AdminController {
     private final AdminService adminService;
     private final JwtUtil jwtUtil;
 
-    // 🔐 관리자 로그인 (토큰 발급)
+    //  관리자 로그인
     @PostMapping("/login")
     public ResponseEntity<AdminLoginResponseDTO> login(
             @RequestBody AdminLoginRequestDTO reqDTO,
@@ -48,11 +50,15 @@ public class AdminController {
     }
 
 
-    // 🙋‍♀️ 관리자 마이페이지(내 정보)
+    // 관리자 정보 조회
     @GetMapping("/me")
-    public ResponseEntity<AdminLoginResponseDTO> getMyInfo(@AuthenticationPrincipal Admin admin) {
-        Long adminId = Long.valueOf(admin.getId());
-        AdminLoginResponseDTO resDTO = adminService.getMyInfo(Math.toIntExact(adminId));
-        return ResponseEntity.ok(resDTO);
+    public ResponseEntity<AdminInfoResponseDTO> getMyInfo(@AuthenticationPrincipal AdminPrincipal adminPrincipal) {
+        Admin admin = adminPrincipal.getAdmin();  // Admin 엔티티 가져오기
+        AdminInfoResponseDTO dto = new AdminInfoResponseDTO(
+                admin.getName(),
+                admin.getEmail(),
+                "관리자"
+        );
+        return ResponseEntity.ok(dto);
     }
 }
