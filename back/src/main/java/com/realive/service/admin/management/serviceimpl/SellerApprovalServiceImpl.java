@@ -1,45 +1,65 @@
 package com.realive.service.admin.management.serviceimpl;
 
+import com.realive.domain.seller.Seller;
 import com.realive.dto.admin.approval.ApproveSellerRequestDTO;
 import com.realive.dto.admin.approval.ApproveSellerResponseDTO;
-// import com.realive.repository.SellerRepository; // 실제 프로젝트에서는 필요시 주석 해제
-// import com.realive.repository.AdminRepository; // 실제 프로젝트에서는 필요시 주석 해제
-// import org.springframework.beans.factory.annotation.Autowired; // 실제 프로젝트에서는 필요시 주석 해제
+import com.realive.repository.seller.SellerRepository;
 import com.realive.service.admin.management.service.SellerApprovalService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime; // ApproveSellerResponseDTO 빌더에서 사용 예시
+import java.time.LocalDateTime;
+import java.util.NoSuchElementException;
 
+@Slf4j
 @Service
+@RequiredArgsConstructor
 public class SellerApprovalServiceImpl implements SellerApprovalService {
 
-    // private final SellerRepository sellerRepository;
-    // private final AdminRepository adminRepository;
-
-    // @Autowired
-    // public SellerApprovalServiceImpl(SellerRepository sellerRepository, AdminRepository adminRepository) {
-    //     this.sellerRepository = sellerRepository;
-    //     this.adminRepository = adminRepository;
-    // }
+    private final SellerRepository sellerRepository;
 
     @Override
+    @Transactional
     public ApproveSellerResponseDTO processSellerApproval(ApproveSellerRequestDTO requestDto, Integer approvingAdminId) {
-        System.out.println("Processing seller approval for seller ID: " + requestDto.getSellerId() +
-                " with status: " + requestDto.getStatus() +
-                " by admin ID: " + approvingAdminId);
+        Seller seller = sellerRepository.findById(requestDto.getSellerId().longValue())
+                .orElseThrow(() -> new NoSuchElementException("판매자 없음 ID: " + requestDto.getSellerId()));
 
-        // 실제 로직:
-        // 1. sellerRepository.findById(requestDto.getSellerId()) 등으로 판매자 엔티티 조회
-        // 2. 조회된 판매자 엔티티의 상태를 requestDto.getStatus()로 변경
-        // 3. 필요한 경우 requestDto.getReason() 사용
-        // 4. sellerRepository.save(sellerEntity)로 저장
-        // 5. 로그 기록 등 추가 작업 (approvingAdminId 활용)
+        String message;
+        boolean successProcessing = false;
+        String finalStatus = seller.isApproved() ? "APPROVED" : "PENDING";
 
-        // 아래는 예시 응답입니다. 실제 DTO 구조와 성공/실패 로직에 맞게 수정해야 합니다.
+        if ("APPROVE".equalsIgnoreCase(requestDto.getStatus())) {
+            if (!seller.isApproved()) {
+                seller.setApproved(true);
+                seller.setApprovedAt(LocalDateTime.now());
+                sellerRepository.save(seller);
+                message = "판매자 승인 완료.";
+                successProcessing = true;
+                finalStatus = "APPROVED";
+            } else {
+                message = "이미 승인된 판매자입니다.";
+            }
+        } else if ("REJECT".equalsIgnoreCase(requestDto.getStatus())) {
+            if (seller.isApproved()) {
+                message = "이미 승인된 판매자는 현재 로직에서 거부 처리할 수 없습니다.";
+            } else {
+                message = "판매자 승인 거부 처리됨. 사유: " + requestDto.getReason();
+                successProcessing = true; // '처리'는 된 것으로 간주
+                finalStatus = "REJECTED"; // 명시적인 REJECTED 상태가 있다면
+            }
+        } else {
+            message = "알 수 없는 승인 상태값: " + requestDto.getStatus();
+        }
+        log.info("판매자 승인 처리 결과 - SellerId: {}, AdminId: {}, Message: {}", requestDto.getSellerId(), approvingAdminId, message);
+
         return ApproveSellerResponseDTO.builder()
-                .success(true)
-                .message("승인 완료.")
-                .timestamp(LocalDateTime.now())
+                .success(successProcessing)
+                .sellerId(requestDto.getSellerId())
+                .newStatus(finalStatus)
+                .message(message)
+                .processedAt(LocalDateTime.now())
                 .build();
     }
 }
