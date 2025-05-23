@@ -26,8 +26,10 @@ public class Order {
     private Long totalPrice;
     @Column(name = "delivery_address", nullable =  false, length = 500)
     private String deliveryAddress;
-    @Column(name = "Ordered_at", nullable =  false, updatable = false, length = 100)
+    @Column(name = "ordered_at", nullable =  false, updatable = false, length = 100)
     private LocalDateTime OrderedAt;
+    @Column(name = "updated_at", nullable =  false, length = 100)
+    private LocalDateTime UpdatedAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customers_id", nullable = false)
