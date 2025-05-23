@@ -10,6 +10,9 @@ public class OrderDTO {
     private String status;
     private LocalDateTime orderDate;
     private Integer totalAmount;
+
+    public class Builder {
+    }
 //    private List<OrderItemDTO> items;
     // 기타 필요한 주문 정보
 }

@@ -1,5 +1,7 @@
 package com.realive.dto.admin.management;
 
+import jdk.jshell.Snippet;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -12,5 +14,8 @@ public class SellerDTO {
     private Integer productCount;
     private Integer totalSales;
     private BigDecimal commission;
+
+    public static Snippet builder() {
+    }
     // 기타 필요한 판매자 정보
 }

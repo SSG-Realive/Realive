@@ -1,5 +1,7 @@
 package com.realive.dto.admin.management;
 
+import jdk.jshell.Snippet;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -13,5 +15,8 @@ public class ProductDTO {
     private BigDecimal price;
     private Integer inventory;
     private LocalDateTime registeredAt;
+
+    public static Snippet builder() {
+    }
     // 기타 필요한 상품 정보
 }

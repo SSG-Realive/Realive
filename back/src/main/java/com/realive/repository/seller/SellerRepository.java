@@ -1,5 +1,6 @@
 package com.realive.repository.seller;
 
+import java.util.Collection;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,5 +13,6 @@ public interface SellerRepository extends JpaRepository<Seller,Long>, EmailLooku
     boolean existsByEmail(String email); //email 중복검사
     boolean existsByName(String name); //이름 중복검사사
     Optional<Seller> findByEmailAndIsActiveTrue(String email); //로그인용(소프트삭제)
-    
+
+    Collection<Object> findByIsApprovedFalse();
 }

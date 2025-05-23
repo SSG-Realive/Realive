@@ -166,7 +166,7 @@ public class AdminDashboardServiceImpl implements AdminDashboardService {
     @Override
     public List<ProductDTO> getPendingProducts() {
         // ProductRepository.findByStatus와 ProductStatus Enum의 승인대기 값 (예: PENDING_APPROVAL) 필요
-        return productRepository.findByStatus(ProductStatus.PENDING_APPROVAL).stream()
+        return productRepository.findByStatus((ProductStatus.PENDING_APPROVAL).stream()
                 .map(this::convertToProductDTO)
                 .collect(Collectors.toList());
     }
