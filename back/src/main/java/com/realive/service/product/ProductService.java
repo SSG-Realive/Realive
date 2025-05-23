@@ -32,7 +32,7 @@ public interface ProductService {
      * 판매자 ID 기준 상품 목록 조회
      * - imageThumbnailUrl / videoThumbnailUrl 포함
      */
-    PageResponseDTO<ProductListDTO> getProductsBySeller(Long sellerId, ProductSearchCondition condition);
+    PageResponseDTO<ProductListDTO> getProductsBySeller(String email, ProductSearchCondition condition);
 
     /**
      * 상품 상세 조회

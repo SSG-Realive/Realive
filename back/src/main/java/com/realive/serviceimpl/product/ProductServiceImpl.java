@@ -9,6 +9,7 @@ import com.realive.repository.product.*;
 import com.realive.repository.seller.SellerRepository;
 import com.realive.service.common.FileUploadService;
 import com.realive.service.product.ProductService;
+import com.realive.service.seller.SellerService;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,7 @@ public class ProductServiceImpl implements ProductService {
     private final SellerRepository sellerRepository;
     private final DeliveryPolicyRepository deliveryPolicyRepository;
     private final FileUploadService fileUploadService;
+    private final SellerService sellerService;
 
     @Override
     public Long createProduct(ProductRequestDTO dto, Long sellerId) {
@@ -212,7 +214,10 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public PageResponseDTO<ProductListDTO> getProductsBySeller(Long sellerId, ProductSearchCondition condition) {
+    public PageResponseDTO<ProductListDTO> getProductsBySeller(String email, ProductSearchCondition condition) {
+        
+        Seller seller = sellerService.getByEmail(email);
+        Long sellerId = seller.getId(); 
         Page<Product> result = productRepository.searchProducts(condition, sellerId);
         List<Product> products = result.getContent();
 
