@@ -20,10 +20,10 @@ import org.springframework.web.client.RestTemplate;
 @RequiredArgsConstructor
 public class KakaoController {
 
-    @Value("${kakao.client-id}")
+    @Value("${KAKAO_CLIENT_ID}")
     private String clientId;
 
-    @Value("${kakao.redirect-uri}")
+    @Value("${KAKAO_REDIRECT_URI}")
     private String redirectUri;
 
     private final RestTemplate restTemplate = new RestTemplate();

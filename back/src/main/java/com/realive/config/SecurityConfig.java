@@ -27,36 +27,29 @@ import com.realive.security_customer.handler.CustomLoginSuccessHandler;
 @Configuration
 @EnableMethodSecurity(prePostEnabled = true)
 @Slf4j
+@RequiredArgsConstructor
 public class SecurityConfig {
 
-    
-    private final CustomLoginSuccessHandler customLoginSuccessHandler = new CustomLoginSuccessHandler();
-
-
-    @Bean
-    public CustomLoginSuccessHandler customLoginSuccessHandler() {
-        return new CustomLoginSuccessHandler();
-    }
-
+    // private final CustomLoginSuccessHandler customLoginSuccessHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
         log.info("------------------Security Config-----------------------");
 
         http
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            .csrf(csrf -> csrf.disable()) // REST API는 CSRF 불필요
-            .formLogin(form -> form.disable()) // 로그인 폼 비활성화
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 미사용
+            .csrf(csrf -> csrf.disable())
+            .formLogin(form -> form.disable())
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/public/**").permitAll()
                 .anyRequest().authenticated()
-            )
-            .oauth2Login(config -> config.successHandler(customLoginSuccessHandler));
+            );
+            // .oauth2Login(config -> config.successHandler(customLoginSuccessHandler));
 
         return http.build();
     }
+
 
     //static 자원들 로그인 체크를 막는 설정 
     //servlet 들어간거로 import 주의!
