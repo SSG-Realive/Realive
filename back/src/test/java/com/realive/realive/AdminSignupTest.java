@@ -19,7 +19,7 @@ public class AdminSignupTest {
 
         Admin admin = new Admin();
         admin.setEmail("admin@admin.com");
-        admin.setName("CC");
+        admin.setName("Gudo");
         admin.setPassword(encoder.encode("admin")); // 패스워드 암호화
 
         adminRepository.save(admin);

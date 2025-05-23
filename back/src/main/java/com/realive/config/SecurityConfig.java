@@ -63,6 +63,8 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();  // 개발용. 운영시 BCrypt로 교체 권장
+        return new BCryptPasswordEncoder();
+        // return NoOpPasswordEncoder.getInstance(); // 개발용 BCrypt X
     }
+
 }

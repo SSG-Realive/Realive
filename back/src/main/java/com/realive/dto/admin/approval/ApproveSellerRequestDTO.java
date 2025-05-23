@@ -8,6 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -19,6 +21,4 @@ public class ApproveSellerRequestDTO {
     @NotNull
     private SellerApprovalStatusByAdmin status;
 
-    @Nullable
-    private String des;
 }
