@@ -66,7 +66,6 @@ public class AdminServiceImpl implements AdminService {
                 .build();
     }
 
-
     @Override
     @Transactional(readOnly = true)
     public Optional<AdminReadDTO> findByEmail(String email) {
@@ -85,8 +84,6 @@ public class AdminServiceImpl implements AdminService {
         }
         return adminRepository.findByEmail(email);
     }
-
-
 
     private AdminReadDTO convertToReadDTO(Admin admin) {
         return AdminReadDTO.builder()
