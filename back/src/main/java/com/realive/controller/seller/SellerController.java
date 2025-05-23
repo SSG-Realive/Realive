@@ -7,7 +7,10 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+<<<<<<< HEAD
 import org.springframework.security.core.context.SecurityContext;
+=======
+>>>>>>> origin/team2/jaehyun
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -98,7 +101,6 @@ public class SellerController {
     @PutMapping("/me")
     public ResponseEntity<Void> updateSeller(
             @RequestBody @Valid SellerUpdateDTO dto) {
-        
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String email = auth.getName();
 
@@ -111,14 +113,12 @@ public class SellerController {
     // 🙋‍♀️ 마이페이지 조회 (판매자 정보 )
     @GetMapping("/me")
     public ResponseEntity<SellerResponseDTO> getMyInfo() {
-        
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String email = auth.getName();
 
         Seller seller = sellerService.getByEmail(email);
 
         SellerResponseDTO dto = sellerService.getMyInfo(seller.getId());
-        
         return ResponseEntity.ok(dto);
     }
 }
