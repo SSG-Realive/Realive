@@ -1,12 +1,13 @@
 package com.realive.repository.admin;
 
+import com.realive.domain.admin.Admin;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
 import java.util.Optional;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-
-import com.realive.domain.admin.Admin;
-
-public interface AdminRepository extends JpaRepository<Admin, Integer>{
+@Repository
+public interface AdminRepository extends JpaRepository<Admin, Integer> {
 
     Optional<Admin> findByEmail(String email);
 }
