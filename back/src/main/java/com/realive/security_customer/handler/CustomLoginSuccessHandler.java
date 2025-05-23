@@ -11,32 +11,28 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.realive.domain.customer.SignupMethod;
 import com.realive.dto.member.MemberLoginDTO;
+import com.realive.security.JwtTokenProvider;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
-//둘 중 어떤 메소드가 동작하는지 확인 
+
 @Log4j2
 @Component
 public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
-    
-	//두 메소드 이름 동일 
-	
-	//파라미터 4개 
-	@Override
-    public void onAuthenticationSuccess(
-		HttpServletRequest request,
-		HttpServletResponse response,
-		FilterChain chain,
-		Authentication authentication) throws IOException, ServletException {
+     
+    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final JwtTokenProvider jwtTokenProvider;
 
-        log.info("-----success handler 4 -----");
-
-        AuthenticationSuccessHandler.super.onAuthenticationSuccess(request, response, chain, authentication);
+    // 생성자 주입
+    public CustomLoginSuccessHandler(JwtTokenProvider jwtTokenProvider) {
+        this.jwtTokenProvider = jwtTokenProvider;
     }
-	
-	//파라미터 3개 
+
     @Override
     public void onAuthenticationSuccess(
 		HttpServletRequest request,
@@ -46,19 +42,27 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
         log.info("-----success handler 3 -----");
 		log.info(authentication);
 
-        // //만일 social 회원이라면 회원정보를 수정하는 페이지로 이동
-        // MemberLoginDTO loginUser = (MemberLoginDTO) authentication.getPrincipal();
-        // log.info("로그인한 사용자 이메일: " + loginUser.getEmail());
-        // log.info("SignupMethod: " + loginUser.getSignupMethod());
+        //만일 social 회원이라면 회원정보를 수정하는 페이지로 이동
+        MemberLoginDTO loginUser = (MemberLoginDTO) authentication.getPrincipal();
+        log.info("로그인한 사용자 이메일: " + loginUser.getEmail());
+        log.info("SignupMethod: " + loginUser.getSignupMethod());
 
-        // // 임시 회원인지 확인
-        // if (loginUser.getSignupMethod() != SignupMethod.USER) {
-        //     log.info("임시 회원입니다. 회원정보 수정 페이지로 리다이렉트합니다.");
-        //     response.sendRedirect("/customer/update-info");
-        // } else {
-        //     log.info("정상 회원입니다. 메인 페이지로 리다이렉트합니다.");
-        //     response.sendRedirect("/");
-        // }
+        // 임시 회원 여부 판단
+        boolean isTemporary = loginUser.getSignupMethod() != SignupMethod.USER;
 
+        // JwtTokenProvider로 토큰 생성
+        String token = jwtTokenProvider.createToken(authentication);
+
+        Map<String, Object> responseData = new HashMap<>();
+        responseData.put("email", loginUser.getEmail());
+        responseData.put("temporaryUser", isTemporary);
+        responseData.put("token", token);
+
+        response.setContentType("application/json;charset=UTF-8");
+        response.setStatus(HttpServletResponse.SC_OK);
+        objectMapper.writeValue(response.getWriter(), responseData);
     }
+
+    
+    
 }

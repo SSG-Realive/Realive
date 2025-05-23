@@ -17,7 +17,7 @@ import com.realive.dto.page.PageRequestDTO;
 import com.realive.dto.page.PageResponseDTO;
 import com.realive.dto.product.ProductListDto;
 import com.realive.dto.product.ProductResponseDto;
-import com.realive.service.productview.ProductViewService;
+import com.realive.service.customer.ProductViewService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;

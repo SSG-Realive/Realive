@@ -19,6 +19,9 @@ public class MemberLoginDTO implements UserDetails, OAuth2User {
 
     // OAuth2 attributes (nullable)
     private Map<String, Object> attributes;
+
+    public MemberLoginDTO() {
+    }
     
 
     // 소셜로그인했을 때 사용하는 곳
