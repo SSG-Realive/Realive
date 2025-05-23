@@ -1,6 +1,10 @@
 package com.realive.dto.member;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,10 +14,12 @@ import com.realive.domain.customer.SignupMethod;
 
 import java.util.*;
 
-@Data
+@Getter
+@Setter
 public class MemberLoginDTO implements UserDetails, OAuth2User {
 
     private String email;
+    @ToString.Exclude
     private String password;
     private SignupMethod signupMethod; 
 
@@ -24,7 +30,7 @@ public class MemberLoginDTO implements UserDetails, OAuth2User {
     }
     
 
-    // 소셜로그인했을 때 사용하는 곳
+    // 일반 로그인 시 사용되는 생성자
     public MemberLoginDTO(String email, String password) {
         this.email = email;
         this.password = password;

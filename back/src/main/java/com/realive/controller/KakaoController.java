@@ -85,7 +85,6 @@ public class KakaoController {
 
         log.info("카카오 로그인 사용자 이메일: {}", email);
 
-        // TODO: 이메일로 회원 가입 또는 로그인 처리
 
         return ResponseEntity.ok(email);
     }

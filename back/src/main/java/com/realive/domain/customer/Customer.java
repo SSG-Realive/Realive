@@ -41,6 +41,9 @@ public class Customer {
     private String address;
 
     //디폴트 false
+    //이메일 인증 여부
+    //만약 이메일 인증 구현하면 소셜로그인, 이메일 인증한사람만 true
+    //만약에 구현 안 할시 그냥 전부 true로 바꿔주면 됨
     @Column(name = "is_verified")
     private Boolean isVerified = false;
     
@@ -48,6 +51,10 @@ public class Customer {
     //탈퇴처리 enum 0,1 ?? 
     @Column(name = "is_active")
     private Boolean isActive = true;
+
+    public void deactivate() {
+        this.isActive = false;  // 탈퇴 처리 (비활성)
+    }
 
     public Customer(String email, String password) {
         this.email = email;
@@ -64,6 +71,7 @@ public class Customer {
     private Gender gender;
 
     //일반/소셜 구분
+    @Enumerated(EnumType.STRING)
     @Column(name = "signup_method")
     private SignupMethod signupMethod;
 

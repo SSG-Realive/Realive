@@ -9,6 +9,8 @@ import java.util.List;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -27,7 +29,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import com.realive.security.JwtAuthenticationFilter;
 import com.realive.security_customer.handler.CustomLoginSuccessHandler;
 
-
+@EnableJpaAuditing //JPA Auditing 을 활성화. createDate, modifiedDate 자동으로 처리 
 @Configuration
 @EnableMethodSecurity(prePostEnabled = true)
 @Slf4j
@@ -50,11 +52,14 @@ public class SecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
             .authorizeHttpRequests(auth -> auth
+                .requestMatchers(HttpMethod.POST, "/member/join").permitAll()
                 .requestMatchers("/api/public/**","/sample/login").permitAll()
+                .requestMatchers("/oauth2/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/member/me").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/member/me").authenticated()
                 .anyRequest().authenticated()
             )
             .oauth2Login(config -> config.successHandler(customLoginSuccessHandler));
-            // .oauth2Login(config -> config.successHandler(customLoginSuccessHandler));
 
         return http.build();
     }

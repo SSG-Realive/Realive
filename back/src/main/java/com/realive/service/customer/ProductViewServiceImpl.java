@@ -1,4 +1,4 @@
-package com.realive.service.productview;
+package com.realive.service.customer;
 
 import java.util.NoSuchElementException;
 
@@ -12,7 +12,6 @@ import com.realive.dto.product.ProductListDto;
 import com.realive.dto.product.ProductResponseDto;
 import com.realive.repository.productview.ProductDetail;
 import com.realive.repository.productview.ProductSearch;
-import com.realive.service.customer.ProductViewService;
 
 import lombok.extern.log4j.Log4j2;
 

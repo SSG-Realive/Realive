@@ -31,7 +31,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         log.info("loadUserByUsername: " + username);
 
         // email 기준으로 Customer 찾기
-        Customer customer = customerLoginRepository.findByEmail(username)
+        Customer customer = customerLoginRepository.findByEmailIncludingSocial(username)
                 .orElseThrow(() -> new UsernameNotFoundException("이메일이 존재하지 않습니다: " + username));
 
         // MemberLoginDTO로 변환해서 리턴
@@ -40,17 +40,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                 customer.getPassword()
         );
 
-    //     UserDetails sampleUser = User.builder()
-    //         .username(username)
-    //         //password -> spring security는 password incoder가 있어 에러 날 것
-    //         //noop이용해서 에러 잡기 
-    //         .password("$2a$10$gfxw06pr1zx02u5Q4EBIruHgRizz9w7xvHGGGVjnWO8CNe18oT.tS") 
-    //         .roles("USER")
-    //         .build();
 
-    //     return sampleUser;
-
-    // }
     }
     
     
