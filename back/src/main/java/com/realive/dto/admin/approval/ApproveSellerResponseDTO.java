@@ -1,4 +1,4 @@
-package com.realive.dto.admin.management;
+package com.realive.dto.admin.approval;
 
 import java.time.LocalDateTime;
 
