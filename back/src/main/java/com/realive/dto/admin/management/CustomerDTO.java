@@ -1,9 +1,11 @@
 package com.realive.dto.admin.management;
 
 import jdk.jshell.Snippet;
+import lombok.Builder;
 
 import java.time.LocalDateTime;
 
+@Builder
 // 고객 관리
 public class CustomerDTO {
     private Integer id;
@@ -14,7 +16,5 @@ public class CustomerDTO {
     private Integer orderCount;
     private Integer totalSpent;
 
-    public static Snippet builder() {
-    }
-    // 기타 필요한 고객 정보
+
 }

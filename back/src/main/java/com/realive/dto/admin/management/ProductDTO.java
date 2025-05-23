@@ -1,11 +1,13 @@
 package com.realive.dto.admin.management;
 
 import jdk.jshell.Snippet;
+import lombok.Builder;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 // 상품 관리
+@Builder
 public class ProductDTO {
     private Integer id;
     private String name;
@@ -16,7 +18,5 @@ public class ProductDTO {
     private Integer inventory;
     private LocalDateTime registeredAt;
 
-    public static Snippet builder() {
-    }
-    // 기타 필요한 상품 정보
+
 }

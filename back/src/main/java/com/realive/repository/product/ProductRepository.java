@@ -18,5 +18,4 @@ public interface ProductRepository extends JpaRepository<Product, Long>, Product
      */
     List<Product> findBySellerId(Long sellerId);
 
-    Collection<Object> findByStatus(void attr0);
 }

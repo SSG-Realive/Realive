@@ -1,7 +1,10 @@
 package com.realive.dto.admin.management;
 
+import lombok.Builder;
+
 import java.time.LocalDateTime;
 
+@Builder
 // 주문 관리
 public class OrderDTO {
     private Integer id;
@@ -11,9 +14,6 @@ public class OrderDTO {
     private LocalDateTime orderDate;
     private Integer totalAmount;
 
-    public class Builder {
-    }
-//    private List<OrderItemDTO> items;
-    // 기타 필요한 주문 정보
+
 }
 

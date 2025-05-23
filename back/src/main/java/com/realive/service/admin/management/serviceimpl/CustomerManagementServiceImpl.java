@@ -1,28 +1,26 @@
 package com.realive.service.admin.management.serviceimpl;
 
 import com.realive.domain.customer.Customer;
-import com.realive.domain.logs.SalesLog; // SalesLog 엔티티 경로
+import com.realive.domain.logs.SalesLog;
 import com.realive.dto.admin.management.CustomerDTO;
 import com.realive.dto.admin.management.OrderDTO;
 import com.realive.repository.customer.CustomerRepository;
-import com.realive.repository.logs.SalesLogRepository; // SalesLogRepository 주입
-// import com.realive.service.admin.logs.StatService; // StatService 주입 (선택적)
+import com.realive.repository.logs.SalesLogRepository;
 import com.realive.service.admin.management.service.CustomerManagementService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl; // 추가
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List; // 추가
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors; // 추가
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -31,8 +29,7 @@ import java.util.stream.Collectors; // 추가
 public class CustomerManagementServiceImpl implements CustomerManagementService {
 
     private final CustomerRepository customerRepository;
-    private final SalesLogRepository salesLogRepository; // 고객 주문/매출 통계용
-    // private final StatService statService; // 또는 StatService를 통해 조회
+    private final SalesLogRepository salesLogRepository;
 
     @Override
     public Page<CustomerDTO> getCustomers(Pageable pageable) {
@@ -41,34 +38,40 @@ public class CustomerManagementServiceImpl implements CustomerManagementService 
 
     @Override
     public Page<CustomerDTO> searchCustomers(String keyword, Pageable pageable) {
-        if (keyword == null || keyword.trim().isEmpty()) return getCustomers(pageable);
-        return customerRepository.findByNameOrEmailContainingIgnoreCase(keyword, pageable)
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return getCustomers(pageable);
+        }
+        // CustomerRepository에 findByNameContainingIgnoreCaseOrEmailContainingIgnoreCase 메소드가 정의되어 있다고 가정
+        return customerRepository.findByNameContainingIgnoreCaseOrEmailContainingIgnoreCase(keyword, keyword, pageable)
                 .map(this::convertToCustomerDTO);
     }
 
     @Override
     public CustomerDTO getCustomerById(Integer customerId) {
-        Customer customer = customerRepository.findById(customerId.longValue())
-                .orElseThrow(() -> new NoSuchElementException("고객 없음 ID: " + customerId));
+        Optional<Customer> customerOptional = customerRepository.findById(customerId.longValue());
+        Customer customer = customerOptional.orElseThrow(() -> new NoSuchElementException("고객 없음 ID: " + customerId));
         return convertToCustomerDTO(customer);
     }
 
     @Override
     @Transactional
     public CustomerDTO updateCustomerStatus(Integer customerId, String status) {
-        Customer customer = customerRepository.findById(customerId.longValue())
-                .orElseThrow(() -> new NoSuchElementException("고객 없음 ID: " + customerId));
-        if ("ACTIVE".equalsIgnoreCase(status)) customer.setIsActive(true);
-        else if ("INACTIVE".equalsIgnoreCase(status)) customer.setIsActive(false);
-        else throw new IllegalArgumentException("유효하지 않은 상태값: " + status);
+        Optional<Customer> customerOptional = customerRepository.findById(customerId.longValue());
+        Customer customer = customerOptional.orElseThrow(() -> new NoSuchElementException("고객 없음 ID: " + customerId));
+
+        if ("ACTIVE".equalsIgnoreCase(status)) {
+            customer.setActive(true);
+        } else if ("INACTIVE".equalsIgnoreCase(status)) {
+            customer.setActive(false);
+        } else {
+            throw new IllegalArgumentException("유효하지 않은 상태값: " + status);
+        }
         return convertToCustomerDTO(customerRepository.save(customer));
     }
 
     @Override
     public Page<OrderDTO> getCustomerOrders(Integer customerId, Pageable pageable) {
-        log.info("고객 주문 이력 조회 (SalesLog 기반) - Customer ID: {}", customerId);
-        // SalesLogRepository에 findByCustomerId(Long customerId, Pageable pageable) 메소드 필요
-        Page<SalesLog> salesLogsPage = salesLogRepository.findByCustomerId(customerId.longValue(), pageable);
+        Page<SalesLog> salesLogsPage = salesLogRepository.findByCustomerId(customerId, pageable);
         List<OrderDTO> orderDTOs = salesLogsPage.getContent().stream()
                 .map(this::convertSalesLogToOrderDTO)
                 .collect(Collectors.toList());
@@ -77,40 +80,43 @@ public class CustomerManagementServiceImpl implements CustomerManagementService 
 
     @Override
     public Map<String, Object> getCustomerStatistics(Integer customerId) {
-        log.info("고객 통계 조회 (SalesLog 기반) - Customer ID: {}", customerId);
-        Customer customer = customerRepository.findById(customerId.longValue())
-                .orElseThrow(() -> new NoSuchElementException("고객 없음 ID: " + customerId));
+        Optional<Customer> customerOptional = customerRepository.findById(customerId.longValue());
+        Customer customer = customerOptional.orElseThrow(() -> new NoSuchElementException("고객 없음 ID: " + customerId));
+
         Map<String, Object> stats = new HashMap<>();
-        stats.put("customerId", customer.getId());
+        stats.put("customerId", customer.getId() != null ? customer.getId().intValue() : null);
         stats.put("customerName", customer.getName());
-        stats.put("registeredAt", customer.getCreated());
+        stats.put("registeredAt", customer.getCreatedAt());
 
-        // SalesLogRepository에 고객별 집계 메소드 필요
-        // 예: countDistinctOrderByCustomerId, sumTotalPriceByCustomerId
-        Long totalOrders = salesLogRepository.countDistinctOrdersByCustomerId(customerId.longValue());
-        BigDecimal totalSpent = salesLogRepository.sumTotalPriceByCustomerId(customerId.longValue());
+        Integer totalOrders = salesLogRepository.countDistinctOrdersByCustomerId(customerId);
+        Integer totalSpent = salesLogRepository.sumTotalPriceByCustomerId(customerId);
 
-        stats.put("totalOrders", totalOrders != null ? totalOrders : 0L);
-        stats.put("totalSpent", totalSpent != null ? totalSpent : BigDecimal.ZERO);
+        stats.put("totalOrders", totalOrders != null ? totalOrders : 0);
+        stats.put("totalSpent", totalSpent != null ? totalSpent : 0);
         return stats;
     }
 
     private CustomerDTO convertToCustomerDTO(Customer e) {
-        return CustomerDTO.builder().id(e.getId()).name(e.getName()).email(e.getEmail()).status(e.getIsActive() ? "ACTIVE" : "INACTIVE").registeredAt(e.getCreated()).build();
+        if (e == null) return null;
+        return CustomerDTO.builder()
+                .id(e.getId() != null ? e.getId().intValue() : null)
+                .name(e.getName())
+                .email(e.getEmail())
+                .status(e.isActive() ? "ACTIVE" : "INACTIVE")
+                .registeredAt(e.getCreatedAt())
+                .orderCount(e.getOrderCount())
+                .totalSpent(e.getTotalSpent())
+                .build();
     }
 
     private OrderDTO convertSalesLogToOrderDTO(SalesLog sl) {
-        // SalesLog 정보를 OrderDTO로 변환 (OrderDTO 구조에 맞게 필드 매핑)
-        // SalesLog에 주문 관련 주요 정보(주문 ID, 상품 정보 요약 등)가 있다면 활용
-        OrderDTO.Builder builder = OrderDTO.builder();
-        // SalesLog에 orderId 또는 orderItemId가 있다면 DTO의 id로 사용
-        builder.id(sl.getOrderItemId() != null ? sl.getOrderItemId().longValue() : (sl.getId() != null ? sl.getId().longValue() : null) );
-        builder.orderDate(sl.getSoldAt() != null ? sl.getSoldAt().atStartOfDay() : null); // soldAt은 LocalDate 가정
-        builder.totalAmount(sl.getTotalPrice() != null ? BigDecimal.valueOf(sl.getTotalPrice()) : BigDecimal.ZERO);
-        builder.status("COMPLETED"); // SalesLog는 판매 완료된 것으로 간주
-        builder.customerId(sl.getCustomerId() != null ? sl.getCustomerId().longValue() : null);
-        // 추가적으로 productId, productName 등을 SalesLog 또는 연관 Product 정보에서 가져와 설정
-        // builder.productName(sl.getProduct() != null ? sl.getProduct().getName() : "N/A");
-        return builder.build();
+        if (sl == null) return null;
+        return OrderDTO.builder()
+                .id(sl.getOrderItemId() != null ? sl.getOrderItemId() : sl.getId())
+                .customerId(sl.getCustomerId())
+                .status("COMPLETED")
+                .orderDate(sl.getSoldAt() != null ? sl.getSoldAt().atStartOfDay() : null)
+                .totalAmount(sl.getTotalPrice())
+                .build();
     }
 }

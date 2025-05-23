@@ -1,8 +1,11 @@
 package com.realive.dto.admin.management;
 
+import lombok.Builder;
+
 import java.time.LocalDateTime;
 
 // 리뷰 관리
+@Builder
 public class ReviewDTO {
     private Integer id;
     private Integer productId;

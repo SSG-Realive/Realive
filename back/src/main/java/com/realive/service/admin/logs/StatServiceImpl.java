@@ -12,7 +12,9 @@ import com.realive.repository.logs.PenaltyLogRepository;
 import com.realive.repository.logs.SalesLogRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.ArrayList;
@@ -23,6 +25,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class StatServiceImpl implements StatService {
 
     private final SalesLogRepository salesLogRepository;
@@ -32,28 +35,24 @@ public class StatServiceImpl implements StatService {
 
     @Override
     public DailySalesSummaryDTO getDailySalesSummary(LocalDate date) {
-        // 날짜별 판매 통계 조회 로직 구현
-        // 1. 해당 날짜의 판매 내역 조회
-        // 2. 판매 건수, 판매 금액, 판매 수량 집계
-
-        Integer totalSalesAmount = 0;  // salesLogRepository.sumTotalPriceByDate(date);
-        Integer totalSalesCount = 0;   // salesLogRepository.countByDate(date);
-        Integer totalQuantity = 0;     // salesLogRepository.sumQuantityByDate(date);
+        Integer totalSalesAmount = salesLogRepository.sumTotalPriceByDate(date);
+        Integer totalSalesCount = salesLogRepository.countBySoldAt(date);
+        Integer totalQuantity = salesLogRepository.sumQuantityByDate(date);
+        Integer totalCommissionAmount = commissionLogRepository.sumCommissionAmountByDate(date);
 
         return DailySalesSummaryDTO.builder()
                 .date(date)
-                .totalSalesCount(totalSalesCount)
-                .totalSalesAmount(totalSalesAmount)
-                .totalQuantity(totalQuantity)
+                .totalSalesCount(totalSalesCount != null ? totalSalesCount : 0)
+                .totalSalesAmount(totalSalesAmount != null ? totalSalesAmount : 0) // DTO가 Integer
+                .totalQuantity(totalQuantity != null ? totalQuantity : 0)
+                // DailySalesSummaryDTO에 totalCommission 필드가 있다면 추가
+                // .totalCommission(totalCommissionAmount != null ? totalCommissionAmount : 0)
                 .build();
     }
 
     @Override
     public SalesLogDetailListDTO getDailySalesLogDetails(LocalDate date) {
-        // 날짜별 상세 판매 내역 조회 로직 구현
-        // 해당 날짜의 모든 판매 로그를 DTO로 변환하여 반환
-
-        List<SalesLog> salesLogs = new ArrayList<>(); // salesLogRepository.findBySoldAt(date);
+        List<SalesLog> salesLogs = salesLogRepository.findBySoldAtBetween(date, date);
         List<SalesLogDTO> salesLogDTOs = salesLogs.stream()
                 .map(this::convertToSalesLogDTO)
                 .collect(Collectors.toList());
@@ -66,156 +65,143 @@ public class StatServiceImpl implements StatService {
 
     @Override
     public MonthlySalesSummaryDTO getMonthlySalesSummary(YearMonth yearMonth) {
-        // 월별 판매 통계 조회 로직 구현
-        // 1. 해당 월의 첫날과 마지막 날을 계산
-        // 2. 해당 기간 내 판매 내역 조회
-        // 3. 판매 건수, 판매 금액, 판매 수량 집계
-
         LocalDate startDate = yearMonth.atDay(1);
         LocalDate endDate = yearMonth.atEndOfMonth();
 
-        List<SalesLog> monthlySales = new ArrayList<>(); // salesLogRepository.findBySoldAtBetween(startDate, endDate);
+        Integer totalSalesAmount = salesLogRepository.sumTotalPriceBySoldAtBetween(startDate, endDate);
+        Long totalSalesCountLong = salesLogRepository.countDistinctOrdersBySoldAtBetween(startDate, endDate);
 
-        Integer totalSalesAmount = 0; // monthlySales.stream().mapToInt(SalesLog::getTotalPrice).sum();
-        Integer totalQuantity = 0;    // monthlySales.stream().mapToInt(SalesLog::getQuantity).sum();
+        List<SalesLog> monthlySales = salesLogRepository.findBySoldAtBetween(startDate, endDate);
+        Integer totalQuantity = monthlySales.stream()
+                .mapToInt(sl -> sl.getQuantity() != null ? sl.getQuantity() : 0)
+                .sum();
 
         return MonthlySalesSummaryDTO.builder()
-                .month(yearMonth)
-                .totalSalesCount(monthlySales.size())
-                .totalSalesAmount(totalSalesAmount)
-                .totalQuantity(totalQuantity)
+                .month(yearMonth) // DTO가 YearMonth
+                .totalSalesCount(totalSalesCountLong != null ? totalSalesCountLong.intValue() : 0) // DTO가 Integer
+                .totalSalesAmount(totalSalesAmount != null ? totalSalesAmount : 0) // DTO가 Integer
+                .totalQuantity(totalQuantity) // DTO가 Integer
                 .build();
     }
 
     @Override
     public MonthlySalesLogDetailListDTO getMonthlySalesLogDetails(YearMonth yearMonth) {
-        // 월별 상세 판매 내역 조회 로직 구현
-        // 해당 월의 모든 판매 로그를 DTO로 변환하여 반환
-
         LocalDate startDate = yearMonth.atDay(1);
         LocalDate endDate = yearMonth.atEndOfMonth();
-
-        List<SalesLog> monthlySales = new ArrayList<>(); // salesLogRepository.findBySoldAtBetween(startDate, endDate);
+        List<SalesLog> monthlySales = salesLogRepository.findBySoldAtBetween(startDate, endDate);
         List<SalesLogDTO> salesLogDTOs = monthlySales.stream()
                 .map(this::convertToSalesLogDTO)
                 .collect(Collectors.toList());
 
         return MonthlySalesLogDetailListDTO.builder()
-                .month(yearMonth)
+                .month(yearMonth) // DTO가 YearMonth
                 .salesLogs(salesLogDTOs)
                 .build();
     }
 
     @Override
     public List<DailySalesSummaryDTO> getDailySummariesInMonth(YearMonth yearMonth) {
-        // 월별 일자별 판매 통계 조회 로직 구현
-        // 해당 월의 각 날짜별로 판매 통계를 조회
-
         List<DailySalesSummaryDTO> result = new ArrayList<>();
-
         LocalDate startDate = yearMonth.atDay(1);
         LocalDate endDate = yearMonth.atEndOfMonth();
-
         LocalDate currentDate = startDate;
         while (!currentDate.isAfter(endDate)) {
             result.add(getDailySalesSummary(currentDate));
             currentDate = currentDate.plusDays(1);
         }
-
         return result;
     }
 
     @Override
     public DailySalesSummaryDTO getSellerDailySalesSummary(Integer sellerId, LocalDate date) {
-        // 판매자별 일자별 판매 통계 조회 로직 구현
+        Integer totalSalesAmount = salesLogRepository.sumTotalPriceBySellerIdAndSoldAtBetween(sellerId, date, date);
+        Long distinctOrderCountLong = salesLogRepository.countDistinctOrdersBySellerIdAndSoldAtBetween(sellerId, date, date);
+        Integer commissionForSellerOnDate = commissionLogRepository.sumCommissionAmountBySellerAndDateRange(sellerId, date, date);
 
-        List<SalesLog> sellerSales = new ArrayList<>(); // salesLogRepository.findBySellerIdAndSoldAt(sellerId, date);
-
-        Integer totalSalesAmount = 0; // sellerSales.stream().mapToInt(SalesLog::getTotalPrice).sum();
-        Integer totalQuantity = 0;    // sellerSales.stream().mapToInt(SalesLog::getQuantity).sum();
+        List<SalesLog> sellerSalesOnDate = salesLogRepository.findBySoldAtBetween(date, date).stream()
+                .filter(sl -> sl.getSellerId() != null && sl.getSellerId().equals(sellerId))
+                .collect(Collectors.toList());
+        Integer totalQuantity = sellerSalesOnDate.stream().mapToInt(sl -> sl.getQuantity() != null ? sl.getQuantity() : 0).sum();
 
         return DailySalesSummaryDTO.builder()
                 .date(date)
-                .totalSalesCount(sellerSales.size())
-                .totalSalesAmount(totalSalesAmount)
+                .totalSalesCount(distinctOrderCountLong != null ? distinctOrderCountLong.intValue() : 0)
+                .totalSalesAmount(totalSalesAmount != null ? totalSalesAmount : 0)
                 .totalQuantity(totalQuantity)
+                // .totalCommission(commissionForSellerOnDate != null ? commissionForSellerOnDate : 0) // DailySalesSummaryDTO에 필드 추가 필요
                 .build();
     }
 
     @Override
     public MonthlySalesSummaryDTO getSellerMonthlySalesSummary(Integer sellerId, YearMonth yearMonth) {
-        // 판매자별 월별 판매 통계 조회 로직 구현
-
         LocalDate startDate = yearMonth.atDay(1);
         LocalDate endDate = yearMonth.atEndOfMonth();
 
-        List<SalesLog> sellerMonthlySales = new ArrayList<>();
-        // salesLogRepository.findBySellerIdAndSoldAtBetween(sellerId, startDate, endDate);
+        Integer totalSalesAmount = salesLogRepository.sumTotalPriceBySellerIdAndSoldAtBetween(sellerId, startDate, endDate);
+        Long distinctOrderCountLong = salesLogRepository.countDistinctOrdersBySellerIdAndSoldAtBetween(sellerId, startDate, endDate);
+        Integer commissionForSellerInMonth = commissionLogRepository.sumCommissionAmountBySellerAndDateRange(sellerId, startDate, endDate);
 
-        Integer totalSalesAmount = 0; // sellerMonthlySales.stream().mapToInt(SalesLog::getTotalPrice).sum();
-        Integer totalQuantity = 0;    // sellerMonthlySales.stream().mapToInt(SalesLog::getQuantity).sum();
+        List<SalesLog> sellerMonthlySales = salesLogRepository.findBySoldAtBetween(startDate, endDate).stream()
+                .filter(sl -> sl.getSellerId() != null && sl.getSellerId().equals(sellerId))
+                .collect(Collectors.toList());
+        Integer totalQuantity = sellerMonthlySales.stream().mapToInt(sl -> sl.getQuantity() != null ? sl.getQuantity() : 0).sum();
 
         return MonthlySalesSummaryDTO.builder()
                 .month(yearMonth)
-                .totalSalesCount(sellerMonthlySales.size())
-                .totalSalesAmount(totalSalesAmount)
+                .totalSalesCount(distinctOrderCountLong != null ? distinctOrderCountLong.intValue() : 0)
+                .totalSalesAmount(totalSalesAmount != null ? totalSalesAmount : 0)
                 .totalQuantity(totalQuantity)
+                // .totalCommission(commissionForSellerInMonth != null ? commissionForSellerInMonth : 0) // MonthlySalesSummaryDTO에 필드 추가 필요
                 .build();
     }
 
     @Override
     public DailySalesSummaryDTO getProductDailySalesSummary(Integer productId, LocalDate date) {
-        // 상품별 일자별 판매 통계 조회 로직 구현
+        Integer totalSalesAmount = salesLogRepository.sumTotalPriceByProductIdAndSoldAtBetween(productId, date, date);
+        Integer totalQuantity = salesLogRepository.sumQuantityByProductIdAndSoldAtBetween(productId, date, date);
 
-        List<SalesLog> productSales = new ArrayList<>(); // salesLogRepository.findByProductIdAndSoldAt(productId, date);
-
-        Integer totalSalesAmount = 0; // productSales.stream().mapToInt(SalesLog::getTotalPrice).sum();
-        Integer totalQuantity = 0;    // productSales.stream().mapToInt(SalesLog::getQuantity).sum();
+        List<SalesLog> productSalesOnDate = salesLogRepository.findBySoldAtBetween(date, date).stream()
+                .filter(sl -> sl.getProductId() != null && sl.getProductId().equals(productId))
+                .collect(Collectors.toList());
+        long distinctOrderCount = productSalesOnDate.stream().map(SalesLog::getOrderItemId).distinct().count();
 
         return DailySalesSummaryDTO.builder()
                 .date(date)
-                .totalSalesCount(productSales.size())
-                .totalSalesAmount(totalSalesAmount)
-                .totalQuantity(totalQuantity)
+                .totalSalesCount((int) distinctOrderCount)
+                .totalSalesAmount(totalSalesAmount != null ? totalSalesAmount : 0)
+                .totalQuantity(totalQuantity != null ? totalQuantity : 0)
                 .build();
     }
 
     @Override
     public MonthlySalesSummaryDTO getProductMonthlySalesSummary(Integer productId, YearMonth yearMonth) {
-        // 상품별 월별 판매 통계 조회 로직 구현
-
         LocalDate startDate = yearMonth.atDay(1);
         LocalDate endDate = yearMonth.atEndOfMonth();
 
-        List<SalesLog> productMonthlySales = new ArrayList<>();
-        // salesLogRepository.findByProductIdAndSoldAtBetween(productId, startDate, endDate);
+        Integer totalSalesAmount = salesLogRepository.sumTotalPriceByProductIdAndSoldAtBetween(productId, startDate, endDate);
+        Integer totalQuantity = salesLogRepository.sumQuantityByProductIdAndSoldAtBetween(productId, startDate, endDate);
 
-        Integer totalSalesAmount = 0; // productMonthlySales.stream().mapToInt(SalesLog::getTotalPrice).sum();
-        Integer totalQuantity = 0;    // productMonthlySales.stream().mapToInt(SalesLog::getQuantity).sum();
+        List<SalesLog> productMonthlySales = salesLogRepository.findBySoldAtBetween(startDate, endDate).stream()
+                .filter(sl -> sl.getProductId() != null && sl.getProductId().equals(productId))
+                .collect(Collectors.toList());
+        long distinctOrderCount = productMonthlySales.stream().map(SalesLog::getOrderItemId).distinct().count();
 
         return MonthlySalesSummaryDTO.builder()
                 .month(yearMonth)
-                .totalSalesCount(productMonthlySales.size())
-                .totalSalesAmount(totalSalesAmount)
-                .totalQuantity(totalQuantity)
+                .totalSalesCount((int) distinctOrderCount)
+                .totalSalesAmount(totalSalesAmount != null ? totalSalesAmount : 0)
+                .totalQuantity(totalQuantity != null ? totalQuantity : 0)
                 .build();
     }
 
     @Override
     public Map<String, Object> getDashboardStats(LocalDate date) {
-        // 대시보드용 통합 통계 조회 로직 구현
-        // 일별 판매 통계, 월별 판매 통계, 판매자별 통계 등을 조합
-
         Map<String, Object> dashboardStats = new HashMap<>();
-
-        // 오늘 판매 통계
-        dashboardStats.put("dailySalesSummary", getDailySalesSummary(date));
-
-        // 이번 달 판매 통계
+        DailySalesSummaryDTO dailySalesSummary = getDailySalesSummary(date);
+        dashboardStats.put("dailySalesSummary", dailySalesSummary);
         YearMonth currentMonth = YearMonth.from(date);
         dashboardStats.put("monthlySalesSummary", getMonthlySalesSummary(currentMonth));
 
-        // 최근 7일간 일별 판매 통계
         List<DailySalesSummaryDTO> last7DaysStats = new ArrayList<>();
         for (int i = 6; i >= 0; i--) {
             LocalDate pastDate = date.minusDays(i);
@@ -223,14 +209,27 @@ public class StatServiceImpl implements StatService {
         }
         dashboardStats.put("last7DaysStats", last7DaysStats);
 
+        Integer totalPayoutToday = payoutLogRepository.sumPayoutAmountByProcessedDate(date);
+        dashboardStats.put("totalPayoutToday", totalPayoutToday != null ? BigDecimal.valueOf(totalPayoutToday) : BigDecimal.ZERO);
+
+        Integer penaltyCountToday = penaltyLogRepository.countByCreatedAtDate(date);
+        dashboardStats.put("penaltyCountToday", penaltyCountToday != null ? penaltyCountToday : 0);
+
         return dashboardStats;
     }
 
-    // SalesLog를 SalesLogDTO로 변환하는 헬퍼 메서드
     private SalesLogDTO convertToSalesLogDTO(SalesLog salesLog) {
-        // 여기에 변환 로직 구현
+        if (salesLog == null) return null;
         return SalesLogDTO.builder()
-                // DTO 필드 설정
+                .id(salesLog.getId())
+                .orderItemId(salesLog.getOrderItemId())
+                .productId(salesLog.getProductId())
+                .sellerId(salesLog.getSellerId())
+                .customerId(salesLog.getCustomerId())
+                .quantity(salesLog.getQuantity())
+                .unitPrice(salesLog.getUnitPrice())
+                .totalPrice(salesLog.getTotalPrice())
+                .soldAt(salesLog.getSoldAt())
                 .build();
     }
 }

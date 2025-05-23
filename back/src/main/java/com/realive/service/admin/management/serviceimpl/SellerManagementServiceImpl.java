@@ -4,10 +4,10 @@ import com.realive.domain.product.Product;
 import com.realive.domain.seller.Seller;
 import com.realive.dto.admin.management.ProductDTO;
 import com.realive.dto.admin.management.SellerDTO;
-import com.realive.dto.logs.salessum.MonthlySalesSummaryDTO; // StatService DTO
+import com.realive.dto.logs.salessum.MonthlySalesSummaryDTO;
 import com.realive.repository.product.ProductRepository;
 import com.realive.repository.seller.SellerRepository;
-import com.realive.service.admin.logs.StatService; // StatService 주입
+import com.realive.service.admin.logs.StatService;
 import com.realive.service.admin.management.service.SellerManagementService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +36,7 @@ public class SellerManagementServiceImpl implements SellerManagementService {
 
     private final SellerRepository sellerRepository;
     private final ProductRepository productRepository;
-    private final StatService statService; // 판매자 매출 통계용
+    private final StatService statService;
 
     @Override
     public Page<SellerDTO> getSellers(Pageable pageable) {
@@ -86,14 +86,14 @@ public class SellerManagementServiceImpl implements SellerManagementService {
         if (commission == null || commission.compareTo(BigDecimal.ZERO) < 0 || commission.compareTo(new BigDecimal("100")) > 0) {
             throw new IllegalArgumentException("커미션은 0~100 사이 값.");
         }
-        // seller.setCommissionRate(commission); // Seller.commissionRate 필드 가정
+        // seller.setCommissionRate(commission); // Seller 엔티티에 필드 필요
         log.warn("Seller commission update logic for seller ID {} needs to be implemented.", sellerId);
         return convertToSellerDTO(sellerRepository.save(seller));
     }
 
     @Override
     public Page<ProductDTO> getSellerProducts(Integer sellerId, Pageable pageable) {
-        return productRepository.findBySellerId(sellerId.longValue(), pageable)
+        return productRepository.findBySellerId(sellerId.longValue(), pageable) // ProductRepository에 Page 반환 메소드 가정
                 .map(this::convertToProductDTO);
     }
 
@@ -103,16 +103,15 @@ public class SellerManagementServiceImpl implements SellerManagementService {
         Seller seller = sellerRepository.findById(sellerId.longValue())
                 .orElseThrow(() -> new NoSuchElementException("판매자 없음 ID: " + sellerId));
         Map<String, Object> stats = new HashMap<>();
-        stats.put("sellerId", seller.getId());
+        stats.put("sellerId", sellerId);
         stats.put("sellerName", seller.getName());
 
-        // StatService를 사용하여 판매자별 월별 통계 집계 (예시)
-        // startDate와 endDate를 포함하는 모든 월에 대해 getSellerMonthlySalesSummary 호출
+        BigDecimal totalSalesForPeriod = BigDecimal.ZERO;
+        long totalOrdersForPeriod = 0L; // 또는 총 판매 아이템 수
+
         YearMonth startYM = YearMonth.from(startDate);
         YearMonth endYM = YearMonth.from(endDate);
-        BigDecimal totalSalesForPeriod = BigDecimal.ZERO;
-        long totalOrdersForPeriod = 0L; // StatService의 DTO에 판매건수(주문단위)가 있다면 합산
-
+        // 해당 기간의 모든 월에 대해 StatService 호출
         for (YearMonth ym = startYM; !ym.isAfter(endYM); ym = ym.plusMonths(1)) {
             MonthlySalesSummaryDTO monthlySummary = statService.getSellerMonthlySalesSummary(sellerId, ym);
             if (monthlySummary != null && monthlySummary.getTotalSalesAmount() != null) {
@@ -123,7 +122,7 @@ public class SellerManagementServiceImpl implements SellerManagementService {
             }
         }
         stats.put("totalSalesInPeriod", totalSalesForPeriod);
-        stats.put("totalOrdersInPeriod", totalOrdersForPeriod);
+        stats.put("totalOrdersInPeriod", totalOrdersForPeriod); // 이 값은 "주문 건수"인지 "판매된 아이템 수"인지 StatService DTO 정의에 따라 달라짐
         return stats;
     }
 
@@ -139,9 +138,29 @@ public class SellerManagementServiceImpl implements SellerManagementService {
     }
 
     private SellerDTO convertToSellerDTO(Seller e) {
-        return SellerDTO.builder().id(e.getId()).name(e.getName()).email(e.getEmail()).status(e.isApproved() ? "APPROVED" : "PENDING").registeredAt(e.getCreatedAt()).build();
+        if (e == null) return null;
+        return SellerDTO.builder()
+                .id(e.getId() != null ? e.getId().intValue() : null)
+                .name(e.getName())
+                // .email(e.getEmail()) // SellerDTO에 있다면
+                .status(e.isApproved() ? "APPROVED" : "PENDING")
+                .registeredAt(e.getCreatedAt())
+                // .productCount(...) // SellerDTO에 있다면
+                // .totalSales(...) // SellerDTO에 있다면
+                // .commission(...) // SellerDTO에 있다면
+                .build();
     }
     private ProductDTO convertToProductDTO(Product e) {
-        return ProductDTO.builder().id(e.getId()).name(e.getName()).price(BigDecimal.valueOf(e.getPrice())).inventory(e.getStock()).status(e.getStatus() != null ? e.getStatus().name() : null).sellerId(e.getSeller() != null ? e.getSeller().getId() : null).sellerName(e.getSeller() != null ? e.getSeller().getName() : null).registeredAt(e.getCreatedAt()).build();
+        if (e == null) return null;
+        return ProductDTO.builder()
+                .id(e.getId() != null ? e.getId().intValue() : null)
+                .name(e.getName())
+                .price(BigDecimal.valueOf(e.getPrice()))
+                .inventory(e.getStock())
+                .status(e.getStatus() != null ? e.getStatus().name() : null)
+                .sellerId(e.getSeller() != null && e.getSeller().getId() != null ? e.getSeller().getId().intValue() : null)
+                .sellerName(e.getSeller() != null ? e.getSeller().getName() : null)
+                .registeredAt(e.getCreatedAt())
+                .build();
     }
 }

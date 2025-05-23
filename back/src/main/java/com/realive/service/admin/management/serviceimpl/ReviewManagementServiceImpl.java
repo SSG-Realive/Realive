@@ -18,6 +18,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -36,11 +38,16 @@ public class ReviewManagementServiceImpl implements ReviewManagementService {
     public Page<ReviewDTO> searchReviews(Map<String, Object> searchParams, Pageable pageable) {
         Specification<SellerReview> spec = (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
-            if (searchParams.get("productName") != null && !searchParams.get("productName").toString().isEmpty() && root.get("product") != null) {
-                predicates.add(cb.like(root.get("product").get("name"), "%" + searchParams.get("productName").toString() + "%"));
+            // SellerReview 엔티티에 product, customer 참조가 없으므로 해당 조건으로 검색 불가.
+            // Seller 참조는 있으므로 sellerName으로는 검색 가능 (SellerReview.seller.name)
+            if (searchParams.get("sellerName") != null && !searchParams.get("sellerName").toString().isEmpty() && root.get("seller") != null) {
+                predicates.add(cb.like(root.get("seller").get("name"), "%" + searchParams.get("sellerName").toString() + "%"));
             }
-            if (searchParams.get("customerName") != null && !searchParams.get("customerName").toString().isEmpty() && root.get("customer") != null) {
-                predicates.add(cb.like(root.get("customer").get("name"), "%" + searchParams.get("customerName").toString() + "%"));
+            if (searchParams.get("rating") != null && searchParams.get("rating").toString().matches("\\d+")) {
+                predicates.add(cb.equal(root.get("rating"), Integer.parseInt(searchParams.get("rating").toString())));
+            }
+            if (searchParams.get("status") != null && !searchParams.get("status").toString().isEmpty()) {
+                predicates.add(cb.equal(root.get("status"), searchParams.get("status").toString()));
             }
             return cb.and(predicates.toArray(new Predicate[0]));
         };
@@ -49,18 +56,18 @@ public class ReviewManagementServiceImpl implements ReviewManagementService {
 
     @Override
     public ReviewDTO getReviewById(Integer reviewId) {
-        SellerReview review = sellerReviewRepository.findById(reviewId.longValue())
-                .orElseThrow(() -> new NoSuchElementException("리뷰 없음 ID: " + reviewId));
+        Optional<SellerReview> reviewOptional = sellerReviewRepository.findById(reviewId.longValue());
+        SellerReview review = reviewOptional.orElseThrow(() -> new NoSuchElementException("리뷰 없음 ID: " + reviewId));
         return convertToReviewDTO(review);
     }
 
     @Override
     @Transactional
     public ReviewDTO updateReviewStatus(Integer reviewId, String status) {
-        SellerReview review = sellerReviewRepository.findById(reviewId.longValue())
-                .orElseThrow(() -> new NoSuchElementException("리뷰 없음 ID: " + reviewId));
-        // review.setStatus(status); // SellerReview 엔티티에 status 필드 및 로직 필요
-        log.warn("Review status update logic for review ID {} (new status: {}) needs to be implemented.", reviewId, status);
+        Optional<SellerReview> reviewOptional = sellerReviewRepository.findById(reviewId.longValue());
+        SellerReview review = reviewOptional.orElseThrow(() -> new NoSuchElementException("리뷰 없음 ID: " + reviewId));
+        review.setStatus(status); // SellerReview 엔티티에 status 필드가 String이라고 가정
+        log.info("리뷰 ID {} 상태 업데이트: {}", reviewId, status);
         return convertToReviewDTO(sellerReviewRepository.save(review));
     }
 
@@ -71,23 +78,31 @@ public class ReviewManagementServiceImpl implements ReviewManagementService {
             throw new NoSuchElementException("삭제할 리뷰 없음 ID: " + reviewId);
         }
         sellerReviewRepository.deleteById(reviewId.longValue());
+        log.info("리뷰 ID {} 삭제 완료", reviewId);
     }
 
     @Override
     public Page<ReviewDTO> getProductReviews(Integer productId, Pageable pageable) {
-        return sellerReviewRepository.findReviewsByProductId(productId.longValue(), pageable)
-                .map(this::convertToReviewDTO);
+        log.warn("getProductReviews: SellerReview 엔티티에 Product 참조가 없거나, SellerReviewRepository에 관련 메소드가 없습니다.");
+        // SellerReviewRepository에 findReviewsByProductId 메소드가 있고, SellerReview에 Product 참조가 있다면 주석 해제
+        // return sellerReviewRepository.findReviewsByProductId(productId.longValue(), pageable)
+        // .map(this::convertToReviewDTO);
+        return Page.empty(pageable);
     }
 
     @Override
     public Page<ReviewDTO> getCustomerReviews(Integer customerId, Pageable pageable) {
-        return sellerReviewRepository.findReviewsByCustomerId(customerId.longValue(), pageable)
-                .map(this::convertToReviewDTO);
+        log.warn("getCustomerReviews: SellerReview 엔티티에 Customer 참조가 없거나, SellerReviewRepository에 관련 메소드가 없습니다.");
+        // SellerReviewRepository에 findReviewsByCustomerId 메소드가 있고, SellerReview에 Customer 참조가 있다면 주석 해제
+        // return sellerReviewRepository.findReviewsByCustomerId(customerId.longValue(), pageable)
+        // .map(this::convertToReviewDTO);
+        return Page.empty(pageable);
     }
 
     @Override
     public Page<ReviewDTO> getSellerProductReviews(Integer sellerId, Pageable pageable) {
-        return sellerReviewRepository.findReviewsBySellerId(sellerId.longValue(), pageable)
+        // 이 메소드는 SellerReview 엔티티가 Seller를 참조하고 있으므로 SellerReviewRepository.findBySellerId 사용 가능
+        return sellerReviewRepository.findBySellerId(sellerId.longValue(), pageable)
                 .map(this::convertToReviewDTO);
     }
 
@@ -95,12 +110,39 @@ public class ReviewManagementServiceImpl implements ReviewManagementService {
     public Map<String, Object> getReviewStatistics(Integer productId) {
         Map<String, Object> stats = new HashMap<>();
         stats.put("productId", productId);
-        stats.put("averageRating", sellerReviewRepository.getAverageRatingByProductId(productId.longValue()));
-        stats.put("totalReviews", sellerReviewRepository.countReviewsByProductId(productId.longValue()));
+        log.warn("getReviewStatistics: SellerReview 엔티티에 Product 참조가 없거나, SellerReviewRepository에 관련 통계 메소드가 없습니다.");
+        // SellerReviewRepository에 getAverageRatingByProductId, countReviewsByProductId 메소드가 있고,
+        // SellerReview 엔티티에 Product 참조가 있다면 주석 해제
+        // stats.put("averageRating", sellerReviewRepository.getAverageRatingByProductId(productId.longValue()));
+        // stats.put("totalReviews", sellerReviewRepository.countReviewsByProductId(productId.longValue()));
+        stats.put("averageRating", 0.0); // 임시 기본값
+        stats.put("totalReviews", 0L);  // 임시 기본값
         return stats;
     }
 
     private ReviewDTO convertToReviewDTO(SellerReview e) {
-        return ReviewDTO.builder().id(e.getId()).productId(e.getProduct() != null ? e.getProduct().getId() : null).productName(e.getProduct() != null ? e.getProduct().getName() : null).customerId(e.getCustomer() != null ? e.getCustomer().getId() : null).customerName(e.getCustomer() != null ? e.getCustomer().getName() : null).rating(e.getRating()).content(e.getContent()).createdAt(e.getCreatedAt()).build();
+        if (e == null) return null;
+        ReviewDTO.Builder builder = ReviewDTO.builder()
+                .id(e.getId() != null ? e.getId().intValue() : null)
+                .rating(e.getRating())
+                .content(e.getContent())
+                .status(e.getStatus())
+                .createdAt(e.getCreatedAt());
+
+        // SellerReview 엔티티에 product, customer 참조가 있다면 해당 정보를 DTO에 추가
+        // if (e.getProduct() != null) {
+        // builder.productId(e.getProduct().getId() != null ? e.getProduct().getId().intValue() : null);
+        // builder.productName(e.getProduct().getName());
+        // }
+        // if (e.getCustomer() != null) {
+        // builder.customerId(e.getCustomer().getId() != null ? e.getCustomer().getId().intValue() : null);
+        // builder.customerName(e.getCustomer().getName());
+        // }
+        if (e.getSeller() != null) {
+            // ReviewDTO에 sellerId, sellerName 필드가 있다면 설정
+            // builder.sellerId(e.getSeller().getId() != null ? e.getSeller().getId().intValue() : null);
+            // builder.sellerName(e.getSeller().getName());
+        }
+        return builder.build();
     }
 }
