@@ -20,5 +20,5 @@ public class ApproveSellerRequestDTO {
     private SellerApprovalStatusByAdmin status;
 
     @Nullable
-    private String reason;
+    private String des;
 }
