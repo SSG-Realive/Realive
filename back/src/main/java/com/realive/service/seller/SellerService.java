@@ -30,7 +30,7 @@ public interface SellerService {
      * @param sellerId 로그인된 판매자의 ID
      * @return 판매자 정보 DTO
      */
-    SellerResponseDTO getMyInfo(Long sellerId);
+    SellerResponseDTO getMyInfo(String email);
 
     /**
      * 판매자 회원가입 처리
@@ -47,7 +47,7 @@ public interface SellerService {
      * @param sellerId 판매자 ID
      * @param dto 수정 요청 DTO
      */
-    void updateSeller(Long sellerId, SellerUpdateDTO dto);
+    void updateSeller(String email, SellerUpdateDTO dto);
 
     /**
      * 이메일로 판매자 조회

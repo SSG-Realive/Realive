@@ -6,8 +6,6 @@ import java.time.Duration;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -99,9 +97,7 @@ public class SellerController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String email = auth.getName();
 
-        Seller seller = sellerService.getByEmail(email);
-
-        sellerService.updateSeller(seller.getId(), dto);
+        sellerService.updateSeller(email, dto);
         return ResponseEntity.ok().build();
     }
 
@@ -111,9 +107,7 @@ public class SellerController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String email = auth.getName();
 
-        Seller seller = sellerService.getByEmail(email);
-
-        SellerResponseDTO dto = sellerService.getMyInfo(seller.getId());
+        SellerResponseDTO dto = sellerService.getMyInfo(email);
         return ResponseEntity.ok(dto);
     }
 }
