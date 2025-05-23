@@ -1,27 +1,19 @@
 package com.realive.repository.seller;
 
-import com.realive.domain.seller.Seller;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.stereotype.Repository;
-
+import java.util.List;
 import java.util.Optional;
 
-@Repository
-public interface SellerRepository extends JpaRepository<Seller, Long>, JpaSpecificationExecutor<Seller> {
+import org.springframework.data.jpa.repository.JpaRepository;
 
-    boolean existsByEmail(String email);
+import com.realive.domain.seller.Seller;
+import com.realive.repository.common.EmailLookupRepository;
 
-    boolean existsByName(String name);
+public interface SellerRepository extends JpaRepository<Seller,Long>, EmailLookupRepository<Seller> {
 
-    Optional<Seller> findByEmailAndIsActive(String email, boolean isActive);
+    boolean existsByEmail(String email); //email 중복검사
+    boolean existsByName(String name); //이름 중복검사
+    Optional<Seller> findByEmailAndIsActiveTrue(String email); //로그인용(소프트삭제)
+    List<Seller> findByIsApprovedFalse(); // 승인 대기 상태의 판매자 목록 조회
 
-    Page<Seller> findByIsApproved(boolean isApproved, Pageable pageable);
-
-    Page<Seller> findByIsActive(boolean isActive, Pageable pageable);
-
-    Page<Seller> findByNameContainingIgnoreCase(String name, Pageable pageable);
 
 }
