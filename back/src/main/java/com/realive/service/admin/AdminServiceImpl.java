@@ -66,25 +66,27 @@ public class AdminServiceImpl implements AdminService {
                 .build();
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public Optional<AdminReadDTO> getAdminById(Integer adminId) {
-        if (adminId == null) {
-            throw new IllegalArgumentException("관리자 ID가 유효하지 않습니다.");
-        }
-        return adminRepository.findById(adminId)
-                .map(this::convertToReadDTO);
-    }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<AdminReadDTO> getAdminByEmail(String email) {
+    public Optional<AdminReadDTO> findByEmail(String email) {
         if (email == null || email.trim().isEmpty()) {
             throw new IllegalArgumentException("이메일이 유효하지 않습니다.");
         }
         return adminRepository.findByEmail(email)
                 .map(this::convertToReadDTO);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<Admin> findAdminEntityByEmail(String email) {
+        if (email == null || email.trim().isEmpty()) {
+            return Optional.empty();
+        }
+        return adminRepository.findByEmail(email);
+    }
+
+
 
     private AdminReadDTO convertToReadDTO(Admin admin) {
         return AdminReadDTO.builder()
