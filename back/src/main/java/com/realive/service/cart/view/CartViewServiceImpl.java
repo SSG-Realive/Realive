@@ -34,8 +34,6 @@ public class CartViewServiceImpl implements CartViewService {
                 .map(cartItem -> cartItem.getProduct().getId())
                 .collect(Collectors.toList());
 
-        // N+1 쿼리 최적화를 위한 ProductViewRepository 개선이 필요하다면 여기에 적용
-        // 현재는 각 productId마다 개별 호출하는 방식으로 유지
 
         Map<Long, ProductResponseDTO> productDetailMap = productIds.stream()
                 .distinct() // 중복 ID 제거

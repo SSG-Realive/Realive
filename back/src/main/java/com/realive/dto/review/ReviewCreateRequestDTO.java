@@ -20,7 +20,7 @@ public class ReviewCreateRequestDTO {
     // 고객 ID는 컨트롤러에서 보안 컨텍스트에서 가져오는 것이 이상적입니다.
     // 만약 당장 보안 컨텍스트에서 가져올 수 없다면, 임시로 요청에 포함시킬 수 있지만,
     // 장기적으로는 서버에서 인증된 사용자 정보를 통해 가져오는 것이 맞습니다.
-     private Long customerId;
+    private Long customerId;
 
     @NotNull(message = "평점은 필수입니다.")
     @Min(value = 1, message = "평점은 최소 1점입니다.")

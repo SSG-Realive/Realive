@@ -11,26 +11,19 @@ import com.realive.dto.review.ReviewUpdateRequestDTO;
 import com.realive.repository.review.crud.ReviewCRUDRepository;
 import com.realive.repository.review.crud.SellerReviewImageRepository;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
-public class ReviewCURDServiceImpl implements ReviewCRUDService {
+@RequiredArgsConstructor
+public class ReviewCRUDServiceImpl implements ReviewCRUDService {
     private final ReviewCRUDRepository reviewRepository;
     private final SellerReviewImageRepository imageRepository;
-
-    public ReviewCURDServiceImpl(
-            ReviewCRUDRepository reviewRepository,
-            SellerReviewImageRepository imageRepository
-    ) {
-        this.reviewRepository = reviewRepository;
-        this.imageRepository = imageRepository;
-    }
 
     @Override
     @Transactional

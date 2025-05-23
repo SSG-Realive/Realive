@@ -22,4 +22,3 @@ public class ReviewResponseDTO {
     private boolean isHidden;
 
 }
-

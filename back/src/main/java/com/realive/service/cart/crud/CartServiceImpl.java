@@ -55,7 +55,6 @@ public class CartServiceImpl implements CartService {
         // 기존 장바구니 항목 조회 시 Customer 엔티티와 Product 엔티티를 직접 사용
         Optional<CartItem> existingCartItem = cartItemRepository.findByCustomer_IdAndProduct_Id(customerId, productId);
 
-
         CartItem cartItem;
         if (existingCartItem.isPresent()) {
             cartItem = existingCartItem.get();
