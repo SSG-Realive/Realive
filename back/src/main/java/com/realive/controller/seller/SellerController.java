@@ -4,7 +4,9 @@ import java.time.Duration;
 
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -37,7 +39,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 public class SellerController {
 
     private final SellerService sellerService;
-    private final ProductService productService;
     private final JwtUtil jwtUtil;
     
  // 🔐 로그인 (토큰 발급)
@@ -92,8 +93,12 @@ public class SellerController {
     // 🔄 판매자 정보 수정
     @PutMapping("/me")
     public ResponseEntity<Void> updateSeller(
-            @RequestBody @Valid SellerUpdateDTO dto,
-            @AuthenticationPrincipal Seller seller) {
+            @RequestBody @Valid SellerUpdateDTO dto) {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = auth.getName();
+
+        Seller seller = sellerService.getByEmail(email);
 
         sellerService.updateSeller(seller.getId(), dto);
         return ResponseEntity.ok().build();
@@ -101,11 +106,15 @@ public class SellerController {
 
     // 🙋‍♀️ 마이페이지 조회 (판매자 정보 )
     @GetMapping("/me")
-    public ResponseEntity<SellerResponseDTO> getMyInfo(@AuthenticationPrincipal Seller seller) {
-        Long sellerId = seller.getId();
+    public ResponseEntity<SellerResponseDTO> getMyInfo() {
 
-        SellerResponseDTO resdto = sellerService.getMyInfo(sellerId);
-        
-        return ResponseEntity.ok(resdto);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = auth.getName();
+
+        Seller seller = sellerService.getByEmail(email);
+
+        SellerResponseDTO dto = sellerService.getMyInfo(seller.getId());
+
+        return ResponseEntity.ok(dto);
     }
 }
