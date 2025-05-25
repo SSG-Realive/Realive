@@ -1,7 +1,5 @@
 package com.realive.dto.order;
 
-import com.realive.domain.common.enums.DeliveryStatus;
-import com.realive.domain.common.enums.OrderStatus;
 import com.realive.domain.order.Order;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,7 +27,6 @@ public class OrderResponseDTO {
 
     private List<OrderItemResponseDTO> orderItems;
 
-    // 주문 전체의 요약 정보를 위한 from 메서드 (OrderListResponseDTO에서 사용)
     public static OrderResponseDTO fromOrder(Order order) {
         return OrderResponseDTO.builder()
                 .orderId(order.getId())
@@ -42,7 +39,6 @@ public class OrderResponseDTO {
                 .build();
     }
 
-    // 단일 주문 상세 조회를 위한 from 메서드 (OrderServiceImpl의 getOrder에서 사용)
     public static OrderResponseDTO from(
             Order order,
             List<OrderItemResponseDTO> orderItemDTOs,

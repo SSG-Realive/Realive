@@ -18,17 +18,15 @@ public class OrderListResponseDTO {
     private int totalOrderPrice;
 
     public static OrderListResponseDTO from(List<OrderResponseDTO> orders) {
-        // totalItems와 totalOrderPrice 계산 로직 수정 필요:
-        // OrderResponseDTO가 이제 OrderItemResponseDTO 리스트를 가지고 있으므로,
-        // 각 주문의 총 항목 수와 총 가격을 합산해야 합니다.
+
 
         int totalItems = orders.stream()
-                .flatMap(order -> order.getOrderItems().stream()) // 각 주문의 OrderItems 스트림을 평탄화
-                .mapToInt(OrderItemResponseDTO::getQuantity) // 각 OrderItem의 수량 합산
+                .flatMap(order -> order.getOrderItems().stream())
+                .mapToInt(OrderItemResponseDTO::getQuantity)
                 .sum();
 
         int totalOrderPrice = orders.stream()
-                .mapToInt(OrderResponseDTO::getTotalPrice) // 각 주문의 총 가격 합산 (OrderResponseDTO의 totalPrice)
+                .mapToInt(OrderResponseDTO::getTotalPrice)
                 .sum();
 
         return OrderListResponseDTO.builder()

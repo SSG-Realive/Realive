@@ -27,7 +27,7 @@ public class Order {
     private OrderStatus status;
 
     @Column(name = "total_price", nullable =  false)
-    private int totalPrice; // Long -> int로 변경
+    private int totalPrice;
 
     @Column(name = "delivery_address", nullable =  false, length = 500)
     private String deliveryAddress;

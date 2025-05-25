@@ -10,11 +10,11 @@ import jakarta.servlet.http.HttpServletRequest;
 
 
 @RestController
-@RequestMapping("/test")  // 전체 경로 앞부분
+@RequestMapping("/test")
 public class HelloController {
 
 
-    @GetMapping("/hello")      // 전체 최종 경로:/test/hello
+    @GetMapping("/hello")
     public String hello(HttpServletRequest request) {
         System.out.println("✅ 요청 URI: " + request.getRequestURI());
         return "Hello, Realive!";

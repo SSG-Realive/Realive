@@ -6,13 +6,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrderItemResponseDTO {
-    private long productId;
-    private String productName;
-    private int quantity;
-    private int price;
-    private String imageUrl;
+@Builder
+public class OrderDeleteRequestDTO {
+    private Long orderId;
+    private Long customerId;
 }

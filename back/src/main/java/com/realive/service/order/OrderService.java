@@ -1,10 +1,10 @@
 package com.realive.service.order;
 
-import com.realive.dto.order.OrderListResponseDTO; // 사용되지 않을 수 있으나, 임시 유지
+import com.realive.dto.order.OrderDeleteRequestDTO;
 import com.realive.dto.order.OrderResponseDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import com.realive.dto.order.OrderAddRequestDTO; // createOrder를 위해 추가
+import com.realive.dto.order.OrderAddRequestDTO;
 
 public interface OrderService {
     // 단일 주문 상세 조회
@@ -14,5 +14,8 @@ public interface OrderService {
     Page<OrderResponseDTO> getOrderList(Pageable pageable);
 
     // 주문 생성
-    Long createOrder(OrderAddRequestDTO orderAddRequestDTO); // 인터페이스에 이 메서드가 명확히 있어야 함
+    Long createOrder(OrderAddRequestDTO orderAddRequestDTO);
+
+    // 구매내역 삭제
+    void deleteOrder(OrderDeleteRequestDTO orderDeleteRequestDTO);
 }

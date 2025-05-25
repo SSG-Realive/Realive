@@ -4,16 +4,13 @@ import com.realive.domain.common.enums.DeliveryStatus;
 import com.realive.domain.common.enums.DeliveryType;
 import com.realive.domain.common.enums.MediaType;
 import com.realive.domain.common.enums.OrderStatus;
-import com.realive.domain.customer.Customer; // Customer 클래스 임포트
+import com.realive.domain.customer.Customer;
 import com.realive.domain.order.Order;
 import com.realive.domain.order.OrderItem;
 import com.realive.domain.product.DeliveryPolicy;
 import com.realive.domain.product.Product;
-import com.realive.dto.order.OrderAddRequestDTO;
-import com.realive.dto.order.OrderItemResponseDTO;
-import com.realive.dto.order.OrderListResponseDTO;
-import com.realive.dto.order.OrderResponseDTO;
-import com.realive.repository.customer.CustomerRepository; // CustomerRepository 임포트
+import com.realive.dto.order.*;
+import com.realive.repository.customer.CustomerRepository;
 import com.realive.repository.order.OrderItemRepository;
 import com.realive.repository.order.OrderRepository;
 import com.realive.repository.product.DeliveryPolicyRepository;
@@ -40,16 +37,15 @@ import java.util.stream.Collectors;
 @Transactional
 @Log4j2
 @RequiredArgsConstructor
-public class OrderServiceImpl implements OrderService { // OrderService 인터페이스 구현
+public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
     private final ProductRepository productRepository;
     private final ProductImageRepository productImageRepository;
     private final DeliveryPolicyRepository deliveryPolicyRepository;
-    private final CustomerRepository customerRepository; // CustomerRepository 주입
+    private final CustomerRepository customerRepository;
 
-    // line 40: `@Override` 어노테이션이 있어야 합니다.
     @Override
     @Transactional
     public Long createOrder(OrderAddRequestDTO orderAddRequestDTO) {
@@ -88,7 +84,6 @@ public class OrderServiceImpl implements OrderService { // OrderService 인터�
         return order.getId();
     }
 
-    // line 88: `@Override` 어노테이션이 있어야 합니다.
     @Override
     public OrderResponseDTO getOrder(Long orderId, Long customerId) {
         Order order = orderRepository.findByCustomerIdAndOrderId(customerId, orderId)
@@ -138,7 +133,7 @@ public class OrderServiceImpl implements OrderService { // OrderService 인터�
         );
     }
 
-    // line 138: `@Override` 어노테이션이 있어야 합니다.
+
     @Override
     public Page<OrderResponseDTO> getOrderList(Pageable pageable) {
         Page<Order> orderPage = orderRepository.findAllOrders(pageable);
@@ -207,5 +202,30 @@ public class OrderServiceImpl implements OrderService { // OrderService 인터�
         long totalElements = orderPage.getTotalElements();
 
         return new PageImpl<>(responseList, pageable, totalElements);
+    }
+
+
+    @Override
+    @Transactional
+    public void deleteOrder(OrderDeleteRequestDTO orderDeleteRequestDTO) {
+        Long orderId = orderDeleteRequestDTO.getOrderId();
+        Long customerId = orderDeleteRequestDTO.getCustomerId();
+
+        Order order = orderRepository.findByCustomerIdAndOrderId(customerId, orderId)
+                .orElseThrow(() -> new NoSuchElementException("삭제하려는 주문을 찾을 수 없습니다: 주문 ID " + orderId + ", 고객 ID " + customerId));
+
+
+        OrderStatus status = order.getStatus();
+        if (status != OrderStatus.PAYMENT_COMPLETED && status != OrderStatus.PAYMENT_COMPLETED) {
+            throw new IllegalStateException("주문 상태가 '"+ order.getStatus().getDescription() + "'이므로 삭제할 수 없습니다.");
+        }
+
+
+        List<OrderItem> orderItemsToDelete = orderItemRepository.findByOrderId(order.getId());
+        orderItemRepository.deleteAll(orderItemsToDelete); // deleteAllInBatch()를 사용해도 됨
+
+
+        orderRepository.delete(order);
+        log.info("주문이 성공적으로 삭제되었습니다: 주문 ID {}", orderId);
     }
 }
