@@ -18,6 +18,8 @@ import java.util.*;
 @Setter
 public class MemberLoginDTO implements UserDetails, OAuth2User {
 
+
+    
     private String email;
     @ToString.Exclude
     private String password;

@@ -30,24 +30,6 @@ public class SampleController {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
 
-
-    @PreAuthorize("permitAll()")
-    @GetMapping("/ex1")
-    public void ex1() {
-        log.info("ex1");
-    }
-
-    @PreAuthorize("isAuthenticated()")
-    @GetMapping("/ex2")
-    public void ex2(@AuthenticationPrincipal MemberLoginDTO dto) {
-        log.info("ex2");
-        log.info(dto);
-    }
-    @PreAuthorize("hasRole('USER')")
-    @GetMapping("/ex3")
-    public void ex3() {
-        log.info("ex3");
-    }
     
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody MemberLoginDTO dto) {
@@ -59,8 +41,6 @@ public class SampleController {
 
         return ResponseEntity.ok(new JwtResponse(token));
     }
-
-    
 
     
 }

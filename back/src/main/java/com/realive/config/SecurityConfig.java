@@ -57,6 +57,8 @@ public class SecurityConfig {
                 .requestMatchers("/oauth2/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/member/me").authenticated()
                 .requestMatchers(HttpMethod.PUT, "/member/me").authenticated()
+                .requestMatchers(HttpMethod.POST, "/wishlist/toggle").authenticated()
+                .requestMatchers(HttpMethod.GET, "/wishlist/my").authenticated()
                 .anyRequest().authenticated()
             )
             .oauth2Login(config -> config.successHandler(customLoginSuccessHandler));

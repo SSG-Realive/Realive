@@ -15,9 +15,8 @@ public interface CustomerLoginRepository extends JpaRepository<Customer, Long> {
     @Query("SELECT c FROM Customer c WHERE c.email = :email AND c.signupMethod = com.realive.domain.customer.SignupMethod.USER  and c.isActive = true")
     Optional<Customer> findByEmail(@Param("email") String email);
 
+    // 이메일로 고객 찾기 (소셜 로그인 포함)
     @Query("SELECT c FROM Customer c WHERE c.email = :email")
     Optional<Customer> findByEmailIncludingSocial(@Param("email") String email);
-
-
     
 }

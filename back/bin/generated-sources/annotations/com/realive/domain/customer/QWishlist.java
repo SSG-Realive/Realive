@@ -28,6 +28,8 @@ public class QWishlist extends EntityPathBase<Wishlist> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
+    public final com.realive.domain.product.QProduct product;
+
     public QWishlist(String variable) {
         this(Wishlist.class, forVariable(variable), INITS);
     }
@@ -47,6 +49,7 @@ public class QWishlist extends EntityPathBase<Wishlist> {
     public QWishlist(Class<? extends Wishlist> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.customer = inits.isInitialized("customer") ? new QCustomer(forProperty("customer")) : null;
+        this.product = inits.isInitialized("product") ? new com.realive.domain.product.QProduct(forProperty("product"), inits.get("product")) : null;
     }
 
 }
