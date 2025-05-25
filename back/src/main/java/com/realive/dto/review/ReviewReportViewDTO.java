@@ -22,8 +22,6 @@ public class ReviewReportViewDTO{
     private String reason;
 
     private String originalReviewContent;
-    
-    private SellerApprovalStatusByAdmin status;
 
    
 }

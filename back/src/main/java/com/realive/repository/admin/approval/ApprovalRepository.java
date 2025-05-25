@@ -1,25 +1,21 @@
 package com.realive.repository.admin.approval;
 
 import com.realive.domain.seller.Seller;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
+import java.util.List;
 
 @Repository
-public interface ApprovalRepository extends JpaRepository<Seller, Integer>, JpaSpecificationExecutor<Seller> {
+public interface ApprovalRepository extends JpaRepository<Seller, Long>, JpaSpecificationExecutor<Seller> {
 
-    Optional<Seller> findById(Integer sellerId);
+    /**
+     * 승인 대기 중인 판매자 목록을 조회합니다.
+     * 조건: isApproved = false AND approvedAt IS NULL
+     * @return 승인 대기 중인 판매자 리스트
+     */
+    List<Seller> findByIsApprovedFalseAndApprovedAtIsNull(); // 승인대기 판매자 조회
 
-    Page<Seller> findByStatus(SellerApprovalStatusByAdmin status, Pageable pageable);
-
-    boolean existsByEmail(String email);
-
-    boolean existsByName(String name);
-
-    Page<Seller> findByNameContainingIgnoreCase(String nameKeyword, Pageable pageable);
 
 }
