@@ -1,5 +1,8 @@
 package com.realive.dto.order;
 
+import lombok.Data;
+
+@Data
 public class OrderAddRequestDTO {
 
     private long orderId;

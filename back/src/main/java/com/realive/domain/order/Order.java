@@ -1,6 +1,7 @@
 package com.realive.domain.order;
 
 import com.realive.domain.customer.Customer;
+import com.realive.domain.common.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,15 +21,24 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable =  false, length = 100)
-    private String status;
-    @Column(name = "total_price", nullable =  false, length = 100)
-    private Long totalPrice;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable =  false, length = 50)
+    private OrderStatus status;
+
+    @Column(name = "total_price", nullable =  false)
+    private int totalPrice; // Long -> int로 변경
+
     @Column(name = "delivery_address", nullable =  false, length = 500)
     private String deliveryAddress;
-    @Column(name = "ordered_at", nullable =  false, updatable = false, length = 100)
+
+    @Column(name = "payment_type", nullable = false, length = 50)
+    private String paymentType;
+
+    @Column(name = "ordered_at", nullable =  false, updatable = false)
     private LocalDateTime OrderedAt;
-    @Column(name = "updated_at", nullable =  false, length = 100)
+
+    @Column(name = "updated_at", nullable =  false)
     private LocalDateTime UpdatedAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
