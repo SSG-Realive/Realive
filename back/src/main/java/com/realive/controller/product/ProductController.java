@@ -9,11 +9,9 @@ import com.realive.dto.product.ProductListDTO;
 import com.realive.service.product.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.MediaType;
-
-
 
 @RestController
 @RequiredArgsConstructor
@@ -21,51 +19,44 @@ import org.springframework.http.MediaType;
 public class ProductController {
 
     private final ProductService productService;
-    
 
     // 🔽 상품 등록
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Long> createProduct(
-            @ModelAttribute ProductRequestDTO dto,
-            @AuthenticationPrincipal Seller seller
-    ) {
+    public ResponseEntity<Long> createProduct(@ModelAttribute ProductRequestDTO dto) {
+        Seller seller = (Seller) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Long sellerId = seller.getId();
+
         Long id = productService.createProduct(dto, sellerId);
         return ResponseEntity.ok(id);
     }
 
     // 🔽 상품 수정
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Void> updateProduct(
-            @PathVariable Long id,
-            @ModelAttribute ProductRequestDTO dto,
-            @AuthenticationPrincipal Seller seller
-    ) {
+    public ResponseEntity<Void> updateProduct(@PathVariable Long id, @ModelAttribute ProductRequestDTO dto) {
+        Seller seller = (Seller) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Long sellerId = seller.getId();
+
         productService.updateProduct(id, dto, sellerId);
         return ResponseEntity.ok().build();
     }
 
     // 🔽 상품 삭제
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProduct(
-            @PathVariable Long id,
-            @AuthenticationPrincipal Seller seller
-    ) {
+    public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
+        Seller seller = (Seller) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Long sellerId = seller.getId();
+
         productService.deleteProduct(id, sellerId);
         return ResponseEntity.ok().build();
     }
 
     // 🔽 상품 목록 조회 (판매자 전용)
     @GetMapping
-    public ResponseEntity<PageResponseDTO<ProductListDTO>> getMyProducts(
-            @AuthenticationPrincipal Seller seller,
-            @ModelAttribute ProductSearchCondition condition) {
-
+    public ResponseEntity<PageResponseDTO<ProductListDTO>> getMyProducts(@ModelAttribute ProductSearchCondition condition) {
+        Seller seller = (Seller) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Long sellerId = seller.getId();
-        PageResponseDTO<ProductListDTO> response = productService.getProductsBySeller(sellerId, condition);
 
+        PageResponseDTO<ProductListDTO> response = productService.getProductsBySeller(sellerId, condition);
         return ResponseEntity.ok(response);
     }
 
