@@ -47,7 +47,7 @@ public class Seller extends BaseTimeEntity{
     @Column(name = "is_approved", nullable = false)
     private boolean isApproved =false;
 
-    @Column(name = "approved_at", updatable =  false)
+    @Column(name = "approved_at")
     private LocalDateTime approvedAt;
 
     @Column(name = "created_at", updatable =  false)

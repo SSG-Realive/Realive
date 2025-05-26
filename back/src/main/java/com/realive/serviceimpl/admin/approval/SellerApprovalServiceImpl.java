@@ -59,6 +59,7 @@ public class SellerApprovalServiceImpl implements SellerApprovalService {
         if (approveAction) { // 승인 처리
             seller.setApproved(true);
             seller.setApprovedAt(LocalDateTime.now()); // 승인 시에만 approvedAt 설정
+            seller.setActive(true);
             log.info("판매자 승인 처리됨 - SellerId: {}", sellerId);
         } else { // 거부 처리
             seller.setApproved(false);
