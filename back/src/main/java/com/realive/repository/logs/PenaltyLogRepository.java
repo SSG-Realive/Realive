@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 public interface PenaltyLogRepository extends JpaRepository<PenaltyLog, Integer> {
@@ -25,4 +26,7 @@ public interface PenaltyLogRepository extends JpaRepository<PenaltyLog, Integer>
     // 특정 기간 내 패널티 포인트 합계
     @Query("SELECT SUM(pl.points) FROM PenaltyLog pl WHERE pl.createdAt BETWEEN :startDateTime AND :endDateTime")
     Integer sumPointsByCreatedAtBetween(LocalDateTime startDateTime, LocalDateTime endDateTime);
+
+    List<PenaltyLog> findByCreatedAtBetween(LocalDateTime startDateTime, LocalDateTime endDateTime);
+
 }

@@ -15,45 +15,190 @@ import java.util.List;
 @Repository
 public interface SalesLogRepository extends JpaRepository<SalesLog, Integer>, JpaSpecificationExecutor<SalesLog> {
 
+    /**
+     * 특정 날짜의 총 판매 금액 합계 조회
+     * @param date 조회할 날짜
+     * @return 해당 날짜의 총 판매 금액
+     */
     @Query("SELECT SUM(sl.totalPrice) FROM SalesLog sl WHERE sl.soldAt = :date")
     Integer sumTotalPriceByDate(@Param("date") LocalDate date);
 
+    /**
+     * 특정 날짜의 총 판매 로그 건수 조회
+     * (DailySalesSummaryDTO의 totalSalesCount 등에 사용)
+     * @param date 조회할 날짜
+     * @return 해당 날짜의 판매 로그 건수
+     */
     @Query("SELECT COUNT(sl) FROM SalesLog sl WHERE sl.soldAt = :date")
     Integer countBySoldAt(@Param("date") LocalDate date);
 
+    /**
+     * 특정 날짜의 총 판매 상품 수량 합계 조회
+     * @param date 조회할 날짜
+     * @return 해당 날짜의 총 판매 상품 수량
+     */
     @Query("SELECT SUM(sl.quantity) FROM SalesLog sl WHERE sl.soldAt = :date")
     Integer sumQuantityByDate(@Param("date") LocalDate date);
 
+    /**
+     * 특정 기간 동안의 총 판매 금액 합계 조회
+     * @param startDate 조회 시작일
+     * @param endDate 조회 종료일
+     * @return 해당 기간의 총 판매 금액
+     */
     @Query("SELECT SUM(sl.totalPrice) FROM SalesLog sl WHERE sl.soldAt BETWEEN :startDate AND :endDate")
     Integer sumTotalPriceBySoldAtBetween(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
+    /**
+     * 특정 기간 동안의 고유 주문 건수 조회
+     * (MonthlySalesSummaryDTO의 totalSalesCount 등에 사용)
+     * @param startDate 조회 시작일
+     * @param endDate 조회 종료일
+     * @return 해당 기간의 고유 주문 건수
+     */
     @Query("SELECT COUNT(DISTINCT sl.orderItemId) FROM SalesLog sl WHERE sl.soldAt BETWEEN :startDate AND :endDate")
     Long countDistinctOrdersBySoldAtBetween(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
+    /**
+     * 특정 고객 ID에 해당하는 판매 로그 목록을 페이징하여 조회
+     * @param customerId 고객 ID
+     * @param pageable 페이징 정보
+     * @return 해당 고객의 판매 로그 페이지
+     */
     Page<SalesLog> findByCustomerId(Integer customerId, Pageable pageable);
 
+    /**
+     * 특정 고객의 고유 주문 건수 조회
+     * @param customerId 고객 ID
+     * @return 해당 고객의 고유 주문 건수
+     */
     @Query("SELECT COUNT(DISTINCT sl.orderItemId) FROM SalesLog sl WHERE sl.customerId = :customerId")
     Integer countDistinctOrdersByCustomerId(@Param("customerId") Integer customerId);
 
+    /**
+     * 특정 고객의 총 판매 금액 합계 조회
+     * @param customerId 고객 ID
+     * @return 해당 고객의 총 판매 금액
+     */
     @Query("SELECT SUM(sl.totalPrice) FROM SalesLog sl WHERE sl.customerId = :customerId")
     Integer sumTotalPriceByCustomerId(@Param("customerId") Integer customerId);
 
+    /**
+     * 특정 판매자 ID에 해당하는 판매 로그 목록을 페이징하여 조회
+     * @param sellerId 판매자 ID
+     * @param pageable 페이징 정보
+     * @return 해당 판매자의 판매 로그 페이지
+     */
     Page<SalesLog> findBySellerId(Integer sellerId, Pageable pageable);
 
+    /**
+     * 특정 판매자의 특정 기간 동안의 총 판매 금액 합계 조회
+     * @param sellerId 판매자 ID
+     * @param startDate 조회 시작일
+     * @param endDate 조회 종료일
+     * @return 해당 판매자 및 기간의 총 판매 금액
+     */
     @Query("SELECT SUM(sl.totalPrice) FROM SalesLog sl WHERE sl.sellerId = :sellerId AND sl.soldAt BETWEEN :startDate AND :endDate")
     Integer sumTotalPriceBySellerIdAndSoldAtBetween(@Param("sellerId") Integer sellerId, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
+    /**
+     * 특정 판매자의 특정 기간 동안의 고유 주문 건수 조회
+     * @param sellerId 판매자 ID
+     * @param startDate 조회 시작일
+     * @param endDate 조회 종료일
+     * @return 해당 판매자 및 기간의 고유 주문 건수
+     */
     @Query("SELECT COUNT(DISTINCT sl.orderItemId) FROM SalesLog sl WHERE sl.sellerId = :sellerId AND sl.soldAt BETWEEN :startDate AND :endDate")
     Long countDistinctOrdersBySellerIdAndSoldAtBetween(@Param("sellerId") Integer sellerId, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
+    /**
+     * 특정 상품 ID에 해당하는 판매 로그 목록을 페이징하여 조회
+     * @param productId 상품 ID
+     * @param pageable 페이징 정보
+     * @return 해당 상품의 판매 로그 페이지
+     */
     Page<SalesLog> findByProductId(Integer productId, Pageable pageable);
 
+    /**
+     * 특정 상품의 특정 기간 동안의 총 판매 금액 합계 조회
+     * @param productId 상품 ID
+     * @param startDate 조회 시작일
+     * @param endDate 조회 종료일
+     * @return 해당 상품 및 기간의 총 판매 금액
+     */
     @Query("SELECT SUM(sl.totalPrice) FROM SalesLog sl WHERE sl.productId = :productId AND sl.soldAt BETWEEN :startDate AND :endDate")
     Integer sumTotalPriceByProductIdAndSoldAtBetween(@Param("productId") Integer productId, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
+    /**
+     * 특정 상품의 특정 기간 동안의 총 판매 상품 수량 합계 조회
+     * @param productId 상품 ID
+     * @param startDate 조회 시작일
+     * @param endDate 조회 종료일
+     * @return 해당 상품 및 기간의 총 판매 상품 수량
+     */
     @Query("SELECT SUM(sl.quantity) FROM SalesLog sl WHERE sl.productId = :productId AND sl.soldAt BETWEEN :startDate AND :endDate")
     Integer sumQuantityByProductIdAndSoldAtBetween(@Param("productId") Integer productId, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
+    /**
+     * 특정 기간 동안의 모든 판매 로그 목록 조회
+     * @param startDate 조회 시작일
+     * @param endDate 조회 종료일
+     * @return 해당 기간의 판매 로그 리스트
+     */
     List<SalesLog> findBySoldAtBetween(LocalDate startDate, LocalDate endDate);
 
+    /**
+     * 특정 판매자의 특정 날짜 총 판매 건수 (SalesLog 기준)
+     * DailySalesSummaryDTO의 totalSalesCount에 해당
+     */
+    @Query("SELECT COUNT(sl) FROM SalesLog sl WHERE sl.sellerId = :sellerId AND sl.soldAt = :date")
+    Integer countBySellerIdAndSoldAt(@Param("sellerId") Integer sellerId, @Param("date") LocalDate date);
+
+    /**
+     * 특정 판매자의 특정 날짜 총 판매 금액
+     * DailySalesSummaryDTO의 totalSalesAmount에 해당
+     */
+    @Query("SELECT SUM(sl.totalPrice) FROM SalesLog sl WHERE sl.sellerId = :sellerId AND sl.soldAt = :date")
+    Integer sumTotalPriceBySellerIdAndSoldAt(@Param("sellerId") Integer sellerId, @Param("date") LocalDate date);
+
+    /**
+     * 특정 판매자의 특정 날짜 총 판매 수량
+     * DailySalesSummaryDTO의 totalQuantity에 해당
+     */
+    @Query("SELECT SUM(sl.quantity) FROM SalesLog sl WHERE sl.sellerId = :sellerId AND sl.soldAt = :date")
+    Integer sumQuantityBySellerIdAndSoldAt(@Param("sellerId") Integer sellerId, @Param("date") LocalDate date);
+
+    /**
+     * 특정 기간 동안 판매된 모든 상품의 총 수량 합계
+     * MonthlySalesSummaryDTO의 totalQuantity에 해당
+     */
+    @Query("SELECT SUM(sl.quantity) FROM SalesLog sl WHERE sl.soldAt BETWEEN :startDate AND :endDate")
+    Integer sumQuantityBySoldAtBetween(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+
+    /**
+     * 특정 판매자의 특정 기간 동안 판매된 모든 상품의 총 수량 합계
+     * MonthlySalesSummaryDTO의 totalQuantity에 해당 (판매자별)
+     */
+    @Query("SELECT SUM(sl.quantity) FROM SalesLog sl WHERE sl.sellerId = :sellerId AND sl.soldAt BETWEEN :startDate AND :endDate")
+    Integer sumQuantityBySellerIdAndSoldAtBetween(@Param("sellerId") Integer sellerId, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+
+    /**
+     * 특정 상품의 특정 날짜 총 판매 건수 (SalesLog 기준)
+     * DailySalesSummaryDTO의 totalSalesCount에 해당 (상품별)
+     */
+    @Query("SELECT COUNT(sl) FROM SalesLog sl WHERE sl.productId = :productId AND sl.soldAt = :date")
+    Integer countByProductIdAndSoldAt(@Param("productId") Integer productId, @Param("date") LocalDate date);
+
+    /**
+     * 특정 상품의 특정 기간 총 판매 건수 (SalesLog 기준)
+     * MonthlySalesSummaryDTO의 totalSalesCount에 해당 (상품별)
+     */
+    @Query("SELECT COUNT(sl) FROM SalesLog sl WHERE sl.productId = :productId AND sl.soldAt BETWEEN :startDate AND :endDate")
+    Integer countByProductIdAndSoldAtBetween(@Param("productId") Integer productId, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+
+    /**
+     * 특정 날짜의 모든 판매 로그 목록 조회
+     * (getDailySalesLogDetails 메소드에서 사용)
+     */
+    List<SalesLog> findBySoldAt(LocalDate soldAt);
 }
