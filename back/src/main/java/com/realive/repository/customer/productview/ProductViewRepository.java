@@ -1,21 +1,18 @@
-package com.realive.repository.productview;
+package com.realive.repository.customer.productview;
 
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
 import com.realive.domain.product.Product;
-import com.realive.dto.product.ProductResponseDto;
+
+// 상품 조회 레포지토리
 
 public interface ProductViewRepository extends JpaRepository<Product, Long>, ProductSearch, ProductDetail {
 
     // 상품 id로 상품 찾기
     // wishlist의 경우 판매 중지 상품도 조회 가능하므로 판매 여부는 조건에서 제외.
-    @Query("SELECT p FROM Product p WHERE p.id = :id")
-    Optional<Product> findProductById(@Param("id") Long id);
+    Optional<Product> findById(Long id);
 
-    
 
 }

@@ -1,4 +1,4 @@
-package com.realive.security_customer;
+package com.realive.security.customer;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.realive.domain.customer.Customer;
 import com.realive.domain.customer.SignupMethod;
 import com.realive.dto.member.MemberLoginDTO;
-import com.realive.repository.customerlogin.CustomerLoginRepository;
+import com.realive.repository.customer.CustomerRepository;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -29,7 +29,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
-    private final CustomerLoginRepository customerLoginRepository;
+    private final CustomerRepository customerRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -67,7 +67,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         // SignupMethod값은 kakao또는 google
 
         // 이메일로 기존 고객 조회
-        Optional<Customer> result = customerLoginRepository.findByEmailIncludingSocial(email);
+        Optional<Customer> result = customerRepository.findByEmailIncludingSocial(email);
 
         Customer customer;
 
@@ -98,7 +98,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             customer.setIsActive(true);  // 활성 상태
             customer.setPenaltyScore(0);  // 초기 페널티 0점
 
-            customerLoginRepository.save(customer);   // 저장
+            customerRepository.save(customer);   // 저장
         } else {
             customer = result.get();
         }

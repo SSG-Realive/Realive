@@ -3,20 +3,20 @@ package com.realive.service.customer;
 import java.util.List;
 import java.util.Optional;
 
-import org.hibernate.cache.spi.support.AbstractReadWriteAccess.Item;
 import org.springframework.stereotype.Service;
 
 import com.realive.domain.customer.Customer;
 import com.realive.domain.customer.Wishlist;
 import com.realive.domain.product.Product;
 import com.realive.dto.product.ProductListDto;
-import com.realive.repository.WishlistRepository;
-import com.realive.repository.customer.CustomerRepository;
-import com.realive.repository.productview.ProductListRepository;
-import com.realive.repository.productview.ProductViewRepository;
+import com.realive.repository.customer.WishlistRepository;
+import com.realive.repository.customer.productview.ProductListRepository;
+import com.realive.repository.customer.productview.ProductViewRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+
+// 찜 서비스
 
 @Transactional
 @Service
@@ -39,7 +39,7 @@ public class WishlistService {
 
         Customer customer = customerService.getActiveCustomerById(customerId);
 
-        Product product = productViewRepository.findProductById(productId)
+        Product product = productViewRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("상품 없음"));
 
         Wishlist wishlist = Wishlist.builder()

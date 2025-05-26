@@ -1,4 +1,4 @@
-package com.realive.repository.productview;
+package com.realive.repository.customer.productview;
 
 import java.util.Optional;
 

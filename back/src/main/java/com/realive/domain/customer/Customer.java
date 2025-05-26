@@ -48,10 +48,11 @@ public class Customer {
     private Boolean isVerified = false;
     
     //디폴트 true
-    //탈퇴처리 enum 0,1 ?? 
+    //탈퇴 여부
     @Column(name = "is_active")
     private Boolean isActive = true;
 
+    // 추가!!
     public void deactivate() {
         this.isActive = false;  // 탈퇴 처리 (비활성)
     }

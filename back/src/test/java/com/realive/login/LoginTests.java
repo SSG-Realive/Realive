@@ -11,7 +11,7 @@ import org.springframework.test.annotation.Rollback;
 import com.realive.domain.customer.Customer;
 import com.realive.domain.customer.Gender;
 import com.realive.domain.customer.SignupMethod;
-import com.realive.repository.customerlogin.CustomerLoginRepository;
+import com.realive.repository.customer.CustomerRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.extern.log4j.Log4j2;
@@ -22,7 +22,7 @@ import lombok.extern.log4j.Log4j2;
 public class LoginTests {
 
     @Autowired
-    private CustomerLoginRepository customerLoginRepository;
+    private CustomerRepository customerRepository;
 
     //PasswordEncoder 주입받기 
     @Autowired
@@ -55,7 +55,7 @@ public class LoginTests {
                 customer.setIsActive(false);  // 탈퇴 상태
             }
 
-            customerLoginRepository.save(customer);
+            customerRepository.save(customer);
         }
 
     }

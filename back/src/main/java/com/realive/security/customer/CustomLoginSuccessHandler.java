@@ -1,4 +1,4 @@
-package com.realive.security_customer.handler;
+package com.realive.security.customer;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -14,7 +14,6 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.realive.domain.customer.SignupMethod;
 import com.realive.dto.member.MemberLoginDTO;
-import com.realive.security.JwtTokenProvider;
 
 import java.io.IOException;
 import java.util.HashMap;

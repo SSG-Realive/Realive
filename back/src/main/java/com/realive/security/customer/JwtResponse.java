@@ -1,4 +1,4 @@
-package com.realive.security;
+package com.realive.security.customer;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

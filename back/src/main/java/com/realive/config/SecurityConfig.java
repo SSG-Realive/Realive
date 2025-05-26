@@ -24,8 +24,9 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import com.realive.security.JwtAuthenticationFilter;
-import com.realive.security_customer.handler.CustomLoginSuccessHandler;
+import com.realive.security.customer.CustomLoginSuccessHandler;
+import com.realive.security.customer.JwtAuthenticationFilter;
+
 
 @EnableJpaAuditing //JPA Auditing 을 활성화. createDate, modifiedDate 자동으로 처리 
 @Configuration

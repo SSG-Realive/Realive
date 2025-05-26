@@ -1,4 +1,4 @@
-package com.realive.security;
+package com.realive.security.customer;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

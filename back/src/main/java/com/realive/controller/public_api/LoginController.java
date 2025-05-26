@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.realive.dto.member.MemberJoinDTO;
 import com.realive.dto.member.MemberLoginDTO;
-import com.realive.security.JwtResponse;
-import com.realive.security.JwtTokenProvider;
+import com.realive.security.customer.JwtResponse;
+import com.realive.security.customer.JwtTokenProvider;
 import com.realive.service.customer.MemberService;
 
 import lombok.RequiredArgsConstructor;

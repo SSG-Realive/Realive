@@ -12,18 +12,20 @@ import com.realive.domain.customer.Customer;
 import com.realive.domain.customer.SignupMethod;
 import com.realive.dto.member.MemberJoinDTO;
 import com.realive.dto.member.MemberReadDTO;
-import com.realive.repository.customerlogin.CustomerLoginRepository;
-import com.realive.security.JwtTokenProvider;
+import com.realive.repository.customer.CustomerRepository;
+import com.realive.security.customer.JwtTokenProvider;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+
+// 회원 관련 서비스
 
 @Transactional
 @Service
 @RequiredArgsConstructor
 public class MemberService {
 
-    private final CustomerLoginRepository customerLoginRepository;
+    private final CustomerRepository customerRepository;
     private final PasswordEncoder passwordEncoder;  // 빈 주입
     private final JwtTokenProvider jwtTokenProvider;
 
@@ -31,7 +33,7 @@ public class MemberService {
     // 회원가입: 소셜로그인(임시회원정보 수정)
     public void updateTemporaryUserInfo(MemberJoinDTO request, String authenticatedEmail) {
         // 인증된 사용자 이메일로 회원 조회
-        Customer customer = customerLoginRepository.findByEmailIncludingSocial(authenticatedEmail)
+        Customer customer = customerRepository.findByEmailIncludingSocial(authenticatedEmail)
                 .orElseThrow(() -> new RuntimeException("회원 정보를 찾을 수 없습니다."));
 
         // 회원정보 업데이트
@@ -51,14 +53,14 @@ public class MemberService {
         // 임시회원 → 일반회원 상태 변경
         customer.setSignupMethod(SignupMethod.USER);
 
-        customerLoginRepository.save(customer);
+        customerRepository.save(customer);
     }
 
     // 일반회원가입
     public String register(MemberJoinDTO dto) {
         // 1) 이미 USER로 가입된 이메일인지 체크
-        if (customerLoginRepository.findByEmailIncludingSocial(dto.getEmail()).isPresent()
-                && customerLoginRepository.findByEmail(dto.getEmail()).isPresent()) {
+        if (customerRepository.findByEmailIncludingSocial(dto.getEmail()).isPresent()
+                && customerRepository.findByEmail(dto.getEmail()).isPresent()) {
             throw new IllegalArgumentException("이미 가입된 이메일입니다.");
         }
 
@@ -77,7 +79,7 @@ public class MemberService {
         customer.setIsActive(true);
         customer.setPenaltyScore(0);
 
-        customerLoginRepository.save(customer);
+        customerRepository.save(customer);
 
         // 이메일로 바로 토큰 발급 (Authentication 불필요)
         return jwtTokenProvider.generateToken(dto.getEmail());
@@ -85,7 +87,7 @@ public class MemberService {
 
     // 회원정보 조회
     public MemberReadDTO getMyProfile(String email) {
-        Customer customer = customerLoginRepository
+        Customer customer = customerRepository
             .findByEmailIncludingSocial(email) // 소셜·일반 모두 조회 가능
             .orElseThrow(() -> new RuntimeException("회원 정보를 찾을 수 없습니다."));
 
@@ -99,8 +101,9 @@ public class MemberService {
         return dto;
     }
 
+    // 회원정보 수정
     public void updateMember(String email, MemberReadDTO dto) {
-        Customer customer = customerLoginRepository.findByEmail(email)
+        Customer customer = customerRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다"));
 
         customer.setName(dto.getName());
@@ -108,16 +111,15 @@ public class MemberService {
         customer.setAddress(dto.getAddress());
         customer.setBirth(dto.getBirth());  
 
-        customerLoginRepository.save(customer); // JPA 더티 체킹으로 자동 반영
+        customerRepository.save(customer); // JPA 더티 체킹으로 자동 반영
     }
 
+    // 회원 탈퇴(소프트): 비활성화
     public void deactivateByEmail(String email) {
-    Customer customer = customerLoginRepository.findByEmailIncludingSocial(email)
+    Customer customer = customerRepository.findByEmailIncludingSocial(email)
             .orElseThrow(() -> new RuntimeException("회원이 존재하지 않습니다."));
 
     customer.deactivate();
-    // 별도의 save() 호출 없어도 @Transactional 내에서 변경 감지되어 반영됨
-}
-
+    }
     
 }
