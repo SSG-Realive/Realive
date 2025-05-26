@@ -17,5 +17,6 @@ public interface ApprovalRepository extends JpaRepository<Seller, Long>, JpaSpec
      */
     List<Seller> findByIsApprovedFalseAndApprovedAtIsNull(); // 승인대기 판매자 조회
 
+    List<Seller> findByIsApprovedTrueAndIsActiveTrue(); // 승인된 판매자 조회
 
 }

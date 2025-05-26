@@ -1,14 +1,13 @@
 package com.realive.controller.seller;
 
+import com.realive.domain.seller.Seller;
 import com.realive.dto.order.DeliveryStatusUpdateDTO;
 import com.realive.service.order.OrderDeliveryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * 판매자용 배송 상태 변경 컨트롤러
- */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/seller/orders")
@@ -16,16 +15,20 @@ public class OrderDeliveryController {
 
     private final OrderDeliveryService orderDeliveryService;
 
-    /**
-     * 배송 상태 업데이트 엔드포인트
-     * PATCH /api/seller/orders/{orderId}/delivery
-     */
+    // PATCH /api/seller/orders/{orderId}/delivery
     @PatchMapping("/{orderId}/delivery")
     public ResponseEntity<Void> updateDeliveryStatus(
             @PathVariable Long orderId,
             @RequestBody DeliveryStatusUpdateDTO dto) {
 
-        orderDeliveryService.updateDeliveryStatus(orderId, dto);
+        // ✅ 현재 로그인한 판매자 꺼내기
+        Seller seller = (Seller) SecurityContextHolder.getContext()
+                .getAuthentication().getPrincipal();
+        Long sellerId = seller.getId();
+
+        // ✅ sellerId 포함해서 서비스 호출
+        orderDeliveryService.updateDeliveryStatus(sellerId, orderId, dto);
+
         return ResponseEntity.ok().build();
     }
 }

@@ -1,7 +1,6 @@
 package com.realive.controller.admin;
 
 import java.time.Duration;
-
 import com.realive.domain.admin.Admin;
 import com.realive.dto.admin.AdminInfoResponseDTO;
 import com.realive.dto.admin.AdminLoginRequestDTO;
@@ -53,7 +52,11 @@ public class AdminController {
     // 관리자 정보 조회
     @GetMapping("/me")
     public ResponseEntity<AdminInfoResponseDTO> getMyInfo(@AuthenticationPrincipal AdminPrincipal adminPrincipal) {
-        Admin admin = adminPrincipal.getAdmin();  // Admin 엔티티 가져오기
+        if (adminPrincipal == null) {
+            // 예외 메시지는 상황에 따라 조정
+            throw new IllegalStateException("관리자 인증이 필요합니다. JWT 토큰을 확인하세요.");
+        }
+        Admin admin = adminPrincipal.getAdmin();
         AdminInfoResponseDTO dto = new AdminInfoResponseDTO(
                 admin.getName(),
                 admin.getEmail(),
@@ -61,4 +64,5 @@ public class AdminController {
         );
         return ResponseEntity.ok(dto);
     }
+
 }

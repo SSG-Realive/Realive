@@ -69,4 +69,14 @@ public class AdminSellerApprovalController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 내부 오류가 발생했습니다."); // 500
         }
     }
+
+    @GetMapping("/approved")
+    public ResponseEntity<List<SellerResponseDTO>> getApprovedSellers() {
+        List<SellerResponseDTO> sellers = sellerApprovalService.getApprovedSellers();
+        if (sellers.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(sellers);
+    }
+
 }

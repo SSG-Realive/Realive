@@ -3,7 +3,6 @@ package com.realive.repository.product;
 import com.realive.domain.product.Product;
 import com.realive.dto.product.ProductSearchCondition;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable; // Pageable import 추가
 
 /**
  * ProductRepositoryCustom
@@ -17,8 +16,7 @@ public interface ProductRepositoryCustom {
      *
      * @param condition 검색 조건 (카테고리, 가격, 상태, 키워드 등)
      * @param sellerId 현재 로그인한 판매자 ID
-     * @param pageable 페이징 및 정렬 정보
      * @return 조건에 맞는 상품 목록 (페이징 처리된 결과)
      */
-    Page<Product> searchProducts(ProductSearchCondition condition, Long sellerId, Pageable pageable); // Pageable 파라미터 추가
+    Page<Product> searchProducts(ProductSearchCondition condition, Long sellerId);
 }

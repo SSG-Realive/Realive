@@ -4,6 +4,7 @@ import com.realive.domain.seller.Seller;
 import com.realive.dto.admin.approval.PendingSellerDTO;
 import com.realive.dto.seller.SellerResponseDTO;
 import com.realive.repository.admin.approval.ApprovalRepository;
+import com.realive.repository.seller.SellerRepository;
 import com.realive.service.admin.approval.SellerApprovalService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +23,8 @@ import java.util.stream.Collectors;
 public class SellerApprovalServiceImpl implements SellerApprovalService {
 
     private final ApprovalRepository approvalRepository;
+    private final SellerRepository sellerRepository;
+
 
     @Override
     @Transactional(readOnly = true)
@@ -101,4 +104,19 @@ public class SellerApprovalServiceImpl implements SellerApprovalService {
                 // Seller 엔티티에 hasBankAccountCopy 필드가 없으므로 DTO에서는 false 또는 생략
                 .build();
     }
+
+    // 승인된 업체 리스트
+    @Override
+    public List<SellerResponseDTO> getApprovedSellers() {
+        return approvalRepository.findByIsApprovedTrueAndIsActiveTrue().stream()
+                .map(seller -> SellerResponseDTO.builder()
+                        .email(seller.getEmail())
+                        .name(seller.getName())
+                        .phone(seller.getPhone())
+                        .isApproved(seller.isApproved())
+                        .businessNumber(seller.getBusinessNumber())
+                        .build())
+                .toList();
+    }
+
 }
