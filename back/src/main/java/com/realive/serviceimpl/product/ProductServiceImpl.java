@@ -202,13 +202,8 @@ public class ProductServiceImpl implements ProductService {
             throw new SecurityException("해당 상품에 대한 삭제 권한이 없습니다.");
         }
 
-        productImageRepository.findByProductId(productId)
-                .forEach(productImageRepository::delete);
 
-        deliveryPolicyRepository.findByProduct(product)
-                .ifPresent(deliveryPolicyRepository::delete);
-
-        productRepository.delete(product);
+        product.setActive(false);
     }
 
     @Override
