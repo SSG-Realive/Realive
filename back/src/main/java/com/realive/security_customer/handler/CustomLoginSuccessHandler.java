@@ -42,7 +42,7 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
         log.info("-----success handler 3 -----");
 		log.info(authentication);
 
-        //만일 social 회원이라면 회원정보를 수정하는 페이지로 이동
+        //만일 social 임시회원이라면 회원정보를 수정하는 페이지로 이동
         MemberLoginDTO loginUser = (MemberLoginDTO) authentication.getPrincipal();
         log.info("로그인한 사용자 이메일: " + loginUser.getEmail());
         log.info("SignupMethod: " + loginUser.getSignupMethod());
@@ -63,6 +63,5 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
         objectMapper.writeValue(response.getWriter(), responseData);
     }
 
-    
     
 }

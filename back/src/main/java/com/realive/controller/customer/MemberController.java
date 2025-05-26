@@ -1,15 +1,11 @@
-package com.realive.controller;
-
-import java.util.Map;
+package com.realive.controller.customer;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,18 +17,27 @@ import com.realive.dto.member.MemberReadDTO;
 import com.realive.service.customer.MemberService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
+
+// 회원 관련 컨트롤러
+
+@Log4j2
 @RestController
-@RequestMapping("/member")
+@RequestMapping("/api/customer/member")
 @RequiredArgsConstructor
 public class MemberController {
 
     private final MemberService memberService;
 
+    // 소셜 로그인 후 임시 회원 회원으로 전환
     @PutMapping("/update-info")
     public ResponseEntity<?> updateTemporaryUserInfo(
             @RequestBody MemberJoinDTO request,
             Authentication authentication) {
+
+        log.info("updateTemporaryUserInfo 호출됨");
+        log.info("Authentication: {}", authentication);
 
         // 로그인 사용자 이메일 가져오기
         String currentEmail = authentication.getName();
@@ -52,26 +57,8 @@ public class MemberController {
         }
     }
 
-    //일반회원가입
-    @PostMapping("/join")
-    public ResponseEntity<?> registerMember(@RequestBody MemberJoinDTO dto) {
-        try {
-            String token = memberService.register(dto);
-            // 가입 직후 자동 로그인용 JWT 토큰을 반환할 수도 있고, 단순 메시지를 줄 수도 있습니다.
-            return ResponseEntity
-                    .status(HttpStatus.CREATED)
-                    .body(Map.of(
-                        "message", "회원가입 성공",
-                        "token", token
-                    ));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body(Map.of("error", e.getMessage()));
-        }
-    }
 
-    //회원정보조회
+    // 회원정보조회
     @GetMapping("/me")
     public ResponseEntity<MemberReadDTO> getMyProfile(Authentication authentication) {
         String email = authentication.getName();
@@ -79,14 +66,14 @@ public class MemberController {
         return ResponseEntity.ok(profile);
     }
 
-    //회원정보수정
+    // 회원정보수정
     @PutMapping("/me")
     public ResponseEntity<?> updateMyInfo(@AuthenticationPrincipal MemberLoginDTO loginDTO,
                                           @RequestBody MemberReadDTO updateDTO) {
         memberService.updateMember(loginDTO.getEmail(), updateDTO);
         return ResponseEntity.ok().build();
     }
-    //회원탈퇴
+    // 회원탈퇴
     @DeleteMapping("/me")
     public ResponseEntity<String> delectMember(Authentication authentication){
         String email = authentication.getName();

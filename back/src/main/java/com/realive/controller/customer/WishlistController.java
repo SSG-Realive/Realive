@@ -1,4 +1,4 @@
-package com.realive.controller;
+package com.realive.controller.customer;
 
 import java.util.List;
 import java.util.Map;
@@ -19,8 +19,10 @@ import com.realive.service.customer.WishlistService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
+// 찜 컨트롤러
+
 @RestController
-@RequestMapping("/wishlist")
+@RequestMapping("/api/customer/wishlist")
 @Log4j2
 @RequiredArgsConstructor
 public class WishlistController {

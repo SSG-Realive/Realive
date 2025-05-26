@@ -11,6 +11,7 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.realive.domain.customer.Customer;
 import com.realive.domain.customer.SignupMethod;
@@ -23,6 +24,7 @@ import java.util.Set;
 
 //소셜로그인하면 인증 대신 -> 인증한 정보를 사용하기
 @Log4j2
+@Transactional
 @Service
 @RequiredArgsConstructor
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
@@ -35,6 +37,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         log.info("userRequest....");
         log.info(userRequest);
+        
 
         log.info("oauth2 user.....................................");
 
@@ -64,12 +67,16 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         // SignupMethod값은 kakao또는 google
 
         // 이메일로 기존 고객 조회
-        Optional<Customer> result = customerLoginRepository.findByEmail(email);
+        Optional<Customer> result = customerLoginRepository.findByEmailIncludingSocial(email);
 
         Customer customer;
 
         // 고객이 존재하지 않는 경우-> 임시 회원으로 만들어서 DB에 저장
         if (result.isEmpty()) {
+
+            log.info("email: " + email);
+            log.info("result.isEmpty(): " + result.isEmpty());
+
             // 고객이 없다면 신규 생성
             customer = new Customer(email, passwordEncoder.encode("1111")); // 임시 비밀번호
 
