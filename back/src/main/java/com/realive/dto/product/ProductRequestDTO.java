@@ -3,12 +3,9 @@ package com.realive.dto.product;
 import com.realive.domain.common.enums.ProductStatus;
 import lombok.Data;
 
-import com.realive.domain.common.enums.MediaType;
-
 import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
-import java.util.List;
 
 /**
  * 상품 등록/수정 요청 DTO

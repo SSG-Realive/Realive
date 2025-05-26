@@ -27,4 +27,8 @@ public interface SellerApprovalService {
     SellerResponseDTO processSellerDecision(Long sellerId, boolean approve, Integer approvingAdminId);
     // 반환 타입을 SellerResponseDTO로 할지, 아니면 PendingSellerDTO와 유사한 '처리 결과 DTO'를 새로 만들지 고민 필요.
     // 여기서는 SellerResponseDTO를 재활용하여 isApproved 상태를 명확히 보여주는 것으로 가정.
+
+    // 승인된 전체 판매자 리스트
+    List<SellerResponseDTO> getApprovedSellers();
+
 }

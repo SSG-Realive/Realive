@@ -13,7 +13,7 @@ public interface SellerRepository extends JpaRepository<Seller,Long>, EmailLooku
     boolean existsByEmail(String email); //email 중복검사
     boolean existsByName(String name); //이름 중복검사
     Optional<Seller> findByEmailAndIsActiveTrue(String email); //로그인용(소프트삭제)
-    List<Seller> findByIsApprovedFalse(); // 승인 대기 상태의 판매자 목록 조회
-
+    Optional<Seller> findByEmail(String email);
+    List<Seller> findByIsApprovedTrueAndIsActiveTrue(); // 승인된 업체 조회
 
 }

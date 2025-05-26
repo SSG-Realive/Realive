@@ -1,7 +1,6 @@
 package com.realive.security;
 
 import com.realive.domain.admin.Admin;
-import com.realive.dto.admin.AdminReadDTO;
 import com.realive.service.admin.AdminService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -36,30 +35,30 @@ public class AdminJwtAuthenticationFilter extends OncePerRequestFilter {
             if (jwtUtil.validateToken(token)) {
                 String email = jwtUtil.getEmailFromToken(token);
 
-                AdminReadDTO admin = adminService.findByEmail(email)
-                        .orElse(null);
+                // 반드시 Admin 엔티티를 가져와서 AdminPrincipal 생성
+                Admin adminEntity = adminService.findAdminEntityByEmail(email).orElse(null);
 
-                if (admin != null) {
+                if (adminEntity != null) {
+                    AdminPrincipal adminPrincipal = new AdminPrincipal(adminEntity);
+
                     UsernamePasswordAuthenticationToken auth =
                             new UsernamePasswordAuthenticationToken(
-                                    admin, null,
+                                    adminPrincipal,
+                                    null,
                                     List.of(new SimpleGrantedAuthority("ROLE_ADMIN"))
                             );
                     SecurityContextHolder.getContext().setAuthentication(auth);
                 }
-
             }
         }
 
         filterChain.doFilter(request, response);
     }
 
-
-
-
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         // /api/admin으로 시작하지 않으면 필터 동작 안 함
         return !request.getRequestURI().startsWith("/api/admin");
     }
+
 }

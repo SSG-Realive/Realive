@@ -10,5 +10,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SellerQnaAnswerRequestDTO {
+
     private String answer; // 작성할 답변
+
 }
