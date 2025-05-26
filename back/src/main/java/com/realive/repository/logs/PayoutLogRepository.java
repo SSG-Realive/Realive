@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,4 +30,7 @@ public interface PayoutLogRepository extends JpaRepository<PayoutLog, Integer> {
 
     // 특정 판매자의 정산 내역
     List<PayoutLog> findBySellerId(Integer sellerId);
+
+    // 특정 기간 동안 처리된(processedAt 기준) 정산 내역 조회
+    List<PayoutLog> findByProcessedAtBetween(LocalDateTime startDateTime, LocalDateTime endDateTime);
 }

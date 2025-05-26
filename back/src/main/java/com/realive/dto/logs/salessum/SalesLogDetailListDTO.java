@@ -15,4 +15,5 @@ import java.util.List;
 public class SalesLogDetailListDTO {
     private final LocalDate date;
     private final List<SalesLogDTO> salesLogs;
+
 }
