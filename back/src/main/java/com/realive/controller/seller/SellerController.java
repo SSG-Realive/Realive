@@ -2,6 +2,7 @@ package com.realive.controller.seller;
 
 import java.time.Duration;
 
+
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -38,6 +39,7 @@ public class SellerController {
 
     private final SellerService sellerService;
     private final JwtUtil jwtUtil;
+   
     
  // 🔐 로그인 (토큰 발급)
     @PostMapping("/login")
@@ -59,7 +61,7 @@ public class SellerController {
         
         return ResponseEntity.ok(resdto);
     }
-    //로그아웃(토큰삭제)
+    //로그아웃(토큰덮어쓰기)
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(HttpServletResponse response) {
         
@@ -92,27 +94,20 @@ public class SellerController {
     @PutMapping("/me")
     public ResponseEntity<Void> updateSeller(
             @RequestBody @Valid SellerUpdateDTO dto) {
-
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String email = auth.getName();
 
-        Seller seller = sellerService.getByEmail(email);
-
-        sellerService.updateSeller(seller.getId(), dto);
+        sellerService.updateSeller(email, dto);
         return ResponseEntity.ok().build();
     }
 
     // 🙋‍♀️ 마이페이지 조회 (판매자 정보 )
     @GetMapping("/me")
     public ResponseEntity<SellerResponseDTO> getMyInfo() {
-
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String email = auth.getName();
 
-        Seller seller = sellerService.getByEmail(email);
-
-        SellerResponseDTO dto = sellerService.getMyInfo(seller.getId());
-
+        SellerResponseDTO dto = sellerService.getMyInfo(email);
         return ResponseEntity.ok(dto);
     }
 }
