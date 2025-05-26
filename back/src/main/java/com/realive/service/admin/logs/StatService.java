@@ -1,5 +1,6 @@
 package com.realive.service.admin.logs;
 
+import com.realive.dto.logs.salessum.CategorySalesSummaryDTO;
 import com.realive.dto.logs.salessum.DailySalesSummaryDTO;
 import com.realive.dto.logs.salessum.MonthlySalesLogDetailListDTO;
 import com.realive.dto.logs.salessum.MonthlySalesSummaryDTO;
@@ -30,4 +31,13 @@ public interface StatService {
 
     // 대시보드용 통합 통계
     Map<String, Object> getDashboardStats(LocalDate date);
+
+
+    /**
+     * 특정 기간 동안의 플랫폼 전체 카테고리별 판매 요약을 조회합니다.
+     * @param startDate 조회 시작일
+     * @param endDate 조회 종료일
+     * @return 카테고리별 판매 요약 DTO 리스트
+     */
+    List<CategorySalesSummaryDTO> getPlatformCategorySalesSummary(LocalDate startDate, LocalDate endDate);
 }
