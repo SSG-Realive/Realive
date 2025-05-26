@@ -1,6 +1,7 @@
 package com.realive.repository.logs;
 
 import com.realive.domain.logs.SalesLog;
+import com.realive.dto.logs.salessum.CategorySalesSummaryDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -201,4 +202,28 @@ public interface SalesLogRepository extends JpaRepository<SalesLog, Integer>, Jp
      * (getDailySalesLogDetails 메소드에서 사용)
      */
     List<SalesLog> findBySoldAt(LocalDate soldAt);
+
+    /**
+     * 특정 기간 동안의 카테고리별 판매 현황(건수, 금액)을 집계합니다.
+     * SalesLog의 productId를 사용하여 Product 엔티티와 조인하고,
+     * Product 엔티티의 category 필드를 사용하여 Category 엔티티와 조인합니다.
+     *
+     * @param startDate 조회 시작일
+     * @param endDate 조회 종료일
+     * @return 카테고리별 판매 요약 DTO 리스트
+     */
+    @Query("SELECT new com.realive.dto.logs.salessum.CategorySalesSummaryDTO(" +
+            "c.id, " +                      // categoryId (Long)
+            "c.name, " +                    // categoryName (String)
+            "COUNT(sl.id), " +              // totalSalesCount (Long)
+            "SUM(sl.totalPrice), " +        // totalSalesAmount (Long) - DTO 필드도 Long으로 가정
+            "CAST(0 AS java.lang.Integer)) " + // totalProfitAmount (Integer, 임시로 0)
+            "FROM SalesLog sl " +
+            "JOIN Product p ON sl.productId = p.id " +
+            "JOIN p.category c " +
+            "WHERE sl.soldAt BETWEEN :startDate AND :endDate " +
+            "GROUP BY c.id, c.name " +
+            "ORDER BY SUM(sl.totalPrice) DESC")
+    List<CategorySalesSummaryDTO> findCategorySalesSummaryBetween(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+
 }

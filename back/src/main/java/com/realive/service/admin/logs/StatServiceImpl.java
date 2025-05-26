@@ -17,6 +17,7 @@ import com.realive.dto.logs.salessum.DailySalesSummaryDTO;
 import com.realive.dto.logs.salessum.MonthlySalesLogDetailListDTO;
 import com.realive.dto.logs.salessum.MonthlySalesSummaryDTO;
 import com.realive.dto.logs.salessum.SalesLogDetailListDTO;
+import com.realive.dto.logs.salessum.CategorySalesSummaryDTO;
 import com.realive.repository.admin.approval.ApprovalRepository;
 import com.realive.repository.logs.CommissionLogRepository;
 import com.realive.repository.logs.PayoutLogRepository;
@@ -41,6 +42,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.Collections;
 
 @Slf4j
 @Service
@@ -328,5 +330,27 @@ public class StatServiceImpl implements StatService {
 
         log.info("대시보드 데이터 구성 완료: {}", dashboardData.keySet());
         return dashboardData;
+
+
+    }
+
+    /**
+     * 특정 기간 동안의 플랫폼 전체 카테고리별 판매 요약을 조회합니다.
+     * (StatService 인터페이스에 선언된 메소드의 구현)
+     * @param startDate 조회 시작일
+     * @param endDate 조회 종료일
+     * @return 카테고리별 판매 요약 DTO 리스트
+     */
+    @Override // 인터페이스 메소드를 구현함을 명시
+    public List<CategorySalesSummaryDTO> getPlatformCategorySalesSummary(LocalDate startDate, LocalDate endDate) {
+        log.info("플랫폼 전체 카테고리별 판매 요약 조회 요청 - 기간: {} ~ {}", startDate, endDate);
+        if (salesLogRepository != null) {
+            // SalesLogRepository에 해당 기간의 카테고리별 집계 쿼리 메소드가 있다고 가정
+            // (이전 답변에서 findCategorySalesSummaryBetween 메소드를 정의했었습니다)
+            return salesLogRepository.findCategorySalesSummaryBetween(startDate, endDate);
+        } else {
+            log.warn("SalesLogRepository가 주입되지 않았습니다. 카테고리별 판매 요약에 대해 빈 리스트를 반환합니다.");
+            return Collections.emptyList(); // SalesLogRepository가 null인 경우 빈 리스트 반환
+        }
     }
 }
