@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 public class OrderListResponseDTO {
 
-    private List<OrderResponseDTO> orders; // 각 OrderResponseDTO는 이제 여러 OrderItemResponseDTO를 포함할 수 있음
+    private List<OrderResponseDTO> orders;
     private int totalItems;
     private int totalOrderPrice;
 

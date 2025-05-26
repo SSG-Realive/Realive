@@ -15,47 +15,60 @@ import java.util.List;
 @AllArgsConstructor
 public class OrderResponseDTO {
 
-    private long orderId;
-    private long customerId;
+    private Long orderId;
+    private Long customerId;
     private String deliveryAddress;
+    private String receiverName;
+    private String phone;
     private int deliveryFee;
     private int totalPrice;
     private String paymentType;
     private String deliveryStatus;
     private String orderStatus;
     private LocalDateTime orderCreatedAt;
+    private LocalDateTime updatedAt;
 
     private List<OrderItemResponseDTO> orderItems;
+
+    private boolean isSellerReviewWritten; // 판매자 리뷰 작성 여부
 
     public static OrderResponseDTO fromOrder(Order order) {
         return OrderResponseDTO.builder()
                 .orderId(order.getId())
                 .customerId(order.getCustomer().getId())
                 .deliveryAddress(order.getDeliveryAddress())
+                .receiverName(order.getReceiverName())
+                .phone(order.getPhone())
                 .totalPrice(order.getTotalPrice())
                 .paymentType(order.getPaymentType())
                 .orderStatus(order.getStatus().getDescription())
+                .deliveryStatus(order.getDeliveryStatus().getDescription())
                 .orderCreatedAt(order.getOrderedAt())
+                .updatedAt(order.getUpdatedAt())
+                .isSellerReviewWritten(order.isSellerReviewWritten())
                 .build();
     }
 
     public static OrderResponseDTO from(
             Order order,
             List<OrderItemResponseDTO> orderItemDTOs,
-            int totalDeliveryFee,
-            String deliveryStatus
+            int totalDeliveryFee
     ) {
         return OrderResponseDTO.builder()
                 .orderId(order.getId())
                 .customerId(order.getCustomer().getId())
                 .deliveryAddress(order.getDeliveryAddress())
+                .receiverName(order.getReceiverName())
+                .phone(order.getPhone())
                 .totalPrice(order.getTotalPrice())
                 .paymentType(order.getPaymentType())
                 .orderStatus(order.getStatus().getDescription())
+                .deliveryStatus(order.getDeliveryStatus().getDescription())
                 .orderCreatedAt(order.getOrderedAt())
+                .updatedAt(order.getUpdatedAt())
                 .deliveryFee(totalDeliveryFee)
-                .deliveryStatus(deliveryStatus)
                 .orderItems(orderItemDTOs)
+                .isSellerReviewWritten(order.isSellerReviewWritten())
                 .build();
     }
 }

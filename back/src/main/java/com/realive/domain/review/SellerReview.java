@@ -1,7 +1,5 @@
 package com.realive.domain.review;
 
-import java.time.LocalDateTime;
-
 import com.realive.domain.common.BaseTimeEntity;
 import com.realive.domain.customer.Customer;
 import com.realive.domain.order.Order;
@@ -14,9 +12,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
+import jakarta.persistence.UniqueConstraint; // UniqueConstraint 임포트 유지
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -27,7 +24,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "seller_reviews")
+// uniqueConstraints 추가, 테이블 수준에서 중복을 방지하는 역할
+@Table(name = "seller_reviews", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"order_id", "customer_id", "seller_id"}) // 이 3개 컬럼의 조합이 유일해야 함
+})
 public class SellerReview extends BaseTimeEntity {
 
     @Id

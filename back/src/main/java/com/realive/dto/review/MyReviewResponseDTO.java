@@ -8,12 +8,13 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Setter
 public class MyReviewResponseDTO {
     private Long reviewId;
     private Long orderId;
     private String productName;
     private double rating;
-    private String comment;
+    private String content;
     private List<String> imageUrls;
     private LocalDateTime createdAt;
 }
