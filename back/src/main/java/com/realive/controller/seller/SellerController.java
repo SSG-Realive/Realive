@@ -1,11 +1,12 @@
 package com.realive.controller.seller;
 
 import java.time.Duration;
-import java.util.List;
+
 
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -13,14 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.realive.domain.seller.Seller;
-import com.realive.dto.product.ProductListDTO;
 import com.realive.dto.seller.SellerLoginRequestDTO;
 import com.realive.dto.seller.SellerLoginResponseDTO;
 import com.realive.dto.seller.SellerResponseDTO;
 import com.realive.dto.seller.SellerSignupDTO;
 import com.realive.dto.seller.SellerUpdateDTO;
 import com.realive.security.JwtUtil;
-import com.realive.service.product.ProductService;
 import com.realive.service.seller.SellerService;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -39,8 +38,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 public class SellerController {
 
     private final SellerService sellerService;
-    private final ProductService productService;
     private final JwtUtil jwtUtil;
+   
     
  // 🔐 로그인 (토큰 발급)
     @PostMapping("/login")
@@ -62,7 +61,7 @@ public class SellerController {
         
         return ResponseEntity.ok(resdto);
     }
-    //로그아웃(토큰삭제제)
+    //로그아웃(토큰덮어쓰기)
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(HttpServletResponse response) {
         
@@ -94,20 +93,21 @@ public class SellerController {
     // 🔄 판매자 정보 수정
     @PutMapping("/me")
     public ResponseEntity<Void> updateSeller(
-            @RequestBody @Valid SellerUpdateDTO dto,
-            @AuthenticationPrincipal Seller seller) {
+            @RequestBody @Valid SellerUpdateDTO dto) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = auth.getName();
 
-        sellerService.updateSeller(seller.getId(), dto);
+        sellerService.updateSeller(email, dto);
         return ResponseEntity.ok().build();
     }
 
     // 🙋‍♀️ 마이페이지 조회 (판매자 정보 )
     @GetMapping("/me")
-    public ResponseEntity<SellerResponseDTO> getMyInfo(@AuthenticationPrincipal Seller seller) {
-        Long sellerId = seller.getId();
+    public ResponseEntity<SellerResponseDTO> getMyInfo() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = auth.getName();
 
-        SellerResponseDTO resdto = sellerService.getMyInfo(sellerId);
-        
-        return ResponseEntity.ok(resdto);
+        SellerResponseDTO dto = sellerService.getMyInfo(email);
+        return ResponseEntity.ok(dto);
     }
 }

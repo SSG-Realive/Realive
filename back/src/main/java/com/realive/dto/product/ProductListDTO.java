@@ -1,9 +1,7 @@
 package com.realive.dto.product;
 
 import com.realive.domain.product.Product;
-import com.realive.domain.product.ProductImage;
 
-import io.micrometer.common.lang.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
