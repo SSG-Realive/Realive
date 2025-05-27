@@ -5,6 +5,7 @@ import com.realive.dto.auction.AuctionResponseDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 public interface AuctionService {
 
@@ -38,6 +39,20 @@ public interface AuctionService {
      */
     AuctionResponseDTO getAuctionDetails(Integer auctionId);
 
-    // TODO: 필요에 따라 추가적인 서비스 메소드 정의
-    // 예: 특정 판매자가 등록한 경매 목록 조회, 특정 상품에 대한 현재 진행 중 경매 조회 등
+    /**
+     * 특정 판매자가 등록한 경매 목록을 페이징하여 조회합니다.
+     * @param sellerId 판매자 ID
+     * @param pageable 페이징 정보
+     * @return 해당 판매자의 경매 목록 Page 객체
+     */
+    Page<AuctionResponseDTO> getAuctionsBySeller(Long sellerId, Pageable pageable);
+
+    /**
+     * 특정 상품 ID에 대해 현재 진행 중인 경매를 조회합니다.
+     * (상품 하나당 하나의 활성 경매만 있다고 가정)
+     * @param productId 상품 ID (Auction 엔티티의 productId 타입과 일치해야 함 - 현재 Integer)
+     * @return 진행 중인 경매 정보 Optional 객체
+     */
+    Optional<AuctionResponseDTO> getCurrentAuctionForProduct(Integer productId);
+
 }

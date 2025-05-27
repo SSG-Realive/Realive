@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository; // @Repository 어노테이션
 
 import java.util.Optional;
 
-@Repository // 사용하신다면 유지
+@Repository
 public interface BidRepository extends JpaRepository<Bid, Integer> {
 
     // JpaRepository에서 기본 제공하지만 명시적으로 선언 가능
