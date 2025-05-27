@@ -53,7 +53,6 @@ public class AdminController {
     @GetMapping("/me")
     public ResponseEntity<AdminInfoResponseDTO> getMyInfo(@AuthenticationPrincipal AdminPrincipal adminPrincipal) {
         if (adminPrincipal == null) {
-            // 예외 메시지는 상황에 따라 조정
             throw new IllegalStateException("관리자 인증이 필요합니다. JWT 토큰을 확인하세요.");
         }
         Admin admin = adminPrincipal.getAdmin();
@@ -64,5 +63,6 @@ public class AdminController {
         );
         return ResponseEntity.ok(dto);
     }
+
 
 }
