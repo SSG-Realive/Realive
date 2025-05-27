@@ -1,6 +1,7 @@
 package com.realive.repository.product;
 
 import com.realive.domain.product.Product;
+import com.realive.dto.product.CustomerProductSearchCondition;
 import com.realive.dto.product.ProductSearchCondition;
 import org.springframework.data.domain.Page;
 
@@ -19,4 +20,6 @@ public interface ProductRepositoryCustom {
      * @return 조건에 맞는 상품 목록 (페이징 처리된 결과)
      */
     Page<Product> searchProducts(ProductSearchCondition condition, Long sellerId);
+
+    Page<Product> searchVisibleProducts(CustomerProductSearchCondition condition);
 }

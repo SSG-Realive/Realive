@@ -5,12 +5,13 @@ import com.realive.dto.product.ProductResponseDTO;
 import com.realive.dto.product.ProductSearchCondition;
 import com.realive.domain.seller.Seller;
 import com.realive.dto.page.PageResponseDTO;
+
 import com.realive.dto.product.ProductListDTO;
 import com.realive.service.product.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.MediaType;
@@ -71,4 +72,6 @@ public class ProductController {
         ProductResponseDTO dto = productService.getProductDetail(id);
         return ResponseEntity.ok(dto);
     }
+
+    
 }
