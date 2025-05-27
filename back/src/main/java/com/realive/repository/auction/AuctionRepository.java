@@ -35,6 +35,7 @@ public interface AuctionRepository extends JpaRepository<Auction, Integer> /* , 
     // 특정 현재 가격 이상인 모든 경매 조회
     List<Auction> findByCurrentPriceGreaterThanEqual(Integer price);
 
+<<<<<<< HEAD
     // 현재 진행 중인 경매 목록 조회 (종료되지 않았고, 종료 시간이 현재 이후)
     Page<Auction> findByIsClosedFalseAndEndTimeAfter(LocalDateTime currentTime, Pageable pageable);
 
@@ -49,4 +50,8 @@ public interface AuctionRepository extends JpaRepository<Auction, Integer> /* , 
     Page<Auction> findByProductIdIn(List<Integer> productIds, Pageable pageable);
 
 
+=======
+    Page<Auction> findByIsClosedFalseAndEndTimeAfter(LocalDateTime currentTime, Pageable pageable);
+
+>>>>>>> 8959463cf51242389515b4c0a5b0de74a469d25e
 }
