@@ -13,7 +13,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
-// import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 // import com.realive.security.UserDetailsImpl;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,14 +29,12 @@ public class BidController {
 
     @PostMapping
     public ResponseEntity<ApiResponse<BidResponseDTO>> placeBid(
-            @Valid @RequestBody BidRequestDTO requestDto
-            /* @AuthenticationPrincipal UserDetailsImpl userDetails */
+            @Valid @RequestBody BidRequestDTO requestDto,
+            @AuthenticationPrincipal(expression = "id") Long customerId
     ) {
-        log.info("POST /api/bids - 입찰 요청: {}", requestDto);
-        Long mockAuthenticatedCustomerId = 2L;
-
+        log.info("POST /api/bids - 입찰 요청: {} (고객ID: {})", requestDto, customerId);
         try {
-            BidResponseDTO placedBid = bidService.placeBid(requestDto, mockAuthenticatedCustomerId);
+            BidResponseDTO placedBid = bidService.placeBid(requestDto, customerId);
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(ApiResponse.success("입찰이 성공적으로 등록되었습니다.", placedBid));
         } catch (NoSuchElementException e) {
