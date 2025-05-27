@@ -19,13 +19,20 @@ public class QSeller extends EntityPathBase<Seller> {
 
     public static final QSeller seller = new QSeller("seller");
 
+    public final com.realive.domain.common.QBaseTimeEntity _super = new com.realive.domain.common.QBaseTimeEntity(this);
+
+    public final DateTimePath<java.time.LocalDateTime> approvedAt = createDateTime("approvedAt", java.time.LocalDateTime.class);
+
     public final StringPath businessNumber = createString("businessNumber");
 
-    public final DateTimePath<java.time.LocalDateTime> createdAt = createDateTime("createdAt", java.time.LocalDateTime.class);
+    //inherited
+    public final DateTimePath<java.time.LocalDateTime> createdAt = _super.createdAt;
 
     public final StringPath email = createString("email");
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
+
+    public final BooleanPath isActive = createBoolean("isActive");
 
     public final BooleanPath isApproved = createBoolean("isApproved");
 
@@ -35,7 +42,8 @@ public class QSeller extends EntityPathBase<Seller> {
 
     public final StringPath phone = createString("phone");
 
-    public final DateTimePath<java.time.LocalDateTime> updatedAt = createDateTime("updatedAt", java.time.LocalDateTime.class);
+    //inherited
+    public final DateTimePath<java.time.LocalDateTime> updatedAt = _super.updatedAt;
 
     public QSeller(String variable) {
         super(Seller.class, forVariable(variable));

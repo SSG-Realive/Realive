@@ -1,4 +1,4 @@
-package com.realive.controller.customer;
+package com.realive.controller.public_api;
 
 import java.io.IOException;
 
@@ -36,6 +36,5 @@ public class KakaoController {
 
         response.sendRedirect(kakaoAuthUrl);
     }
-
 
 }

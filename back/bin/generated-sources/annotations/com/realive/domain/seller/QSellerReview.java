@@ -26,7 +26,11 @@ public class QSellerReview extends EntityPathBase<SellerReview> {
 
     public final DateTimePath<java.time.LocalDateTime> createdAt = createDateTime("createdAt", java.time.LocalDateTime.class);
 
+    public final com.realive.domain.customer.QCustomer customer;
+
     public final NumberPath<Long> id = createNumber("id", Long.class);
+
+    public final com.realive.domain.order.QOrder order;
 
     public final NumberPath<Integer> rating = createNumber("rating", Integer.class);
 
@@ -50,6 +54,8 @@ public class QSellerReview extends EntityPathBase<SellerReview> {
 
     public QSellerReview(Class<? extends SellerReview> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
+        this.customer = inits.isInitialized("customer") ? new com.realive.domain.customer.QCustomer(forProperty("customer")) : null;
+        this.order = inits.isInitialized("order") ? new com.realive.domain.order.QOrder(forProperty("order"), inits.get("order")) : null;
         this.seller = inits.isInitialized("seller") ? new QSeller(forProperty("seller")) : null;
     }
 

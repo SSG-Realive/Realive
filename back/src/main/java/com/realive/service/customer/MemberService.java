@@ -116,10 +116,10 @@ public class MemberService {
 
     // 회원 탈퇴(소프트): 비활성화
     public void deactivateByEmail(String email) {
-    Customer customer = customerRepository.findByEmailIncludingSocial(email)
-            .orElseThrow(() -> new RuntimeException("회원이 존재하지 않습니다."));
+        Customer customer = customerRepository.findByEmailIncludingSocial(email)
+                .orElseThrow(() -> new RuntimeException("회원이 존재하지 않습니다."));
 
-    customer.deactivate();
+        customer.deactivate();
     }
     
 }

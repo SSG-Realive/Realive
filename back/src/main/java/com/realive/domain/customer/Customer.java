@@ -23,7 +23,7 @@ import lombok.Setter;
 
 @EntityListeners(AuditingEntityListener.class)
 @Entity
-@Table(name = "customer")
+@Table(name = "customers")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
