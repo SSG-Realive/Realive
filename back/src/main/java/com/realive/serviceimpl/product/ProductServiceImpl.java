@@ -9,6 +9,7 @@ import com.realive.repository.product.*;
 import com.realive.repository.seller.SellerRepository;
 import com.realive.service.common.FileUploadService;
 import com.realive.service.product.ProductService;
+import com.realive.service.seller.SellerService;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,7 @@ public class ProductServiceImpl implements ProductService {
     private final SellerRepository sellerRepository;
     private final DeliveryPolicyRepository deliveryPolicyRepository;
     private final FileUploadService fileUploadService;
+    private final SellerService sellerService;
 
     @Override
     public Long createProduct(ProductRequestDTO dto, Long sellerId) {
@@ -205,9 +207,13 @@ public class ProductServiceImpl implements ProductService {
 
         product.setActive(false);
     }
-
+    //상품 목록 조회 (판매자 전용)
     @Override
-    public PageResponseDTO<ProductListDTO> getProductsBySeller(Long sellerId, ProductSearchCondition condition) {
+    public PageResponseDTO<ProductListDTO> getProductsBySeller(String email, ProductSearchCondition condition) {
+        
+        Seller seller = sellerService.getByEmail(email);
+        Long sellerId = seller.getId(); 
+
         Page<Product> result = productRepository.searchProducts(condition, sellerId);
         List<Product> products = result.getContent();
 
@@ -262,4 +268,36 @@ public class ProductServiceImpl implements ProductService {
                 .map(ProductImage::getUrl)
                 .orElse(null);
     }
+
+    // 구매자 전용 상품 목록 조회
+    @Override
+    public PageResponseDTO<ProductListDTO> getVisibleProducts(CustomerProductSearchCondition condition) {
+       Page<Product> result = productRepository.searchVisibleProducts(condition);
+       List<Product> products = result.getContent();
+
+       //상품 id 목록 추출
+       List<Long> productIDs = products.stream()
+                .map(Product :: getId)
+                .toList();
+                
+        //상품 이미지 매핑
+        List<Object[]> rows = productImageRepository.findThumbnailUrlsByProductIds(productIDs, MediaType.IMAGE);
+        Map<Long, String> imageMap = rows.stream()
+                .collect(Collectors.toMap(
+                        row -> (Long) row[0],
+                        row -> (String) row[1]
+                ));
+        
+        //상품 DTO 매핑
+        List<ProductListDTO> dtoList = products.stream()
+                .map(product -> ProductListDTO.from(product, imageMap.get(product.getId())))
+                .toList();
+
+        //반환
+        return PageResponseDTO.<ProductListDTO>withAll()
+                .pageRequestDTO(condition)
+                .dtoList(dtoList)
+                .total((int) result.getTotalElements())
+                .build();
+        }
 }
