@@ -1,9 +1,14 @@
 package com.realive.repository.product;
 
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.realive.domain.product.Product;
+import com.realive.domain.product.QCategory;
 import com.realive.domain.product.QProduct;
+import com.realive.domain.seller.QSeller;
+import com.realive.dto.product.CustomerProductSearchCondition;
 import com.realive.dto.product.ProductSearchCondition;
 import lombok.RequiredArgsConstructor;
 
@@ -105,4 +110,75 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
 
         return builder;
     }
+    //구매자 전용 물품 리스트
+    @Override
+    public Page<Product> searchVisibleProducts(CustomerProductSearchCondition condition) {
+        QProduct product = QProduct.product;
+        QCategory category = QCategory.category;
+        QSeller seller = QSeller.seller;
+
+        BooleanBuilder builder = new BooleanBuilder();
+
+        //활성 상품만 표기할 것
+        builder.and(product.active.eq(true));
+
+        //키워드 검색
+        if (condition.getKeyword() != null && !condition.getKeyword().isEmpty()) {
+            builder.and(
+                product.name.containsIgnoreCase(condition.getKeyword())
+                .or(product.description.containsIgnoreCase(condition.getKeyword()))
+            );
+        }
+        //카테고리 조건
+        if (condition.getCategoryId() !=null) {
+            builder.and(product.category.id.eq(condition.getCategoryId()));
+        } else if (condition.getParentCategoryId() != null) {
+            builder.and(product.category.parent.id.eq(condition.getParentCategoryId()));
+            
+        }// end if
+
+        //판매자 이름 조건
+        if (condition.getSellerName() !=null && !condition.getSellerName().isBlank()){
+            builder.and(product.seller.name.containsIgnoreCase(condition.getSellerName()));
+        } 
+        
+        //가격 조건
+        if (condition.getMinPrice() != null) {
+            builder.and(product.price.goe(condition.getMinPrice()));
+        }
+        if (condition.getMaxPrice() != null) {
+            builder.and(product.price.loe(condition.getMaxPrice()));            
+        }
+
+        //정렬 조건 처리
+        OrderSpecifier<?> orderSpec = product.createdAt.desc(); // 기본값
+        if (condition.getSort() != null) {
+            switch (condition.getSort()) {
+                case "price_asc" -> orderSpec = product.price.asc();
+                case "price_desc" -> orderSpec = product.price.desc();
+                case "new" -> orderSpec = product.createdAt.desc();
+            }
+        }
+
+        // 페이징 처리
+        JPAQuery<Product> query = queryFactory.selectFrom(product)
+                .leftJoin(product.category, category).fetchJoin()
+                .leftJoin(product.seller, seller).fetchJoin()
+                .where(builder)
+                .orderBy(orderSpec)
+                .offset(condition.getPageIndex() * condition.getSize())
+                .limit(condition.getSize());
+
+        List<Product> resultList = query.fetch();
+
+        long total = queryFactory.select(product.count())
+                .from(product)
+                .where(builder)
+                .fetchOne();
+
+        return new PageImpl<>(resultList, condition.toPageable(), total);
+            
+        }
 }
+            
+        
