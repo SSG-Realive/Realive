@@ -49,5 +49,7 @@ public class SellerQna extends BaseTimeEntity {
     @Column(name = "answered_at")
     private LocalDateTime answeredAt;
 
+    @Column(name = "is_active")
+    private boolean isActive = true;
 
 }

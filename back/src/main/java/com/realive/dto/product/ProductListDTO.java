@@ -1,5 +1,6 @@
 package com.realive.dto.product;
 
+import com.realive.domain.product.Category;
 import com.realive.domain.product.Product;
 
 import lombok.AllArgsConstructor;
@@ -22,7 +23,10 @@ public class ProductListDTO {
     private String status;             // 상태 (상, 중, 하)
     private boolean isActive;          // 판매 여부
     private String imageThumbnailUrl;  // 대표 이미지 썸네일
-    
+    private String parentCategoryName;
+    private String categoryName;
+    private String sellerName;
+
 
     public static ProductListDTO from(Product product, String imageUrl) {
         return ProductListDTO.builder()
@@ -32,6 +36,12 @@ public class ProductListDTO {
                 .status(product.getStatus().name())  // enum 처리
                 .isActive(product.isActive())
                 .imageThumbnailUrl(imageUrl)
+                .categoryName(Category.getCategoryFullPath(product.getCategory()))
+                .parentCategoryName(
+                        product.getCategory() != null && product.getCategory().getParent() != null
+                                ? product.getCategory().getParent().getName()
+                                : null)
+                .sellerName(product.getSeller().getName())
                 .build();
     }
 }

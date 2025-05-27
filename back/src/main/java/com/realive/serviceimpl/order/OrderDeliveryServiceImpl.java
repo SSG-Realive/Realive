@@ -34,24 +34,30 @@ public class OrderDeliveryServiceImpl implements OrderDeliveryService {
         OrderDelivery delivery = orderDeliveryRepository.findByOrderId(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("배송 정보가 존재하지 않습니다."));
 
+        // 🔒 본인 주문인지 검증
         if (!delivery.getOrder().getProduct().getSeller().getId().equals(sellerId)) {
             throw new SecurityException("자신의 주문에 대해서만 배송 상태를 변경할 수 있습니다.");
         }
 
-        DeliveryStatus currentStatus = delivery.getDeliveryStatus(); // 🔹 추가
+        DeliveryStatus currentStatus = delivery.getDeliveryStatus();
         DeliveryStatus newStatus = dto.getDeliveryStatus();
 
-        // 🔒 상태 전이 제한 로직 추가
-        if (!((currentStatus == DeliveryStatus.결제완료 && newStatus == DeliveryStatus.배송중) ||
-                (currentStatus == DeliveryStatus.배송중 && newStatus == DeliveryStatus.배송완료))) {
+        // 🔒 상태 전이 제한 (결제완료 → 배송중 → 배송완료만 허용)
+        boolean validTransition =
+                (currentStatus == DeliveryStatus.결제완료 && newStatus == DeliveryStatus.배송중) ||
+                        (currentStatus == DeliveryStatus.배송중 && newStatus == DeliveryStatus.배송완료);
+
+        if (!validTransition) {
             throw new IllegalStateException("유효하지 않은 배송 상태 전이입니다.");
         }
 
+        // 🔐 배송중일 경우 운송장/택배사 필수
         if (newStatus == DeliveryStatus.배송중 &&
                 (dto.getTrackingNumber() == null || dto.getCarrier() == null)) {
             throw new IllegalArgumentException("배송중 상태에서는 운송장 번호와 택배사 정보가 필수입니다.");
         }
 
+        // 📦 상태 및 관련 정보 업데이트
         delivery.setDeliveryStatus(newStatus);
         delivery.setTrackingNumber(dto.getTrackingNumber());
         delivery.setCarrier(dto.getCarrier());

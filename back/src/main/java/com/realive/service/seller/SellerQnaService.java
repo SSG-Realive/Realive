@@ -13,20 +13,12 @@ import org.springframework.data.domain.Pageable;
 public interface SellerQnaService {
 
     /**
-     * 판매자 기준 QnA 목록 조회 (페이징)
-     *
-     * @param sellerId 판매자 ID
-     * @param pageable 페이지 요청 정보
-     * @return QnA 목록 페이지
+     * 판매자 이메일 기준 QnA 목록 조회
      */
-    Page<SellerQnaResponseDTO> getQnaListBySeller(Long sellerId, Pageable pageable);
+    Page<SellerQnaResponseDTO> getQnaListByEmail(String email, Pageable pageable);
 
     /**
-     * QnA 답변 작성 또는 수정
-     *
-     * @param sellerId 판매자 ID
-     * @param qnaId    QnA ID
-     * @param dto      답변 내용 DTO
+     * 판매자 이메일 기준 QnA 답변 작성/수정
      */
-    void answerQna(Long sellerId, Long qnaId, SellerQnaAnswerRequestDTO dto);
+    void answerQnaByEmail(String email, Long qnaId, SellerQnaAnswerRequestDTO dto);
 }

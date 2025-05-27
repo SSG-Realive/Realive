@@ -1,11 +1,14 @@
 package com.realive.dto.product;
 
 import com.realive.domain.common.enums.ProductStatus;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-
-import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 상품 등록/수정 요청 DTO
@@ -13,22 +16,41 @@ import org.springframework.web.multipart.MultipartFile;
 @Data
 public class ProductRequestDTO {
 
+    @NotBlank
     private String name;
+
+    @NotNull
+    @Min(1)
+    private Integer price;
+
+    @NotBlank
     private String description;
-    private int price;
+
+    @Min(0)
     private Integer stock;
+
+    @Min(0)
     private Integer width;
+
+    @Min(0)
     private Integer depth;
+
+    @Min(0)
     private Integer height;
+
     private ProductStatus status;
+
     private Long categoryId;
+
     private Boolean active;
 
-    private MultipartFile imageThumbnail;           // 대표 이미지 (필수)
-    private MultipartFile videoThumbnail;           // 대표 영상 (선택)
+    @NotNull
+    private MultipartFile imageThumbnail;
 
-    private List<MultipartFile> subImages;          // ✅ 상세 이미지 다건 업로드 (선택)
-    // 필요시 추후 확장: private List<MultipartFile> subVideos;
+    private MultipartFile videoThumbnail;
 
+    private List<MultipartFile> subImages;
+
+    @Valid
     private DeliveryPolicyDTO deliveryPolicy;
 }
