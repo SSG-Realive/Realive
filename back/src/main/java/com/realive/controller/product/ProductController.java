@@ -9,11 +9,8 @@ import com.realive.dto.product.ProductListDTO;
 import com.realive.service.product.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-<<<<<<< HEAD
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-=======
->>>>>>> origin/team2/jaehyun
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.MediaType;
