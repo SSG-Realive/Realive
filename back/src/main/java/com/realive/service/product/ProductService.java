@@ -29,7 +29,7 @@ public interface ProductService {
     void deleteProduct(Long productId, Long sellerId);
 
     /**
-     * 판매자 ID 기준 상품 목록 조회
+     * 판매자 ID 기준 상품 목록 조회(판매자용)
      * - imageThumbnailUrl / videoThumbnailUrl 포함
      */
     PageResponseDTO<ProductListDTO> getProductsBySeller(String email, ProductSearchCondition condition);

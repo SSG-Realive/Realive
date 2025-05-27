@@ -212,12 +212,13 @@ public class ProductServiceImpl implements ProductService {
 
         productRepository.delete(product);
     }
-
+    //상품 목록 조회 (판매자 전용)
     @Override
     public PageResponseDTO<ProductListDTO> getProductsBySeller(String email, ProductSearchCondition condition) {
         
         Seller seller = sellerService.getByEmail(email);
         Long sellerId = seller.getId(); 
+
         Page<Product> result = productRepository.searchProducts(condition, sellerId);
         List<Product> products = result.getContent();
 
