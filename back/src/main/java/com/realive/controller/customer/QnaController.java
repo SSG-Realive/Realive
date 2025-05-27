@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.realive.dto.product.ProductListDto;
+import com.realive.dto.product.ProductListDTO;
 import com.realive.dto.qna.QnaListDTO;
 import com.realive.dto.seller.SellerQnaRequestDTO;
 import com.realive.service.customer.CustomerQnaService;

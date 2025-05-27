@@ -16,7 +16,7 @@ import com.realive.domain.common.enums.MediaType;
 import com.realive.domain.common.enums.ProductStatus;
 import com.realive.domain.product.Product;
 import com.realive.domain.product.ProductImage;
-import com.realive.dto.product.ProductListDto;
+import com.realive.dto.product.ProductListDTO;
 import com.realive.repository.customer.productview.ProductSearch;
 import com.realive.repository.customer.productview.ProductViewRepository;
 

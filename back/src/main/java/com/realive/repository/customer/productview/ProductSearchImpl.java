@@ -17,7 +17,7 @@ import com.realive.domain.product.QProductImage;
 import com.realive.domain.seller.QSeller;
 import com.realive.dto.page.PageRequestDTO;
 import com.realive.dto.page.PageResponseDTO;
-import com.realive.dto.product.ProductListDto;
+import com.realive.dto.product.ProductListDTO;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -29,7 +29,7 @@ public class ProductSearchImpl implements ProductSearch {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public PageResponseDTO<ProductListDto> search(PageRequestDTO requestDTO, Long categoryId) {
+    public PageResponseDTO<ProductListDTO> search(PageRequestDTO requestDTO, Long categoryId) {
         QProduct product = QProduct.product;
         QCategory category = QCategory.category;
         QProductImage productImage = QProductImage.productImage;
@@ -63,8 +63,8 @@ public class ProductSearchImpl implements ProductSearch {
 
         // 실제 데이터 조회
         // 데이터 조회 JPQLQuery 생성
-        JPQLQuery<ProductListDto> query = queryFactory
-            .select(Projections.bean(ProductListDto.class,
+        JPQLQuery<ProductListDTO> query = queryFactory
+            .select(Projections.bean(ProductListDTO.class,
                 product.id.as("id"),
                 product.name.as("name"),
                 product.price.as("price"),
@@ -86,7 +86,7 @@ public class ProductSearchImpl implements ProductSearch {
             .orderBy(product.id.desc());
 
         // 리스트 조회
-        List<ProductListDto> dtoList = query.fetch();
+        List<ProductListDTO> dtoList = query.fetch();
 
         // 전체 개수
         Long total = queryFactory
@@ -95,7 +95,7 @@ public class ProductSearchImpl implements ProductSearch {
                 .where(builder)
                 .fetchOne();
 
-        return PageResponseDTO.<ProductListDto>withAll()
+        return PageResponseDTO.<ProductListDTO>withAll()
                 .pageRequestDTO(requestDTO)
                 .dtoList(dtoList)
                 .total(total.intValue())

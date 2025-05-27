@@ -13,7 +13,7 @@ import com.realive.domain.customer.Customer;
 import com.realive.domain.product.Product;
 import com.realive.domain.seller.Seller;
 import com.realive.domain.seller.SellerQna;
-import com.realive.dto.product.ProductListDto;
+import com.realive.dto.product.ProductListDTO;
 import com.realive.dto.qna.QnaDetailDTO;
 import com.realive.dto.qna.QnaListDTO;
 import com.realive.dto.seller.SellerQnaRequestDTO;
@@ -57,7 +57,7 @@ public class CustomerQnaService {
         SellerQna saved = customerQnaRepository.save(qna);
 
         // 상품 요약 정보 가져오기
-        ProductListDto productSummary = productListRepository
+        ProductListDTO productSummary = productListRepository
                 .getWishlistedProducts(List.of(product.getId()))
                 .stream()
                 .findFirst()
@@ -80,9 +80,9 @@ public class CustomerQnaService {
                 .distinct()
                 .collect(Collectors.toList());
 
-        List<ProductListDto> productSummaries = productListRepository.getWishlistedProducts(productIds);
-        Map<Long, ProductListDto> productMap = productSummaries.stream()
-                .collect(Collectors.toMap(ProductListDto::getId, dto -> dto));
+        List<ProductListDTO> productSummaries = productListRepository.getWishlistedProducts(productIds);
+        Map<Long, ProductListDTO> productMap = productSummaries.stream()
+                .collect(Collectors.toMap(ProductListDTO::getId, dto -> dto));
 
         List<Map<String, Object>> resultList = qnaList.stream().map(qna -> {
             Map<String, Object> result = new HashMap<>();
@@ -111,7 +111,7 @@ public class CustomerQnaService {
         
         Product product = qna.getProduct();
         
-        ProductListDto productSummary = productListRepository
+        ProductListDTO productSummary = productListRepository
                 .getWishlistedProducts(List.of(product.getId()))
                 .stream()
                 .findFirst()

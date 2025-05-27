@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import com.realive.domain.customer.Customer;
 import com.realive.domain.customer.Wishlist;
 import com.realive.domain.product.Product;
-import com.realive.dto.product.ProductListDto;
+import com.realive.dto.product.ProductListDTO;
 import com.realive.repository.customer.WishlistRepository;
 import com.realive.repository.customer.productview.ProductListRepository;
 import com.realive.repository.customer.productview.ProductViewRepository;
@@ -52,7 +52,7 @@ public class WishlistService {
     }
 
     //찜 목록 조회
-    public List<ProductListDto> getWishlistForCustomer(Long customerId) {
+    public List<ProductListDTO> getWishlistForCustomer(Long customerId) {
         List<Long> productIds = wishlistRepository.findProductIdsByCustomerId(customerId);
         return productListRepository.getWishlistedProducts(productIds);
     }

@@ -12,7 +12,7 @@ import com.realive.domain.product.QCategory;
 import com.realive.domain.product.QProduct;
 import com.realive.domain.product.QProductImage;
 import com.realive.domain.seller.QSeller;
-import com.realive.dto.product.ProductListDto;
+import com.realive.dto.product.ProductListDTO;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -25,7 +25,7 @@ public class ProductListRepositoryImpl implements ProductListRepository{
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<ProductListDto> getWishlistedProducts(List<Long> productIds) {
+    public List<ProductListDTO> getWishlistedProducts(List<Long> productIds) {
         if (productIds == null || productIds.isEmpty()) {
             return Collections.emptyList();
         }
@@ -36,7 +36,7 @@ public class ProductListRepositoryImpl implements ProductListRepository{
       
 
         return queryFactory
-            .select(Projections.bean(ProductListDto.class,
+            .select(Projections.bean(ProductListDTO.class,
                 product.id.as("id"),
                 product.name.as("name"),
                 product.price.as("price"),

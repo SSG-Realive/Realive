@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.realive.dto.page.PageRequestDTO;
 import com.realive.dto.page.PageResponseDTO;
-import com.realive.dto.product.ProductListDto;
+import com.realive.dto.product.ProductListDTO;
 import com.realive.dto.product.ProductResponseDto;
 import com.realive.service.customer.ProductViewService;
 
@@ -29,13 +29,13 @@ public class ProductViewController {
 
     // 상품 목록 조회 - 검색
     @GetMapping
-    public ResponseEntity<PageResponseDTO<ProductListDto>> list(
+    public ResponseEntity<PageResponseDTO<ProductListDTO>> list(
             @ModelAttribute PageRequestDTO pageRequestDTO,
             @RequestParam(name = "categoryId", required = false) Long categoryId) {
 
         log.info("page: {}, size: {}, offset: {}", pageRequestDTO.getPage(), pageRequestDTO.getSize(), pageRequestDTO.getOffset());
 
-        PageResponseDTO<ProductListDto> result = productViewService.search(pageRequestDTO, categoryId);
+        PageResponseDTO<ProductListDTO> result = productViewService.search(pageRequestDTO, categoryId);
         return ResponseEntity.ok(result);
     }   
 
