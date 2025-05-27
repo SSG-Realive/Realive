@@ -204,13 +204,8 @@ public class ProductServiceImpl implements ProductService {
             throw new SecurityException("해당 상품에 대한 삭제 권한이 없습니다.");
         }
 
-        productImageRepository.findByProductId(productId)
-                .forEach(productImageRepository::delete);
 
-        deliveryPolicyRepository.findByProduct(product)
-                .ifPresent(deliveryPolicyRepository::delete);
-
-        productRepository.delete(product);
+        product.setActive(false);
     }
     //상품 목록 조회 (판매자 전용)
     @Override
@@ -262,7 +257,7 @@ public class ProductServiceImpl implements ProductService {
                 .isActive(product.isActive())
                 .imageThumbnailUrl(getThumbnailUrlByType(productId, MediaType.IMAGE))
                 .videoThumbnailUrl(getThumbnailUrlByType(productId, MediaType.VIDEO))
-                .categoryName(product.getCategory() != null ? product.getCategory().getName() : null)
+                .categoryName(Category.getCategoryFullPath(product.getCategory()))
                 .sellerName(product.getSeller().getName())
                 .build();
     }
