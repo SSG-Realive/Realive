@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.realive.dto.page.PageRequestDTO;
 import com.realive.dto.page.PageResponseDTO;
 import com.realive.dto.product.ProductListDTO;
-import com.realive.dto.product.ProductResponseDto;
+import com.realive.dto.product.ProductResponseDTO;
 import com.realive.service.customer.ProductViewService;
 
 import lombok.RequiredArgsConstructor;
@@ -41,8 +41,8 @@ public class ProductViewController {
 
     // 상품 상세 조회
     @GetMapping("/{id}")
-    public ResponseEntity<ProductResponseDto> getProductDetail(@PathVariable("id") Long id) {
-        ProductResponseDto productDetail = productViewService.getProductDetail(id);
+    public ResponseEntity<ProductResponseDTO> getProductDetail(@PathVariable("id") Long id) {
+        ProductResponseDTO productDetail = productViewService.getProductDetail(id);
         return ResponseEntity.ok(productDetail);
     }
 

@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.realive.dto.page.PageRequestDTO;
 import com.realive.dto.page.PageResponseDTO;
 import com.realive.dto.product.ProductListDTO;
-import com.realive.dto.product.ProductResponseDto;
+import com.realive.dto.product.ProductResponseDTO;
 import com.realive.repository.customer.productview.ProductDetail;
 import com.realive.repository.customer.productview.ProductSearch;
 
@@ -37,7 +37,7 @@ public class ProductViewServiceImpl implements ProductViewService {
     }
 
     @Override
-    public ProductResponseDto getProductDetail(Long id) {
+    public ProductResponseDTO getProductDetail(Long id) {
         return productDetail.findProductDetailById(id)
                 .orElseThrow(() -> new NoSuchElementException("해당 상품이 존재하지 않습니다. id=" + id));
     }
