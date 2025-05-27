@@ -1,6 +1,8 @@
 package com.realive.repository.auction;
 
 import com.realive.domain.auction.Auction;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -31,5 +33,7 @@ public interface AuctionRepository extends JpaRepository<Auction, Integer> {
 
     // 특정 현재 가격 이상인 모든 경매 조회
     List<Auction> findByCurrentPriceGreaterThanEqual(Integer price);
+
+    Page<Auction> findByIsClosedFalseAndEndTimeAfter(LocalDateTime currentTime, Pageable pageable);
 
 }
