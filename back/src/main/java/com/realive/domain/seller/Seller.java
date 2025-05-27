@@ -50,8 +50,8 @@ public class Seller extends BaseTimeEntity {
     @Column(name = "is_approved", nullable = false)
     private boolean isApproved = false;
 
-    // 승인 시각 (수정 불가)
-    @Column(name = "approved_at", updatable = false)
+    // 승인 시각
+    @Column(name = "approved_at")
     private LocalDateTime approvedAt;
 
     // 활동 여부
