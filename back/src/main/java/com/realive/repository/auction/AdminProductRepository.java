@@ -12,6 +12,8 @@ public interface AdminProductRepository extends JpaRepository<AdminProduct, Inte
 
     Optional<AdminProduct> findById(Integer id);
 
+    Optional<AdminProduct> findByProductId(Integer productId);
+
     @Query("select ap.id, ap.productId, ap.purchasedFromSellerId, ap.purchasedAt, " +
             "  ap.isAuctioned " +
             " from AdminProduct ap ")
