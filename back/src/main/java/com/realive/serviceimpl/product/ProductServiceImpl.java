@@ -251,7 +251,7 @@ public class ProductServiceImpl implements ProductService {
                 .isActive(product.isActive())
                 .imageThumbnailUrl(getThumbnailUrlByType(productId, MediaType.IMAGE))
                 .videoThumbnailUrl(getThumbnailUrlByType(productId, MediaType.VIDEO))
-                .categoryName(product.getCategory() != null ? product.getCategory().getName() : null)
+                .categoryName(Category.getCategoryFullPath(product.getCategory()))
                 .sellerName(product.getSeller().getName())
                 .build();
     }

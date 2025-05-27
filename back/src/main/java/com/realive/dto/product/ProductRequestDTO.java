@@ -1,6 +1,9 @@
 package com.realive.dto.product;
 
 import com.realive.domain.common.enums.ProductStatus;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.util.List;
@@ -14,8 +17,8 @@ import org.springframework.web.multipart.MultipartFile;
 public class ProductRequestDTO {
 
     private String name;
+    private Integer price;
     private String description;
-    private int price;
     private Integer stock;
     private Integer width;
     private Integer depth;
