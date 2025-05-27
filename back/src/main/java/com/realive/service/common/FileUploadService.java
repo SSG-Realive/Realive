@@ -17,7 +17,7 @@ import java.util.UUID;
 public class FileUploadService {
 
     // 실제 업로드 디렉토리 (프로젝트 외부 경로로 권장)
-    private static final String UPLOAD_DIR = "uploads/";
+    private static final String UPLOAD_DIR = System.getProperty("user.dir") + "/uploads/";
 
     /**
      * MultipartFile을 저장하고, 저장 경로 반환

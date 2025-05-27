@@ -1,3 +1,4 @@
+.gitignore
 # -------------------------------------
 # IDE / Tool 설정
 # -------------------------------------
@@ -24,30 +25,23 @@ desktop.ini
 *.rar
 *.hprof
 .gradle
-.gradle/**/build/
-!src/**/build/
 build/
 out/
 cmake-build-*/
 hs_err_pid*
 replay_pid*
-.mtj.tmp/
-.project
-.classpath
-gradle-app.setting
 .gradletasknamecache
 
 # Spring Boot 설정 파일
 application.yml
 
-# QueryDSL Q파일 (generated sources)
+# QueryDSL Q파일
 build/generated/
-**/generated/
-**/generated-sources/
 **/generated/querydsl/
 **/Q*.java
 
-# IntelliJ cache files
+# -------------------------------------
+# IntelliJ / Eclipse
 .idea/**/workspace.xml
 .idea/**/tasks.xml
 .idea/**/usage.statistics.xml
@@ -55,9 +49,7 @@ build/generated/
 .idea/**/shelf
 .idea/**/aws.xml
 .idea/**/contentModel.xml
-.idea/**/dataSources/
-.idea/**/dataSources.ids
-.idea/**/dataSources.local.xml
+.idea/**/dataSources*
 .idea/**/sqlDataSources.xml
 .idea/**/dynamic.xml
 .idea/**/uiDesigner.xml
@@ -67,17 +59,15 @@ build/generated/
 .idea/**/sonarlint/
 .idea/**/sonarIssues.xml
 .idea/**/markdown-navigator*
-.idea/codestream.xml
 .idea/httpRequests
 .idea/**/azureSettings.xml
-.idea/$CACHE_FILE$
 .idea_modules/
 atlassian-ide-plugin.xml
+.project
+.classpath
 
 # -------------------------------------
 # Node.js / React / Next.js / Yarn
-# -------------------------------------
-# dependencies
 node_modules/
 .pnp
 .pnp.*
@@ -115,6 +105,9 @@ next-env.d.ts
 # Vercel deploy
 .vercel
 
-# 기타 백업 파일
+# 기타 백업/임시 파일
+*.swp
+*.tmp
+*~
 *.backup.*
 *.back.*

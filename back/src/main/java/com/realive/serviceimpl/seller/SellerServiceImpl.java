@@ -1,5 +1,7 @@
 package com.realive.serviceimpl.seller;
 
+
+
 import java.util.List;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,7 +24,9 @@ import com.realive.service.seller.SellerService;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
+@Log4j2
 @Service
 @RequiredArgsConstructor
 public class SellerServiceImpl implements SellerService{
@@ -43,6 +47,8 @@ public class SellerServiceImpl implements SellerService{
     //로그인
     @Override
     public SellerLoginResponseDTO login(SellerLoginRequestDTO reqdto){
+
+       
 
         // email로 사용자 찾기
         Seller seller = sellerRepository.findByEmailAndIsActiveTrue(reqdto.getEmail())
@@ -86,6 +92,10 @@ public class SellerServiceImpl implements SellerService{
     // 회원가입
     @Override
     public void registerSeller(SellerSignupDTO dto, MultipartFile businessLicense, MultipartFile bankAcountCopy){
+        
+        
+        
+        
         //이메일 존재 유무 검증.
         if (sellerRepository.existsByEmail(dto.getEmail())) {
             throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
