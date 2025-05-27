@@ -1,6 +1,7 @@
 package com.realive.service.product;
 
 import com.realive.dto.page.PageResponseDTO;
+import com.realive.dto.product.CustomerProductSearchCondition;
 import com.realive.dto.product.ProductListDTO;
 import com.realive.dto.product.ProductRequestDTO;
 import com.realive.dto.product.ProductResponseDTO;
@@ -29,15 +30,20 @@ public interface ProductService {
     void deleteProduct(Long productId, Long sellerId);
 
     /**
-     * 판매자 ID 기준 상품 목록 조회
+     * 판매자 ID 기준 상품 목록 조회(판매자용)
      * - imageThumbnailUrl / videoThumbnailUrl 포함
      */
-    PageResponseDTO<ProductListDTO> getProductsBySeller(Long sellerId, ProductSearchCondition condition);
+    PageResponseDTO<ProductListDTO> getProductsBySeller(String email, ProductSearchCondition condition);
 
     /**
      * 상품 상세 조회
      * - imageThumbnailUrl / videoThumbnailUrl 포함
      */
     ProductResponseDTO getProductDetail(Long productId);
+
+    /**
+     * 구매자 전용 상품 목록 조회
+     */
+    PageResponseDTO<ProductListDTO> getVisibleProducts(CustomerProductSearchCondition condition);
 
 }
