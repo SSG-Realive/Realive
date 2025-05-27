@@ -1,11 +1,11 @@
 package com.realive.repository.productview;
 
-import java.util.List;
 
-import org.springframework.data.domain.Pageable;
-import com.realive.dto.product.ProductListDTO;
 
+import com.realive.dto.page.PageRequestDTO;
+import com.realive.dto.page.PageResponseDTO;
+import com.realive.dto.product.ProductListDto;
 
 public interface ProductSearch {
-    List <ProductListDTO> productList(Pageable pageable);
+    PageResponseDTO<ProductListDto> search(PageRequestDTO requestDTO, Long categoryId);
 }

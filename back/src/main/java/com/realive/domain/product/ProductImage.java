@@ -32,7 +32,6 @@ public class ProductImage {
     private String url;
 
     // 대표 이미지 여부 (썸네일)
-    @Builder.Default
     @Column(name = "is_thumbnail", nullable = false)
     private boolean isThumbnail = false;
 

@@ -108,3 +108,5 @@ next-env.d.ts
 # 기타 백업 파일
 *.backup.*
 *.back.*
+
+.env.properties

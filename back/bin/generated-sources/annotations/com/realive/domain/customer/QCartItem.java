@@ -28,6 +28,8 @@ public class QCartItem extends EntityPathBase<CartItem> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
+    public final com.realive.domain.product.QProduct product;
+
     public final NumberPath<Integer> quantity = createNumber("quantity", Integer.class);
 
     public final DateTimePath<java.time.LocalDateTime> updated = createDateTime("updated", java.time.LocalDateTime.class);
@@ -51,6 +53,7 @@ public class QCartItem extends EntityPathBase<CartItem> {
     public QCartItem(Class<? extends CartItem> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.customer = inits.isInitialized("customer") ? new QCustomer(forProperty("customer")) : null;
+        this.product = inits.isInitialized("product") ? new com.realive.domain.product.QProduct(forProperty("product"), inits.get("product")) : null;
     }
 
 }

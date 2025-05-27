@@ -3,7 +3,6 @@ package com.realive.domain.customer;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -17,11 +16,14 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @EntityListeners(AuditingEntityListener.class)
 @Entity
 @Table(name = "customer")
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -39,6 +41,9 @@ public class Customer {
     private String address;
 
     //디폴트 false
+    //이메일 인증 여부
+    //만약 이메일 인증 구현하면 소셜로그인, 이메일 인증한사람만 true
+    //만약에 구현 안 할시 그냥 전부 true로 바꿔주면 됨
     @Column(name = "is_verified")
     private Boolean isVerified = false;
     
@@ -46,6 +51,15 @@ public class Customer {
     //탈퇴처리 enum 0,1 ?? 
     @Column(name = "is_active")
     private Boolean isActive = true;
+
+    public void deactivate() {
+        this.isActive = false;  // 탈퇴 처리 (비활성)
+    }
+
+    public Customer(String email, String password) {
+        this.email = email;
+        this.password = password;
+    }
 
     //디폴트 0
     @Column(name = "penalty_score")
@@ -56,6 +70,8 @@ public class Customer {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
+    //일반/소셜 구분
+    @Enumerated(EnumType.STRING)
     @Column(name = "signup_method")
     private SignupMethod signupMethod;
 
