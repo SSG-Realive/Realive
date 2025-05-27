@@ -33,7 +33,7 @@ public class ReviewViewServiceImpl implements ReviewViewService {
         // ReviewListResponseDTO로 변환하여 반환
         return ReviewListResponseDTO.builder()
                 .reviews(reviewsPage.getContent()) // 페이지의 실제 리뷰 리스트
-                .totalCount((int) reviewsPage.getTotalElements()) // 총 요소 개수
+                .totalCount(reviewsPage.getTotalElements()) // <-- 캐스팅 제거 (totalCount가 long 타입으로 변경됨)
                 .page(reviewsPage.getNumber()) // 현재 페이지 번호 (0부터 시작)
                 .size(reviewsPage.getSize()) // 페이지당 요소 개수
                 .build();
@@ -43,6 +43,11 @@ public class ReviewViewServiceImpl implements ReviewViewService {
     @Override
     public ReviewResponseDTO getReviewDetail(Long id) {
         log.info("Fetching review detail for id: {}", id);
+        // ID 유효성 검사 추가
+        if (id == null || id <= 0) {
+            log.error("Invalid review ID: {}", id);
+            throw new IllegalArgumentException("Invalid review ID");
+        }
         ReviewResponseDTO review = reviewDetail.findReviewDetailById(id)
                 .orElseThrow(() -> {
                     log.error("Review not found with id: {}", id);

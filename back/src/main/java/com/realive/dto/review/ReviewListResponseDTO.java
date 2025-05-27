@@ -9,7 +9,7 @@ import java.util.List;
 @Builder
 public class ReviewListResponseDTO {
     private List<ReviewResponseDTO> reviews;
-    private int totalCount;
+    private Long totalCount;
     private int page;
     private int size;
 }

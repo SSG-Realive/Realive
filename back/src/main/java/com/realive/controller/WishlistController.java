@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.realive.dto.product.ProductListDto;
+import com.realive.dto.product.ProductListDTO;
 import com.realive.dto.wishlist.WishlistDTO;
 import com.realive.service.customer.CustomerService;
 import com.realive.service.customer.WishlistService;
@@ -40,10 +40,10 @@ public class WishlistController {
 
     // 찜 목록 조회
     @GetMapping("/my")
-    public ResponseEntity<List<ProductListDto>> getMyWishlist(Authentication authentication) {
+    public ResponseEntity<List<ProductListDTO>> getMyWishlist(Authentication authentication) {
         String email = authentication.getName(); 
         Long customerId = customerService.findIdByEmail(email);
-        List<ProductListDto> wishlists = wishlistService.getWishlistForCustomer(customerId);
+        List<ProductListDTO> wishlists = wishlistService.getWishlistForCustomer(customerId);
         return ResponseEntity.ok(wishlists);
     }
 

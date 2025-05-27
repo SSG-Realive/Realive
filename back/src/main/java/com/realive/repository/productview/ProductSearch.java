@@ -4,8 +4,8 @@ package com.realive.repository.productview;
 
 import com.realive.dto.page.PageRequestDTO;
 import com.realive.dto.page.PageResponseDTO;
-import com.realive.dto.product.ProductListDto;
+import com.realive.dto.product.ProductListDTO;
 
 public interface ProductSearch {
-    PageResponseDTO<ProductListDto> search(PageRequestDTO requestDTO, Long categoryId);
+    PageResponseDTO<ProductListDTO> search(PageRequestDTO requestDTO, Long categoryId);
 }

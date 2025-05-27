@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.realive.domain.product.Product;
-import com.realive.dto.product.ProductResponseDto;
 
 public interface ProductViewRepository extends JpaRepository<Product, Long>, ProductSearch, ProductDetail {
 

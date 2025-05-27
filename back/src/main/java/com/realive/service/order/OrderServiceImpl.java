@@ -110,9 +110,9 @@ public class OrderServiceImpl implements OrderService {
         Optional<OrderDelivery> optionalOrderDelivery = orderDeliveryRepository.findByOrder(order);
         String currentDeliveryStatus = optionalOrderDelivery
                 .map(delivery -> delivery.getStatus().getDescription())
-                .orElse(DeliveryStatus.DELIVERY_PREPARING.getDescription()); // 현재 enum에 UNKNOWN 없음, 기본값으로 '배송준비중' 설정
+                .orElse(DeliveryStatus.DELIVERY_PREPARING.getDescription());
 
-        String paymentType = "UNKNOWN_PAYMENT_TYPE"; // TODO: 실제 결제 타입 가져오는 로직 구현 필요
+        String paymentType = "CARD"; // 다른 결제수단은 없음
 
         return OrderResponseDTO.from(
                 order,

@@ -2,6 +2,7 @@ package com.realive.domain.customer;
 
 import java.time.LocalDateTime;
 
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -18,10 +19,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @EntityListeners(AuditingEntityListener.class)
 @Entity
@@ -30,6 +27,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
 public class CartItem {
 
     @Id
@@ -50,10 +48,10 @@ public class CartItem {
 
     @CreatedDate
     @Column(name = "created_at", updatable = false)
-    protected LocalDateTime created;
+    protected LocalDateTime createdAt;
 
     @LastModifiedDate
     @Column(name ="updated_at" )
-    protected LocalDateTime updated;
+    protected LocalDateTime updatedAt;
     
 }

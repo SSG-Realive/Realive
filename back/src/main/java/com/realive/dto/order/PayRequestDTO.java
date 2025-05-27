@@ -18,15 +18,14 @@ import java.util.List;
 @AllArgsConstructor
 public class PayRequestDTO {
 
-    // 현재 시스템 제약사항에 따라 customerId를 DTO에 포함
     @NotNull(message = "고객 ID는 필수입니다.")
     private Long customerId;
 
     // --- 결제 상품 정보 (두 그룹 중 하나만 유효하도록 하는 로직이 필요) ---
     // [옵션 1] 단일 상품 결제 시 사용
     private Long productId;
-    @Positive(message = "수량은 1개 이상이어야 합니다.") // 수량은 1개 이상
-    private Integer quantity; // Integer로 변경하여 productId와 함께 null 체크 용이하게
+    @Positive(message = "수량은 1개 이상이어야 합니다.")
+    private Integer quantity; // Integer로 null 값 허용
 
     // [옵션 2] 여러 상품 (장바구니) 결제 시 사용
     // @Valid: ProductQuantityDTO 내의 유효성 검사도 수행하도록 함
@@ -37,8 +36,6 @@ public class PayRequestDTO {
     // Custom Validator를 구현하거나 서비스/컨트롤러 로직에서 명시적으로 처리하는 것이 좋습니다.
     // 예: if (productId != null && orderItems != null) throw new IllegalArgumentException("단일 상품과 여러 상품 결제를 동시에 요청할 수 없습니다.");
 
-
-    // --- 배송 정보 ---
     @NotBlank(message = "수령인 이름은 필수입니다.")
     private String receiverName;
 
@@ -48,7 +45,6 @@ public class PayRequestDTO {
     @NotBlank(message = "배송 주소는 필수입니다.")
     private String deliveryAddress;
 
-    // --- 결제 방법 ---
     @NotNull(message = "결제 방법은 필수입니다.")
-    private PaymentType paymentMethod; // String 대신 Enum 타입 사용
+    private PaymentType paymentMethod;
 }

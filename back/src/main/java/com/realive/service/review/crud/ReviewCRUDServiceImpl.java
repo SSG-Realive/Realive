@@ -18,18 +18,18 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ReviewCRUDServiceImpl implements ReviewCRUDService {
     private final ReviewCRUDRepository reviewRepository;
     private final SellerReviewImageRepository imageRepository;
-    private final CustomerRepository customerRepository; // 주입
-    private final OrderRepository orderRepository;       // 주입
-    private final SellerRepository sellerRepository;     // 주입
+    private final CustomerRepository customerRepository;
+    private final OrderRepository orderRepository;
+    private final SellerRepository sellerRepository;
 
     @Override
     @Transactional
@@ -41,19 +41,18 @@ public class ReviewCRUDServiceImpl implements ReviewCRUDService {
                 });
 
         // 2. Customer, Order, Seller 엔티티 조회 (실제 존재하는지 확인)
-        // 이 부분이 중요하게 변경됩니다.
         Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new EntityNotFoundException("Customer not found with ID: " + customerId));
         Order order = orderRepository.findById(requestDTO.getOrderId())
-                .orElseThrow(() -> new EntityNotFoundException("Order not found with ID: " + requestDTO.getOrderId()));
+                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 주문입니다.: " + requestDTO.getOrderId()));
         Seller seller = sellerRepository.findById(requestDTO.getSellerId())
-                .orElseThrow(() -> new EntityNotFoundException("Seller not found with ID: " + requestDTO.getSellerId()));
+                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 판매자입니다.: " + requestDTO.getSellerId()));
 
         // 3. SellerReview 엔티티 생성
         SellerReview review = SellerReview.builder()
-                .customer(customer) // 조회된 실제 엔티티 사용
-                .order(order)       // 조회된 실제 엔티티 사용
-                .seller(seller)     // 조회된 실제 엔티티 사용
+                .customer(customer)
+                .order(order)
+                .seller(seller)
                 .rating(requestDTO.getRating())
                 .content(requestDTO.getContent())
                 .build();
@@ -61,21 +60,16 @@ public class ReviewCRUDServiceImpl implements ReviewCRUDService {
         // 4. 저장
         SellerReview savedReview = reviewRepository.save(review);
 
-        // 5. 주문의 리뷰 작성 여부 플래그 업데이트
-        // (단일 리뷰만 허용하는 경우에 필요)
-        order.setSellerReviewWritten(true);
-        orderRepository.save(order); // 변경된 주문 상태 저장
-
-        // 6. 이미지 저장
+        // 5. 이미지 저장 (createdAt 수동 설정 부분 제거)
         List<String> imageUrls = saveImages(savedReview, requestDTO.getImageUrls());
 
-        // 7. DTO로 변환
+        // 6. DTO로 변환하여 반환
         return ReviewResponseDTO.builder()
                 .reviewId(savedReview.getId())
                 .orderId(savedReview.getOrder().getId())
                 .customerId(savedReview.getCustomer().getId())
                 .sellerId(savedReview.getSeller().getId())
-                .productName(null) // productName은 현재 Review 엔티티에 없으므로, 필요에 따라 주문/상품 정보에서 가져오거나 null 처리
+                .productName(null) // CRUD 서비스에서는 productName을 처리하지 않습니다.
                 .rating(savedReview.getRating())
                 .content(savedReview.getContent())
                 .imageUrls(imageUrls)
@@ -89,14 +83,14 @@ public class ReviewCRUDServiceImpl implements ReviewCRUDService {
     public ReviewResponseDTO updateReview(Long reviewId, ReviewUpdateRequestDTO requestDTO, Long customerId) {
         // 리뷰 조회
         SellerReview review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new EntityNotFoundException("Review not found with ID: " + reviewId));
+                .orElseThrow(() -> new EntityNotFoundException("리뷰를 찾을 수 없습니다. " + reviewId));
 
         // 권한 확인
         if (!review.getCustomer().getId().equals(customerId)) {
-            throw new SecurityException("You are not authorized to update this review.");
+            throw new SecurityException("리뷰를 수정할 수 있는 권한이 없습니다.");
         }
 
-        // 리뷰 업데이트
+        // 리뷰 내용 업데이트
         review.setRating(requestDTO.getRating());
         review.setContent(requestDTO.getContent());
 
@@ -106,7 +100,7 @@ public class ReviewCRUDServiceImpl implements ReviewCRUDService {
         // 새 이미지 저장
         List<String> imageUrls = saveImages(review, requestDTO.getImageUrls());
 
-        SellerReview updatedReview = reviewRepository.save(review);
+        SellerReview updatedReview = reviewRepository.save(review); // 변경된 리뷰 저장
 
         // DTO로 변환
         return ReviewResponseDTO.builder()
@@ -114,7 +108,7 @@ public class ReviewCRUDServiceImpl implements ReviewCRUDService {
                 .orderId(updatedReview.getOrder().getId())
                 .customerId(updatedReview.getCustomer().getId())
                 .sellerId(updatedReview.getSeller().getId())
-                .productName(null) // productName은 현재 Review 엔티티에 없으므로, 필요에 따라 주문/상품 정보에서 가져오거나 null 처리
+                .productName(null) // CRUD 서비스에서는 productName을 처리하지 않습니다.
                 .rating(updatedReview.getRating())
                 .content(updatedReview.getContent())
                 .imageUrls(imageUrls)
@@ -128,45 +122,36 @@ public class ReviewCRUDServiceImpl implements ReviewCRUDService {
     public void deleteReview(Long reviewId, Long customerId) {
         // 리뷰 조회
         SellerReview review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new EntityNotFoundException("Review not found with ID: " + reviewId));
+                .orElseThrow(() -> new EntityNotFoundException("리뷰를 찾을 수 없습니다. : " + reviewId));
 
         // 권한 확인
         if (!review.getCustomer().getId().equals(customerId)) {
-            throw new SecurityException("You are not authorized to delete this review.");
+            throw new SecurityException("리뷰를 삭제하실 수 있는 권한이 없습니다.");
         }
 
-        // 주문의 리뷰 작성 여부 플래그 되돌리기 (리뷰가 삭제될 때만 해당 주문의 플래그를 false로 설정)
-        // 해당 주문의 다른 리뷰가 있는지 확인하는 로직이 필요할 수 있으나,
-        // 현재는 단일 주문-단일 리뷰 구조이므로 단순히 false로 설정
-        // **주의: 만약 한 주문에 여러 리뷰가 가능하다면, 해당 주문에 남은 리뷰가 없을 때만 false로 변경하는 로직이 필요합니다.**
-        Order order = review.getOrder();
-        order.setSellerReviewWritten(false); // 리뷰 삭제 시 플래그를 false로 되돌림
-        orderRepository.save(order); // 변경된 주문 상태 저장
-
-
-        // 관련 이미지 삭제
+        // 관련 이미지 삭제 (먼저 삭제하여 외래키 제약조건 위반 방지)
         imageRepository.deleteByReviewId(reviewId);
 
         // 리뷰 삭제
         reviewRepository.delete(review);
     }
 
+    // 이미지 저장을 위한 헬퍼 메서드
     private List<String> saveImages(SellerReview review, List<String> imageUrls) {
         List<String> savedImageUrls = new ArrayList<>();
         if (imageUrls != null && !imageUrls.isEmpty()) {
-            for (int i = 0; i < imageUrls.size(); i++) {
-                String url = imageUrls.get(i);
-                if (url != null && !url.isBlank()) {
-                    SellerReviewImage reviewImage = SellerReviewImage.builder()
+            List<SellerReviewImage> reviewImages = imageUrls.stream()
+                    .filter(url -> url != null && !url.isBlank())
+                    .map(url -> SellerReviewImage.builder()
                             .review(review)
                             .imageUrl(url)
-                            .thumbnail(i == 0) // 첫 번째 이미지를 썸네일로 설정
-                            .createdAt(LocalDateTime.now())
-                            .build();
-                    imageRepository.save(reviewImage);
-                    savedImageUrls.add(url);
-                }
-            }
+                            .thumbnail(imageUrls.indexOf(url) == 0)
+                            .build())
+                    .collect(Collectors.toList());
+            imageRepository.saveAll(reviewImages);
+            savedImageUrls = reviewImages.stream()
+                    .map(SellerReviewImage::getImageUrl)
+                    .collect(Collectors.toList());
         }
         return savedImageUrls;
     }

@@ -1,17 +1,16 @@
 package com.realive.service.customer;
-import java.util.Optional;
 
 import com.realive.dto.page.PageRequestDTO;
 import com.realive.dto.page.PageResponseDTO;
-import com.realive.dto.product.ProductListDto;
-import com.realive.dto.product.ProductResponseDto;
+import com.realive.dto.product.ProductListDTO;
+import com.realive.dto.product.ProductResponseDTO;
 
 
 public interface ProductViewService {
     
-    PageResponseDTO<ProductListDto> search(PageRequestDTO dto, Long categoryId);
+    PageResponseDTO<ProductListDTO> search(PageRequestDTO dto, Long categoryId);
 
-    ProductResponseDto getProductDetail(Long id);
+    ProductResponseDTO getProductDetail(Long id);
 
 }
 

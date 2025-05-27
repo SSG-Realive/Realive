@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.realive.domain.customer.Wishlist;
-import com.realive.dto.product.ProductListDto;
 
 public interface WishlistRepository extends JpaRepository<Wishlist, Long>  {
     

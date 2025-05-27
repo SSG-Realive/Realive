@@ -31,9 +31,9 @@ public class OrderDelivery extends BaseTimeEntity {
     private DeliveryStatus status;
 
     @Column(name = "tracking_number")
-    private Long trackingNumber;
+    private Long trackingNumber; // 송장 번호
 
-    private String carrier;
+    private String carrier; // 배송인 이름
 
     @Column(name = "start_date")
     private LocalDateTime startDate;

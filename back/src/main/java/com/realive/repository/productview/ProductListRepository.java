@@ -2,8 +2,8 @@ package com.realive.repository.productview;
 
 import java.util.List;
 
-import com.realive.dto.product.ProductListDto;
+import com.realive.dto.product.ProductListDTO;
 
 public interface ProductListRepository {
-    List<ProductListDto> getWishlistedProducts(List<Long> productIds);
+    List<ProductListDTO> getWishlistedProducts(List<Long> productIds);
 }

@@ -15,5 +15,5 @@ public class ProductQuantityDTO {
     @NotNull(message = "상품 ID는 필수입니다.") // 상품 ID는 null이 아니어야 함
     private Long productId;
     @Min(value = 1, message = "수량은 최소 1개 이상이어야 합니다.") // 수량은 1개 이상이어야 함
-    private int quantity; // int는 null을 허용하지 않으므로 @NotNull은 필요 없음. @Min만으로 충분
+    private int quantity;
 }
