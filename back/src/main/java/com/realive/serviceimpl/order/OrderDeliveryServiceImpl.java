@@ -1,12 +1,15 @@
 package com.realive.serviceimpl.order;
 
 import com.realive.domain.common.enums.DeliveryStatus;
+import com.realive.domain.common.enums.SellerDeliveryStatus;
 import com.realive.domain.order.Order;
 import com.realive.domain.order.OrderDelivery;
+import com.realive.domain.order.SellerOrderDelivery;
 import com.realive.domain.product.Product;
 import com.realive.dto.order.DeliveryStatusUpdateDTO;
 import com.realive.dto.order.OrderDeliveryResponseDTO;
 import com.realive.repository.order.OrderDeliveryRepository;
+import com.realive.repository.order.SellerOrderDeliveryRepository;
 import com.realive.service.order.OrderDeliveryService;
 import lombok.RequiredArgsConstructor;
 
@@ -25,7 +28,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class OrderDeliveryServiceImpl implements OrderDeliveryService {
 
-    private final OrderDeliveryRepository orderDeliveryRepository;
+    private final SellerOrderDeliveryRepository sellerorderDeliveryRepository;
 
     /**
      * 배송 상태를 업데이트하고 상태별 처리 시간 자동 기록
@@ -33,7 +36,7 @@ public class OrderDeliveryServiceImpl implements OrderDeliveryService {
     @Override
     @Transactional
     public void updateDeliveryStatus(Long sellerId, Long orderId, DeliveryStatusUpdateDTO dto) {
-        OrderDelivery delivery = orderDeliveryRepository.findByOrderId(orderId)
+        SellerOrderDelivery delivery = sellerorderDeliveryRepository.findByOrderId(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("배송 정보가 존재하지 않습니다."));
 
         // 🔒 본인 주문인지 검증
@@ -46,15 +49,15 @@ public class OrderDeliveryServiceImpl implements OrderDeliveryService {
 
         // 🔒 상태 전이 제한 (결제완료 → 배송중 → 배송완료만 허용)
         boolean validTransition =
-                (currentStatus == DeliveryStatus.결제완료 && newStatus == DeliveryStatus.배송중) ||
-                        (currentStatus == DeliveryStatus.배송중 && newStatus == DeliveryStatus.배송완료);
+                (currentStatus == SellerDeliveryStatus.결제완료 && newStatus == SellerDeliveryStatus.배송중) ||
+                        (currentStatus == SellerDeliveryStatus.배송중 && newStatus == SellerDeliveryStatus.배송완료);
 
         if (!validTransition) {
             throw new IllegalStateException("유효하지 않은 배송 상태 전이입니다.");
         }
 
         // ✅ 운송장 번호와 택배사 정보는 배송중일 때 선택적으로 입력 가능
-        if (newStatus == DeliveryStatus.배송중) {
+        if (newStatus == SellerDeliveryStatus.배송중) {
             if (dto.getTrackingNumber() != null) {
                 delivery.setTrackingNumber(dto.getTrackingNumber());
             }
@@ -66,11 +69,11 @@ public class OrderDeliveryServiceImpl implements OrderDeliveryService {
         // 📦 상태 및 관련 정보 업데이트
         delivery.setDeliveryStatus(newStatus);
         
-        if (newStatus == DeliveryStatus.배송중 && delivery.getStartDate() == null) {
+        if (newStatus == SellerDeliveryStatus.배송중 && delivery.getStartDate() == null) {
             delivery.setStartDate(LocalDateTime.now());
         }
 
-        if (newStatus == DeliveryStatus.배송완료 && delivery.getCompleteDate() == null) {
+        if (newStatus == SellerDeliveryStatus.배송완료 && delivery.getCompleteDate() == null) {
             delivery.setCompleteDate(LocalDateTime.now());
         }
     }
