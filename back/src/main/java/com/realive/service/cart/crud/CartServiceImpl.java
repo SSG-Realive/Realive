@@ -9,8 +9,9 @@ import com.realive.dto.cart.CartItemUpdateRequestDTO;
 import com.realive.dto.product.ProductResponseDTO;
 import com.realive.repository.cart.CartItemRepository;
 import com.realive.repository.customer.CustomerRepository;
+import com.realive.repository.customer.productview.ProductViewRepository;
 import com.realive.repository.product.ProductRepository;
-import com.realive.repository.productview.ProductViewRepository;
+
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;

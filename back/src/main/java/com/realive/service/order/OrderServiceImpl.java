@@ -52,7 +52,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderResponseDTO getOrder(Long orderId, Long customerId) {
-        Order order = orderRepository.findByCustomerIdAndOrderId(customerId, orderId)
+        Order order = orderRepository.findByCustomer_IdAndId(customerId, orderId)
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 구매 내역입니다. (주문 ID: " + orderId + ", 고객 ID: " + customerId + ")"));
 
         List<OrderItem> orderItems = orderItemRepository.findByOrderId(order.getId());
@@ -211,7 +211,7 @@ public class OrderServiceImpl implements OrderService {
         Long orderId = orderDeleteRequestDTO.getOrderId();
         Long customerId = orderDeleteRequestDTO.getCustomerId();
 
-        Order order = orderRepository.findByCustomerIdAndOrderId(customerId, orderId)
+        Order order = orderRepository.findByCustomer_IdAndId(customerId, orderId)
                 .orElseThrow(() -> new NoSuchElementException("삭제하려는 주문을 찾을 수 없습니다: 주문 ID " + orderId + ", 고객 ID " + customerId));
 
         Optional<OrderDelivery> optionalOrderDelivery = orderDeliveryRepository.findByOrder(order);
@@ -252,7 +252,7 @@ public class OrderServiceImpl implements OrderService {
         Long customerId = orderCancelRequestDTO.getCustomerId();
         String reason = orderCancelRequestDTO.getReason();
 
-        Order order = orderRepository.findByCustomerIdAndOrderId(customerId, orderId)
+        Order order = orderRepository.findByCustomer_IdAndId(customerId, orderId)
                 .orElseThrow(() -> new NoSuchElementException("취소하려는 주문을 찾을 수 없습니다 : 주문 ID " + orderId + ", 고객 ID " + customerId));
 
         Optional<OrderDelivery> optionalOrderDelivery = orderDeliveryRepository.findByOrder(order);
@@ -301,7 +301,7 @@ public class OrderServiceImpl implements OrderService {
         Long orderId = orderConfirmRequestDTO.getOrderId();
         Long customerId = orderConfirmRequestDTO.getCustomerId();
 
-        Order order = orderRepository.findByCustomerIdAndOrderId(customerId, orderId)
+        Order order = orderRepository.findByCustomer_IdAndId(customerId, orderId)
                 .orElseThrow(() -> new NoSuchElementException("구매확정 하려는 주문을 찾을 수 없습니다: 주문 ID " + orderId + ", 고객 ID " + customerId));
 
         OrderDelivery orderDelivery = orderDeliveryRepository.findByOrder(order)

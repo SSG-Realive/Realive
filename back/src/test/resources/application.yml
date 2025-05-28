@@ -47,6 +47,9 @@ jwt:
   secret: ${JWT_SECRET}
   expiration: ${JWT_EXPIRATION}
 
+file:
+  upload-dir: ./uploads
+
 logging:
   level:
     org.springframework.security: DEBUG

@@ -3,6 +3,9 @@ package com.realive.dto.page;
 
 import lombok.ToString;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -23,6 +26,10 @@ public class PageRequestDTO {
     }
     public int getLimit() {
         return this.size;
+    }
+
+    public Pageable toPageable() {
+        return PageRequest.of(page - 1, size);
     }
     
 }
