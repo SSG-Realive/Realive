@@ -37,20 +37,19 @@ public class CartServiceImpl implements CartService {
 
         // Customer 엔티티 조회
         Customer customer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new EntityNotFoundException("Customer not found with ID: " + customerId));
+                .orElseThrow(() -> new EntityNotFoundException("ID " + customerId + "번 고객을 찾을 수 없습니다."));
 
         // Product 엔티티 조회
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new EntityNotFoundException("Product not found with ID: " + productId));
+                .orElseThrow(() -> new EntityNotFoundException("ID " + productId + "번 상품을 찾을 수 없습니다."));
 
         if (product.getStock() < quantityToAdd) {
-            throw new IllegalArgumentException("Not enough stock for product ID: " + productId);
+            throw new IllegalArgumentException("상품 ID " + productId + "번의 재고가 부족합니다.");
         }
         // TODO: 상품 상태 (isActive, status) 확인 로직 추가
         if (!product.isActive() || product.getStatus() == null /*|| product.getStatus() == ProductStatus.하*/) { // 예시: ProductStatus.하인 경우 추가 불가
-            throw new IllegalArgumentException("Product is not active or in an unpurchasable state for product ID: " + productId);
+            throw new IllegalArgumentException("상품 ID " + productId + "번이 활성화되어 있지 않거나 구매할 수 없는 상태입니다.");
         }
-
 
         // 기존 장바구니 항목 조회 시 Customer 엔티티와 Product 엔티티를 직접 사용
         Optional<CartItem> existingCartItem = cartItemRepository.findByCustomer_IdAndProduct_Id(customerId, productId);
@@ -60,22 +59,22 @@ public class CartServiceImpl implements CartService {
             cartItem = existingCartItem.get();
             int newQuantity = cartItem.getQuantity() + quantityToAdd;
             if (product.getStock() < newQuantity) {
-                throw new IllegalArgumentException("Not enough stock to update quantity for product ID: " + productId);
+                throw new IllegalArgumentException("상품 ID " + productId + "번의 재고가 부족하여 수량을 업데이트할 수 없습니다.");
             }
             cartItem.setQuantity(newQuantity);
-            log.info("Updating quantity for existing cart item: {}", cartItem.getId());
+            log.info("기존 장바구니 항목 ID {}의 수량을 업데이트합니다.", cartItem.getId());
         } else {
             cartItem = CartItem.builder()
                     .customer(customer)
                     .product(product)
                     .quantity(quantityToAdd)
                     .build();
-            log.info("Adding new cart item for customer {} and product {}: Quantity = {}", customerId, productId, quantityToAdd);
+            log.info("고객 ID {}와 상품 ID {}에 대한 새로운 장바구니 항목을 추가합니다. 수량: {}", customerId, productId, quantityToAdd);
         }
 
         CartItem savedCartItem = cartItemRepository.save(cartItem);
         ProductResponseDTO productDetailDto = productViewRepository.findProductDetailById(savedCartItem.getProduct().getId())
-                .orElseThrow(() -> new EntityNotFoundException("Product detail not found for ID: " + savedCartItem.getProduct().getId()));
+                .orElseThrow(() -> new EntityNotFoundException("ID " + savedCartItem.getProduct().getId() + "번 상품의 상세 정보를 찾을 수 없습니다."));
 
         return CartItemResponseDTO.from(savedCartItem, productDetailDto);
     }
@@ -86,34 +85,33 @@ public class CartServiceImpl implements CartService {
         int newQuantity = requestDTO.getQuantity();
 
         CartItem cartItem = cartItemRepository.findByIdAndCustomer_Id(cartItemId, customerId)
-                .orElseThrow(() -> new EntityNotFoundException("Cart item not found or unauthorized with ID: " + cartItemId));
+                .orElseThrow(() -> new EntityNotFoundException("ID " + cartItemId + "번 장바구니 항목을 찾을 수 없거나 권한이 없습니다."));
 
         if (newQuantity <= 0) {
             cartItemRepository.delete(cartItem);
-            log.info("Removed cart item {} as quantity became 0 or less.", cartItemId);
-            return null;
+            log.info("수량이 0 이하가 되어 장바구니 항목 ID {}를 제거했습니다.", cartItemId);
+            return null; // 장바구니 항목 제거 시 null 반환
         }
 
         // Product 엔티티 조회
         Product product = productRepository.findById(cartItem.getProduct().getId())
-                .orElseThrow(() -> new EntityNotFoundException("Product associated with cart item not found."));
+                .orElseThrow(() -> new EntityNotFoundException("장바구니 항목과 연결된 상품을 찾을 수 없습니다."));
 
         if (product.getStock() < newQuantity) {
-            throw new IllegalArgumentException("Not enough stock for product ID: " + product.getId() + " to update quantity to " + newQuantity);
+            throw new IllegalArgumentException("상품 ID " + product.getId() + "번의 재고가 부족하여 수량을 " + newQuantity + "(으)로 업데이트할 수 없습니다.");
         }
         // TODO: 상품 상태 (isActive, status) 확인 로직 추가
         if (!product.isActive() || product.getStatus() == null /*|| product.getStatus() == ProductStatus.하*/) { // 예시: ProductStatus.하인 경우 추가 불가
-            throw new IllegalArgumentException("Product is not active or in an unpurchasable state for product ID: " + product.getId());
+            throw new IllegalArgumentException("상품 ID " + product.getId() + "번이 활성화되어 있지 않거나 구매할 수 없는 상태입니다.");
         }
 
-
         cartItem.setQuantity(newQuantity);
-        log.info("Updated cart item {} quantity to {}", cartItemId, newQuantity);
+        log.info("장바구니 항목 ID {}의 수량을 {}로 업데이트했습니다.", cartItemId, newQuantity);
 
         CartItem updatedCartItem = cartItemRepository.save(cartItem);
         // ProductViewRepository를 통해 상세 DTO 조회
         ProductResponseDTO productDetailDto = productViewRepository.findProductDetailById(updatedCartItem.getProduct().getId())
-                .orElseThrow(() -> new EntityNotFoundException("Product detail not found for ID: " + updatedCartItem.getProduct().getId()));
+                .orElseThrow(() -> new EntityNotFoundException("ID " + updatedCartItem.getProduct().getId() + "번 상품의 상세 정보를 찾을 수 없습니다."));
 
         return CartItemResponseDTO.from(updatedCartItem, productDetailDto);
     }
@@ -123,16 +121,16 @@ public class CartServiceImpl implements CartService {
     public void removeCartItem(Long customerId, Long cartItemId) {
         // findByIdAndCustomer_Id로 수정
         CartItem cartItem = cartItemRepository.findByIdAndCustomer_Id(cartItemId, customerId)
-                .orElseThrow(() -> new EntityNotFoundException("Cart item not found or unauthorized with ID: " + cartItemId));
+                .orElseThrow(() -> new EntityNotFoundException("ID " + cartItemId + "번 장바구니 항목을 찾을 수 없거나 권한이 없습니다."));
 
         cartItemRepository.delete(cartItem);
-        log.info("Removed cart item: {}", cartItemId);
+        log.info("장바구니 항목 ID {}를 제거했습니다.", cartItemId);
     }
 
     @Override
     @Transactional
     public void clearCart(Long customerId) {
         cartItemRepository.deleteByCustomer_Id(customerId);
-        log.info("Cleared cart for customer: {}", customerId);
+        log.info("고객 ID {}의 장바구니를 비웠습니다.", customerId);
     }
 }

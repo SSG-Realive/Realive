@@ -1,6 +1,6 @@
 package com.realive.service.order;
 
-import com.realive.domain.common.enums.DeliveryStatus; // 제공해주신 enum만 사용
+import com.realive.domain.common.enums.DeliveryStatus;
 import com.realive.domain.common.enums.DeliveryType;
 import com.realive.domain.common.enums.MediaType;
 import com.realive.domain.common.enums.OrderStatus;
@@ -187,7 +187,7 @@ public class OrderServiceImpl implements OrderService {
             }
 
             String currentDeliveryStatus = deliveryStatusByOrderId.getOrDefault(order.getId(), DeliveryStatus.DELIVERY_PREPARING.getDescription()); // 현재 enum에 UNKNOWN 없음, 기본값으로 '배송준비중' 설정
-            String paymentType = "UNKNOWN_PAYMENT_TYPE"; // TODO: 실제 결제 타입 가져오는 로직 구현 필요
+            String paymentType = "CARD"; // PaymentType은 1개로 통일
 
             OrderResponseDTO orderDTO = OrderResponseDTO.from(
                     order,
@@ -281,11 +281,6 @@ public class OrderServiceImpl implements OrderService {
         orderRepository.save(order);
 
         optionalOrderDelivery.ifPresent(delivery -> {
-            // 현재 enum에 'CANCELLED' 없음. 가장 가까운 '배송준비중'으로 다시 설정하거나,
-            // 별도의 취소 상태를 나타내는 필드를 OrderDelivery에 추가해야 합니다.
-            // 여기서는 임시로 '배송준비중'으로 되돌리거나, 상태 변경 없이 로그만 남깁니다.
-            // 가장 정확한 해결책은 DeliveryStatus enum에 CANCELLED 상태를 추가하는 것입니다.
-            // delivery.setStatus(DeliveryStatus.CANCELLED); // 이 라인은 컴파일 에러 발생
             log.warn("DeliveryStatus enum에 CANCELLED 상태가 없어 배송 상태를 '취소'로 설정할 수 없습니다. 배송 ID: {}", delivery.getId());
             delivery.setCompleteDate(LocalDateTime.now()); // 취소 완료 시간으로 사용 가능
             orderDeliveryRepository.save(delivery);

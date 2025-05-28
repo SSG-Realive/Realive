@@ -37,12 +37,12 @@ public class ReviewCRUDServiceImpl implements ReviewCRUDService {
         // 1. 중복 리뷰 확인 (orderId, customerId, sellerId 조합으로 확인)
         reviewRepository.findByOrderIdAndCustomerIdAndSellerId(requestDTO.getOrderId(), customerId, requestDTO.getSellerId())
                 .ifPresent(review -> {
-                    throw new IllegalStateException("A review for this order and seller by this customer already exists.");
+                    throw new IllegalStateException("이미 작성하신 리뷰입니다.");
                 });
 
         // 2. Customer, Order, Seller 엔티티 조회 (실제 존재하는지 확인)
         Customer customer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new EntityNotFoundException("Customer not found with ID: " + customerId));
+                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 고객입니다.: " + customerId));
         Order order = orderRepository.findById(requestDTO.getOrderId())
                 .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 주문입니다.: " + requestDTO.getOrderId()));
         Seller seller = sellerRepository.findById(requestDTO.getSellerId())
@@ -83,7 +83,7 @@ public class ReviewCRUDServiceImpl implements ReviewCRUDService {
     public ReviewResponseDTO updateReview(Long reviewId, ReviewUpdateRequestDTO requestDTO, Long customerId) {
         // 리뷰 조회
         SellerReview review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new EntityNotFoundException("리뷰를 찾을 수 없습니다. " + reviewId));
+                .orElseThrow(() -> new EntityNotFoundException("해당하는 리뷰를 찾을 수 없습니다. " + reviewId));
 
         // 권한 확인
         if (!review.getCustomer().getId().equals(customerId)) {
@@ -108,7 +108,7 @@ public class ReviewCRUDServiceImpl implements ReviewCRUDService {
                 .orderId(updatedReview.getOrder().getId())
                 .customerId(updatedReview.getCustomer().getId())
                 .sellerId(updatedReview.getSeller().getId())
-                .productName(null) // CRUD 서비스에서는 productName을 처리하지 않습니다.
+                .productName(null)
                 .rating(updatedReview.getRating())
                 .content(updatedReview.getContent())
                 .imageUrls(imageUrls)
@@ -122,7 +122,7 @@ public class ReviewCRUDServiceImpl implements ReviewCRUDService {
     public void deleteReview(Long reviewId, Long customerId) {
         // 리뷰 조회
         SellerReview review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new EntityNotFoundException("리뷰를 찾을 수 없습니다. : " + reviewId));
+                .orElseThrow(() -> new EntityNotFoundException("해당하는 리뷰를 찾을 수 없습니다. : " + reviewId));
 
         // 권한 확인
         if (!review.getCustomer().getId().equals(customerId)) {

@@ -1,37 +1,29 @@
 package com.realive.dto.page;
 
 
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import lombok.*;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
+@Setter
+@ToString
 public class PageRequestDTO {
-    
-    private int page = 1;
-    private int size = 10;
-    private String sort = "createdAt";
-    private String direction = "DESC";
-    private String keyword;
 
-    public int getPageIndex(){
-        return (page <= 0) ? 0 : page -1;
+
+    private int page = 1;        // 현재 페이지 번호
+    private int size = 10;       // 한 페이지 당 게시글 수
+    private String type;         // 검색 조건 타입 (예: "T", "TC" 등)
+    private String keyword;      // 검색어
+
+
+
+
+    //기준위치
+    public int getOffset() {
+        return (page - 1) * size;
     }
-
-    public Pageable toPageable(){
-        Sort.Direction dir = Sort.Direction.fromOptionalString(direction).orElse(Sort.Direction.DESC);
-        return PageRequest.of(getPageIndex(), size, Sort.by(dir, sort));
+    public int getLimit() {
+        return this.size;
     }
-
-
-
 
 }
+
