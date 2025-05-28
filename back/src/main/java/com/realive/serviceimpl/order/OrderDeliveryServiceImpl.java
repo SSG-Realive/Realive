@@ -9,6 +9,8 @@ import com.realive.dto.order.OrderDeliveryResponseDTO;
 import com.realive.repository.order.OrderDeliveryRepository;
 import com.realive.service.order.OrderDeliveryService;
 import lombok.RequiredArgsConstructor;
+
+import org.checkerframework.checker.units.qual.s;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,17 +53,19 @@ public class OrderDeliveryServiceImpl implements OrderDeliveryService {
             throw new IllegalStateException("유효하지 않은 배송 상태 전이입니다.");
         }
 
-        // 🔐 배송중일 경우 운송장/택배사 필수
-        if (newStatus == DeliveryStatus.배송중 &&
-                (dto.getTrackingNumber() == null || dto.getCarrier() == null)) {
-            throw new IllegalArgumentException("배송중 상태에서는 운송장 번호와 택배사 정보가 필수입니다.");
+        // ✅ 운송장 번호와 택배사 정보는 배송중일 때 선택적으로 입력 가능
+        if (newStatus == DeliveryStatus.배송중) {
+            if (dto.getTrackingNumber() != null) {
+                delivery.setTrackingNumber(dto.getTrackingNumber());
+            }
+            if (dto.getCarrier() != null) {
+                delivery.setCarrier(dto.getCarrier());
+            }
         }
 
         // 📦 상태 및 관련 정보 업데이트
         delivery.setDeliveryStatus(newStatus);
-        delivery.setTrackingNumber(dto.getTrackingNumber());
-        delivery.setCarrier(dto.getCarrier());
-
+        
         if (newStatus == DeliveryStatus.배송중 && delivery.getStartDate() == null) {
             delivery.setStartDate(LocalDateTime.now());
         }
@@ -94,5 +98,32 @@ public class OrderDeliveryServiceImpl implements OrderDeliveryService {
                     .carrier(delivery.getCarrier())
                     .build();
         }).collect(Collectors.toList());
+    }
+
+    @Override
+    public OrderDeliveryResponseDTO getDeliveryByOrderId(Long sellerId, Long orderId) {
+        OrderDelivery delivery = orderDeliveryRepository.findByOrderId(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("배송 정보가 존재하지 않습니다"));
+
+        // 본인 주문 검증
+        if (!delivery.getOrder().getProduct().getSeller().getId().equals(sellerId)) {
+            throw new SecurityException("자신의 상품이 아닌 주문에 접근할 수 없습니다.");
+
+        }
+
+        Order order = delivery.getOrder();
+        Product product = order.getProduct();
+
+        return OrderDeliveryResponseDTO.builder()
+                .orderId(order.getId())
+                .productName(product.getName())
+                //.buyerId(order.getCustomer().getId()) // 구매자 ID 포함 필요 시 해제
+                .deliveryStatus(delivery.getDeliveryStatus())
+                .startDate(delivery.getStartDate())
+                .completeDate(delivery.getCompleteDate())
+                .trackingNumber(delivery.getTrackingNumber())
+                .carrier(delivery.getCarrier())
+                .build();
+        
     }
 }

@@ -25,4 +25,7 @@ public interface OrderDeliveryService {
      * @return 배송 내역 목록
      */
     List<OrderDeliveryResponseDTO> getDeliveriesBySeller(Long sellerId);
+
+
+    OrderDeliveryResponseDTO getDeliveryByOrderId(Long sellerId, Long orderId);
 }
