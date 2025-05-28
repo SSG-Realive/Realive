@@ -13,6 +13,6 @@ import lombok.Setter;
 public class DeliveryStatusUpdateDTO {
 
     private DeliveryStatus deliveryStatus;  // 결제완료, 배송중, 배송완료
-    private String trackingNumber;          // 운송장 번호 (운송장 번호는 배송중일 때 필수)
-    private String carrier;                 // 택배사 (택배사 이름은 배송중일 때 필수)
+    private String trackingNumber;          // 운송장 번호 (운송장 번호는 배송중일 때 선택)
+    private String carrier;                 // 택배사 (택배사 이름은 배송중일 때 선택)
 }

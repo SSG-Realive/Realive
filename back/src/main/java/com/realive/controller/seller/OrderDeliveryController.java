@@ -2,11 +2,13 @@ package com.realive.controller.seller;
 
 import com.realive.domain.seller.Seller;
 import com.realive.dto.order.DeliveryStatusUpdateDTO;
+import com.realive.dto.order.OrderDeliveryResponseDTO;
 import com.realive.service.order.OrderDeliveryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -31,4 +33,14 @@ public class OrderDeliveryController {
 
         return ResponseEntity.ok().build();
     }
+    // 배송 단건 조회 컨트롤러
+    @GetMapping("/{orderId}/delivey")
+    public ResponseEntity<OrderDeliveryResponseDTO> getDeliveryByOrderId(@PathVariable Long orderId) {
+
+        Seller seller = (Seller) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        OrderDeliveryResponseDTO result = orderDeliveryService.getDeliveryBySeller(seller.getId(), orderId);
+
+        return ResponseEntity.ok(result);
+    }
+    
 }
