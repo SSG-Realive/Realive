@@ -14,11 +14,11 @@ import com.realive.domain.customer.SignupMethod;
 import com.realive.repository.customer.CustomerRepository;
 
 import jakarta.transaction.Transactional;
-import lombok.extern.log4j.Log4j2;
+//import lombok.extern.log4j.Log4j2;
 
 @Transactional
 @SpringBootTest
-@Log4j2
+//@Log4j2
 public class LoginTests {
 
     @Autowired

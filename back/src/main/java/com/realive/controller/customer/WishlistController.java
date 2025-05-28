@@ -3,6 +3,12 @@ package com.realive.controller.customer;
 import java.util.List;
 import java.util.Map;
 
+import com.realive.dto.wishlist.WishlistMostResponseDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -49,5 +55,19 @@ public class WishlistController {
         return ResponseEntity.ok(wishlists);
     }
 
-    
+    // 찜 목록에 가장 많이 추가된 물품 표시
+    @GetMapping("/most-popular")
+    public ResponseEntity<Page<WishlistMostResponseDTO>> getMostPopularWishlists(
+            @PageableDefault(size = 5, sort = "wishCounts", direction = Sort.Direction.DESC) Pageable pageable) {
+        try{
+
+            Page<WishlistMostResponseDTO> mostWishlistedProducts =
+                    wishlistService.getMostWishlistedProducts(pageable);
+
+            return ResponseEntity.ok(mostWishlistedProducts);
+        }catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build(); // 서버 오류
+
+        }
+    }
 }

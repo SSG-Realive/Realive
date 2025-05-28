@@ -17,10 +17,10 @@ import com.realive.repository.customer.productview.ProductViewRepository;
 
 import jakarta.persistence.EntityManager;
 
-import lombok.extern.log4j.Log4j2;
+//import lombok.extern.log4j.Log4j2;
 
 @SpringBootTest
-@Log4j2
+//@Log4j2
 @Transactional
 public class ProductRepoTests {
 
