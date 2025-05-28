@@ -1,11 +1,14 @@
 package com.realive.serviceimpl.order;
 
+import com.realive.domain.common.enums.DeliveryStatus;
 import com.realive.domain.common.enums.SellerDeliveryStatus;
 import com.realive.domain.order.Order;
+import com.realive.domain.order.OrderDelivery;
 import com.realive.domain.order.SellerOrderDelivery;
 import com.realive.domain.product.Product;
 import com.realive.dto.order.DeliveryStatusUpdateDTO;
 import com.realive.dto.order.OrderDeliveryResponseDTO;
+import com.realive.repository.order.OrderDeliveryRepository;
 import com.realive.repository.order.SellerOrderDeliveryRepository;
 import com.realive.service.order.OrderDeliveryService;
 import lombok.RequiredArgsConstructor;
@@ -26,14 +29,13 @@ import java.util.stream.Collectors;
 public class OrderDeliveryServiceImpl implements OrderDeliveryService {
 
     private final SellerOrderDeliveryRepository sellerorderDeliveryRepository;
-    private final SellerOrderDeliveryRepository sellerOrderDeliveryRepository;
 
     /**
      * 배송 상태를 업데이트하고 상태별 처리 시간 자동 기록
      */
     @Override
     @Transactional
-    public void updateSellerDeliveryStatus(Long sellerId, Long orderId, DeliveryStatusUpdateDTO dto) {
+    public void updateDeliveryStatus(Long sellerId, Long orderId, DeliveryStatusUpdateDTO dto) {
         SellerOrderDelivery delivery = sellerorderDeliveryRepository.findByOrderId(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("배송 정보가 존재하지 않습니다."));
 
@@ -42,8 +44,8 @@ public class OrderDeliveryServiceImpl implements OrderDeliveryService {
             throw new SecurityException("자신의 주문에 대해서만 배송 상태를 변경할 수 있습니다.");
         }
 
-        SellerDeliveryStatus currentStatus = delivery.getSellerDeliveryStatus();
-        SellerDeliveryStatus newStatus = dto.getDeliveryStatus    ();
+        DeliveryStatus currentStatus = delivery.getDeliveryStatus();
+        DeliveryStatus newStatus = dto.getDeliveryStatus();
 
         // 🔒 상태 전이 제한 (결제완료 → 배송중 → 배송완료만 허용)
         boolean validTransition =
@@ -65,8 +67,8 @@ public class OrderDeliveryServiceImpl implements OrderDeliveryService {
         }
 
         // 📦 상태 및 관련 정보 업데이트
-        delivery.setSellerDeliveryStatus(newStatus);
-
+        delivery.setDeliveryStatus(newStatus);
+        
         if (newStatus == SellerDeliveryStatus.배송중 && delivery.getStartDate() == null) {
             delivery.setStartDate(LocalDateTime.now());
         }
@@ -82,7 +84,7 @@ public class OrderDeliveryServiceImpl implements OrderDeliveryService {
     @Override
     @Transactional(readOnly = true)
     public List<OrderDeliveryResponseDTO> getDeliveriesBySeller(Long sellerId) {
-        List<SellerOrderDelivery> deliveries = sellerOrderDeliveryRepository.findAllBySellerId(sellerId);
+        List<OrderDelivery> deliveries = orderDeliveryRepository.findAllBySellerId(sellerId);
 
         return deliveries.stream().map(delivery -> {
             Order order = delivery.getOrder();
@@ -92,7 +94,7 @@ public class OrderDeliveryServiceImpl implements OrderDeliveryService {
                     .orderId(order.getId())
                     .productName(product.getName())
                     //.buyerId(order.getCustomer().getId()) // 구매자 ID 포함 필요 시 해제
-                    .SellerDeliveryStatus(delivery.getSellerDeliveryStatus())
+                    .deliveryStatus(delivery.getDeliveryStatus())
                     .startDate(delivery.getStartDate())
                     .completeDate(delivery.getCompleteDate())
                     .trackingNumber(delivery.getTrackingNumber())
@@ -103,7 +105,7 @@ public class OrderDeliveryServiceImpl implements OrderDeliveryService {
 
     @Override
     public OrderDeliveryResponseDTO getDeliveryByOrderId(Long sellerId, Long orderId) {
-        SellerOrderDelivery delivery = sellerOrderDeliveryRepository.findByOrderId(orderId)
+        OrderDelivery delivery = orderDeliveryRepository.findByOrderId(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("배송 정보가 존재하지 않습니다"));
 
         // 본인 주문 검증
@@ -119,12 +121,12 @@ public class OrderDeliveryServiceImpl implements OrderDeliveryService {
                 .orderId(order.getId())
                 .productName(product.getName())
                 //.buyerId(order.getCustomer().getId()) // 구매자 ID 포함 필요 시 해제
-                .SellerDeliveryStatus(delivery.getSellerDeliveryStatus())
+                .deliveryStatus(delivery.getDeliveryStatus())
                 .startDate(delivery.getStartDate())
                 .completeDate(delivery.getCompleteDate())
                 .trackingNumber(delivery.getTrackingNumber())
                 .carrier(delivery.getCarrier())
                 .build();
-
+        
     }
 }

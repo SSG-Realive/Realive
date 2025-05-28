@@ -1,7 +1,7 @@
 package com.realive.domain.order;
 
 import com.realive.domain.common.BaseTimeEntity;
-import com.realive.domain.common.enums.SellerDeliveryStatus;
+import com.realive.domain.common.enums.DeliveryStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -34,7 +34,7 @@ public class SellerOrderDelivery extends BaseTimeEntity {
     // 배송 상태 (결제완료, 배송중, 배송완료)
     @Enumerated(EnumType.STRING)
     @Column(name = "delivery_status", nullable = false)
-    private SellerDeliveryStatus SellerDeliveryStatus;
+    private DeliveryStatus deliveryStatus;
 
     // 배송 시작일
     @Column(name = "start_date")

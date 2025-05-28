@@ -1,20 +1,19 @@
 package com.realive.dto.seller;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Getter
-@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Data
 public class SellerQnaRequestDTO {
 
-    @NotNull
-    private Long sellerId;
-
-    @NotBlank
     private String title;
-
-    @NotBlank
     private String content;
+    private Long productId;
+    private Long customerId;
+
 }

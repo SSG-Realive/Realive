@@ -1,0 +1,20 @@
+Index: back/build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>plugins {\r\n\tid 'java'\r\n\tid 'org.springframework.boot' version '3.4.5'\r\n\tid 'io.spring.dependency-management' version '1.1.7'\r\n}\r\n\r\n\r\ngroup = 'com.realive'\r\nversion = '0.0.1-SNAPSHOT'\r\n\r\n\r\njava {\r\n\ttoolchain {\r\n\t\tlanguageVersion = JavaLanguageVersion.of(17)\r\n\t}\r\n}\r\n\r\n\r\nconfigurations {\r\n\tcompileOnly {\r\n\t\textendsFrom annotationProcessor\r\n\t}\r\n}\r\n\r\n\r\nrepositories {\r\n\tmavenCentral()\r\n}\r\n\r\n\r\ndependencies {\r\n\timplementation 'org.springframework.boot:spring-boot-starter-data-jpa'\r\n\timplementation 'org.springframework.boot:spring-boot-starter-security'\r\n\timplementation 'org.springframework.boot:spring-boot-starter-validation'\r\n\timplementation 'org.springframework.boot:spring-boot-starter-web'\r\n\tcompileOnly 'org.projectlombok:lombok'\r\n\tdevelopmentOnly 'org.springframework.boot:spring-boot-devtools'\r\n\truntimeOnly 'org.mariadb.jdbc:mariadb-java-client'\r\n\tannotationProcessor 'org.projectlombok:lombok'\r\n\ttestImplementation 'org.springframework.boot:spring-boot-starter-test'\r\n\ttestImplementation 'org.springframework.security:spring-security-test'\r\n\ttestRuntimeOnly 'org.junit.platform:junit-platform-launcher'\r\n\timplementation 'io.jsonwebtoken:jjwt-api:0.11.5'\r\n\truntimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'\r\n\truntimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'\r\n\r\n\r\n// Querydsl (Groovy 기준)\r\n\timplementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'\r\n\tannotationProcessor 'com.querydsl:querydsl-apt:5.0.0:jakarta'\r\n\tannotationProcessor 'jakarta.persistence:jakarta.persistence-api'\r\n\tannotationProcessor 'jakarta.annotation:jakarta.annotation-api'\r\n\r\n\r\n}\r\n\r\n\r\ntasks.named('test') {\r\n\tuseJUnitPlatform()\r\n}\r\n\r\n\r\ndef querydslDir = \"$buildDir/generated/querydsl\"\r\n\r\n\r\nsourceSets {\r\n\tmain {\r\n\t\tjava {\r\n\t\t\tsrcDir querydslDir\r\n\t\t}\r\n\t}\r\n}\r\n\r\n\r\ntasks.withType(JavaCompile).configureEach {\r\n\toptions.annotationProcessorGeneratedSourcesDirectory = file(querydslDir)\r\n}\r\n
+===================================================================
+diff --git a/back/build.gradle b/back/build.gradle
+--- a/back/build.gradle	(revision 2d3862cce83a442aa1dddffa81fc6ff3ce04acde)
++++ b/back/build.gradle	(date 1747296927992)
+@@ -35,7 +35,10 @@
+ 	implementation 'org.springframework.boot:spring-boot-starter-web'
+ 	compileOnly 'org.projectlombok:lombok'
+ 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+-	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
++
++// https://mvnrepository.com/artifact/org.postgresql/postgresql
++	implementation 'org.postgresql:postgresql:42.7.5'
++
+ 	annotationProcessor 'org.projectlombok:lombok'
+ 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+ 	testImplementation 'org.springframework.security:spring-security-test'
