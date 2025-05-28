@@ -20,6 +20,7 @@ public class OrderDeliveryController {
 
     private final OrderDeliveryService orderDeliveryService;
 
+    //리스트 조회
     @GetMapping
     public ResponseEntity<List<OrderDeliveryResponseDTO>> getDeliveriesBySeller() {
     // 🔐 로그인한 판매자 정보 가져오기

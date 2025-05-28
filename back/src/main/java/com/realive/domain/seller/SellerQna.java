@@ -1,6 +1,9 @@
 package com.realive.domain.seller;
 
 import com.realive.domain.common.BaseTimeEntity;
+import com.realive.domain.customer.Customer;
+import com.realive.domain.product.Product;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -51,5 +54,14 @@ public class SellerQna extends BaseTimeEntity {
 
     @Column(name = "is_active")
     private boolean isActive = true;
+    // 문의 작성 시간
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
+
+    public Boolean getIsAnswered() {
+        return isAnswered;
+    }
+
+
 
 }

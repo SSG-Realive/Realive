@@ -12,7 +12,7 @@ Thumbs.db
 desktop.ini
 
 # -------------------------------------
-# Java / Gradle / Spring Boot
+# Java / Gradle / IntelliJ
 # -------------------------------------
 *.class
 *.log
@@ -32,6 +32,7 @@ hs_err_pid*
 replay_pid*
 .gradletasknamecache
 
+<<<<<<< HEAD
 # Spring Boot 설정 파일
 application.yml
 
@@ -42,6 +43,9 @@ build/generated/
 
 # -------------------------------------
 # IntelliJ / Eclipse
+=======
+# IntelliJ cache files
+>>>>>>> origin/team1/javcki
 .idea/**/workspace.xml
 .idea/**/tasks.xml
 .idea/**/usage.statistics.xml
@@ -114,3 +118,4 @@ next-env.d.ts
 
 # 업로드 파일 제외
 uploads/
+.env.properties
