@@ -29,7 +29,7 @@ import com.realive.repository.seller.SellerRepository;
 // import com.realive.repository.user.UserRepository;
 
 // --- DTO stats 패키지 import ---
-// 아래 패키지에 MemberSummaryStatsDTO, MemberPeriodStatsDTO, DateBasedValueDTO, MonthBasedValueDTO 등이 있다고 가정
+// 아래 패키지에 SalesPeriodStatsDTO, SellerSalesDetailDTO 등이 수정된 버전으로 있다고 가정
 import com.realive.dto.logs.stats.*;
 
 import lombok.RequiredArgsConstructor;
@@ -70,6 +70,8 @@ public class StatServiceImpl implements StatService {
 
     @Override
     public AdminDashboardDTO getAdminDashboard(LocalDate date, String periodType) {
+        // (이전 최종본과 동일 - 내용 생략)
+        // 핵심: MemberSummaryStatsDTO.builder()에 unique, engaged, active 필드 모두 Mock 데이터 할당
         log.info("getAdminDashboard 호출됨 - 날짜: {}, 기간타입: {}", date, periodType);
 
         LocalDate startDate = date;
@@ -125,26 +127,26 @@ public class StatServiceImpl implements StatService {
         }
 
         MemberSummaryStatsDTO memberSummaryStats = MemberSummaryStatsDTO.builder()
-                .totalMembers(10000L + ThreadLocalRandom.current().nextLong(1000)) // TODO: 실제 UserRepository.count()
+                .totalMembers(10000L + ThreadLocalRandom.current().nextLong(1000))
                 .newMembersInPeriod(ThreadLocalRandom.current().nextLong(
                         "DAILY".equalsIgnoreCase(periodType) ? 10 : 200,
                         "DAILY".equalsIgnoreCase(periodType) ? 30 : 500
-                )) // TODO: 실제 기간 내 신규 가입자 수
-                .uniqueVisitorsInPeriod(ThreadLocalRandom.current().nextLong( // 고유 방문자 수 Mock
+                ))
+                .uniqueVisitorsInPeriod(ThreadLocalRandom.current().nextLong(
                         "DAILY".equalsIgnoreCase(periodType) ? 500 : 5000,
                         "DAILY".equalsIgnoreCase(periodType) ? 2000 : 20000
-                )) // TODO: 실제 '고유 방문자 수' (쿠키/IP/로그인 사용자 기반)
-                .engagedUsersInPeriod(ThreadLocalRandom.current().nextLong( // 참여 사용자 수 Mock
+                ))
+                .engagedUsersInPeriod(ThreadLocalRandom.current().nextLong(
                         "DAILY".equalsIgnoreCase(periodType) ? 100 : 1000,
                         "DAILY".equalsIgnoreCase(periodType) ? 500 : 5000
-                ))   // TODO: 실제 '참여 사용자 수' (상품조회, 로그인 시도 등 의미있는 행동 기준)
-                .activeUsersInPeriod(ThreadLocalRandom.current().nextLong( // 이 값에 대한 추이만 MemberPeriodStatsDTO에 포함
+                ))
+                .activeUsersInPeriod(ThreadLocalRandom.current().nextLong(
                         "DAILY".equalsIgnoreCase(periodType) ? 80 : 800,
                         "DAILY".equalsIgnoreCase(periodType) ? 400 : 4000
-                ))    // TODO: 실제 '활동 사용자 수' (unique나 engaged와 다른 별도 정의 또는 둘 중 하나를 대표)
+                ))
                 .build();
 
-        SalesSummaryStatsDTO salesSummaryStats = SalesSummaryStatsDTO.builder()
+        SalesSummaryStatsDTO salesSummaryStatsForDashboard = SalesSummaryStatsDTO.builder()
                 .totalOrdersInPeriod(ThreadLocalRandom.current().nextLong("DAILY".equalsIgnoreCase(periodType) ? 20 : 400, "DAILY".equalsIgnoreCase(periodType) ? 80 : 1000))
                 .totalRevenueInPeriod(ThreadLocalRandom.current().nextDouble("DAILY".equalsIgnoreCase(periodType) ? 1000000 : 20000000, "DAILY".equalsIgnoreCase(periodType) ? 5000000 : 80000000))
                 .totalFeesInPeriod(ThreadLocalRandom.current().nextDouble(100000, 1000000)).build();
@@ -163,7 +165,7 @@ public class StatServiceImpl implements StatService {
                 .productLog(productLog)
                 .penaltyLogs(penaltyLogsMock)
                 .memberSummaryStats(memberSummaryStats)
-                .salesSummaryStats(salesSummaryStats)
+                .salesSummaryStats(salesSummaryStatsForDashboard)
                 .auctionSummaryStats(auctionSummaryStats)
                 .reviewSummaryStats(reviewSummaryStats)
                 .build();
@@ -172,58 +174,64 @@ public class StatServiceImpl implements StatService {
     @Override
     public SalesPeriodStatsDTO getSalesStatistics(LocalDate startDate, LocalDate endDate,
                                                   Optional<Integer> sellerId, Optional<String> sortBy) {
-        // (이전 답변과 동일한 Mock 구현 유지)
-        log.info("getSalesStatistics 호출됨 - 기간: {} ~ {}, 판매자ID: {}, 정렬: {}", startDate, endDate, sellerId, sortBy);
+        log.info("getSalesStatistics 호출됨 (판매자별 집중) - 기간: {} ~ {}, 판매자ID: {}, 정렬: {}", startDate, endDate, sellerId, sortBy);
+
+        // 전체 판매 요약 정보 (선택적으로 유지)
+        // TODO: 실제 데이터 조회 시, sellerId 유무에 따라 요약 범위 달라질 수 있음
         SalesSummaryStatsDTO summary = SalesSummaryStatsDTO.builder()
-                .totalOrdersInPeriod(ThreadLocalRandom.current().nextLong(100, 1000))
-                .totalRevenueInPeriod(ThreadLocalRandom.current().nextDouble(10000000, 50000000))
-                .totalFeesInPeriod(ThreadLocalRandom.current().nextDouble(1000000, 5000000))
+                .totalOrdersInPeriod(ThreadLocalRandom.current().nextLong(sellerId.isPresent() ? 10 : 100, sellerId.isPresent() ? 50 : 1000))
+                .totalRevenueInPeriod(ThreadLocalRandom.current().nextDouble(sellerId.isPresent() ? 1000000 : 10000000, sellerId.isPresent() ? 5000000 : 50000000))
+                .totalFeesInPeriod(ThreadLocalRandom.current().nextDouble(100000, 5000000)) // 이 수수료는 전체 플랫폼 수수료일 수 있음
                 .build();
-        List<ProductSalesDetailDTO> productDetails = new ArrayList<>();
-        for(int i=0; i < ThreadLocalRandom.current().nextInt(5,15); i++) {
-            productDetails.add(ProductSalesDetailDTO.builder()
-                    .productId(i+1)
-                    .productName("Mock 상품 " + (i+1) + (sellerId.map(id -> " (판매자 " + id + ")").orElse("")))
-                    .quantitySold(ThreadLocalRandom.current().nextLong(10, 100))
-                    .totalRevenue(ThreadLocalRandom.current().nextDouble(100000, 1000000))
-                    .build());
-        }
-        sortBy.ifPresent(s -> {
-            if (s.equalsIgnoreCase("revenue_desc")) {
-                productDetails.sort(Comparator.comparing(ProductSalesDetailDTO::getTotalRevenue).reversed());
-            }
-        });
+
+        // 판매자별 판매 상세 정보 생성
         List<SellerSalesDetailDTO> sellerDetails = new ArrayList<>();
         if (sellerId.isPresent()) {
+            // 특정 판매자 조회 시
+            // TODO: 실제 DB에서 해당 sellerId의 판매 건수(salesCount)와 매출(totalRevenue) 조회
             sellerDetails.add(SellerSalesDetailDTO.builder()
                     .sellerId(sellerId.get())
-                    .sellerName("Mock 판매자 " + sellerId.get())
-                    .quantitySold(ThreadLocalRandom.current().nextLong(50, 200))
+                    .sellerName("Mock 판매자 " + sellerId.get()) // TODO: 실제 판매자 이름 조회
+                    .salesCount(ThreadLocalRandom.current().nextLong(5, 50)) // 판매 건수
                     .totalRevenue(ThreadLocalRandom.current().nextDouble(500000, 5000000))
                     .build());
         } else {
-            for(int i=0; i < ThreadLocalRandom.current().nextInt(3,8); i++) {
+            // 전체 판매자 (또는 상위 판매자 등) 조회 시
+            // TODO: 실제 DB에서 판매자별 판매 건수와 매출 조회 (페이징 또는 Top N 고려)
+            for(int i = 0; i < ThreadLocalRandom.current().nextInt(3, 8); i++) {
                 sellerDetails.add(SellerSalesDetailDTO.builder()
-                        .sellerId(i+1)
-                        .sellerName("Mock 판매자 " + (i+1))
-                        .quantitySold(ThreadLocalRandom.current().nextLong(50, 200))
+                        .sellerId(i + 1)
+                        .sellerName("Mock 판매자 " + (i + 1)) // TODO: 실제 판매자 이름 조회
+                        .salesCount(ThreadLocalRandom.current().nextLong(10, 100)) // 판매 건수
                         .totalRevenue(ThreadLocalRandom.current().nextDouble(500000, 5000000))
                         .build());
             }
+            // sortBy 로직 (판매자별 정렬) - salesCount 또는 totalRevenue 기준
+            sortBy.ifPresent(s -> {
+                if (s.equalsIgnoreCase("salesCount_desc")) {
+                    sellerDetails.sort(Comparator.comparing(SellerSalesDetailDTO::getSalesCount).reversed());
+                } else if (s.equalsIgnoreCase("revenue_desc")) {
+                    sellerDetails.sort(Comparator.comparing(SellerSalesDetailDTO::getTotalRevenue).reversed());
+                }
+                // 다른 정렬 기준 추가 가능
+            });
         }
+
+        // 전체 매출 추이 (선택적으로 유지)
+        // TODO: 실제 데이터 조회. sellerId가 있다면 해당 판매자의 매출 추이, 없다면 전체 매출 추이
         List<DateBasedValueDTO<Double>> dailyRevenueTrend = generateDateBasedTrend(startDate, endDate,
                 () -> ThreadLocalRandom.current().nextDouble(100000, 1000000));
+
         return SalesPeriodStatsDTO.builder()
-                .summary(summary)
-                .productSalesDetails(productDetails)
-                .sellerSalesDetails(sellerDetails)
-                .dailyRevenueTrend(dailyRevenueTrend)
+                .summary(summary) // 전체 요약 (선택적)
+                .sellerSalesDetails(sellerDetails) // 핵심: 판매자별 상세
+                .dailyRevenueTrend(dailyRevenueTrend) // 전체 또는 판매자별 매출 추이 (선택적)
                 .build();
     }
 
     @Override
     public AuctionPeriodStatsDTO getAuctionPeriodStatistics(LocalDate startDate, LocalDate endDate) {
-        // (이전 답변과 동일한 Mock 구현 유지)
+        // (이전 최종본과 동일 - 내용 생략)
         log.info("getAuctionPeriodStatistics 호출됨 - 기간: {} ~ {}", startDate, endDate);
         long totalAuctions = ThreadLocalRandom.current().nextLong(50, 200);
         long successfulAuctions = (long) (totalAuctions * ThreadLocalRandom.current().nextDouble(0.6, 0.9));
@@ -241,49 +249,51 @@ public class StatServiceImpl implements StatService {
 
     @Override
     public MemberPeriodStatsDTO getMemberPeriodStatistics(LocalDate startDate, LocalDate endDate) {
+        // (이전 최종본과 동일 - MemberPeriodStatsDTO의 최종 정의 반영됨)
+        // 여기서는 해당 코드 반복을 피하기 위해 생략합니다.
+        // 이전 답변의 getMemberPeriodStatistics 메소드 구현을 참고해주세요.
+        // 핵심: MemberSummaryStatsDTO에 3가지 활동 지표 채우고,
+        // MemberPeriodStatsDTO에는 dailyNewUserTrend, dailyActiveUserTrend, monthlyNewUserTrend, monthlyActiveUserTrend만 채움
         log.info("getMemberPeriodStatistics 호출됨 - 기간: {} ~ {}", startDate, endDate);
 
-        // MemberSummaryStatsDTO 생성 (3가지 활동 지표 Mock 데이터로 채움)
         MemberSummaryStatsDTO summary = MemberSummaryStatsDTO.builder()
-                .totalMembers(15000L + ThreadLocalRandom.current().nextLong(2000)) // TODO: 실제 데이터 조회
-                .newMembersInPeriod(ThreadLocalRandom.current().nextLong(100, 500)) // TODO: 실제 데이터 조회
-                .uniqueVisitorsInPeriod(ThreadLocalRandom.current().nextLong(2000, 8000)) // TODO: 실제 '고유 방문자 수'
-                .engagedUsersInPeriod(ThreadLocalRandom.current().nextLong(1000, 4000))  // TODO: 실제 '참여 사용자 수'
-                .activeUsersInPeriod(ThreadLocalRandom.current().nextLong(1500, 6000))   // TODO: 실제 '활동 사용자 수' (정의 필요)
+                .totalMembers(15000L + ThreadLocalRandom.current().nextLong(2000))
+                .newMembersInPeriod(ThreadLocalRandom.current().nextLong(100, 500))
+                .uniqueVisitorsInPeriod(ThreadLocalRandom.current().nextLong(2000, 8000))
+                .engagedUsersInPeriod(ThreadLocalRandom.current().nextLong(1000, 4000))
+                .activeUsersInPeriod(ThreadLocalRandom.current().nextLong(1500, 6000))
                 .build();
 
-        // MemberPeriodStatsDTO의 추이 데이터 필드 (사용자 확정 DTO 구조 반영)
-        // dailyActiveUserTrend와 monthlyActiveUserTrend는 summary.activeUsersInPeriod 값의 추이를 나타냄
         List<DateBasedValueDTO<Long>> dailyNewUserTrend = generateDateBasedTrend(startDate, endDate,
                 () -> ThreadLocalRandom.current().nextLong(5, 30));
         List<DateBasedValueDTO<Long>> dailyActiveUserTrend = generateDateBasedTrend(startDate, endDate,
-                () -> { // summary.activeUsersInPeriod를 기반으로 일별 추이 Mock 생성
+                () -> {
                     long daysBetween = ChronoUnit.DAYS.between(startDate, endDate) + 1;
-                    if (daysBetween <= 0) return summary.getActiveUsersInPeriod(); // 기간이 0일 이하일 경우 (방어 코드)
-                    return summary.getActiveUsersInPeriod() / daysBetween + ThreadLocalRandom.current().nextLong(-20, 21); // 단순 평균 + 변동성
+                    if (daysBetween <= 0) return summary.getActiveUsersInPeriod();
+                    return summary.getActiveUsersInPeriod() / daysBetween + ThreadLocalRandom.current().nextLong(-20, 21);
                 });
 
         List<MonthBasedValueDTO<Long>> monthlyNewUserTrend = generateMonthBasedTrend(startDate, endDate,
                 () -> ThreadLocalRandom.current().nextLong(100, 500));
         List<MonthBasedValueDTO<Long>> monthlyActiveUserTrend = generateMonthBasedTrend(startDate, endDate,
-                () -> { // summary.activeUsersInPeriod를 기반으로 월별 추이 Mock 생성
+                () -> {
                     long monthsBetween = ChronoUnit.MONTHS.between(YearMonth.from(startDate), YearMonth.from(endDate)) + 1;
-                    if (monthsBetween <= 0) return summary.getActiveUsersInPeriod(); // 기간이 0개월 이하일 경우 (방어 코드)
-                    return summary.getActiveUsersInPeriod() / monthsBetween + ThreadLocalRandom.current().nextLong(-200, 201); // 단순 평균 + 변동성
+                    if (monthsBetween <= 0) return summary.getActiveUsersInPeriod();
+                    return summary.getActiveUsersInPeriod() / monthsBetween + ThreadLocalRandom.current().nextLong(-200, 201);
                 });
 
         return MemberPeriodStatsDTO.builder()
-                .summary(summary) // 모든 활동 지표가 포함된 summary
+                .summary(summary)
                 .dailyNewUserTrend(dailyNewUserTrend)
-                .dailyActiveUserTrend(dailyActiveUserTrend)   // 'activeUsersInPeriod'에 대한 추이
+                .dailyActiveUserTrend(dailyActiveUserTrend)
                 .monthlyNewUserTrend(monthlyNewUserTrend)
-                .monthlyActiveUserTrend(monthlyActiveUserTrend) // 'activeUsersInPeriod'에 대한 추이
+                .monthlyActiveUserTrend(monthlyActiveUserTrend)
                 .build();
     }
 
     @Override
     public ReviewPeriodStatsDTO getReviewPeriodStatistics(LocalDate startDate, LocalDate endDate) {
-        // (이전 답변과 동일한 Mock 구현 유지)
+        // (이전 최종본과 동일 - 내용 생략)
         log.info("getReviewPeriodStatistics 호출됨 - 기간: {} ~ {}", startDate, endDate);
         long totalReviews = ThreadLocalRandom.current().nextLong(1000, 5000);
         long deletedReviews = (long) (totalReviews * ThreadLocalRandom.current().nextDouble(0.01, 0.05));
@@ -302,9 +312,9 @@ public class StatServiceImpl implements StatService {
                 .summary(summary).ratingDistribution(ratingDistribution).dailyReviewCountTrend(dailyReviewTrend).build();
     }
 
-    // === 기존 메소드들 (제공해주신 DTO 필드명에 맞춰 수정된 버전 유지) ===
+    // === 기존 메소드들 (변경 없음 - 이전 최종본과 동일, 내용 생략) ===
     @Override
-    public DailySalesSummaryDTO getDailySalesSummary(LocalDate date) {
+    public DailySalesSummaryDTO getDailySalesSummary(LocalDate date) { /* 이전과 동일 */
         log.info("getDailySalesSummary 호출됨 - 날짜: {}", date);
         Integer salesCount = salesLogRepository.countBySoldAt(date);
         Integer salesAmount = salesLogRepository.sumTotalPriceByDate(date);
@@ -316,14 +326,14 @@ public class StatServiceImpl implements StatService {
                 .totalSalesAmount(totalSalesAmount).totalQuantity(totalQuantity).build();
     }
     @Override
-    public SalesLogDetailListDTO getDailySalesLogDetails(LocalDate date) {
+    public SalesLogDetailListDTO getDailySalesLogDetails(LocalDate date) { /* 이전과 동일 */
         log.info("getDailySalesLogDetails 호출됨 - 날짜: {}", date);
         List<SalesLog> salesLogEntities = salesLogRepository.findBySoldAt(date);
         List<SalesLogDTO> salesLogDTOs = salesLogEntities.stream().map(SalesLogDTO::fromEntity).collect(Collectors.toList());
         return SalesLogDetailListDTO.builder().date(date).salesLogs(salesLogDTOs).build();
     }
     @Override
-    public MonthlySalesSummaryDTO getMonthlySalesSummary(YearMonth yearMonth) {
+    public MonthlySalesSummaryDTO getMonthlySalesSummary(YearMonth yearMonth) { /* 이전과 동일 */
         log.info("getMonthlySalesSummary 호출됨 - 연월: {}", yearMonth);
         LocalDate startDate = yearMonth.atDay(1);
         LocalDate endDate = yearMonth.atEndOfMonth();
@@ -337,7 +347,7 @@ public class StatServiceImpl implements StatService {
                 .totalSalesAmount(totalSalesAmountValue).totalQuantity(totalQuantityValue).build();
     }
     @Override
-    public MonthlySalesLogDetailListDTO getMonthlySalesLogDetails(YearMonth yearMonth) {
+    public MonthlySalesLogDetailListDTO getMonthlySalesLogDetails(YearMonth yearMonth) { /* 이전과 동일 */
         log.info("getMonthlySalesLogDetails 호출됨 - 연월: {}", yearMonth);
         LocalDate startDate = yearMonth.atDay(1);
         LocalDate endDate = yearMonth.atEndOfMonth();
@@ -346,7 +356,7 @@ public class StatServiceImpl implements StatService {
         return MonthlySalesLogDetailListDTO.builder().month(yearMonth).salesLogs(salesLogDTOs).build();
     }
     @Override
-    public List<DailySalesSummaryDTO> getDailySummariesInMonth(YearMonth yearMonth) {
+    public List<DailySalesSummaryDTO> getDailySummariesInMonth(YearMonth yearMonth) { /* 이전과 동일 */
         log.info("getDailySummariesInMonth 호출됨 (for 루프 사용) - 연월: {}", yearMonth);
         List<DailySalesSummaryDTO> dailySummaries = new ArrayList<>();
         int daysInMonth = yearMonth.lengthOfMonth();
@@ -357,7 +367,7 @@ public class StatServiceImpl implements StatService {
         return dailySummaries;
     }
     @Override
-    public DailySalesSummaryDTO getSellerDailySalesSummary(Integer sellerId, LocalDate date) {
+    public DailySalesSummaryDTO getSellerDailySalesSummary(Integer sellerId, LocalDate date) { /* 이전과 동일 */
         log.info("getSellerDailySalesSummary 호출됨 - 판매자ID: {}, 날짜: {}", sellerId, date);
         Integer salesCount = salesLogRepository.countBySellerIdAndSoldAt(sellerId, date);
         Integer salesAmount = salesLogRepository.sumTotalPriceBySellerIdAndSoldAt(sellerId, date);
@@ -369,7 +379,7 @@ public class StatServiceImpl implements StatService {
                 .totalSalesAmount(totalSalesAmount).totalQuantity(totalQuantity).build();
     }
     @Override
-    public MonthlySalesSummaryDTO getSellerMonthlySalesSummary(Integer sellerId, YearMonth yearMonth) {
+    public MonthlySalesSummaryDTO getSellerMonthlySalesSummary(Integer sellerId, YearMonth yearMonth) { /* 이전과 동일 */
         log.info("getSellerMonthlySalesSummary 호출됨 - 판매자ID: {}, 연월: {}", sellerId, yearMonth);
         LocalDate startDate = yearMonth.atDay(1);
         LocalDate endDate = yearMonth.atEndOfMonth();
@@ -383,7 +393,7 @@ public class StatServiceImpl implements StatService {
                 .totalSalesAmount(totalSalesAmountValue).totalQuantity(totalQuantityValue).build();
     }
     @Override
-    public DailySalesSummaryDTO getProductDailySalesSummary(Integer productId, LocalDate date) {
+    public DailySalesSummaryDTO getProductDailySalesSummary(Integer productId, LocalDate date) { /* 이전과 동일 */
         log.info("getProductDailySalesSummary 호출됨 - 상품ID: {}, 날짜: {}", productId, date);
         Integer salesAmount = salesLogRepository.sumTotalPriceByProductIdAndSoldAtBetween(productId, date, date);
         Integer quantitySum = salesLogRepository.sumQuantityByProductIdAndSoldAtBetween(productId, date, date);
@@ -395,7 +405,7 @@ public class StatServiceImpl implements StatService {
                 .totalSalesAmount(totalSalesAmount).totalQuantity(totalQuantity).build();
     }
     @Override
-    public MonthlySalesSummaryDTO getProductMonthlySalesSummary(Integer productId, YearMonth yearMonth) {
+    public MonthlySalesSummaryDTO getProductMonthlySalesSummary(Integer productId, YearMonth yearMonth) { /* 이전과 동일 */
         log.info("getProductMonthlySalesSummary 호출됨 - 상품ID: {}, 연월: {}", productId, yearMonth);
         LocalDate startDate = yearMonth.atDay(1);
         LocalDate endDate = yearMonth.atEndOfMonth();
@@ -409,7 +419,7 @@ public class StatServiceImpl implements StatService {
                 .totalSalesAmount(totalSalesAmountValue).totalQuantity(totalQuantityValue).build();
     }
     @Override
-    public Map<String, Object> getDashboardStats(LocalDate date) {
+    public Map<String, Object> getDashboardStats(LocalDate date) { /* 이전과 동일 */
         log.info("관리자 대시보드 통합 통계 조회 (Map 반환) - 날짜: {}", date);
         Map<String, Object> dashboardData = new HashMap<>();
         int pendingSellerCount = 0;
@@ -472,7 +482,7 @@ public class StatServiceImpl implements StatService {
         return dashboardData;
     }
     @Override
-    public List<CategorySalesSummaryDTO> getPlatformCategorySalesSummary(LocalDate startDate, LocalDate endDate) {
+    public List<CategorySalesSummaryDTO> getPlatformCategorySalesSummary(LocalDate startDate, LocalDate endDate) { /* 이전과 동일 */
         log.info("플랫폼 전체 카테고리별 판매 요약 조회 요청 - 기간: {} ~ {}", startDate, endDate);
         if (salesLogRepository != null) {
             List<CategorySalesSummaryDTO> results = salesLogRepository.findCategorySalesSummaryBetween(startDate,endDate);
@@ -483,11 +493,12 @@ public class StatServiceImpl implements StatService {
         }
     }
 
+
     // --- Helper methods for generating trend data (Mock 데이터 생성용) ---
     private <T> List<DateBasedValueDTO<T>> generateDateBasedTrend(LocalDate startDate, LocalDate endDate, java.util.function.Supplier<T> valueSupplier) {
         List<DateBasedValueDTO<T>> trend = new ArrayList<>();
         long days = ChronoUnit.DAYS.between(startDate, endDate) + 1;
-        if (days <= 0 || days > 366) days = Math.max(1, Math.min(days, 30)); // 데이터 기간 제한
+        if (days <= 0 || days > 366) days = Math.max(1, Math.min(days, 30));
         for (int i = 0; i < days; i++) {
             trend.add(new DateBasedValueDTO<>(startDate.plusDays(i), valueSupplier.get()));
         }
@@ -499,7 +510,7 @@ public class StatServiceImpl implements StatService {
         YearMonth startMonth = YearMonth.from(startDate);
         YearMonth endMonth = YearMonth.from(endDate);
         long months = ChronoUnit.MONTHS.between(startMonth, endMonth) + 1;
-        if (months <= 0 || months > 24) months = Math.max(1, Math.min(months, 12)); // 데이터 기간 제한
+        if (months <= 0 || months > 24) months = Math.max(1, Math.min(months, 12));
         for (int i = 0; i < months; i++) {
             trend.add(new MonthBasedValueDTO<>(startMonth.plusMonths(i), valueSupplier.get()));
         }

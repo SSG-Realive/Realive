@@ -1,11 +1,7 @@
+// src/main/java/com/realive/controller/admin/AdminStatsController.java
 package com.realive.controller.admin;
 
-import com.realive.dto.common.ApiResponse; // ApiResponse 클래스 import
-
-// 서비스 인터페이스 import
-import com.realive.service.admin.logs.StatService;
-
-// 응답 및 요청 DTO import (실제 패키지 경로에 맞게 확인 필요)
+import com.realive.dto.common.ApiResponse;
 import com.realive.dto.logs.AdminDashboardDTO;
 import com.realive.dto.logs.salessum.CategorySalesSummaryDTO;
 import com.realive.dto.logs.salessum.DailySalesSummaryDTO;
@@ -14,32 +10,28 @@ import com.realive.dto.logs.salessum.MonthlySalesSummaryDTO;
 import com.realive.dto.logs.salessum.SalesLogDetailListDTO;
 import com.realive.dto.logs.stats.AuctionPeriodStatsDTO;
 import com.realive.dto.logs.stats.MemberPeriodStatsDTO;
-import com.realive.dto.logs.stats.MemberSummaryStatsDTO; // MemberPeriodStatsDTO 내부 및 Swagger 설명에서 사용
-import com.realive.dto.logs.stats.DateBasedValueDTO;     // MemberPeriodStatsDTO 내부 및 Swagger 설명에서 사용
-import com.realive.dto.logs.stats.MonthBasedValueDTO;    // MemberPeriodStatsDTO 내부 및 Swagger 설명에서 사용
+import com.realive.dto.logs.stats.MemberSummaryStatsDTO;
+import com.realive.dto.logs.stats.DateBasedValueDTO;
+import com.realive.dto.logs.stats.MonthBasedValueDTO;
 import com.realive.dto.logs.stats.ReviewPeriodStatsDTO;
-import com.realive.dto.logs.stats.SalesPeriodStatsDTO;
+import com.realive.dto.logs.stats.SalesPeriodStatsDTO; // 수정된 SalesPeriodStatsDTO
+import com.realive.dto.logs.stats.SellerSalesDetailDTO; // SellerSalesDetailDTO import 추가
+import com.realive.service.admin.logs.StatService;
 
-// Swagger/OpenAPI 어노테이션 import
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
-// Lombok import
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-// Spring Framework import
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-// Java 기본 라이브러리 import
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.Collections;
@@ -86,7 +78,11 @@ public class AdminStatsController {
         }
     }
 
-    @Operation(summary = "기간별 판매 통계 조회", description = "지정된 기간 및 조건에 따른 판매 통계 상세 정보(상품별/판매자별 판매 건수, 매출, 추이)를 조회합니다.")
+    @Operation(summary = "기간별 판매자 판매 통계 조회", // summary 변경
+            description = "지정된 기간 및 조건에 따른 판매자별 판매 건수 및 매출 통계 정보를 조회합니다. " +
+                    "SalesPeriodStatsDTO는 전체 판매 요약(선택적), 판매자별 상세 정보 리스트(List<SellerSalesDetailDTO>), " +
+                    "그리고 전체 매출 추이(선택적)를 포함합니다. " +
+                    "SellerSalesDetailDTO는 sellerId, sellerName, salesCount(판매건수), totalRevenue(총매출)을 포함합니다.") // description 변경
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "조회 성공",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = SalesPeriodStatsDTOApiResponse.class))),
@@ -98,14 +94,14 @@ public class AdminStatsController {
     public ResponseEntity<ApiResponse<SalesPeriodStatsDTO>> getSalesStatistics(
             @Parameter(description = "조회 시작일 (YYYY-MM-DD)", required = true) @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @Parameter(description = "조회 종료일 (YYYY-MM-DD)", required = true) @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-            @Parameter(description = "판매자 ID (선택)") @RequestParam(required = false) Integer sellerId,
-            @Parameter(description = "정렬 기준 (선택, 예: revenue_desc)") @RequestParam(required = false) String sortBy) {
+            @Parameter(description = "판매자 ID (선택, 특정 판매자 조회 시)") @RequestParam(required = false) Integer sellerId,
+            @Parameter(description = "정렬 기준 (선택, 예: salesCount_desc, revenue_desc)") @RequestParam(required = false) String sortBy) { // sortBy 예시 변경
         log.info("GET /api/admin/stats/sales-period - startDate: {}, endDate: {}, sellerId: {}, sortBy: {}", startDate, endDate, sellerId, sortBy);
         try {
             SalesPeriodStatsDTO stats = statService.getSalesStatistics(startDate, endDate, Optional.ofNullable(sellerId), Optional.ofNullable(sortBy));
             return ResponseEntity.ok(ApiResponse.success(stats));
         } catch (Exception e) {
-            log.error("기간별 판매 통계 조회 중 오류 발생", e);
+            log.error("기간별 판매자 판매 통계 조회 중 오류 발생", e); // 로그 메시지 변경
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), "서버 내부 오류: " + e.getMessage()));
         }
@@ -188,10 +184,11 @@ public class AdminStatsController {
         }
     }
 
+    // --- 나머지 기존 API 엔드포인트들 (이전과 동일) ---
     @Operation(summary = "관리자 대시보드 통계 조회 (Map 반환 - 레거시)", description = "특정 날짜를 기준으로 대시보드에 필요한 통합 통계 정보를 Map 형태로 조회합니다.")
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "조회 성공",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = MapApiResponse.class))), // Map 반환 타입 명시
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = MapApiResponse.class))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "500", description = "서버 내부 오류",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiResponse.class)))
     })
@@ -462,7 +459,7 @@ public class AdminStatsController {
         }
     }
 
-
+    // --- ApiResponse의 Schema 정의를 위한 내부 정적 클래스 ---
     private static class AdminDashboardDTOApiResponse extends ApiResponse<AdminDashboardDTO> {}
     private static class SalesPeriodStatsDTOApiResponse extends ApiResponse<SalesPeriodStatsDTO> {}
     private static class AuctionPeriodStatsDTOApiResponse extends ApiResponse<AuctionPeriodStatsDTO> {}
@@ -474,5 +471,5 @@ public class AdminStatsController {
     private static class MonthlySalesLogDetailListDTOApiResponse extends ApiResponse<MonthlySalesLogDetailListDTO> {}
     private static class CategorySalesSummaryDTOListApiResponse extends ApiResponse<List<CategorySalesSummaryDTO>> {}
     private static class DailySalesSummaryDTOListApiResponse extends ApiResponse<List<DailySalesSummaryDTO>> {}
-    private static class MapApiResponse extends ApiResponse<Map<String,Object>>{} // getDashboardStats 용
+    private static class MapApiResponse extends ApiResponse<Map<String,Object>>{}
 }

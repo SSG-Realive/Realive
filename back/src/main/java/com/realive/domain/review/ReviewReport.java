@@ -27,7 +27,7 @@ public class ReviewReport extends BaseTimeEntity {
 @GeneratedValue(strategy = GenerationType.IDENTITY)
 private Integer id;
 
-@Column(name = "seller_revire_id")
+@Column(name = "seller_review_id")
 private Integer sellerReviewId;
 
 @Column(name = "reporter_id")
