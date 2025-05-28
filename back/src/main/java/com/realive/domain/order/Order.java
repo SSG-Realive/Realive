@@ -1,6 +1,7 @@
 package com.realive.domain.order;
 
 //import com.realive.domain.customer.Customer;
+import com.realive.domain.common.BaseTimeEntity;
 import com.realive.domain.product.Product;
 import jakarta.persistence.*;
 import lombok.*;
@@ -12,7 +13,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @Table(name = "orders")  // 테이블명이 order일 경우 예약어 주의
-public class Order {
+public class Order extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,10 +24,4 @@ public class Order {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
-    // 🔗 구매자 정보 (선택)
-    // @ManyToOne(fetch = FetchType.LAZY)
-    //@JoinColumn(name = "customer_id", nullable = false)
-    //private Customer customer;
-
-    // 주문 수량, 결제 금액 등도 필요시 추가
 }
