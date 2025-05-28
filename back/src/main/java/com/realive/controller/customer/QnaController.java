@@ -13,8 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.realive.dto.product.ProductListDTO;
+import com.realive.dto.qna.CustomerQnaRequestDTO;
 import com.realive.dto.qna.QnaListDTO;
-import com.realive.dto.seller.SellerQnaRequestDTO;
+
 import com.realive.service.customer.CustomerQnaService;
 import com.realive.service.customer.CustomerService;
 
@@ -38,7 +39,7 @@ public class QnaController {
     // 고객 상품 문의하기 (상품 요약 정보 포함)
     @PostMapping
     public ResponseEntity<?> customerQna(Authentication authentication,
-                                            @RequestBody SellerQnaRequestDTO requestDTO) {
+                                            @RequestBody CustomerQnaRequestDTO requestDTO) {
         String email = authentication.getName();
         Long customerId = customerService.findIdByEmail(email);
         requestDTO.setCustomerId(customerId);

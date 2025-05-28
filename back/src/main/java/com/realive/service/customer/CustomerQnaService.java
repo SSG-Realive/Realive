@@ -10,13 +10,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.realive.domain.customer.Customer;
+import com.realive.domain.customer.CustomerQna;
 import com.realive.domain.product.Product;
 import com.realive.domain.seller.Seller;
-import com.realive.domain.seller.SellerQna;
 import com.realive.dto.product.ProductListDTO;
+import com.realive.dto.qna.CustomerQnaRequestDTO;
 import com.realive.dto.qna.QnaDetailDTO;
 import com.realive.dto.qna.QnaListDTO;
-import com.realive.dto.seller.SellerQnaRequestDTO;
 import com.realive.repository.customer.CustomerQnaRepository;
 import com.realive.repository.customer.CustomerRepository;
 import com.realive.repository.customer.productview.ProductListRepository;
@@ -35,7 +35,7 @@ public class CustomerQnaService {
     private final ProductListRepository productListRepository;
 
     // 판매자 상품 1:1 문의하기 + 상단에 상품 요약
-    public Map<String, Object> createQnaWithProductSummary(SellerQnaRequestDTO requestDTO) {
+    public Map<String, Object> createQnaWithProductSummary(CustomerQnaRequestDTO requestDTO) {
         
         Product product = ProductViewRepository.findById(requestDTO.getProductId())
                 .orElseThrow(() -> new NoSuchElementException("상품을 찾을 수 없습니다. ID=" + requestDTO.getProductId()));
@@ -45,7 +45,7 @@ public class CustomerQnaService {
 
         Seller seller = product.getSeller();
 
-        SellerQna qna = SellerQna.builder()
+        CustomerQna qna = CustomerQna.builder()
                 .product(product)
                 .seller(seller)
                 .customer(customer)
@@ -54,7 +54,7 @@ public class CustomerQnaService {
                 .isAnswered(false)
                 .build();
 
-        SellerQna saved = customerQnaRepository.save(qna);
+        CustomerQna saved = customerQnaRepository.save(qna);
 
         // 상품 요약 정보 가져오기
         ProductListDTO productSummary = productListRepository
@@ -73,7 +73,7 @@ public class CustomerQnaService {
     // 문의 목록 조회(본인 문의)
     public List<Map<String, Object>> listQnaWithProductSummary(Long customerId) {
        
-        List<SellerQna> qnaList = customerQnaRepository.findByCustomerIdOrderByIdDesc(customerId);
+        List<CustomerQna> qnaList = customerQnaRepository.findByCustomerIdOrderByIdDesc(customerId);
 
         List<Long> productIds = qnaList.stream()
                 .map(q -> q.getProduct().getId())
@@ -106,7 +106,7 @@ public class CustomerQnaService {
     // 문의 상세조회(문의+답변)
     public Map<String, Object> detailQnaWithProductSummary(Long id, Long customerId) {
 
-        SellerQna qna = customerQnaRepository.findByIdAndCustomerId(id, customerId)
+        CustomerQna qna = customerQnaRepository.findByIdAndCustomerId(id, customerId)
                 .orElseThrow(() -> new NoSuchElementException("문의 정보를 찾을 수 없습니다. ID=" + id));
         
         Product product = qna.getProduct();
