@@ -3,8 +3,6 @@ package com.realive.domain.product;
 import jakarta.persistence.*;
 import lombok.*;
 
-
-
 /**
  * 상품 카테고리 엔티티
  * 예: 침대, 소파, 책상 등
@@ -31,5 +29,21 @@ public class Category {
     @JoinColumn(name = "parent_id")
     private Category parent;
 
-    
+    /**
+     * 상위 카테고리 경로를 포함한 전체 경로 반환
+     */
+    public static String getCategoryFullPath(Category category) {
+        if (category == null) return null;
+
+        StringBuilder sb = new StringBuilder(category.getName());
+        Category parent = category.getParent();
+
+        // 무한 루프 방지용 (자기 참조 구조 보호)
+        while (parent != null) {
+            sb.insert(0, parent.getName() + " > ");
+            parent = parent.getParent();
+        }
+
+        return sb.toString();
+    }
 }

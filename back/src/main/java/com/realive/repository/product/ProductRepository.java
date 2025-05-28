@@ -2,7 +2,11 @@ package com.realive.repository.product;
 
 import com.realive.domain.product.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -16,4 +20,11 @@ public interface ProductRepository extends JpaRepository<Product, Long>, Product
      * @return 해당 판매자의 상품 리스트
      */
     List<Product> findBySellerId(Long sellerId);
+
+
+    // 오늘 등록된 신규 상품 수 조회 (BaseTimeEntity의 createdAt 필드 사용 가정)
+    @Query("SELECT COUNT(p) FROM Product p WHERE p.createdAt >= :startOfDay AND p.createdAt < :endOfDay")
+    long countByCreatedAtBetween(@Param("startOfDay") LocalDateTime startOfDay, @Param("endOfDay") LocalDateTime endOfDay);
+
+
 }

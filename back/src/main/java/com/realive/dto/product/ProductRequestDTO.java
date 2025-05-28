@@ -1,13 +1,14 @@
 package com.realive.dto.product;
 
 import com.realive.domain.common.enums.ProductStatus;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-
-import com.realive.domain.common.enums.MediaType;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-
-import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 상품 등록/수정 요청 DTO
@@ -15,21 +16,41 @@ import org.springframework.web.multipart.MultipartFile;
 @Data
 public class ProductRequestDTO {
 
-    private String name;                        // 상품명
-    private String description;                 // 상품 설명
-    private int price;                          // 가격
-    private Integer stock;                      // 재고 수량 (기본 1)
-    private Integer width;                      // 가로 (cm)
-    private Integer depth;                      // 세로 (cm)
-    private Integer height;                     // 높이 (cm)
-    private ProductStatus status;               // 상태 (상, 중, 하)
-    private Long categoryId;                    // 카테고리 ID
-    private Boolean active;                   // 판매 여부 (기본 true)
-   
-    private MultipartFile thumbnailImage;                
-    private MediaType mediaType;
-    private DeliveryPolicyDTO deliveryPolicy;   // 배송 정책 정보
+    @NotBlank
+    private String name;
 
-    private List<MultipartFile> images;
-    private List<MediaType> imageMediaTypes; 
+    @NotNull
+    @Min(1)
+    private Integer price;
+
+    @NotBlank
+    private String description;
+
+    @Min(0)
+    private Integer stock;
+
+    @Min(0)
+    private Integer width;
+
+    @Min(0)
+    private Integer depth;
+
+    @Min(0)
+    private Integer height;
+
+    private ProductStatus status;
+
+    private Long categoryId;
+
+    private Boolean active;
+
+    @NotNull
+    private MultipartFile imageThumbnail;
+
+    private MultipartFile videoThumbnail;
+
+    private List<MultipartFile> subImages;
+
+    @Valid
+    private DeliveryPolicyDTO deliveryPolicy;
 }

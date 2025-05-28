@@ -1,6 +1,8 @@
 package com.realive.dto.product;
 
 import com.realive.domain.common.enums.DeliveryType;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,12 +18,11 @@ import lombok.NoArgsConstructor;
 @Builder
 public class DeliveryPolicyDTO {
 
-    // 배송 유형: 무료배송, 유료배송
-    private DeliveryType type;
+    @NotNull
+    private DeliveryType type;      // 배송 유형: 무료배송, 유료배송
 
-    // 배송비 (원 단위, 0이면 무료)
-    private int cost;
+    @Min(0)
+    private int cost;               // 배송비 (원 단위, 0이면 무료)
 
-    // 지역 제한 정보 (예: "서울/경기만 가능")
-    private String regionLimit;
+    private String regionLimit;     // 지역 제한 정보 (예: "서울/경기만 가능")
 }

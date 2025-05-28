@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 public class MemberModifyDTO {
     
-    private Long id ;
+    private Long id;
 
     private String name;
 

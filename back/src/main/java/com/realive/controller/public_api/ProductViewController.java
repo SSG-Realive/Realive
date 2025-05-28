@@ -33,7 +33,7 @@ public class ProductViewController {
             @ModelAttribute PageRequestDTO pageRequestDTO,
             @RequestParam(name = "categoryId", required = false) Long categoryId) {
 
-        log.info("page: {}, size: {}, offset: {}", pageRequestDTO.getPage(), pageRequestDTO.getSize(), pageRequestDTO.getOffset());
+        log.info("page: {}, size: {}, offset: {}", pageRequestDTO.getPage(), pageRequestDTO.getSize());
 
         PageResponseDTO<ProductListDTO> result = productViewService.search(pageRequestDTO, categoryId);
         return ResponseEntity.ok(result);
