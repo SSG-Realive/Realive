@@ -27,5 +27,5 @@ public interface OrderDeliveryService {
     List<OrderDeliveryResponseDTO> getDeliveriesBySeller(Long sellerId);
 
 
-    OrderDeliveryResponseDTO getDeliveryBySeller(Long sellerId, Long orderId);
+    OrderDeliveryResponseDTO getDeliveryByOrderId(Long sellerId, Long orderId);
 }

@@ -101,7 +101,7 @@ public class OrderDeliveryServiceImpl implements OrderDeliveryService {
     }
 
     @Override
-    public OrderDeliveryResponseDTO getDeliveryBySeller(Long sellerId, Long orderId) {
+    public OrderDeliveryResponseDTO getDeliveryByOrderId(Long sellerId, Long orderId) {
         OrderDelivery delivery = orderDeliveryRepository.findByOrderId(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("배송 정보가 존재하지 않습니다"));
 
