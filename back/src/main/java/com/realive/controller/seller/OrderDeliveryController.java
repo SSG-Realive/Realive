@@ -33,7 +33,7 @@ public class OrderDeliveryController {
 
     // PATCH /api/seller/orders/{orderId}/delivery
     @PatchMapping("/{orderId}/delivery")
-    public ResponseEntity<Void> updateDeliveryStatus(
+    public ResponseEntity<Void> updateSellerDeliveryStatus(
             @PathVariable Long orderId,
             @RequestBody DeliveryStatusUpdateDTO dto) {
 
@@ -43,7 +43,7 @@ public class OrderDeliveryController {
         Long sellerId = seller.getId();
 
         // ✅ sellerId 포함해서 서비스 호출
-        orderDeliveryService.updateDeliveryStatus(sellerId, orderId, dto);
+        orderDeliveryService.updateSellerDeliveryStatus(sellerId, orderId, dto);
 
         return ResponseEntity.ok().build();
     }

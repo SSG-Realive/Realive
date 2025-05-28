@@ -1,4 +1,5 @@
 package com.realive.domain.common.enums;
 
-public class SignupMethod {
+public enum SignupMethod {
+    KAKAO, GOOGLE, USER;
 }

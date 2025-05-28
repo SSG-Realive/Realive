@@ -52,4 +52,12 @@ public class SellerQna extends BaseTimeEntity {
     @Column(name = "is_active")
     private boolean isActive = true;
 
+    @Column(nullable = false)
+    private boolean deleted = false; // soft delete 여부
+
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "customer_id", nullable = false)
+//    private Customer customer;
+
+
 }
