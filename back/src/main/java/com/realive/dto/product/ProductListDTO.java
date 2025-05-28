@@ -1,6 +1,5 @@
 package com.realive.dto.product;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;

@@ -5,8 +5,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.realive.domain.product.Product;
-
-// 상품 조회 레포지토리
+import com.realive.dto.product.ProductResponseDTO;
 
 public interface ProductViewRepository extends JpaRepository<Product, Long>, ProductSearch, ProductDetail {
 

@@ -2,15 +2,10 @@ package com.realive.repository.customer.productview;
 
 import java.util.List;
 
-import org.springframework.data.domain.Pageable;
-
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.Order;
-import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.realive.domain.product.Product;
 import com.realive.domain.product.QCategory;
 import com.realive.domain.product.QProduct;
 import com.realive.domain.product.QProductImage;

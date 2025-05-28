@@ -1,11 +1,15 @@
 package com.realive.dto.cart;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
 public class CartItemAddRequestDTO {
 
-    private Long productId; //물품 번호, product쪽 dto가 합쳐지고 필요시 수정
-    private int quantity; // 물품 수량, product쪽 dto가 합쳐지고 필요시 수정
+    @NotNull(message = "상품 번호는 필수입니다.")
+    private Long productId;
+    @Min(value = 1, message = "수량은 1 이상이여야 합니다.")
+    private int quantity;
 
 }

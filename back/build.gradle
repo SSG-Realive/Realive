@@ -48,7 +48,7 @@ dependencies {
 	testAnnotationProcessor 'org.projectlombok:lombok'
 
 
-// Querydsl (Groovy 기준)
+	// Querydsl (Groovy 기준)
 	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
 	annotationProcessor 'com.querydsl:querydsl-apt:5.0.0:jakarta'
 	annotationProcessor 'jakarta.persistence:jakarta.persistence-api'

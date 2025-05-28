@@ -1,21 +1,24 @@
 package com.realive.dto.review;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import lombok.*;
+import java.time.LocalDateTime;
+import java.util.List;
 
 
-@Getter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReviewResponseDTO {
-
     private Long reviewId;
     private Long orderId;
-    private int score;
-    private String comment;
-    private String imageUrl;
+    private Long customerId;
+    private Long sellerId;
+    private String productName;
+    private double rating;
+    private String content;
+    private List<String> imageUrls;
+    private LocalDateTime createdAt;
+    private boolean isHidden;
 
 }

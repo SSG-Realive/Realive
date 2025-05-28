@@ -2,13 +2,8 @@ package com.realive.product;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.List;
-
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -22,9 +17,6 @@ import com.realive.repository.customer.productview.ProductViewRepository;
 
 import jakarta.persistence.EntityManager;
 
-import org.springframework.data.domain.Pageable;
-import org.springframework.test.annotation.Rollback;
-import org.springframework.data.domain.PageRequest;
 import lombok.extern.log4j.Log4j2;
 
 @SpringBootTest
