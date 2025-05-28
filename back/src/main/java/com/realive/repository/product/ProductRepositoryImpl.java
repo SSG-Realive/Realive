@@ -51,7 +51,7 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
         builder.and(product.seller.id.eq(sellerId));
 
        if (cond.getIsActive() != null) {
-            builder.and(product.active.eq(cond.getIsActive()));
+            builder.and(product.isActive.eq(cond.getIsActive()));
         }
 
         if (cond.getStatus() != null) {

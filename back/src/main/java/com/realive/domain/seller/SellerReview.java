@@ -2,6 +2,9 @@ package com.realive.domain.seller;
 
 import java.time.LocalDateTime;
 
+import com.realive.domain.customer.Customer;
+import com.realive.domain.order.Order;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -33,13 +36,13 @@ public class SellerReview {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // @ManyToOne(fetch = FetchType.LAZY)
-    // @JoinColumn(name = "order_id", nullable = false)
-    // private Order order;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id", nullable = false)
+    private Order order;
 
-    // @ManyToOne(fetch = FetchType.LAZY)
-    // @JoinColumn(name = "customer_id", nullable = false)
-    // private Customer customer;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "customer_id", nullable = false)
+    private Customer customer;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id", nullable = false)

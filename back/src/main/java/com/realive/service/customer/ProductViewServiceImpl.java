@@ -10,8 +10,8 @@ import com.realive.dto.page.PageRequestDTO;
 import com.realive.dto.page.PageResponseDTO;
 import com.realive.dto.product.ProductListDTO;
 import com.realive.dto.product.ProductResponseDTO;
-import com.realive.repository.productview.ProductDetail;
-import com.realive.repository.productview.ProductSearch;
+import com.realive.repository.customer.productview.ProductDetail;
+import com.realive.repository.customer.productview.ProductSearch;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -43,5 +43,3 @@ public class ProductViewServiceImpl implements ProductViewService {
     }
 
 }
-
-

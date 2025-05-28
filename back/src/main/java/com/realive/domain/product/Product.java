@@ -55,9 +55,6 @@ public class Product extends BaseTimeEntity {
     @Column(nullable = false, name = "is_active")
     private boolean isActive = true;
 
-   
-
-
 
     // 판매자
     @ManyToOne(fetch = FetchType.LAZY)

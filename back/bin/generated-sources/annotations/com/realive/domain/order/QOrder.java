@@ -30,9 +30,11 @@ public class QOrder extends EntityPathBase<Order> {
 
     public final DateTimePath<java.time.LocalDateTime> OrderedAt = createDateTime("OrderedAt", java.time.LocalDateTime.class);
 
-    public final StringPath status = createString("status");
+    public final EnumPath<com.realive.domain.common.enums.OrderStatus> status = createEnum("status", com.realive.domain.common.enums.OrderStatus.class);
 
-    public final NumberPath<Long> totalPrice = createNumber("totalPrice", Long.class);
+    public final NumberPath<Integer> totalPrice = createNumber("totalPrice", Integer.class);
+
+    public final DateTimePath<java.time.LocalDateTime> UpdatedAt = createDateTime("UpdatedAt", java.time.LocalDateTime.class);
 
     public QOrder(String variable) {
         this(Order.class, forVariable(variable), INITS);

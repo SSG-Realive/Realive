@@ -5,7 +5,6 @@ import com.realive.domain.common.enums.MediaType;
 import com.realive.domain.common.enums.ProductStatus;
 import com.realive.domain.product.Product;
 import com.realive.domain.product.ProductImage;
-import com.realive.repository.productview.ProductViewRepository;
 import com.realive.repository.review.view.ReviewViewRepository;
 import jakarta.persistence.EntityManager;
 import lombok.extern.log4j.Log4j2;
