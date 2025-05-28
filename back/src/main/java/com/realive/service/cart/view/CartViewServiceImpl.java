@@ -5,7 +5,8 @@ import com.realive.dto.cart.CartItemResponseDTO;
 import com.realive.dto.cart.CartListResponseDTO;
 import com.realive.dto.product.ProductResponseDTO;
 import com.realive.repository.cart.CartItemRepository;
-import com.realive.repository.productview.ProductViewRepository;
+import com.realive.repository.customer.productview.ProductViewRepository;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
