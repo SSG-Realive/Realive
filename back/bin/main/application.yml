@@ -1,14 +1,19 @@
 server:
   port: 8080
   servlet:
-    context-path: 
-
+    context-path:
 spring:
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
   datasource:
-    url: jdbc:postgresql://localhost:5432/realive
+    url: jdbc:postgresql://localhost:5432/postgres
     username: postgres  
     password: 12345678
     driver-class-name: org.postgresql.Driver
+
 
   jpa:
     hibernate:

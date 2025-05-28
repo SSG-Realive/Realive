@@ -1,7 +1,9 @@
 package com.realive.repository.product;
 
-import com.realive.domain.product.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.realive.domain.product.Category;
+
 
 /**
  * 카테고리 정보를 조회/저장하는 JPA Repository
