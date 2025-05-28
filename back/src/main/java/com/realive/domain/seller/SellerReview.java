@@ -1,5 +1,4 @@
-// package com.realive.domain.seller;
-
+package com.realive.domain.seller;
 import com.realive.domain.common.BaseTimeEntity;
 
 import jakarta.persistence.Column;

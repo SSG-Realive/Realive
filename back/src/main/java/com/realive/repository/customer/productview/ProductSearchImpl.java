@@ -64,7 +64,7 @@ public class ProductSearchImpl implements ProductSearch {
                 product.name.as("name"),
                 product.price.as("price"),
                 product.status.stringValue().as("status"), // enum일 경우 stringValue() 사용
-                product.isActive.as("isActive"),
+                product.active.as("isActive"),
                 productImage.url.as("thumbnailUrl"),
                 seller.name.as("sellerName"),
                 category.name.as("categoryName")

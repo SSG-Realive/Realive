@@ -24,6 +24,8 @@ public class QProduct extends EntityPathBase<Product> {
 
     public final com.realive.domain.common.QBaseTimeEntity _super = new com.realive.domain.common.QBaseTimeEntity(this);
 
+    public final BooleanPath active = createBoolean("active");
+
     public final QCategory category;
 
     //inherited
@@ -36,8 +38,6 @@ public class QProduct extends EntityPathBase<Product> {
     public final NumberPath<Integer> height = createNumber("height", Integer.class);
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
-
-    public final BooleanPath isActive = createBoolean("isActive");
 
     public final StringPath name = createString("name");
 

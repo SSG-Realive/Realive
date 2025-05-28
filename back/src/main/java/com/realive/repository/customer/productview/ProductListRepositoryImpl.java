@@ -41,7 +41,7 @@ public class ProductListRepositoryImpl implements ProductListRepository{
                 product.name.as("name"),
                 product.price.as("price"),
                 product.status.stringValue().as("status"),
-                product.isActive.as("isActive"),
+                product.active.as("isActive"),
                 productImage.url.as("thumbnailUrl"),
                 seller.name.as("sellerName"),
                 category.name.as("categoryName")

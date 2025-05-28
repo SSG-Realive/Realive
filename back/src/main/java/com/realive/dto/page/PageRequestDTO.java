@@ -24,7 +24,8 @@ public class PageRequestDTO {
     private int size = 10;              // 페이지당 데이터 개수 (기본값: 10)
     private String sort = "createdAt";  // 정렬 기준 필드명 (기본값: createdAt)
     private String direction = "DESC";  // 정렬 방향 (ASC 또는 DESC, 기본값: DESC)
-    private String keyword;             // 검색 키워드 (선택적으로 사용 가능)
+    private String keyword;         // 검색 키워드 (선택적, null일 수 있음)
+    private String type;             
 
     /**
      * 0-based 페이지 인덱스를 반환
@@ -42,5 +43,13 @@ public class PageRequestDTO {
     public Pageable toPageable() {
         Sort.Direction dir = Sort.Direction.fromOptionalString(direction).orElse(Sort.Direction.DESC);
         return PageRequest.of(getPageIndex(), size, Sort.by(dir, sort));
+    }
+
+    public int getOffset() {
+        return getPageIndex() * size;
+    }
+
+    public int getLimit() {
+        return size;
     }
 }

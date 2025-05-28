@@ -10,7 +10,7 @@ import com.realive.repository.order.OrderDeliveryRepository;
 import com.realive.service.order.OrderDeliveryService;
 import lombok.RequiredArgsConstructor;
 
-import org.checkerframework.checker.units.qual.s;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

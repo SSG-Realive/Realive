@@ -33,7 +33,7 @@ public class CartItemResponseDTO {
                 .productName(productDetailDto != null ? productDetailDto.getName() : null)
                 .quantity(cartItem.getQuantity())
                 .productPrice(productDetailDto != null ? productDetailDto.getPrice() : 0)
-                .productImage(productDetailDto != null ? productDetailDto.getThumbnailUrl() : null) // ProductResponseDto에서 썸네일 URL 가져옴
+                .productImage(productDetailDto != null ? productDetailDto.getImageThumbnailUrl() : null) // ProductResponseDto에서 썸네일 URL 가져옴
                 .totalPrice(productDetailDto != null ? productDetailDto.getPrice() * cartItem.getQuantity() : 0)
                 .cartCreatedAt(cartItem.getCreatedAt())
                 .build();
