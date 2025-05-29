@@ -39,7 +39,7 @@ public class QOrderDelivery extends EntityPathBase<OrderDelivery> {
 
     public final EnumPath<com.realive.domain.common.enums.DeliveryStatus> status = createEnum("status", com.realive.domain.common.enums.DeliveryStatus.class);
 
-    public final NumberPath<Long> trackingNumber = createNumber("trackingNumber", Long.class);
+    public final StringPath trackingNumber = createString("trackingNumber");
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> updatedAt = _super.updatedAt;
