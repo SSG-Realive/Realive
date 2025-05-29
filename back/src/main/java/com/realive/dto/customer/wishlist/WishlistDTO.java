@@ -1,10 +1,8 @@
-package com.realive.dto.wishlist;
-
-import com.realive.domain.customer.Customer;
+package com.realive.dto.customer.wishlist;
 
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+
+// [Customer] 위시리스트DTO 
 
 @Data
 public class WishlistDTO {
@@ -14,6 +12,5 @@ public class WishlistDTO {
     private Long customerId;
 
     private Long productId;
-
 
 }

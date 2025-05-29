@@ -16,7 +16,7 @@ import com.realive.repository.customer.productview.ProductViewRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
-// 찜 서비스
+// [Customer] 찜 Service
 
 @Transactional
 @Service
@@ -30,6 +30,7 @@ public class WishlistService {
 
     // 찜 토글 (찜 추가/찜 해제)
     public boolean toggleWishlist(Long customerId, Long productId) {
+        
         Optional<Wishlist> wishlistOpt = wishlistRepository.findByCustomerIdAndProductId(customerId, productId);
 
         if (wishlistOpt.isPresent()) {

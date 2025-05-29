@@ -1,14 +1,14 @@
-package com.realive.dto.member;
+package com.realive.dto.customer.member;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import lombok.Data;
 
-//회원-회원정보 수정/삭제 
+// [Customer] 회원정보 조회DTO
+
 @Data
-public class MemberModifyDTO {
-    
-    private Long id;
+public class MemberReadDTO {
 
     private String name;
 
@@ -19,5 +19,7 @@ public class MemberModifyDTO {
     private String address;
 
     private LocalDate birth;
+
+    private LocalDateTime created;
     
 }

@@ -1,24 +1,19 @@
 package com.realive.service.customer;
 
-
-import java.time.LocalDate;
-
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.realive.domain.customer.Customer;
 import com.realive.domain.customer.SignupMethod;
-import com.realive.dto.member.MemberJoinDTO;
-import com.realive.dto.member.MemberReadDTO;
+import com.realive.dto.customer.member.MemberJoinDTO;
+import com.realive.dto.customer.member.MemberReadDTO;
 import com.realive.repository.customer.CustomerRepository;
 import com.realive.security.customer.JwtTokenProvider;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
-// 회원 관련 서비스
+// [Customer] 회원가입 및 탈퇴, 회원정보 Service
 
 @Transactional
 @Service
@@ -32,6 +27,7 @@ public class MemberService {
 
     // 회원가입: 소셜로그인(임시회원정보 수정)
     public void updateTemporaryUserInfo(MemberJoinDTO request, String authenticatedEmail) {
+        
         // 인증된 사용자 이메일로 회원 조회
         Customer customer = customerRepository.findByEmailIncludingSocial(authenticatedEmail)
                 .orElseThrow(() -> new RuntimeException("회원 정보를 찾을 수 없습니다."));
@@ -58,6 +54,7 @@ public class MemberService {
 
     // 일반회원가입
     public String register(MemberJoinDTO dto) {
+        
         // 1) 이미 USER로 가입된 이메일인지 체크
         if (customerRepository.findByEmailIncludingSocial(dto.getEmail()).isPresent()
                 && customerRepository.findByEmail(dto.getEmail()).isPresent()) {

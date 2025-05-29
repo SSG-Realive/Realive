@@ -11,16 +11,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.realive.dto.member.MemberJoinDTO;
-import com.realive.dto.member.MemberLoginDTO;
-import com.realive.dto.member.MemberReadDTO;
+import com.realive.dto.customer.member.MemberJoinDTO;
+import com.realive.dto.customer.member.MemberLoginDTO;
+import com.realive.dto.customer.member.MemberReadDTO;
 import com.realive.service.customer.MemberService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
-
-// 회원 관련 컨트롤러
+// [Customer] 회원 관련 컨트롤러
 
 @Log4j2
 @RestController
@@ -30,7 +29,7 @@ public class MemberController {
 
     private final MemberService memberService;
 
-    // 소셜 로그인 후 임시 회원 회원으로 전환
+    // 임시회원: 소셜 로그인 후 임시 회원 회원으로 전환
     @PutMapping("/update-info")
     public ResponseEntity<?> updateTemporaryUserInfo(
             @RequestBody MemberJoinDTO request,
@@ -57,7 +56,6 @@ public class MemberController {
         }
     }
 
-
     // 회원정보조회
     @GetMapping("/me")
     public ResponseEntity<MemberReadDTO> getMyProfile(Authentication authentication) {
@@ -73,6 +71,7 @@ public class MemberController {
         memberService.updateMember(loginDTO.getEmail(), updateDTO);
         return ResponseEntity.ok().build();
     }
+
     // 회원탈퇴
     @DeleteMapping("/me")
     public ResponseEntity<String> delectMember(Authentication authentication){

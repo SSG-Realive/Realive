@@ -1,4 +1,4 @@
-package com.realive.dto.qna;
+package com.realive.dto.customer.qna;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +9,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Data
+
+// [Customer] Q&A 요청DTO
+
 public class CustomerQnaRequestDTO {
 
     private String title;

@@ -15,6 +15,8 @@ import com.realive.repository.customer.productview.ProductSearch;
 
 import lombok.extern.log4j.Log4j2;
 
+// [Customer] 상품 조회 Service 구현체
+
 @Service
 @Transactional
 @Log4j2
@@ -29,7 +31,6 @@ public class ProductViewServiceImpl implements ProductViewService {
         this.productSearch = productSearch;
         this.productDetail = productDetail;
     }
-
 
     @Override
     public PageResponseDTO<ProductListDTO> search(PageRequestDTO dto, Long categoryId) {

@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.RestController;
 
-import com.realive.dto.member.MemberJoinDTO;
-import com.realive.dto.member.MemberLoginDTO;
+import com.realive.dto.customer.member.MemberJoinDTO;
+import com.realive.dto.customer.member.MemberLoginDTO;
 import com.realive.security.customer.JwtResponse;
 import com.realive.security.customer.JwtTokenProvider;
 import com.realive.service.customer.MemberService;
@@ -22,7 +22,7 @@ import com.realive.service.customer.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
-// 일반 로그인 및 일반 회원가입 컨트롤러
+// [Customer,공개API] 일반 로그인 및 일반 회원가입 컨트롤러
 
 @RestController
 @RequestMapping("/api/public/auth")
@@ -66,5 +66,4 @@ public class LoginController {
         }
     }
 
-    
 }

@@ -1,8 +1,6 @@
-package com.realive.dto.member;
+package com.realive.dto.customer.member;
 
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -14,24 +12,21 @@ import com.realive.domain.customer.SignupMethod;
 
 import java.util.*;
 
-@Getter
-@Setter
+// [Customer] 로그인DTO
+
+@Data
 public class MemberLoginDTO implements UserDetails, OAuth2User {
 
-
-    
     private String email;
     @ToString.Exclude
     private String password;
     private SignupMethod signupMethod; 
-
     // OAuth2 attributes (nullable)
     private Map<String, Object> attributes;
 
     public MemberLoginDTO() {
     }
     
-
     // 일반 로그인 시 사용되는 생성자
     public MemberLoginDTO(String email, String password) {
         this.email = email;
@@ -46,7 +41,6 @@ public class MemberLoginDTO implements UserDetails, OAuth2User {
         this.signupMethod = signupMethod;
         this.attributes = attributes;
     }
-
 
     // 권한 설정 (기본 사용자 권한)
     //GrantedAuthority의 하위 타입만 들어갈 수 있음
@@ -96,4 +90,5 @@ public class MemberLoginDTO implements UserDetails, OAuth2User {
     public boolean isEnabled() {
         return true;
     }
+    
 }

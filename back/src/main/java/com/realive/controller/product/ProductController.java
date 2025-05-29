@@ -5,7 +5,6 @@ import com.realive.dto.product.ProductResponseDTO;
 import com.realive.dto.product.ProductSearchCondition;
 import com.realive.domain.seller.Seller;
 import com.realive.dto.page.PageResponseDTO;
-
 import com.realive.dto.product.ProductListDTO;
 import com.realive.service.product.ProductService;
 import jakarta.validation.Valid;

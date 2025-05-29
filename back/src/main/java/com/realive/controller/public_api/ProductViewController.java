@@ -17,7 +17,7 @@ import com.realive.service.customer.ProductViewService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
-// 상품 조회 컨트롤러
+// [Customer,공개API] 상품 조회 컨트롤러
 
 @RestController
 @RequestMapping("/api/public/items")
@@ -27,7 +27,7 @@ public class ProductViewController {
 
     private final ProductViewService productViewService;
 
-    // 상품 목록 조회 - 검색
+    // 상품 목록 조회 with 검색
     @GetMapping
     public ResponseEntity<PageResponseDTO<ProductListDTO>> list(
             @ModelAttribute PageRequestDTO pageRequestDTO,
@@ -45,6 +45,5 @@ public class ProductViewController {
         ProductResponseDTO productDetail = productViewService.getProductDetail(id);
         return ResponseEntity.ok(productDetail);
     }
-
     
 }

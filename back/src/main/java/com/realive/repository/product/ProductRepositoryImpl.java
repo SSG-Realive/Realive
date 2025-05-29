@@ -80,7 +80,7 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
 
         // 활성 여부 조건
         if (cond.getIsActive() != null) {
-            builder.and(product.isActive.eq(cond.getIsActive()));
+            builder.and(product.active.eq(cond.getIsActive()));
         }
 
         // 상품 상태 조건
@@ -120,7 +120,7 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
         BooleanBuilder builder = new BooleanBuilder();
 
         //활성 상품만 표기할 것
-        builder.and(product.isActive.eq(true));
+        builder.and(product.active.eq(true));
 
         //키워드 검색
         if (condition.getKeyword() != null && !condition.getKeyword().isEmpty()) {

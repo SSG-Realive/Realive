@@ -1,21 +1,18 @@
 package com.realive.security.customer;
 
-import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
-import org.springframework.context.annotation.Bean;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.realive.domain.customer.Customer;
-import com.realive.dto.member.MemberLoginDTO;
+import com.realive.dto.customer.member.MemberLoginDTO;
 import com.realive.repository.customer.CustomerRepository;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.java.Log;
 import lombok.extern.log4j.Log4j2;
+
+// [Customer] UserDetailsService
 
 @Service
 @Log4j2
@@ -40,8 +37,6 @@ public class CustomUserDetailsService implements UserDetailsService {
                 customer.getPassword()
         );
 
-
     }
-    
     
 }

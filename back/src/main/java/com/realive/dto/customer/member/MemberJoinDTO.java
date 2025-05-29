@@ -1,11 +1,12 @@
-package com.realive.dto.member;
+package com.realive.dto.customer.member;
 
 import java.time.LocalDate;
 import com.realive.domain.customer.Gender;
 import lombok.Data;
 import lombok.Setter;
 
-//회원-회원가입용 
+// [Customer] 회원가입DTO
+
 @Data
 @Setter
 public class MemberJoinDTO {

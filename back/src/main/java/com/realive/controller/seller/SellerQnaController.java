@@ -1,6 +1,6 @@
 package com.realive.controller.seller;
 
-import com.realive.domain.seller.Seller;
+
 import com.realive.dto.seller.SellerQnaAnswerRequestDTO;
 import com.realive.dto.seller.SellerQnaResponseDTO;
 import com.realive.service.seller.SellerQnaService;

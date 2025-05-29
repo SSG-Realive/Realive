@@ -7,7 +7,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.realive.dto.member.MemberLoginDTO;
+import com.realive.dto.customer.member.MemberLoginDTO;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -16,12 +16,12 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
-//JWT 토큰을 이용한 인증 필터
-//토큰이 유효하면 SecurityContextHolder에 인증 객체를 등록
+// [Customer] JWT 토큰을 이용한 인증 필터
+
 @Component
 @RequiredArgsConstructor
 @Log4j2
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
+public class CustomerJwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final CustomUserDetailsService customUserDetailsService;
@@ -62,4 +62,5 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         return null;
     }
+    
 }

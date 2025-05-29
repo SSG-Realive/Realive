@@ -6,7 +6,6 @@ import com.realive.dto.admin.AdminInfoResponseDTO;
 import com.realive.dto.admin.AdminLoginRequestDTO;
 import com.realive.dto.admin.AdminLoginResponseDTO;
 import com.realive.security.AdminPrincipal;
-import com.realive.security.JwtUtil;
 import com.realive.service.admin.AdminService;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +21,6 @@ import lombok.RequiredArgsConstructor;
 public class AdminController {
 
     private final AdminService adminService;
-    private final JwtUtil jwtUtil;
 
     //  관리자 로그인
     @PostMapping("/login")

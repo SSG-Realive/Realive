@@ -1,6 +1,5 @@
 package com.realive.config;
 
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -9,7 +8,6 @@ import java.util.List;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -25,20 +23,17 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.realive.security.customer.CustomLoginSuccessHandler;
-import com.realive.security.customer.JwtAuthenticationFilter;
+import com.realive.security.customer.CustomerJwtAuthenticationFilter;
 
 
-@EnableJpaAuditing //JPA Auditing 을 활성화. createDate, modifiedDate 자동으로 처리 
 @Configuration
 @EnableMethodSecurity(prePostEnabled = true)
 @Slf4j
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final CustomerJwtAuthenticationFilter jwtAuthenticationFilter; // [Customer] JWT 인증 필터
     private final CustomLoginSuccessHandler customLoginSuccessHandler;
-    //private final CustomOAuth2UserService customOAuth2UserService;
-
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -51,14 +46,11 @@ public class SecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/public/**").permitAll()
-                .requestMatchers("/api/customer/**").authenticated()
-                //.requestMatchers("/oauth2/**").permitAll()
-                .anyRequest().authenticated()
-            )
+                .requestMatchers("/api/public/**").permitAll() // [Customer] 공개 API
+                .requestMatchers("/api/customer/**").authenticated() // [Customer] 로그인 사용자만 접근
+                .anyRequest().authenticated())
             .oauth2Login(config -> config
-                .successHandler(customLoginSuccessHandler));  
-
+                .successHandler(customLoginSuccessHandler)); // [Customer] 소셜로그인 성공 핸들러
         return http.build();
     }
 
@@ -74,7 +66,7 @@ public class SecurityConfig {
     }
 
     //static 자원들 로그인 체크를 막는 설정 
-    //servlet 들어간거로 import 주의!
+    //import 주의!! - ..servlet..(X)
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
 
@@ -101,7 +93,5 @@ public class SecurityConfig {
 
         return source;
     }
-
-
 
 }
