@@ -6,7 +6,6 @@ import com.realive.domain.order.OrderDelivery;
 import com.realive.domain.product.Product;
 import com.realive.dto.order.DeliveryStatusUpdateDTO;
 import com.realive.dto.order.OrderDeliveryResponseDTO;
-import com.realive.repository.order.OrderDeliveryRepository;
 import com.realive.service.order.OrderDeliveryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
