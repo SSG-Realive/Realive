@@ -1,4 +1,4 @@
-package com.realive.dto.customer.qna;
+package com.realive.dto.customer.customer_qna;
 
 import java.time.LocalDateTime;
 
@@ -9,7 +9,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class QnaListDTO {
+public class CustomerQnaListDTO {
 
     private Long id;                 
     private String title;              

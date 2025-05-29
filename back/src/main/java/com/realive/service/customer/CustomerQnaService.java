@@ -13,9 +13,9 @@ import com.realive.domain.customer.Customer;
 import com.realive.domain.customer.CustomerQna;
 import com.realive.domain.product.Product;
 import com.realive.domain.seller.Seller;
-import com.realive.dto.customer.qna.CustomerQnaRequestDTO;
-import com.realive.dto.customer.qna.QnaDetailDTO;
-import com.realive.dto.customer.qna.QnaListDTO;
+import com.realive.dto.customer.customer_qna.CustomerQnaDetailDTO;
+import com.realive.dto.customer.customer_qna.CustomerQnaRequestDTO;
+import com.realive.dto.customer.customer_qna.CustomerQnaListDTO;
 import com.realive.dto.product.ProductListDTO;
 import com.realive.repository.customer.CustomerQnaRepository;
 import com.realive.repository.customer.CustomerRepository;
@@ -89,7 +89,7 @@ public class CustomerQnaService {
         List<Map<String, Object>> resultList = qnaList.stream().map(qna -> {
             Map<String, Object> result = new HashMap<>();
 
-            QnaListDTO qnaDto = QnaListDTO.builder()
+            CustomerQnaListDTO qnaDto = CustomerQnaListDTO.builder()
                     .id(qna.getId())
                     .title(qna.getTitle())
                     .createdAt(qna.getCreatedAt())
@@ -119,7 +119,7 @@ public class CustomerQnaService {
                 .findFirst()
                 .orElseThrow(() -> new EntityNotFoundException("상품 요약 정보를 찾을 수 없습니다."));
 
-        QnaDetailDTO qnaDetail = QnaDetailDTO.builder()
+        CustomerQnaDetailDTO qnaDetail = CustomerQnaDetailDTO.builder()
             .id(qna.getId())
             .title(qna.getTitle())
             .content(qna.getContent())
@@ -138,12 +138,12 @@ public class CustomerQnaService {
     }
 
     // 상품 문의 목록 조회(상품 상세조회 페이지)
-    public List<QnaListDTO> listProductQnaWith(Long productId) {
+    public List<CustomerQnaListDTO> listProductQnaWith(Long productId) {
 
         List<CustomerQna> qnaList = customerQnaRepository.findByProductIdOrderByIdDesc(productId);
 
         return qnaList.stream()
-                .map(qna -> QnaListDTO.builder()
+                .map(qna -> CustomerQnaListDTO.builder()
                         .id(qna.getId())
                         .title(qna.getTitle())
                         .createdAt(qna.getCreatedAt())

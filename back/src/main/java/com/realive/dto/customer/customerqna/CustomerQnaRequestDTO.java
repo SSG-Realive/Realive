@@ -1,4 +1,4 @@
-package com.realive.dto.customer.qna;
+package com.realive.dto.customer.customer_qna;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

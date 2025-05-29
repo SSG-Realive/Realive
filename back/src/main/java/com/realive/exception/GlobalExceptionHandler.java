@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 import com.realive.dto.error.ErrorResponse;
 
@@ -94,5 +95,12 @@ public class GlobalExceptionHandler {
                     .message(errorMessage)
                     .build());
     }
+    
+    @ExceptionHandler(NoHandlerFoundException.class)
+    public ResponseEntity<ErrorResponse> handleNoHandlerFoundException(NoHandlerFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+            .body(new ErrorResponse(404, "NOT_FOUND", "요청하신 경로가 존재하지 않습니다."));
+    }
+
             
 }
