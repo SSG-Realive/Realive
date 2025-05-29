@@ -43,19 +43,5 @@ public class AdminProductDTO {
         return builder.build();
     }
 
-    // 만약 Product 정보 없이 AdminProduct만으로 DTO를 만드는 경우도 있다면,
-    // 아래와 같이 오버로딩된 메소드를 유지할 수 있습니다.
-    public static AdminProductDTO fromEntity(AdminProduct entity) {
-        if (entity == null) {
-            return null;
-        }
-        return AdminProductDTO.builder()
-                .id(entity.getId())
-                .productId(entity.getProductId())
-                .purchasePrice(entity.getPurchasePrice())
-                .purchasedFromSellerId(entity.getPurchasedFromSellerId())
-                .purchasedAt(entity.getPurchasedAt())
-                .auctioned(entity.isAuctioned())
-                .build();
-    }
+
 }

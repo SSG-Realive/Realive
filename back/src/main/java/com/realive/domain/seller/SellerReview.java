@@ -2,6 +2,8 @@ package com.realive.domain.seller;
 
 import com.realive.domain.common.BaseTimeEntity;
 
+import com.realive.domain.customer.Customer;
+import com.realive.domain.order.Order;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -43,17 +45,17 @@ public class SellerReview extends BaseTimeEntity {
      * 리뷰가 연결된 주문 (미사용 중)
      * 향후 연결 필요 시 주석 해제
      */
-    // @ManyToOne(fetch = FetchType.LAZY)
-    // @JoinColumn(name = "order_id", nullable = false)
-    // private Order order;
+     @ManyToOne(fetch = FetchType.LAZY)
+     @JoinColumn(name = "order_id", nullable = false)
+     private Order order;
 
     /**
      * 리뷰 작성한 고객 (미사용 중)
      * 향후 연결 필요 시 주석 해제
      */
-    // @ManyToOne(fetch = FetchType.LAZY)
-    // @JoinColumn(name = "customer_id", nullable = false)
-    // private Customer customer;
+     @ManyToOne(fetch = FetchType.LAZY)
+     @JoinColumn(name = "customer_id", nullable = false)
+     private Customer customer;
 
     // 리뷰 대상 판매자
     @ManyToOne(fetch = FetchType.LAZY)
