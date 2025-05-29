@@ -1,6 +1,9 @@
 package com.realive.repository.review;
 
 import com.realive.domain.review.ReviewReport;
+import com.realive.domain.common.enums.ReviewReportStatus; // Enum 경로
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -36,4 +39,12 @@ public interface ReviewReportRepository extends JpaRepository<ReviewReport, Inte
     // 필요에 따라 추가적인 조회/삭제 메소드들
     // 예: 특정 판매자 리뷰 ID에 대한 모든 신고 조회
     List<ReviewReport> findAllBySellerReviewId(Integer sellerReviewId);
+
+    /**
+     * 특정 처리 상태(status)를 가진 모든 리뷰 신고 내역을 페이징하여 조회합니다.
+     * @param status 조회할 신고 처리 상태
+     * @param pageable 페이징 정보 (페이지 번호, 페이지 크기, 정렬 등)
+     * @return 해당 상태의 신고 목록 페이지
+     */
+    Page<ReviewReport> findAllByStatus(ReviewReportStatus status, Pageable pageable);
 }

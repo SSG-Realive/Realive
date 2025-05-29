@@ -1,4 +1,4 @@
-package com.realive.controller.admin;
+package com.realive.controller.admin.user;
 
 
 import com.realive.dto.admin.user.CustomerDetailDTO; // 추가
