@@ -32,7 +32,6 @@ hs_err_pid*
 replay_pid*
 .gradletasknamecache
 
-<<<<<<< HEAD
 # Spring Boot 설정 파일
 application.yml
 
@@ -43,9 +42,7 @@ build/generated/
 
 # -------------------------------------
 # IntelliJ / Eclipse
-=======
 # IntelliJ cache files
->>>>>>> origin/team1/javcki
 .idea/**/workspace.xml
 .idea/**/tasks.xml
 .idea/**/usage.statistics.xml
