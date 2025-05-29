@@ -70,4 +70,6 @@ public class SellerReview extends BaseTimeEntity {
     @Column(nullable = false, length = 1000)
     private String content;
 
+    @Column(name = "is_hidden")
+    private Boolean isHidden;
 }

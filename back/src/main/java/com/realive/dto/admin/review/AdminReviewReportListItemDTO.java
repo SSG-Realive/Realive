@@ -13,6 +13,6 @@ public class AdminReviewReportListItemDTO {
     private Long reportedReviewId;              // 신고된 SellerReview.id (Long)
     private Long reporterId;                    // 신고자 Customer.id (Long)
     private String reporterName;                // 신고자 이름
-    private String reasonSummary;               // 신고 사유 요약
+    private String reason;               // 신고 사유
     private LocalDateTime reportedAt;           // 신고일 (ReviewReport.createdAt)
 }

@@ -17,5 +17,6 @@ public class AdminSellerReviewListItemDTO { //리뷰 목록 조회용
     private int rating;             // 평점
     private String contentSummary;  // 리뷰 내용 요약 (예: 앞 100자)
     private LocalDateTime createdAt;  // 리뷰 작성일
-    // private Boolean isHidden;    // SellerReview 엔티티에 숨김/공개 상태 필드가 있다면 추가
+    private LocalDateTime updatedAt;
+    private Boolean isHidden;
 }
