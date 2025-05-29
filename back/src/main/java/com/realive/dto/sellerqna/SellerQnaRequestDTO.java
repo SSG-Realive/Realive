@@ -1,4 +1,4 @@
-package com.realive.dto.seller;
+package com.realive.dto.sellerqna;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,7 +13,5 @@ public class SellerQnaRequestDTO {
 
     private String title;
     private String content;
-    private Long productId;
-    private Long customerId;
 
 }

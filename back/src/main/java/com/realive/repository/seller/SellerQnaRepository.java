@@ -9,17 +9,18 @@ import java.util.Optional;
 
 public interface SellerQnaRepository extends JpaRepository<SellerQna, Long> {
 
-    // 판매자별 활성 QnA 목록
-    Page<SellerQna> findBySellerIdAndIsActiveTrue(Long sellerId, Pageable pageable);
+    // 일반 목록 조회 (마이페이지 등)
+    Page<SellerQna> findBySellerIdAndIsActiveTrueAndDeletedFalse(Long sellerId, Pageable pageable);
 
-    // 전체 QnA 목록
+    // 관리자 전체 목록 조회
     Page<SellerQna> findBySellerId(Long sellerId, Pageable pageable);
 
-    // 개별 QnA 조회 (삭제 안 된 것만)
-    Optional<SellerQna> findByIdAndIsActiveTrue(Long id);
+    // 단건 조회 (판매자 본인 확인)
+    Optional<SellerQna> findByIdAndSellerIdAndDeletedFalse(Long id, Long sellerId);
 
-    // 미답변 QnA 조회
-    Page<SellerQna> findBySellerIdAndIsAnsweredFalseAndIsActiveTrue(Long sellerId, Pageable pageable);
+    // 미답변 필터링 조회
+    Page<SellerQna> findBySellerIdAndIsAnsweredFalseAndDeletedFalse(Long sellerId, Pageable pageable);
 
-    Page<SellerQna> findByIsAnsweredFalseAndDeletedFalse(boolean deleted);
+
+    Page<SellerQna> findBySellerIdAndIsActiveTrue(Long sellerId, Pageable pageable);
 }

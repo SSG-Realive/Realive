@@ -15,39 +15,17 @@ import java.util.List;
 @Repository
 public interface SellerOrderRepository extends JpaRepository<Order, Long>, JpaSpecificationExecutor<Order> {
 
-    // ❌ 잘못된 접근 방식 → 삭제 권장
-    // Page<Order> findByProductId(Long productId, Pageable pageable);
-    // long countByProductId(Long productId);
+    Page<Order> findByProductId(Long productId, Pageable pageable);
 
-    /**
-     * ✅ 판매자 ID 기준으로 주문 조회 (Order → OrderItem → Product)
-     */
-    @Query("""
-        SELECT DISTINCT o FROM Order o
-        JOIN o.orderItems i
-        JOIN i.product p
-        WHERE p.seller.id = :sellerId
-    """)
+    long countByProductId(Long productId);
+
+    @Query("SELECT o FROM Order o WHERE o.product.seller.id = :sellerId")
     Page<Order> findByProductSellerId(@Param("sellerId") Long sellerId, Pageable pageable);
 
-    /**
-     * ✅ 판매자 주문 수 카운트
-     */
-    @Query("""
-        SELECT COUNT(DISTINCT o.id) FROM Order o
-        JOIN o.orderItems i
-        JOIN i.product p
-        WHERE p.seller.id = :sellerId
-    """)
+    @Query("SELECT COUNT(o.id) FROM Order o WHERE o.product.seller.id = :sellerId")
     long countByProductSellerId(@Param("sellerId") Long sellerId);
 
-    /**
-     * ✅ 가장 많이 주문된 상품 조회 (상위 N개)
-     */
-    @Query("""
-        SELECT i.product FROM OrderItem i
-        GROUP BY i.product.id
-        ORDER BY COUNT(i.product.id) DESC
-    """)
+    @Query("SELECT o.product FROM Order o GROUP BY o.product.id ORDER BY COUNT(o.product.id) DESC")
     List<Product> findTopOrderedProducts(Pageable pageable);
+
 }

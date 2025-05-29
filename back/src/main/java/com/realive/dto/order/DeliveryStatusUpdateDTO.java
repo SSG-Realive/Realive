@@ -1,6 +1,6 @@
 package com.realive.dto.order;
 
-import com.realive.domain.common.enums.SellerDeliveryStatus;
+import com.realive.domain.common.enums.DeliveryStatus;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,7 +12,7 @@ import lombok.Setter;
 @Setter
 public class DeliveryStatusUpdateDTO {
 
-    private SellerDeliveryStatus deliveryStatus;  // 결제완료, 배송중, 배송완료
+    private DeliveryStatus deliveryStatus;  // 결제완료, 배송중, 배송완료
     private String trackingNumber;          // 운송장 번호 (운송장 번호는 배송중일 때 선택)
     private String carrier;                 // 택배사 (택배사 이름은 배송중일 때 선택)
 }
