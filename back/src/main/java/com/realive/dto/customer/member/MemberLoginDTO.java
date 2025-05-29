@@ -10,6 +10,8 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import com.realive.domain.customer.SignupMethod;
 
+import jakarta.validation.constraints.NotBlank;
+
 import java.util.*;
 
 // [Customer] 로그인DTO
@@ -17,10 +19,15 @@ import java.util.*;
 @Data
 public class MemberLoginDTO implements UserDetails, OAuth2User {
 
+    @NotBlank(message = "이메일을 입력해주세요.")
     private String email;
+
+    @NotBlank(message = "비밀번호를 입력해주세요.")
     @ToString.Exclude
     private String password;
+
     private SignupMethod signupMethod; 
+    
     // OAuth2 attributes (nullable)
     private Map<String, Object> attributes;
 

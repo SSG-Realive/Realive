@@ -13,6 +13,7 @@ import com.realive.repository.customer.WishlistRepository;
 import com.realive.repository.customer.productview.ProductListRepository;
 import com.realive.repository.customer.productview.ProductViewRepository;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
@@ -41,7 +42,7 @@ public class WishlistService {
         Customer customer = customerService.getActiveCustomerById(customerId);
 
         Product product = productViewRepository.findById(productId)
-                .orElseThrow(() -> new RuntimeException("상품 없음"));
+                .orElseThrow(() -> new EntityNotFoundException("상품이 존재하지 않습니다. id=" + productId));
 
         Wishlist wishlist = Wishlist.builder()
                 .customer(customer)
@@ -54,8 +55,11 @@ public class WishlistService {
 
     //찜 목록 조회
     public List<ProductListDTO> getWishlistForCustomer(Long customerId) {
+
+        Customer customer = customerService.getActiveCustomerById(customerId); // 고객 존재 여부 체크
         List<Long> productIds = wishlistRepository.findProductIdsByCustomerId(customerId);
         return productListRepository.getWishlistedProducts(productIds);
+        
     }
  
 }

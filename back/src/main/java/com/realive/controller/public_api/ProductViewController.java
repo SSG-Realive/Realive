@@ -1,5 +1,7 @@
 package com.realive.controller.public_api;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -8,10 +10,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.realive.dto.customer.qna.QnaListDTO;
 import com.realive.dto.page.PageRequestDTO;
 import com.realive.dto.page.PageResponseDTO;
 import com.realive.dto.product.ProductListDTO;
 import com.realive.dto.product.ProductResponseDTO;
+import com.realive.service.customer.CustomerQnaService;
 import com.realive.service.customer.ProductViewService;
 
 import lombok.RequiredArgsConstructor;
@@ -26,6 +30,7 @@ import lombok.extern.log4j.Log4j2;
 public class ProductViewController {
 
     private final ProductViewService productViewService;
+    private final CustomerQnaService customerQnaService;
 
     // 상품 목록 조회 with 검색
     @GetMapping
@@ -42,8 +47,18 @@ public class ProductViewController {
     // 상품 상세 조회
     @GetMapping("/{id}")
     public ResponseEntity<ProductResponseDTO> getProductDetail(@PathVariable("id") Long id) {
+        
         ProductResponseDTO productDetail = productViewService.getProductDetail(id);
         return ResponseEntity.ok(productDetail);
+    }
+
+    // 상품 Q&A 목록 조회
+    @GetMapping("/qna/{productId}")
+    public ResponseEntity<List<QnaListDTO>> getProductQnaList(@PathVariable("productId") Long productId){
+
+        List<QnaListDTO> qnaLists = customerQnaService.listProductQnaWith(productId);
+        return ResponseEntity.ok(qnaLists); 
+
     }
     
 }

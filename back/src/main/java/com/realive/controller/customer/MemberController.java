@@ -1,6 +1,5 @@
 package com.realive.controller.customer;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -13,9 +12,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.realive.dto.customer.member.MemberJoinDTO;
 import com.realive.dto.customer.member.MemberLoginDTO;
+import com.realive.dto.customer.member.MemberModifyDTO;
 import com.realive.dto.customer.member.MemberReadDTO;
+import com.realive.exception.UnauthorizedException;
 import com.realive.service.customer.MemberService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
@@ -29,10 +31,10 @@ public class MemberController {
 
     private final MemberService memberService;
 
-    // 임시회원: 소셜 로그인 후 임시 회원 회원으로 전환
+    // 임시회원: 소셜 로그인 후 임시회원으로 전회원을 회원으로 전환
     @PutMapping("/update-info")
     public ResponseEntity<?> updateTemporaryUserInfo(
-            @RequestBody MemberJoinDTO request,
+            @RequestBody @Valid MemberJoinDTO request,
             Authentication authentication) {
 
         log.info("updateTemporaryUserInfo 호출됨");
@@ -41,19 +43,13 @@ public class MemberController {
         // 로그인 사용자 이메일 가져오기
         String currentEmail = authentication.getName();
 
-        // 이메일이 요청과 다르면 권한 문제일 수 있음 (보안 검증)
+         // 권한 검증: 본인만 수정 가능
         if (!currentEmail.equals(request.getEmail())) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                .body("본인의 정보만 수정할 수 있습니다.");
+            throw new UnauthorizedException("본인의 정보만 수정할 수 있습니다.");
         }
-
-        try {
-            memberService.updateTemporaryUserInfo(request, currentEmail);
-            return ResponseEntity.ok("회원정보가 정상적으로 수정되었습니다.");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body("회원정보 수정 중 오류가 발생했습니다.");
-        }
+        
+        memberService.updateTemporaryUserInfo(request, currentEmail);
+        return ResponseEntity.ok("회원정보가 정상적으로 수정되었습니다.");
     }
 
     // 회원정보조회
@@ -67,7 +63,7 @@ public class MemberController {
     // 회원정보수정
     @PutMapping("/me")
     public ResponseEntity<?> updateMyInfo(@AuthenticationPrincipal MemberLoginDTO loginDTO,
-                                          @RequestBody MemberReadDTO updateDTO) {
+                                          @RequestBody @Valid MemberModifyDTO updateDTO) {
         memberService.updateMember(loginDTO.getEmail(), updateDTO);
         return ResponseEntity.ok().build();
     }

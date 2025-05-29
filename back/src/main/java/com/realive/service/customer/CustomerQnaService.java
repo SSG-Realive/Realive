@@ -22,6 +22,7 @@ import com.realive.repository.customer.CustomerRepository;
 import com.realive.repository.customer.productview.ProductListRepository;
 import com.realive.repository.customer.productview.ProductViewRepository;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 // [Customer] Q&A Service
@@ -40,10 +41,10 @@ public class CustomerQnaService {
     public Map<String, Object> createQnaWithProductSummary(CustomerQnaRequestDTO requestDTO) {
         
         Product product = ProductViewRepository.findById(requestDTO.getProductId())
-                .orElseThrow(() -> new NoSuchElementException("상품을 찾을 수 없습니다. ID=" + requestDTO.getProductId()));
+                .orElseThrow(() -> new EntityNotFoundException("상품을 찾을 수 없습니다. ID=" + requestDTO.getProductId()));
 
         Customer customer = customerRepository.findActiveUserById(requestDTO.getCustomerId())
-                .orElseThrow(() -> new NoSuchElementException("고객을 찾을 수 없습니다. ID=" + requestDTO.getCustomerId()));
+                .orElseThrow(() -> new EntityNotFoundException("고객을 찾을 수 없습니다. ID=" + requestDTO.getCustomerId()));
 
         Seller seller = product.getSeller();
 
@@ -63,7 +64,7 @@ public class CustomerQnaService {
                 .getWishlistedProducts(List.of(product.getId()))
                 .stream()
                 .findFirst()
-                .orElseThrow(() -> new NoSuchElementException("상품 요약 정보를 찾을 수 없습니다."));
+                .orElseThrow(() -> new EntityNotFoundException("상품 요약 정보를 찾을 수 없습니다."));
 
         return Map.of(
             "qnaId", saved.getId(),
@@ -96,7 +97,7 @@ public class CustomerQnaService {
                     .build();
 
             result.put("qna", qnaDto);
-            result.put("productSummary", productMap.get(qna.getProduct().getId()));
+            result.put("productSummary", productMap.getOrDefault(qna.getProduct().getId(), null));
 
             return result;
         }).collect(Collectors.toList());
@@ -108,7 +109,7 @@ public class CustomerQnaService {
     public Map<String, Object> detailQnaWithProductSummary(Long id, Long customerId) {
 
         CustomerQna qna = customerQnaRepository.findByIdAndCustomerId(id, customerId)
-                .orElseThrow(() -> new NoSuchElementException("문의 정보를 찾을 수 없습니다. ID=" + id));
+                .orElseThrow(() -> new EntityNotFoundException("문의 정보를 찾을 수 없습니다. ID=" + id));
         
         Product product = qna.getProduct();
         
@@ -116,7 +117,7 @@ public class CustomerQnaService {
                 .getWishlistedProducts(List.of(product.getId()))
                 .stream()
                 .findFirst()
-                .orElseThrow(() -> new NoSuchElementException("상품 요약 정보를 찾을 수 없습니다."));
+                .orElseThrow(() -> new EntityNotFoundException("상품 요약 정보를 찾을 수 없습니다."));
 
         QnaDetailDTO qnaDetail = QnaDetailDTO.builder()
             .id(qna.getId())

@@ -1,17 +1,24 @@
 package com.realive.exception;
 
+import java.util.stream.Collectors;
+
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.realive.dto.error.ErrorResponse;
 
+import jakarta.persistence.EntityNotFoundException;
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
 
-    //인풋 에러 처리하는 코드
+    // 인풋 에러 처리하는 코드
+    // HTTP 400 (Bad Request) 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorResponse> handleIllegalArgument(IllegalArgumentException e){
         return ResponseEntity
@@ -23,6 +30,8 @@ public class GlobalExceptionHandler {
                 .build());
     }
 
+    // 인증되지 않은 요청
+    // HTTP 401
     @ExceptionHandler(UnauthorizedException.class)
     public ResponseEntity<ErrorResponse> handleUnauthorized(UnauthorizedException e) {
         return ResponseEntity
@@ -35,7 +44,8 @@ public class GlobalExceptionHandler {
     }
 
 
-    //서버 에러 처리하는 코드
+    // 서버 에러 처리하는 코드
+    // HTTP 500 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGeneralException(Exception e){
         return ResponseEntity
@@ -46,7 +56,43 @@ public class GlobalExceptionHandler {
                 .message("서버 오류가 발생했습니다")
                 .build());
     }
+
+    // 엔티티를 못 찾았을 때 던지는 EntityNotFoundException을 처리
+    // HTTP 404 (Not Found)
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleNotFound(EntityNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+            .body(ErrorResponse.builder()
+                .status(404)
+                .code("NOT_FOUND")
+                .message(e.getMessage())
+                .build());
+    }
+
+    // 이메일 중복(커스텀)
+    // HTTP 400 (Bad Request)
+    @ExceptionHandler(DuplicateEmailException.class)
+    public ResponseEntity<ErrorResponse> handleDuplicateEmail(DuplicateEmailException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(ErrorResponse.builder()
+                .status(400)
+                .code("EMAIL_DUPLICATE")
+                .message(e.getMessage())
+                .build());
+    }
+
+    // 유효성 검사 처리용
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        String errorMessage = ex.getBindingResult().getAllErrors().stream()
+                                .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                                .collect(Collectors.joining(", "));
+        return ResponseEntity.badRequest()
+                .body(ErrorResponse.builder()
+                    .status(HttpStatus.BAD_REQUEST.value())
+                    .code("VALIDATION_FAILED")
+                    .message(errorMessage)
+                    .build());
+    }
             
-                
-    
 }
