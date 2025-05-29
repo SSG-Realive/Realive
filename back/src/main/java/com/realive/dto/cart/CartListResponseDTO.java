@@ -13,9 +13,9 @@ import java.util.List;
 @AllArgsConstructor
 public class CartListResponseDTO {
 
-    private List<CartItemResponseDTO> items; // 장바구니 항목 리스트
-    private int totalItems; // 총 상품 수 (장바구니 내 항목의 총 개수)
-    private int totalCartPrice; // 장바구니 총액 (모든 상품 가격 합계)
+    private List<CartItemResponseDTO> items;
+    private int totalItems;
+    private int totalCartPrice;
 
     // DTO 변환 시 총액 및 총 상품 수 계산
     public static CartListResponseDTO from(List<CartItemResponseDTO> items) {

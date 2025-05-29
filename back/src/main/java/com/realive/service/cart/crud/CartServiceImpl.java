@@ -30,6 +30,7 @@ public class CartServiceImpl implements CartService {
     private final ProductViewRepository productViewRepository;
     private final CustomerRepository customerRepository;
 
+    // 장바구니 추가
     @Override
     @Transactional
     public CartItemResponseDTO addCartItem(Long customerId, CartItemAddRequestDTO requestDTO) {
@@ -48,7 +49,7 @@ public class CartServiceImpl implements CartService {
             throw new IllegalArgumentException("상품 ID " + productId + "번의 재고가 부족합니다.");
         }
         // TODO: 상품 상태 (isActive, status) 확인 로직 추가
-        if (!product.isActive() || product.getStatus() == null /*|| product.getStatus() == ProductStatus.하*/) { // 예시: ProductStatus.하인 경우 추가 불가
+        if (!product.isActive() || product.getStatus() == null) {
             throw new IllegalArgumentException("상품 ID " + productId + "번이 활성화되어 있지 않거나 구매할 수 없는 상태입니다.");
         }
 
@@ -56,14 +57,16 @@ public class CartServiceImpl implements CartService {
         Optional<CartItem> existingCartItem = cartItemRepository.findByCustomer_IdAndProduct_Id(customerId, productId);
 
         CartItem cartItem;
+        // Cart에 Item이 존재할시
         if (existingCartItem.isPresent()) {
             cartItem = existingCartItem.get();
             int newQuantity = cartItem.getQuantity() + quantityToAdd;
             if (product.getStock() < newQuantity) {
-                throw new IllegalArgumentException("상품 ID " + productId + "번의 재고가 부족하여 수량을 업데이트할 수 없습니다.");
+                throw new IllegalArgumentException("상품 ID " + productId + "번의 재고가 부족하여 수량을 추가할 수 없습니다.");
             }
             cartItem.setQuantity(newQuantity);
-            log.info("기존 장바구니 항목 ID {}의 수량을 업데이트합니다.", cartItem.getId());
+            log.info("기존 장바구니 항목 ID {}의 수량을 갱신합니다.", cartItem.getId());
+            //Cart에 Item이 존재하지 않을시
         } else {
             cartItem = CartItem.builder()
                     .customer(customer)
@@ -80,6 +83,9 @@ public class CartServiceImpl implements CartService {
         return CartItemResponseDTO.from(savedCartItem, productDetailDto);
     }
 
+    //장바구니 수량 변경 + 수량 0될 시 삭제
+    //바꾸고 싶은 수량을 입력해야함
+    //ex) Cart에 5개가 있는데 2개를 제거하고 싶을땐 5-2인 3을 입력해 수량 변경
     @Override
     @Transactional
     public CartItemResponseDTO updateCartItemQuantity(Long customerId, Long cartItemId, CartItemUpdateRequestDTO requestDTO) {
@@ -102,7 +108,7 @@ public class CartServiceImpl implements CartService {
             throw new IllegalArgumentException("상품 ID " + product.getId() + "번의 재고가 부족하여 수량을 " + newQuantity + "(으)로 업데이트할 수 없습니다.");
         }
         // TODO: 상품 상태 (isActive, status) 확인 로직 추가
-        if (!product.isActive() || product.getStatus() == null /*|| product.getStatus() == ProductStatus.하*/) { // 예시: ProductStatus.하인 경우 추가 불가
+        if (!product.isActive() || product.getStatus() == null ) {
             throw new IllegalArgumentException("상품 ID " + product.getId() + "번이 활성화되어 있지 않거나 구매할 수 없는 상태입니다.");
         }
 
@@ -117,10 +123,10 @@ public class CartServiceImpl implements CartService {
         return CartItemResponseDTO.from(updatedCartItem, productDetailDto);
     }
 
+    // 장바구니에서 항목 제거
     @Override
     @Transactional
     public void removeCartItem(Long customerId, Long cartItemId) {
-        // findByIdAndCustomer_Id로 수정
         CartItem cartItem = cartItemRepository.findByIdAndCustomer_Id(cartItemId, customerId)
                 .orElseThrow(() -> new EntityNotFoundException("ID " + cartItemId + "번 장바구니 항목을 찾을 수 없거나 권한이 없습니다."));
 
@@ -128,10 +134,11 @@ public class CartServiceImpl implements CartService {
         log.info("장바구니 항목 ID {}를 제거했습니다.", cartItemId);
     }
 
+    // 장바구니 비우기
     @Override
     @Transactional
     public void clearCart(Long customerId) {
         cartItemRepository.deleteByCustomer_Id(customerId);
-        log.info("고객 ID {}의 장바구니를 비웠습니다.", customerId);
+        log.info("고객 ID {}의 장바구니를 모두 삭제하였습니다.", customerId);
     }
 }
