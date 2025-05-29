@@ -115,7 +115,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long>, JpaSp
     * @param customerId 고객 ID
     * @return 총 구매 금액
     */
-    @Query("SELECT SUM(o.totalAmount) FROM Order o WHERE o.customer.id = :customerId")
+    @Query("SELECT SUM(o.totalPrice) FROM Order o WHERE o.customer.id = :customerId")
     BigDecimal sumTotalSpentForCustomer(@Param("customerId") Long customerId);
 
    // JpaSpecificationExecutor를 상속받았으므로, CustomerManagementServiceImpl의 searchCustomers에서

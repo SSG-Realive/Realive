@@ -25,14 +25,14 @@ public class SellerOrderListDTO {
     private DeliveryStatus deliveryStatus;
     private String deleiveryStatusText;
 
-    private Long trackingNumber;
+    private String trackingNumber;
     private LocalDateTime startDate;
     private LocalDateTime completeDate;
 
     private DeliveryType deliveryType;
 
     public SellerOrderListDTO(Long orderId, String productName, String customerName, int quantity,
-                               DeliveryStatus deliveryStatus, Long trackingNumber,
+                               DeliveryStatus deliveryStatus, String trackingNumber,
                                LocalDateTime startDate, LocalDateTime completeDate, LocalDateTime orderDate) {
         this.orderId = orderId;
         this.productName = productName;
