@@ -7,31 +7,55 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
-@Getter 
+/**
+ * PageResponseDTO<T>
+ * - 페이징 처리된 결과를 응답용으로 포장하는 DTO
+ * - 페이지 정보, 전체 개수, 현재 페이지의 데이터 목록 등을 포함함
+ *
+ * @param <T> 응답 데이터의 타입 (ex: ProductDTO, SellerDTO 등)
+ */
+@Getter
 @ToString
-public class PageResponseDTO<E> {
+public class PageResponseDTO<T> {
 
-    private int page, size, total, start, end;
-    private boolean prev, next;
-    private List<E> dtoList;
+    private int page;               // 현재 페이지 번호
+    private int size;               // 한 페이지당 항목 수
+    private int total;              // 전체 항목 수
+    private int start;              // 페이지네이션의 시작 번호 (ex: 1, 11, 21...)
+    private int end;                // 이지네이션의 끝 번호 (ex: 10, 20, 30...)
+    private boolean prev;           // 이전 페이지 그룹 존재 여부
+    private boolean next;           // 다음 페이지 그룹 존재 여부
+    private List<T> dtoList;        // 현재 페이지에 해당하는 데이터 목록
 
+    /**
+     * 생성자 (Builder 사용)
+     * - 페이징 요청 정보와 결과 리스트, 전체 개수를 받아 계산 및 초기화
+     *
+     * @param pageRequestDTO 페이징 요청 정보
+     * @param dtoList        현재 페이지의 데이터 목록
+     * @param total          전체 데이터 개수
+     */
     @Builder(builderMethodName = "withAll")
-    public PageResponseDTO(PageRequestDTO pageRequestDTO, List<E> dtoList, int total){
+    private PageResponseDTO(PageRequestDTO pageRequestDTO, List<T> dtoList, int total) {
         this.page = pageRequestDTO.getPage();
         this.size = pageRequestDTO.getSize();
         this.total = total;
-        this.dtoList = dtoList == null ? new ArrayList<>() : dtoList;
+        this.dtoList = (dtoList != null) ? dtoList : new ArrayList<>();
 
-        // 페이지 범위 설정 ex) 12: 11~20
-        this.end = (int)(Math.ceil(this.page / 10.0)) * 10; // Math.ceil: 올림
-        this.start = this.end - 9; 
+        // 한 블록당 10개 페이지를 보여줄 때의 끝 페이지 계산
+        this.end = (int) (Math.ceil(this.page / 10.0)) * 10;
+        this.start = this.end - 9;
 
-        // end가 총 페이지 수(last)를 넘지 않도록 하는 로직
-        int last = (int)(Math.ceil((total / (double) size)));
-        this.end = Math.min(end, last); // end가 last보다 크면 last로 설정
+        // 전체 페이지 수 계산
+        int last = (int) Math.ceil((double) total / size);
 
-        // 이전과 다음
-        this.prev = start > 1;
-        this.next = total > end * size;
+        // 끝 페이지 번호가 실제 페이지 수보다 크면 보정
+        if (this.end > last) {
+            this.end = last;
+        }
+
+        // 이전/다음 페이지 그룹 존재 여부
+        this.prev = this.start > 1;
+        this.next = end < last;
     }
 }

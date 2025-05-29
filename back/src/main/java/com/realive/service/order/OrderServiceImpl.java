@@ -111,7 +111,6 @@ public class OrderServiceImpl implements OrderService {
         String currentDeliveryStatus = optionalOrderDelivery
                 .map(delivery -> delivery.getStatus().getDescription())
                 .orElse(DeliveryStatus.DELIVERY_PREPARING.getDescription());
-
         String paymentType = "CARD"; // 다른 결제수단은 없음
 
         return OrderResponseDTO.from(

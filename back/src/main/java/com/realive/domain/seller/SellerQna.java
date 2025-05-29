@@ -1,9 +1,6 @@
 package com.realive.domain.seller;
 
 import com.realive.domain.common.BaseTimeEntity;
-import com.realive.domain.customer.Customer;
-import com.realive.domain.product.Product;
-
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -12,7 +9,7 @@ import java.time.LocalDateTime;
 /**
  * 판매자 QnA 엔티티
  * - 판매자 전용 QnA 관리 (질문/답변)
- * - 고객이 질문하고, 판매자가 답변함
+ * - 판매자 질문하고, 관리자가 답변함
  */
 @Entity
 @Table(name = "seller_qna")
@@ -33,14 +30,6 @@ public class SellerQna extends BaseTimeEntity {
     @JoinColumn(name = "seller_id", nullable = false)
     private Seller seller;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id", nullable = false)
-    private Product product;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "Customer_id", nullable = false)
-    private Customer customer;
-
     // 질문 제목
     @Column(length = 100, nullable = false)
     private String title;
@@ -60,14 +49,15 @@ public class SellerQna extends BaseTimeEntity {
     @Column(name = "answered_at")
     private LocalDateTime answeredAt;
 
-    // 문의 작성 시간
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
+    @Column(name = "is_active")
+    private boolean isActive = true;
 
-    public Boolean getIsAnswered() {
-        return isAnswered;
-    }
+    @Column(nullable = false)
+    private boolean deleted = false; // soft delete 여부
 
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "customer_id", nullable = false)
+//    private Customer customer;
 
 
 }

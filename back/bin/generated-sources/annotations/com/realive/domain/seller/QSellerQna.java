@@ -30,15 +30,16 @@ public class QSellerQna extends EntityPathBase<SellerQna> {
 
     public final StringPath content = createString("content");
 
-    public final DateTimePath<java.time.LocalDateTime> createdAt = createDateTime("createdAt", java.time.LocalDateTime.class);
+    //inherited
+    public final DateTimePath<java.time.LocalDateTime> createdAt = _super.createdAt;
 
-    public final com.realive.domain.customer.QCustomer customer;
+    public final BooleanPath deleted = createBoolean("deleted");
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final BooleanPath isAnswered = createBoolean("isAnswered");
+    public final BooleanPath isActive = createBoolean("isActive");
 
-    public final com.realive.domain.product.QProduct product;
+    public final BooleanPath isAnswered = createBoolean("isAnswered");
 
     public final QSeller seller;
 
@@ -65,8 +66,6 @@ public class QSellerQna extends EntityPathBase<SellerQna> {
 
     public QSellerQna(Class<? extends SellerQna> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.customer = inits.isInitialized("customer") ? new com.realive.domain.customer.QCustomer(forProperty("customer")) : null;
-        this.product = inits.isInitialized("product") ? new com.realive.domain.product.QProduct(forProperty("product"), inits.get("product")) : null;
         this.seller = inits.isInitialized("seller") ? new QSeller(forProperty("seller")) : null;
     }
 

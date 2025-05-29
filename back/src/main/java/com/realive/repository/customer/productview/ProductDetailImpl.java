@@ -38,7 +38,7 @@ public class ProductDetailImpl implements ProductDetail {
                 product.depth,
                 product.height,
                 product.status.stringValue(),
-                product.isActive,
+                product.active,
                 productImage.url,
                 category.name,
                 seller.name
