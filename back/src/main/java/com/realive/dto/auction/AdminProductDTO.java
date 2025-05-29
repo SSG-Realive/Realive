@@ -35,13 +35,9 @@ public class AdminProductDTO {
                 .auctioned(adminProduct.isAuctioned());
 
         if (product != null) {
-            // Product 엔티티에 getName(), getDescription() 메소드가 있다고 가정
             builder.productName(product.getName())
                     .productDescription(product.getDescription());
-            // 필요하다면 다른 Product 정보도 추가
         }
         return builder.build();
     }
-
-
 }

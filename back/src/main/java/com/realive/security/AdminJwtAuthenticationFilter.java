@@ -15,6 +15,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.List;
 
+// 관리자용 jwt 인증 필터
 @RequiredArgsConstructor
 public class AdminJwtAuthenticationFilter extends OncePerRequestFilter {
 
@@ -57,7 +58,6 @@ public class AdminJwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        // /api/admin으로 시작하지 않으면 필터 동작 안 함
         return !request.getRequestURI().startsWith("/api/admin");
     }
 
