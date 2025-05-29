@@ -6,13 +6,19 @@ import org.springframework.data.domain.Pageable;
 
 public interface SellerQnaService {
 
+    // QnA 작성 (새로 추가)
+    void createQna(Long sellerId, SellerQnaRequestDTO dto);
+
+    // QnA 목록 조회
     Page<SellerQnaResponseDTO> getQnaListBySellerId(Long sellerId, Pageable pageable);
 
+    // QnA 단건 조회
     SellerQnaDetailResponseDTO getQnaDetail(Long sellerId, Long qnaId);
 
+    // QnA 삭제 (soft delete)
     void deleteQna(Long sellerId, Long qnaId);
 
+    // QnA 수정 (답변 없을 때만 가능)
     void updateQnaContent(Long sellerId, Long qnaId, SellerQnaUpdateRequestDTO dto);
 
-    void answerQna(Long sellerId, Long qnaId, SellerQnaAnswerRequestDTO dto);
 }

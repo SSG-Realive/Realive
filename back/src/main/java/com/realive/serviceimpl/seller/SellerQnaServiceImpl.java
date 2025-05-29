@@ -1,8 +1,10 @@
 package com.realive.serviceimpl.seller;
 
+import com.realive.domain.seller.Seller;
 import com.realive.domain.seller.SellerQna;
 import com.realive.dto.sellerqna.*;
 import com.realive.repository.seller.SellerQnaRepository;
+import com.realive.repository.seller.SellerRepository;
 import com.realive.service.seller.SellerQnaService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -10,13 +12,31 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-
 @Service
 @RequiredArgsConstructor
 public class SellerQnaServiceImpl implements SellerQnaService {
 
     private final SellerQnaRepository sellerQnaRepository;
+    private final SellerRepository sellerRepository;
+
+    // ✅ QnA 작성
+    @Override
+    @Transactional
+    public void createQna(Long sellerId, SellerQnaRequestDTO dto) {
+        Seller seller = sellerRepository.findById(sellerId)
+                .orElseThrow(() -> new IllegalArgumentException("판매자 정보가 존재하지 않습니다."));
+
+        SellerQna qna = SellerQna.builder()
+                .seller(seller)
+                .title(dto.getTitle())
+                .content(dto.getContent())
+                .isAnswered(false)
+                .isActive(true)
+                .deleted(false)
+                .build();
+
+        sellerQnaRepository.save(qna);
+    }
 
     @Override
     @Transactional
@@ -58,18 +78,6 @@ public class SellerQnaServiceImpl implements SellerQnaService {
 
     @Override
     @Transactional
-    public void answerQna(Long sellerId, Long qnaId, SellerQnaAnswerRequestDTO dto) {
-        SellerQna qna = sellerQnaRepository.findById(qnaId)
-                .filter(q -> q.getSeller().getId().equals(sellerId))
-                .orElseThrow(() -> new IllegalArgumentException("QnA가 존재하지 않거나 권한이 없습니다."));
-
-        qna.setAnswer(dto.getAnswer());
-        qna.setAnswered(true);
-        qna.setAnsweredAt(LocalDateTime.now());
-    }
-
-    @Override
-    @Transactional
     public void deleteQna(Long sellerId, Long qnaId) {
         SellerQna qna = sellerQnaRepository.findById(qnaId)
                 .filter(q -> q.getSeller().getId().equals(sellerId))
@@ -85,6 +93,10 @@ public class SellerQnaServiceImpl implements SellerQnaService {
         SellerQna qna = sellerQnaRepository.findById(qnaId)
                 .filter(q -> q.getSeller().getId().equals(sellerId))
                 .orElseThrow(() -> new IllegalArgumentException("QnA가 존재하지 않거나 권한이 없습니다."));
+
+        if (qna.isAnswered()) {
+            throw new IllegalStateException("이미 답변된 QnA는 수정할 수 없습니다.");
+        }
 
         qna.setTitle(dto.getTitle());
         qna.setContent(dto.getContent());
