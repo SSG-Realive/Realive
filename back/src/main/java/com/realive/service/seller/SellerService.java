@@ -55,11 +55,9 @@ public interface SellerService {
 
      @param dto 판매자 회원가입 정보 DTO
 
-     @param businessLicense 사업자등록증 파일
-
-     @param bankAccountCopy 통장 사본 파일
+     통장사본과 사업자 등록증은 이벤트로 처리
      */
-    void registerSeller(SellerSignupDTO dto, MultipartFile businessLicense, MultipartFile bankAccountCopy);
+    Seller registerSeller(SellerSignupDTO dto);
 
     /**
 

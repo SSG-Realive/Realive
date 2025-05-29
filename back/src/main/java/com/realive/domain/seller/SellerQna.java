@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 /**
  * 판매자 QnA 엔티티
  * - 판매자 전용 QnA 관리 (질문/답변)
- * - 고객이 질문하고, 판매자가 답변함
+ * - 판매자 질문하고, 관리자가 답변함
  */
 @Entity
 @Table(name = "seller_qna")
@@ -51,5 +51,13 @@ public class SellerQna extends BaseTimeEntity {
 
     @Column(name = "is_active")
     private boolean isActive = true;
+
+    @Column(nullable = false)
+    private boolean deleted = false; // soft delete 여부
+
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "customer_id", nullable = false)
+//    private Customer customer;
+
 
 }

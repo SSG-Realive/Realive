@@ -1,5 +1,7 @@
 package com.realive.serviceimpl.seller;
 
+
+
 import java.util.List;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,7 +24,9 @@ import com.realive.service.seller.SellerService;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
+@Log4j2
 @Service
 @RequiredArgsConstructor
 public class SellerServiceImpl implements SellerService{
@@ -43,6 +47,8 @@ public class SellerServiceImpl implements SellerService{
     //로그인
     @Override
     public SellerLoginResponseDTO login(SellerLoginRequestDTO reqdto){
+
+       
 
         // email로 사용자 찾기
         Seller seller = sellerRepository.findByEmailAndIsActiveTrue(reqdto.getEmail())
@@ -69,10 +75,11 @@ public class SellerServiceImpl implements SellerService{
     // 판매자 정보 조회 
     @Override
     public SellerResponseDTO getMyInfo(String email){
-
+        // 이메일로 판매자 찾기
         Seller seller = sellerRepository.findByEmail(email)
                 .orElseThrow(()-> new IllegalArgumentException("존재하지 않는 판매자입니다."));
 
+        // 판매자 정보 생성
         return SellerResponseDTO.builder()
                 .email(seller.getEmail())
                 .name(seller.getName())
@@ -85,7 +92,10 @@ public class SellerServiceImpl implements SellerService{
     }
     // 회원가입
     @Override
-    public void registerSeller(SellerSignupDTO dto, MultipartFile businessLicense, MultipartFile bankAcountCopy){
+    @Transactional
+    public Seller registerSeller(SellerSignupDTO dto){
+        
+        
         //이메일 존재 유무 검증.
         if (sellerRepository.existsByEmail(dto.getEmail())) {
             throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
@@ -98,6 +108,7 @@ public class SellerServiceImpl implements SellerService{
         //비번 인코딩저장.
         String encodedPassword = passwordEncoder.encode(dto.getPassword());
 
+        //dto로 전달받은 정보로 seller 객체 생성 
         Seller seller = Seller.builder()
                 .email(dto.getEmail())
                 .name(dto.getName())
@@ -107,36 +118,19 @@ public class SellerServiceImpl implements SellerService{
                 .isApproved(false)
                 .build();
         //dto 받은거 저장.
-        sellerRepository.save(seller);
+        return sellerRepository.save(seller);
 
-        //파일 업로드 
-        String licenseUrl = fileUploadService.upload(businessLicense, "사업자등록증", seller.getId());
-        String bankUrl = fileUploadService.upload(bankAcountCopy, "통장사본", seller.getId());
-
-        SellerDocument licenceDoc = SellerDocument.builder()
-                .seller(seller)
-                .fileType(SellerFileType.사업자등록증)
-                .fileUrl(licenseUrl)
-                .isVerified(false)
-                .build();
         
-         SellerDocument bankDoc = SellerDocument.builder()
-                .seller(seller)
-                .fileType(SellerFileType.통장사본)
-                .fileUrl(bankUrl)
-                .isVerified(false)
-                .build();
-
-        sellerDocumentRepository.saveAll(List.of(licenceDoc,bankDoc));
     
     }   
     //회원수정
     @Override
     @Transactional
     public void updateSeller(String email, SellerUpdateDTO dto) {
+        // 이메일로 판매자 찾기
         Seller seller = sellerRepository.findByEmail(email)
                 .orElseThrow(()-> new IllegalArgumentException("존재하지 않는 판매자입니다."));
-
+        //판매자 이름 수정 및 검증
         if (!seller.getName().equals(dto.getName())) {
             if(sellerRepository.existsByName(dto.getName())){
                 throw new IllegalArgumentException("이미 사용중인 이름입니다.");
@@ -145,13 +139,13 @@ public class SellerServiceImpl implements SellerService{
             seller.setName(dto.getName());
 
         }//end if
-
+        //판매자 전화번호 수정 
         if (!seller.getPhone().equals(dto.getPhone())) {
 
             seller.setPhone(dto.getPhone());
 
         }//end if
-
+        //판매자 비밀번호 조건부 수정
         if (dto.getNewPassword() != null && !dto.getNewPassword().isBlank()) {
 
             String encodedPassword = passwordEncoder.encode(dto.getNewPassword());
