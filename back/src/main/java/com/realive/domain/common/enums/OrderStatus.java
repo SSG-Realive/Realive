@@ -14,11 +14,6 @@ public enum OrderStatus {
     PURCHASE_CANCELED("구매취소"),
     REFUND_COMPLETED("환불완료"),
 
-    // 배송 연계 상태 (OrderService 로직에서 참조)
-    DELIVERY_PREPARING("배송준비중"),
-    DELIVERY_IN_PROGRESS("배송중"),
-    DELIVERY_COMPLETED("배송완료"),
-
     // 최종 구매 확정 상태
     PURCHASE_CONFIRMED("구매확정");
 

@@ -7,7 +7,9 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface SellerReviewImageRepository extends JpaRepository<SellerReviewImage, Integer> { // Integer는 PK 타입
+public interface SellerReviewImageRepository extends JpaRepository<SellerReviewImage, Integer> {
+
     List<SellerReviewImage> findByReviewId(Long reviewId);
+
     void deleteByReviewId(Long reviewId);
 }

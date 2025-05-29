@@ -85,7 +85,7 @@ public class CartServiceImpl implements CartService {
 
     //장바구니 수량 변경 + 수량 0될 시 삭제
     //바꾸고 싶은 수량을 입력해야함
-    //ex) Cart에 5개가 있는데 2개를 제거하고 싶을땐 5-2인 3을 입력해 수량 변경
+    //ex) Cart에 5개가 있는데 2개를 제거하고 싶을땐 (5-2)인 3을 입력해 수량 변경
     @Override
     @Transactional
     public CartItemResponseDTO updateCartItemQuantity(Long customerId, Long cartItemId, CartItemUpdateRequestDTO requestDTO) {

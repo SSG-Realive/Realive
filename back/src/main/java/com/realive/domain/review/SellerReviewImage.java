@@ -1,6 +1,6 @@
 package com.realive.domain.review;
 
-import com.realive.domain.common.BaseTimeEntity; // BaseTimeEntity 임포트
+import com.realive.domain.common.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,14 +13,14 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class SellerReviewImage extends BaseTimeEntity { // BaseTimeEntity 상속
+public class SellerReviewImage extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "review_id", nullable = false) // nullable = false 추가 권장
+    @JoinColumn(name = "review_id", nullable = false)
     private SellerReview review;
 
     @Column(nullable = false) // 필수값으로 설정

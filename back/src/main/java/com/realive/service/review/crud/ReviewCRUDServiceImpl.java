@@ -9,6 +9,7 @@ import com.realive.dto.review.ReviewCreateRequestDTO;
 import com.realive.dto.review.ReviewResponseDTO;
 import com.realive.dto.review.ReviewUpdateRequestDTO;
 import com.realive.repository.customer.CustomerRepository;
+import com.realive.repository.order.OrderRepository;
 import com.realive.repository.review.crud.ReviewCRUDRepository;
 import com.realive.repository.review.crud.SellerReviewImageRepository;
 import com.realive.repository.seller.SellerRepository;
