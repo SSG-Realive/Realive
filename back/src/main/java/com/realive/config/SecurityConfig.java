@@ -2,7 +2,7 @@ package com.realive.config;
 
 import com.realive.repository.seller.SellerRepository;
 import com.realive.security.AdminJwtAuthenticationFilter;
-import com.realive.security.JwtAuthenticationFilter;
+import com.realive.security.SellerJwtAuthenticationFilter;
 import com.realive.security.JwtUtil;
 import com.realive.service.admin.AdminService;
 import lombok.extern.slf4j.Slf4j;
@@ -32,8 +32,8 @@ public class SecurityConfig {
 
     // JwtAuthenticationFilter Bean 등록 (일반 사용자용)
     @Bean
-    public JwtAuthenticationFilter jwtAuthenticationFilter(SellerRepository sellerRepository) {
-        return new JwtAuthenticationFilter(jwtUtil, sellerRepository);
+    public SellerJwtAuthenticationFilter jwtAuthenticationFilter(SellerRepository sellerRepository) {
+        return new SellerJwtAuthenticationFilter(jwtUtil, sellerRepository);
     }
 
     // AdminJwtAuthenticationFilter Bean 등록 (관리자 인증용)
@@ -46,7 +46,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(
             HttpSecurity http,
-            JwtAuthenticationFilter jwtAuthenticationFilter,
+            SellerJwtAuthenticationFilter sellerJwtAuthenticationFilter,
             AdminJwtAuthenticationFilter adminJwtAuthenticationFilter
     ) throws Exception {
         log.info("Security Filter Chain");
@@ -61,7 +61,7 @@ public class SecurityConfig {
                 )
                 // 관리자 인증 필터 우선 적용, 그 다음 일반 사용자 인증 필터 적용 (순서 중요!)
                 .addFilterBefore(adminJwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(sellerJwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
