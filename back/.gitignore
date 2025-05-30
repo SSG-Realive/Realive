@@ -1,0 +1,117 @@
+# -------------------------------------
+# IDE / Tool 설정
+# -------------------------------------
+.idea/
+*.iml
+.vscode/
+.history/
+*.sublime*
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# -------------------------------------
+# Java / Gradle / IntelliJ
+# -------------------------------------
+*.class
+*.log
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+*.hprof
+.gradle
+build/
+out/
+cmake-build-*/
+hs_err_pid*
+replay_pid*
+.gradletasknamecache
+
+# Spring Boot 설정 파일
+application.yml
+
+# QueryDSL Q파일
+build/generated/
+**/generated/querydsl/
+**/Q*.java
+
+# -------------------------------------
+# IntelliJ / Eclipse
+# IntelliJ cache files
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/**/usage.statistics.xml
+.idea/**/dictionaries
+.idea/**/shelf
+.idea/**/aws.xml
+.idea/**/contentModel.xml
+.idea/**/dataSources*
+.idea/**/sqlDataSources.xml
+.idea/**/dynamic.xml
+.idea/**/uiDesigner.xml
+.idea/**/dbnavigator.xml
+.idea/**/gradle.xml
+.idea/**/libraries
+.idea/**/sonarlint/
+.idea/**/sonarIssues.xml
+.idea/**/markdown-navigator*
+.idea/httpRequests
+.idea/**/azureSettings.xml
+.idea_modules/
+atlassian-ide-plugin.xml
+.project
+.classpath
+
+# -------------------------------------
+# Node.js / React / Next.js / Yarn
+node_modules/
+.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+bower_components/
+
+# debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# testing
+coverage/
+
+# Next.js build artifacts
+.next/
+out/
+
+# production build
+build/
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# local env files
+.env*
+*.pem
+
+# Vercel deploy
+.vercel
+
+# 기타 백업/임시 파일
+*.swp
+*.tmp
+*~
+*.backup.*
+*.back.*
+
+# 업로드 파일 제외
+uploads/
+.env.properties

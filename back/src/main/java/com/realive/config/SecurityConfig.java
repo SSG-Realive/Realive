@@ -32,6 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 @EnableMethodSecurity(prePostEnabled = true)
 @Slf4j
 @RequiredArgsConstructor
+//@Order(2)
 public class SecurityConfig {
 
     private final CustomerJwtAuthenticationFilter jwtAuthenticationFilter; // [Customer] JWT 인증 필터
@@ -42,6 +43,7 @@ public class SecurityConfig {
         log.info("------------------Security Config-----------------------");
 
         http
+            .securityMatcher("/api/customer/**", "/api/public/**")
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .csrf(csrf -> csrf.disable())
             .formLogin(form -> form.disable())
@@ -53,8 +55,7 @@ public class SecurityConfig {
                 .anyRequest().authenticated())
             .exceptionHandling(exceptions -> exceptions
                 .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))) // [Customer] 모든 인증 실패 요청에 대해 401 Unauthorized 응답 반환
-            .oauth2Login(config -> config
-                .successHandler(customLoginSuccessHandler)); // [Customer] 소셜로그인 성공 핸들러
+            .oauth2Login(config -> config.successHandler(customLoginSuccessHandler)); // [Customer] 소셜로그인 성공 핸들러
         return http.build();
     }
 
