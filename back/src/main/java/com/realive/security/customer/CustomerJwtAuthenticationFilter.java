@@ -62,5 +62,15 @@ public class CustomerJwtAuthenticationFilter extends OncePerRequestFilter {
         }
         return null;
     }
+<<<<<<< HEAD
     
+=======
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String uri = request.getRequestURI();
+        return uri.startsWith("/api/admin") || uri.startsWith("/api/seller");
+    }
+
+>>>>>>> dev
 }
