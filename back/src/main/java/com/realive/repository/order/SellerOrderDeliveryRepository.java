@@ -8,7 +8,8 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Optional;
 
-public interface SellerOrderDeliveryRepository extends JpaRepository<OrderDelivery, Long> {
+public interface SellerOrderDeliveryRepository
+        extends JpaRepository<OrderDelivery, Long>, SellerOrderDeliveryRepositoryCustom {
 
     // 🔧 [수정된 부분] 주문 ID 단건 조회 (판매자 검증 포함)
     @Query("""
