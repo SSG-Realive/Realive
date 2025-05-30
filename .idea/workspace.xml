@@ -4,7 +4,28 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="67f489e3-9d31-491e-8279-eb7115a2352e" name="Changes" comment="" />
+    <list default="true" id="67f489e3-9d31-491e-8279-eb7115a2352e" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__com_github_ben_manes_caffeine_caffeine_3_1_8.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__com_github_waffle_waffle_jna_3_3_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__com_google_errorprone_error_prone_annotations_2_21_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__net_java_dev_jna_jna_5_13_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__net_java_dev_jna_jna_platform_5_13_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__org_checkerframework_checker_qual_3_37_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__org_mariadb_jdbc_mariadb_java_client_3_4_2.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__org_mockito_mockito_core_5_14_2.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__org_slf4j_jcl_over_slf4j_2_0_17.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules/realive.test.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/realive.test.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/src/main/java/com/realive/dto/auction/AdminPurchaseRequestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/back/src/main/java/com/realive/dto/auction/AdminPurchaseRequestDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/src/main/java/com/realive/service/admin/product/AdminProductService.java" beforeDir="false" afterPath="$PROJECT_DIR$/back/src/main/java/com/realive/service/admin/product/AdminProductService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/src/main/java/com/realive/serviceimpl/admin/product/AdminProductServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/back/src/main/java/com/realive/serviceimpl/admin/product/AdminProductServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hs_err_pid11536.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/hs_err_pid25460.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/replay_pid11536.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/replay_pid25460.log" beforeDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -53,6 +74,7 @@
   "keyToString": {
     "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "Gradle.Build back.executor": "Run",
+    "Gradle.back 빌드.executor": "Run",
     "RequestMappingsPanelOrder0": "0",
     "RequestMappingsPanelOrder1": "1",
     "RequestMappingsPanelWidth0": "75",
@@ -60,10 +82,11 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "Spring Boot.RealiveApplication.executor": "Run",
-    "git-widget-placeholder": "team1/min",
+    "git-widget-placeholder": "team3/gudo",
     "ignore.virus.scanning.warn.message": "true",
+    "junie.onboarding.icon.badge.shown": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Realive/back",
+    "last_opened_file_path": "C:/SSG_KDT8/Realive",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -85,8 +108,14 @@
   </component>
   <component name="RunManager">
     <configuration name="RealiveApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <option name="envFilePaths">
+        <option value="$PROJECT_DIR$/back/src/main/resources/env.properties" />
+      </option>
       <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
       <module name="realive.main" />
+      <selectedOptions>
+        <option name="environmentVariables" />
+      </selectedOptions>
       <option name="SPRING_BOOT_MAIN_CLASS" value="com.realive.RealiveApplication" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -96,8 +125,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-9823dce3aa75-a94e463ab2e7-intellij.indexing.shared.core-IU-243.26053.27" />
-        <option value="bundled-js-predefined-d6986cc7102b-1632447f56bf-JavaScript-IU-243.26053.27" />
+        <option value="bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.25410.129" />
+        <option value="bundled-js-predefined-d6986cc7102b-6a121458b545-JavaScript-IU-251.25410.129" />
       </set>
     </attachedChunks>
   </component>
@@ -116,6 +145,7 @@
       <workItem from="1747298183231" duration="167000" />
       <workItem from="1747298363610" duration="58000" />
       <workItem from="1747298436755" duration="9000" />
+      <workItem from="1748589126960" duration="157000" />
     </task>
     <servers />
   </component>
