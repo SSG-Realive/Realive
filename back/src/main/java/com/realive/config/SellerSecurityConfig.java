@@ -8,14 +8,12 @@
     import org.springframework.core.annotation.Order;
     import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
     import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-    import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
     import org.springframework.security.config.http.SessionCreationPolicy;
     import org.springframework.security.web.SecurityFilterChain;
     import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
     import org.springframework.context.annotation.Bean;
     import org.springframework.web.cors.CorsConfigurationSource;
 
-    @EnableWebSecurity
     @EnableMethodSecurity(prePostEnabled = true)
     @Configuration
     @RequiredArgsConstructor
@@ -33,15 +31,17 @@
             log.info("✅ SellerSecurityConfig 적용");
 
             http
-                .securityMatcher("/api/seller/**")
-                .cors(cors -> cors.configurationSource(corsConfigurationSource))  // 주입된 Bean 사용
-                .csrf(csrf -> csrf.disable())
-                .formLogin(form -> form.disable())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(sellerJwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/api/seller/**").permitAll()
-                );
+                    .securityMatcher("/api/seller/**")
+                    .cors(cors -> cors.configurationSource(corsConfigurationSource))  // 주입된 Bean 사용
+                    .csrf(csrf -> csrf.disable())
+                    .formLogin(form -> form.disable())
+                    .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                    .addFilterBefore(sellerJwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                    .authorizeHttpRequests(auth -> auth
+                            .requestMatchers("/api/seller/login").permitAll()
+                            .requestMatchers("/api/seller/**").authenticated()
+                    );
+
 
             return http.build();
         }
