@@ -55,6 +55,9 @@ public class MemberController {
     // 회원정보조회
     @GetMapping("/me")
     public ResponseEntity<MemberReadDTO> getMyProfile(Authentication authentication) {
+        MemberLoginDTO loginDTO = (MemberLoginDTO) authentication.getPrincipal();
+        log.info("현재 로그인한 사용자: {}", loginDTO);
+        log.info("로그인 사용자 ID: {}", loginDTO.getEmail());
         String email = authentication.getName();
         MemberReadDTO profile = memberService.getMyProfile(email);
         return ResponseEntity.ok(profile);

@@ -62,9 +62,6 @@ public class CustomerJwtAuthenticationFilter extends OncePerRequestFilter {
         }
         return null;
     }
-<<<<<<< HEAD
-    
-=======
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
@@ -72,5 +69,4 @@ public class CustomerJwtAuthenticationFilter extends OncePerRequestFilter {
         return uri.startsWith("/api/admin") || uri.startsWith("/api/seller");
     }
 
->>>>>>> dev
 }
