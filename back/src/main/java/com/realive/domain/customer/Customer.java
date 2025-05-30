@@ -46,7 +46,7 @@ public class Customer {
     //만약에 구현 안 할시 그냥 전부 true로 바꿔주면 됨
     @Column(name = "is_verified")
     private Boolean isVerified = false;
-
+    
     //디폴트 true
     //탈퇴 여부
     @Column(name = "is_active")
@@ -65,7 +65,7 @@ public class Customer {
     //디폴트 0
     @Column(name = "penalty_score")
     private Integer penaltyScore = 0;
-
+ 
     private LocalDate birth;
 
     @Enumerated(EnumType.STRING)
@@ -84,5 +84,5 @@ public class Customer {
     @Column(name ="updated_at" )
     protected LocalDateTime updated;
 
-
+    
 }

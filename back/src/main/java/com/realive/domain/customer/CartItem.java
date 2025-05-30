@@ -53,5 +53,5 @@ public class CartItem {
     @LastModifiedDate
     @Column(name ="updated_at" )
     protected LocalDateTime updatedAt;
-
+    
 }

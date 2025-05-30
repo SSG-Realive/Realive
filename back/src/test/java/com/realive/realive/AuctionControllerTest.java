@@ -3,7 +3,8 @@ package com.realive.realive;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.realive.config.JpaAuditingConfig; // @EnableJpaAuditing이 분리된 설정 클래스
+import com.realive.config.JpaAuditingConfig;
+// @EnableJpaAuditing이 분리된 설정 클래스
 import com.realive.controller.auction.AuctionController;
 import com.realive.dto.auction.AuctionCreateRequestDTO;
 import com.realive.dto.auction.AuctionResponseDTO;

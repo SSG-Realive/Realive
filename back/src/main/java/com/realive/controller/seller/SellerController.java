@@ -19,6 +19,7 @@ import com.realive.dto.seller.SellerLoginResponseDTO;
 import com.realive.dto.seller.SellerResponseDTO;
 import com.realive.dto.seller.SellerSignupDTO;
 import com.realive.dto.seller.SellerUpdateDTO;
+import com.realive.event.FileUploadEvnetPublisher;
 import com.realive.security.JwtUtil;
 import com.realive.service.seller.SellerService;
 
@@ -39,6 +40,7 @@ public class SellerController {
 
     private final SellerService sellerService;
     private final JwtUtil jwtUtil;
+    private final FileUploadEvnetPublisher fileUploadEvnetPublisher;
    
     
  // 🔐 로그인 (토큰 발급)
@@ -86,7 +88,9 @@ public class SellerController {
             @RequestPart MultipartFile businessLicense,
             @RequestPart MultipartFile bankAccountCopy) {
 
-        sellerService.registerSeller(dto, businessLicense, bankAccountCopy);
+        Seller savedSeller = sellerService.registerSeller(dto);
+
+        fileUploadEvnetPublisher.publish(savedSeller,businessLicense, bankAccountCopy);
         return ResponseEntity.ok().build();
     }
 
