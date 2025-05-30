@@ -17,7 +17,7 @@ import java.util.UUID;
 public class FileUploadService {
 
     // 실제 업로드 디렉토리 (프로젝트 외부 경로로 권장)
-    private static final String UPLOAD_DIR = "uploads/";
+    private static final String UPLOAD_DIR = System.getProperty("user.dir") + "/uploads/";
 
     /**
      * MultipartFile을 저장하고, 저장 경로 반환
@@ -52,5 +52,26 @@ public class FileUploadService {
 
         // 나중에 프론트에서 이 경로를 통해 이미지 접근 가능
         return "/uploads/" + subDirPath + newFilename;
+    }
+    
+    /**
+     * 파일이 존재하면 삭제
+     * @param sellerId 판매자 ID
+     * @param category 파일 카테고리
+     */
+    public void deleteIfExists(Long sellerId, String category){
+        
+        String folderPath = UPLOAD_DIR + category + "/" + sellerId + "/";
+        File folder = new File(folderPath);
+        
+        if (folder.exists() && folder.isDirectory()){
+            File[] files = folder.listFiles();
+            if (files != null) {
+               for (File file : files) {
+                file.delete();
+               }
+            }
+        }
+        folder.delete();
     }
 }

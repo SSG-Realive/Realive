@@ -11,7 +11,7 @@ Thumbs.db
 desktop.ini
 
 # -------------------------------------
-# Java / Gradle / Spring Boot
+# Java / Gradle / IntelliJ
 # -------------------------------------
 *.class
 *.log
@@ -41,6 +41,7 @@ build/generated/
 
 # -------------------------------------
 # IntelliJ / Eclipse
+# IntelliJ cache files
 .idea/**/workspace.xml
 .idea/**/tasks.xml
 .idea/**/usage.statistics.xml
@@ -110,3 +111,7 @@ next-env.d.ts
 *~
 *.backup.*
 *.back.*
+
+# 업로드 파일 제외
+uploads/
+.env.properties

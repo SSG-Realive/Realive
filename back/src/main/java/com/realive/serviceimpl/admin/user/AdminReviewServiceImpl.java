@@ -5,17 +5,12 @@ import com.realive.domain.customer.Customer;
 import com.realive.domain.order.Order;
 import com.realive.domain.product.Product;
 import com.realive.domain.review.ReviewReport;
-import com.realive.domain.seller.SellerReview; // SellerReview 엔티티 경로 확인
-import com.realive.domain.seller.Seller;     // Seller 엔티티 경로 확인
-import com.realive.dto.admin.review.AdminReviewReportDetailDTO;
-import com.realive.dto.admin.review.AdminReviewReportListItemDTO;
-import com.realive.dto.admin.review.TakeActionOnReportRequestDTO;
-import com.realive.dto.admin.review.AdminSellerReviewDetailDTO;
-import com.realive.dto.admin.review.AdminSellerReviewListItemDTO; // 이 DTO 사용
+import com.realive.domain.seller.SellerReview;
+import com.realive.domain.seller.Seller;
+import com.realive.dto.admin.review.*;
 import com.realive.repository.customer.CustomerRepository;
 import com.realive.repository.review.ReviewReportRepository;
 import com.realive.repository.review.SellerReviewRepository;
-// SellerReviewSpecification의 정확한 import 경로를 확인해주세요.
 import com.realive.repository.review.SellerReviewSpecification;
 import com.realive.service.admin.user.AdminReviewService;
 
@@ -25,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification; // Specification import
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,43 +39,42 @@ public class AdminReviewServiceImpl implements AdminReviewService {
     private final SellerReviewRepository sellerReviewRepository;
     private final CustomerRepository customerRepository;
 
-    // --- 기존 4개 메소드는 이전 최종본과 동일 (getReportedReviewsByStatus, getReportDetail, getSellerReviewDetail, processReportAction) ---
-    // convertToAdminReviewReportListItemDTO는 AdminReviewReportListItemDTO의 reason 필드 변경 반영됨
-
     @Override
     public Page<AdminReviewReportListItemDTO> getReportedReviewsByStatus(ReviewReportStatus status, Pageable pageable) {
         log.info("Fetching reported reviews with status: {} and pageable: {}", status, pageable);
-        Page<ReviewReport> reportPage = reviewReportRepository.findAllByStatus(status, pageable);
-        List<AdminReviewReportListItemDTO> dtoList = reportPage.getContent().stream()
+        Page<ReviewReport> reportPage = reviewReportRepository.findAllByStatus(status, pageable); // Page<ReviewReport> 타입 명시
+        List<AdminReviewReportListItemDTO> dtoList = reportPage.getContent().stream() // List<AdminReviewReportListItemDTO> 타입 명시
                 .map(this::convertToAdminReviewReportListItemDTO)
                 .collect(Collectors.toList());
         return new PageImpl<>(dtoList, pageable, reportPage.getTotalElements());
-    }
+    } // getReportedReviewsByStatus 메소드 닫는 중괄호
 
     private AdminReviewReportListItemDTO convertToAdminReviewReportListItemDTO(ReviewReport report) {
         Long reportedReviewIdAsLong = null;
         if (report.getSellerReviewId() != null) {
             reportedReviewIdAsLong = report.getSellerReviewId().longValue();
-        }
+        } // if 닫는 중괄호
+
         String reporterName = "신고자 정보 없음";
         Long reporterIdAsLong = null;
         if (report.getReporterId() != null) {
             reporterIdAsLong = report.getReporterId().longValue();
-            Optional<Customer> customerOpt = customerRepository.findById(reporterIdAsLong);
+            Optional<Customer> customerOpt = customerRepository.findById(reporterIdAsLong); // Optional<Customer> 타입 명시
             if (customerOpt.isPresent()) {
                 reporterName = customerOpt.get().getName();
-            }
-        }
+            } // if 닫는 중괄호
+        } // if 닫는 중괄호
+
         return AdminReviewReportListItemDTO.builder()
                 .reportId(report.getId())
                 .status(report.getStatus())
                 .reportedReviewId(reportedReviewIdAsLong)
                 .reporterId(reporterIdAsLong)
                 .reporterName(reporterName)
-                .reason(report.getReason()) // DTO 필드명 'reason'으로 변경됨
+                .reason(report.getReason())
                 .reportedAt(report.getCreatedAt())
                 .build();
-    }
+    } // convertToAdminReviewReportListItemDTO 메소드 닫는 중괄호
 
     @Override
     @Transactional
@@ -98,15 +92,16 @@ public class AdminReviewServiceImpl implements AdminReviewService {
                 Product product = order.getProduct();
                 productName = product.getName();
                 productId = product.getId();
-            }
-        }
+            } // 안쪽 if 닫는 중괄호
+        } // 바깥쪽 if 닫는 중괄호
+
         String sellerName = (review.getSeller() != null) ? review.getSeller().getName() : "판매자 정보 없음";
         Long sellerId = (review.getSeller() != null) ? review.getSeller().getId() : null;
         String customerName = (review.getCustomer() != null) ? review.getCustomer().getName() : "고객 정보 없음";
         Long customerId = (review.getCustomer() != null) ? review.getCustomer().getId() : null;
-        List<String> imageUrls = Collections.emptyList();
-        Boolean isHidden = null; // SellerReview 엔티티에 isHidden 필드가 없다면 null
-        String adminMemo = null;
+        List<String> imageUrls = Collections.emptyList(); // List<String> 타입 명시
+        Boolean isHidden = null;
+        String adminMemo = null; // 사용자 첨부 파일에 누락된 부분 복원
         return AdminSellerReviewDetailDTO.builder()
                 .reviewId(review.getId())
                 .orderId(orderId)
@@ -124,7 +119,7 @@ public class AdminReviewServiceImpl implements AdminReviewService {
                 .isHidden(isHidden)
                 .adminMemo(adminMemo)
                 .build();
-    }
+    } // getSellerReviewDetail 메소드 닫는 중괄호
 
     @Override
     @Transactional
@@ -139,20 +134,22 @@ public class AdminReviewServiceImpl implements AdminReviewService {
             } catch (EntityNotFoundException e) {
                 log.warn("Associated SellerReview (ID: {}) not found for ReviewReport (ID: {}). Error: {}",
                         report.getSellerReviewId(), reportId, e.getMessage());
-            }
-        }
+            } // catch 닫는 중괄호
+        } // if 닫는 중괄호
+
         Long reporterIdAsLong = null;
         String reporterName = "신고자 정보 없음";
         String reporterEmail = null;
         if (report.getReporterId() != null) {
             reporterIdAsLong = report.getReporterId().longValue();
-            Optional<Customer> customerOpt = customerRepository.findById(reporterIdAsLong);
+            Optional<Customer> customerOpt = customerRepository.findById(reporterIdAsLong); // Optional<Customer> 타입 명시
             if (customerOpt.isPresent()) {
                 Customer reporter = customerOpt.get();
                 reporterName = reporter.getName();
                 reporterEmail = reporter.getEmail();
-            }
-        }
+            } // 안쪽 if 닫는 중괄호
+        } // 바깥쪽 if 닫는 중괄호
+
         return AdminReviewReportDetailDTO.builder()
                 .reportId(report.getId())
                 .status(report.getStatus())
@@ -164,7 +161,7 @@ public class AdminReviewServiceImpl implements AdminReviewService {
                 .reporterEmail(reporterEmail)
                 .reportedReviewDetail(reportedReviewDetailContent)
                 .build();
-    }
+    } // getReportDetail 메소드 닫는 중괄호
 
     @Override
     @Transactional
@@ -175,41 +172,37 @@ public class AdminReviewServiceImpl implements AdminReviewService {
         report.updateStatus(actionRequest.getNewStatus());
         reviewReportRepository.save(report);
         log.info("ReviewReport (ID: {}) status updated to: {}", report.getId(), report.getStatus());
-    }
+    } // processReportAction 메소드 닫는 중괄호
 
-    // === 이 메소드가 수정되었습니다 (sellerFilter 파라미터 및 로직 추가) ===
     @Override
     public Page<AdminSellerReviewListItemDTO> getAllSellerReviews(Pageable pageable,
                                                                   Optional<String> productFilter,
                                                                   Optional<String> customerFilter,
-                                                                  Optional<String> sellerFilter) { // sellerFilter 파라미터 받음
+                                                                  Optional<String> sellerFilter) {
         log.info("Fetching all seller reviews. Pageable: {}, ProductFilter: {}, CustomerFilter: {}, SellerFilter: {}",
                 pageable, productFilter.orElse("N/A"), customerFilter.orElse("N/A"), sellerFilter.orElse("N/A"));
 
-        Specification<SellerReview> spec = Specification.where(null); // 기본 Specification
+        Specification<SellerReview> spec = Specification.where(null); // Specification<SellerReview> 타입 명시
 
         if (productFilter.isPresent() && !productFilter.get().isBlank()) {
             spec = spec.and(SellerReviewSpecification.productNameContains(productFilter.get()));
-        }
+        } // if 닫는 중괄호
 
         if (customerFilter.isPresent() && !customerFilter.get().isBlank()) {
             spec = spec.and(SellerReviewSpecification.customerNameContains(customerFilter.get()));
-        }
+        } // if 닫는 중괄호
 
-        if (sellerFilter.isPresent() && !sellerFilter.get().isBlank()) { // sellerFilter 조건 추가
+        if (sellerFilter.isPresent() && !sellerFilter.get().isBlank()) {
             spec = spec.and(SellerReviewSpecification.sellerNameContains(sellerFilter.get()));
-        }
+        } // if 닫는 중괄호
 
-        Page<SellerReview> sellerReviewPage = sellerReviewRepository.findAll(spec, pageable);
-
-        List<AdminSellerReviewListItemDTO> dtoList = sellerReviewPage.getContent().stream()
+        Page<SellerReview> sellerReviewPage = sellerReviewRepository.findAll(spec, pageable); // Page<SellerReview> 타입 명시
+        List<AdminSellerReviewListItemDTO> dtoList = sellerReviewPage.getContent().stream() // List<AdminSellerReviewListItemDTO> 타입 명시
                 .map(this::convertToAdminSellerReviewListItemDTO)
                 .collect(Collectors.toList());
-
         return new PageImpl<>(dtoList, pageable, sellerReviewPage.getTotalElements());
-    }
+    } // getAllSellerReviews 메소드 닫는 중괄호
 
-    // AdminSellerReviewListItemDTO 변환 메소드 (이전과 동일)
     private AdminSellerReviewListItemDTO convertToAdminSellerReviewListItemDTO(SellerReview review) {
         String productName = (review.getOrder() != null && review.getOrder().getProduct() != null)
                 ? review.getOrder().getProduct().getName() : "상품 정보 없음";
@@ -223,12 +216,12 @@ public class AdminReviewServiceImpl implements AdminReviewService {
         String contentSummary = review.getContent();
         if (contentSummary != null && contentSummary.length() > 50) {
             contentSummary = contentSummary.substring(0, 50) + "...";
-        }
+        } // if 닫는 중괄호
 
-        Boolean isHiddenValue = null; // SellerReview 엔티티에 isHidden 필드가 없다면 항상 null
-        // if (review.getIsHidden() != null) { // SellerReview 엔티티에 isHidden 필드가 있다면
-        //     isHiddenValue = review.getIsHidden();
-        // }
+        Boolean isHiddenValue = null;
+        if (review.getIsHidden() != null) { // SellerReview 엔티티에 isHidden 필드가 있다고 가정하고 주석 해제
+            isHiddenValue = review.getIsHidden();
+        } // if 닫는 중괄호
 
         return AdminSellerReviewListItemDTO.builder()
                 .reviewId(review.getId())
@@ -244,19 +237,26 @@ public class AdminReviewServiceImpl implements AdminReviewService {
                 .updatedAt(review.getUpdatedAt())
                 .isHidden(isHiddenValue)
                 .build();
-    }
+    } // convertToAdminSellerReviewListItemDTO 메소드 닫는 중괄호
 
-    // --- 인터페이스에서 주석 처리된 나머지 메소드들의 구현부는 여기서도 주석 처리 또는 삭제 ---
+    // === "리뷰 삭제 API"를 위한 메소드 구현 추가 ===
+    @Override
+    @Transactional
+    public void deleteSellerReview(Long reviewId) throws EntityNotFoundException {
+        log.info("Attempting to delete seller review with ID: {}", reviewId);
+        if (!sellerReviewRepository.existsById(reviewId)) {
+            log.warn("SellerReview not found for deletion with ID: {}", reviewId);
+            throw new EntityNotFoundException("SellerReview not found with id: " + reviewId);
+        }
+        sellerReviewRepository.deleteById(reviewId);
+        log.info("Successfully deleted seller review with ID: {}", reviewId);
+    } // deleteSellerReview 메소드 닫는 중괄호
+
+    // --- 아직 구현하지 않은 다른 기능의 뼈대는 주석 처리 또는 삭제 ---
     /*
     @Override
     @Transactional
     public void updateSellerReviewVisibility(Long reviewId, Boolean isHidden) throws EntityNotFoundException {
-        // TODO: 구현 필요
-    }
-
-    @Override
-    @Transactional
-    public void deleteSellerReview(Long reviewId) throws EntityNotFoundException {
         // TODO: 구현 필요
     }
     */
