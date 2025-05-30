@@ -20,7 +20,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
     @Configuration
     @RequiredArgsConstructor
     @Slf4j
-    @Order(1)
+    @Order(2)
     public class SellerSecurityConfig {
 
         private final SellerJwtAuthenticationFilter sellerJwtAuthenticationFilter;

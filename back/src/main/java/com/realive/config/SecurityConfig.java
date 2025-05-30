@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -32,7 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 @EnableMethodSecurity(prePostEnabled = true)
 @Slf4j
 @RequiredArgsConstructor
-//@Order(2)
+@Order(1)
 public class SecurityConfig {
 
     private final CustomerJwtAuthenticationFilter jwtAuthenticationFilter; // [Customer] JWT 인증 필터
