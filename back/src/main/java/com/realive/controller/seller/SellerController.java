@@ -91,7 +91,7 @@ public class SellerController {
         Seller savedSeller = sellerService.registerSeller(dto);
 
         fileUploadEvnetPublisher.publish(savedSeller,businessLicense, bankAccountCopy);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().build(); 
     }
 
     // 🔄 판매자 정보 수정
