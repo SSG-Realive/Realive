@@ -9,6 +9,7 @@ import java.util.List;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -25,17 +26,18 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.realive.security.customer.CustomLoginSuccessHandler;
-import com.realive.security.customer.JwtAuthenticationFilter;
+import com.realive.security.customer.CustomerJwtAuthenticationFilter;
 
 
-@EnableJpaAuditing //JPA Auditing 을 활성화. createDate, modifiedDate 자동으로 처리 
+// @EnableJpaAuditing //JPA Auditing 을 활성화. createDate, modifiedDate 자동으로 처리 
 @Configuration
 @EnableMethodSecurity(prePostEnabled = true)
 @Slf4j
 @RequiredArgsConstructor
+@Order(2)
 public class SecurityConfig {
 
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final CustomerJwtAuthenticationFilter jwtAuthenticationFilter;
     private final CustomLoginSuccessHandler customLoginSuccessHandler;
     //private final CustomOAuth2UserService customOAuth2UserService;
 
@@ -45,6 +47,7 @@ public class SecurityConfig {
         log.info("------------------Security Config-----------------------");
 
         http
+            .securityMatcher("/api/customer/**", "/api/public/**")
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .csrf(csrf -> csrf.disable())
             .formLogin(form -> form.disable())
@@ -54,7 +57,8 @@ public class SecurityConfig {
                 .requestMatchers("/api/public/**").permitAll()
                 .requestMatchers("/api/customer/**").authenticated()
                 //.requestMatchers("/oauth2/**").permitAll()
-                .anyRequest().authenticated()
+                
+                
             )
             .oauth2Login(config -> config
                 .successHandler(customLoginSuccessHandler));  

@@ -25,7 +25,7 @@ import lombok.RequiredArgsConstructor;
  */
 @Component
 @RequiredArgsConstructor
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
+public class SellerJwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil; // JWT 유틸리티 클래스
     private final SellerRepository sellerRepository; // 판매자 정보 조회용 리포지토리
