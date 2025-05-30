@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import com.realive.dto.customer.customer_qna.CustomerQnaRequestDTO;
+import com.realive.dto.customer.customerqna.CustomerQnaRequestDTO;
 import com.realive.service.customer.CustomerQnaService;
 import com.realive.service.customer.CustomerService;
 
