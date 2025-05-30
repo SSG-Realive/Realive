@@ -5,26 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="67f489e3-9d31-491e-8279-eb7115a2352e" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__com_github_ben_manes_caffeine_caffeine_3_1_8.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__com_github_waffle_waffle_jna_3_3_0.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__com_google_errorprone_error_prone_annotations_2_21_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__net_java_dev_jna_jna_5_13_0.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__net_java_dev_jna_jna_platform_5_13_0.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__org_checkerframework_checker_qual_3_37_0.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__org_mariadb_jdbc_mariadb_java_client_3_4_2.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__org_mockito_mockito_core_5_14_2.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__org_slf4j_jcl_over_slf4j_2_0_17.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules/realive.test.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/realive.test.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/back/src/main/java/com/realive/dto/auction/AdminPurchaseRequestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/back/src/main/java/com/realive/dto/auction/AdminPurchaseRequestDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/back/src/main/java/com/realive/service/admin/product/AdminProductService.java" beforeDir="false" afterPath="$PROJECT_DIR$/back/src/main/java/com/realive/service/admin/product/AdminProductService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/back/src/main/java/com/realive/serviceimpl/admin/product/AdminProductServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/back/src/main/java/com/realive/serviceimpl/admin/product/AdminProductServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/hs_err_pid11536.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/hs_err_pid25460.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/replay_pid11536.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/replay_pid25460.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/front/.gitignore" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -145,7 +126,7 @@
       <workItem from="1747298183231" duration="167000" />
       <workItem from="1747298363610" duration="58000" />
       <workItem from="1747298436755" duration="9000" />
-      <workItem from="1748589126960" duration="157000" />
+      <workItem from="1748589126960" duration="447000" />
     </task>
     <servers />
   </component>
