@@ -7,13 +7,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+// 리뷰 신고 요청 DTO
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReviewReportDTO {
-    
-
 
     private Integer sellerReviewId;
 
@@ -22,6 +21,5 @@ public class ReviewReportDTO {
 
     @NotBlank
     private String reason;
-
 
 }

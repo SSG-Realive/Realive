@@ -1,50 +1,41 @@
-package com.realive.repository.auction; // 실제 BidRepository의 패키지 경로
+package com.realive.repository.auction;
 
-import com.realive.domain.auction.Bid; // 실제 Bid 엔티티 경로
+import com.realive.domain.auction.Bid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query; // Query 어노테이션이 있다면 유지
-import org.springframework.stereotype.Repository; // @Repository 어노테이션을 사용한다면 유지
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
 public interface BidRepository extends JpaRepository<Bid, Integer> {
 
-    // JpaRepository에서 기본 제공하지만 명시적으로 선언 가능
+    // JpaRepository에서 기본 제공하지만, 명시적으로 선언하여 가독성을 높일 수 있음
     Optional<Bid> findById(Integer id);
-
-    // JPQL 쿼리 메소드 (기존 코드)
-    @Query("select b.id, b.auctionId, b.customerId, b.bidPrice, " +
-            "  b.bidTime " +
-            " from Bid b ")
-    Page<Object[]> list1(Pageable pageable);
-
-
-    // --- 아래 메소드들을 추가하거나, BidServiceImpl에서 호출하는 메소드명과 일치하도록 수정 ---
 
     /**
      * 특정 경매의 모든 입찰 내역을 최신 입찰 시간 순으로 페이징하여 조회합니다.
-     * BidServiceImpl의 getBidsForAuction 메소드에서 사용됩니다.
-     * @param auctionId 경매 ID
-     * @param pageable 페이징 및 정렬 정보
-     * @return 입찰 내역 페이지
+     * Pageable 객체에 포함된 정렬 정보는 이 메소드명의 OrderBy절에 의해 덮어쓰여질 수 있습니다.
+     * 명시적인 정렬이 필요 없다면 메소드명에서 OrderBy를 제거하고 Pageable의 Sort를 활용하세요.
+     * @param auctionId 경매 ID.
+     * @param pageable 페이징 정보.
+     * @return 입찰 내역 페이지.
      */
     Page<Bid> findByAuctionIdOrderByBidTimeDesc(Integer auctionId, Pageable pageable);
 
     /**
      * 특정 고객의 모든 입찰 내역을 최신 입찰 시간 순으로 페이징하여 조회합니다.
-     * BidServiceImpl의 getBidsByCustomer 메소드에서 사용됩니다.
-     * @param customerId 고객 ID (Bid 엔티티의 customerId 타입에 맞춤 - 현재 Integer)
-     * @param pageable 페이징 및 정렬 정보
-     * @return 입찰 내역 페이지
+     * Pageable 객체에 포함된 정렬 정보는 이 메소드명의 OrderBy절에 의해 덮어쓰여질 수 있습니다.
+     * 명시적인 정렬이 필요 없다면 메소드명에서 OrderBy를 제거하고 Pageable의 Sort를 활용하세요.
+     * @param customerId 고객 ID (Bid 엔티티의 customerId 타입과 일치 - 현재 Integer).
+     * @param pageable 페이징 정보.
+     * @return 입찰 내역 페이지.
      */
     Page<Bid> findByCustomerIdOrderByBidTimeDesc(Integer customerId, Pageable pageable);
 
-    // 만약 BidServiceImpl에서 `findByAuctionId(Integer, Pageable)`와 `findByCustomerId(Integer, Pageable)`을
-    // 직접 호출하고 있다면 (OrderByBidTimeDesc 없이), 해당 시그니처로 메소드를 정의해야 합니다.
-    // 예: Page<Bid> findByAuctionId(Integer auctionId, Pageable pageable);
-    // 예: Page<Bid> findByCustomerId(Integer customerId, Pageable pageable);
-    // 이 경우, 정렬은 Pageable 객체에 Sort 정보를 담아서 전달해야 합니다.
+    // 만약 Pageable 객체의 Sort 정보를 우선적으로 사용하고 싶다면, 아래와 같이 메소드명에서 OrderBy절을 제거합니다.
+    // 이 경우, 서비스 계층에서 PageRequest.of(page, size, Sort.by(Direction.DESC, "bidTime")) 형태로 Sort를 명시해야 합니다.
+    // Page<Bid> findByAuctionId(Integer auctionId, Pageable pageable);
+    // Page<Bid> findByCustomerId(Integer customerId, Pageable pageable);
 }

@@ -2,7 +2,7 @@ package com.realive.realive;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.realive.controller.admin.StatController;
+import com.realive.controller.admin.AdminStatsController;
 import com.realive.dto.common.ApiResponse;
 import com.realive.dto.logs.AdminDashboardDTO;
 import com.realive.dto.logs.CommissionLogDTO;
@@ -58,7 +58,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SuppressWarnings("deprecation")
-@WebMvcTest(StatController.class)
+@WebMvcTest(AdminStatsController.class)
 class StatControllerTest {
 
     @Autowired

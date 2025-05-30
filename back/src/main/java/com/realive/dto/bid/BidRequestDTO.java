@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+// 입찰 요청 DTO
 @Getter
 @Setter
 @NoArgsConstructor

@@ -1,4 +1,4 @@
-package com.realive.service.admin;
+package com.realive.serviceimpl.admin;
 
 import com.realive.domain.admin.Admin;
 import com.realive.dto.admin.AdminLoginRequestDTO;
@@ -7,6 +7,7 @@ import com.realive.dto.admin.AdminReadDTO;
 import com.realive.exception.UnauthorizedException;
 import com.realive.repository.admin.AdminRepository;
 import com.realive.security.JwtUtil;
+import com.realive.service.admin.AdminService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

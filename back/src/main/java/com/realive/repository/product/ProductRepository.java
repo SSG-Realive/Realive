@@ -26,5 +26,6 @@ public interface ProductRepository extends JpaRepository<Product, Long>, Product
     @Query("SELECT COUNT(p) FROM Product p WHERE p.createdAt >= :startOfDay AND p.createdAt < :endOfDay")
     long countByCreatedAtBetween(@Param("startOfDay") LocalDateTime startOfDay, @Param("endOfDay") LocalDateTime endOfDay);
 
+    List<Product> findAllByIdIn(List<Long> ids); // 여러 ID로 조회
 
 }

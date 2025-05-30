@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+// 신고된 리뷰 조회
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -23,5 +24,4 @@ public class ReviewReportViewDTO{
 
     private String originalReviewContent;
 
-   
 }
