@@ -12,6 +12,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Repository
 // JpaSpecificationExecutor<SellerReview>를 상속받도록 추가합니다.
 public interface SellerReviewRepository extends JpaRepository<SellerReview, Long>, JpaSpecificationExecutor<SellerReview> {
@@ -72,7 +74,18 @@ public interface SellerReviewRepository extends JpaRepository<SellerReview, Long
     @Query("DELETE FROM SellerReview sr WHERE sr.seller.id = :sellerId")
     int deleteBySellerId(@Param("sellerId") Long sellerId);
 
-    // JpaSpecificationExecutor를 상속받았으므로,
-    // 별도의 findAll(Specification<SellerReview> spec, Pageable pageable) 메소드 선언은 필요 없습니다.
-    // Spring Data JPA가 자동으로 해당 메소드를 제공합니다.
+    // === 사용자 비활성화 시 모든 관련 리뷰를 가져오기 위한 non-paging 조회 메소드 추가 ===
+    /**
+     * 특정 고객 ID(작성자)가 작성한 모든 리뷰 목록을 조회합니다 (페이징 없음).
+     * @param customerId 고객 ID
+     * @return 해당 고객이 작성한 모든 리뷰 리스트
+     */
+    List<SellerReview> findAllByCustomerId(Long customerId); // SellerReview 엔티티의 'customer' 필드 기준
+
+    /**
+     * 특정 판매자 ID가 받은 모든 리뷰 목록을 조회합니다 (페이징 없음).
+     * @param sellerId 판매자 ID
+     * @return 해당 판매자가 받은 모든 리뷰 리스트
+     */
+    List<SellerReview> findAllBySellerId(Long sellerId); // SellerReview 엔티티의 'seller' 필드 기준
 }

@@ -70,6 +70,18 @@ public class SellerReview extends BaseTimeEntity {
     @Column(nullable = false, length = 1000)
     private String content;
 
-    @Column(name = "is_hidden")
-    private Boolean isHidden;
+    /**
+     * 리뷰의 숨김/공개 상태입니다. (true: 숨김, false: 공개)
+     * - @Column(name = "is_hidden", nullable = false):
+     *   DB의 'is_hidden' 컬럼과 매핑되며, NOT NULL 제약이 추가됩니다.
+     *   DB 스키마에도 'DEFAULT false' 설정을 권장합니다.
+     * - @Builder.Default:
+     *   Lombok @Builder 사용 시, 이 필드 값을 명시적으로 설정하지 않으면
+     *   아래 초기값(Boolean.FALSE)이 기본값으로 사용되도록 보장합니다.
+     *   이것이 없으면, 빌더 사용 시 isHidden 필드가 null이 되어
+     *   @Column(nullable = false) 제약과 충돌할 수 있습니다.
+     */
+    @Column(name = "is_hidden", nullable = false) // DB 컬럼명 및 NOT NULL 제약
+    @Builder.Default // Lombok 빌더 사용 시 기본값 적용
+    private Boolean isHidden = Boolean.FALSE;   // Java 객체 기본값 false (공개)
 }

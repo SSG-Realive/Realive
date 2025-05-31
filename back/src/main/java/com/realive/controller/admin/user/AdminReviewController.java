@@ -25,6 +25,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
+/**
+ * 관리자의 리뷰 및 신고 관리 기능을 위한 REST 컨트롤러입니다.
+ * (Javadoc 주석은 이전 최종본과 동일하게 유지)
+ */
 @Slf4j
 @RestController
 @RequestMapping("/api/admin")
@@ -34,11 +38,17 @@ public class AdminReviewController {
 
     private final AdminReviewService adminReviewService;
 
+    // --- getReportedReviews, getReportDetail, processReviewReportAction, getSellerReviewDetail, getAllSellerReviews 메소드는 이전 최종본과 동일 ---
+    // (이 메소드들은 서비스 계층에서 반환하는 DTO에 상품 정보가 추가되었더라도, API 스펙 자체는 변경되지 않음)
+
+    @Operation(summary = "신고된 리뷰 목록 조회"/* ... */)
     @GetMapping("/reviews-reports/reports")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<Page<AdminReviewReportListItemDTO>>> getReportedReviews( // 제네릭 타입 명시
-                                                                                               @RequestParam ReviewReportStatus status,
-                                                                                               @PageableDefault(size = 10, sort = "createdAt,desc") Pageable pageable) {
+    public ResponseEntity<ApiResponse<Page<AdminReviewReportListItemDTO>>> getReportedReviews(
+            @Parameter(description = "조회할 리뷰 신고의 처리 상태 (예: PENDING, RESOLVED_KEPT)")
+            @RequestParam ReviewReportStatus status,
+            @PageableDefault(size = 10, sort = "createdAt,desc") Pageable pageable) {
+        // ... (이전 최종본과 동일)
         log.info("GET /api/admin/reviews-reports/reports - status: {}, page: {}, size: {}, sort: {}",
                 status, pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort());
         try {
@@ -51,12 +61,15 @@ public class AdminReviewController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), "신고 목록 조회 중 서버 오류가 발생했습니다."));
         }
-    } // getReportedReviews 닫는 중괄호
+    }
 
+    @Operation(summary = "리뷰 신고 상세 정보 조회"/* ... */)
     @GetMapping("/reviews-reports/reports/{reportId}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<AdminReviewReportDetailDTO>> getReportDetail( // 제네릭 타입 명시
-                                                                                    @PathVariable Integer reportId) {
+    public ResponseEntity<ApiResponse<AdminReviewReportDetailDTO>> getReportDetail(
+            @Parameter(description = "조회할 리뷰 신고의 ID")
+            @PathVariable Integer reportId) {
+        // ... (이전 최종본과 동일)
         log.info("GET /api/admin/reviews-reports/reports/{}", reportId);
         try {
             AdminReviewReportDetailDTO reportDetail = adminReviewService.getReportDetail(reportId);
@@ -68,32 +81,40 @@ public class AdminReviewController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), "신고 상세 정보 조회 중 서버 오류가 발생했습니다."));
         }
-    } // getReportDetail 닫는 중괄호
+    }
 
+    @Operation(summary = "리뷰 신고 조치 실행"/* ... */)
     @PutMapping("/reviews-reports/reports/{reportId}/action")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<String>> processReviewReportAction( // 제네릭 타입 명시
-                                                                          @PathVariable Integer reportId,
-                                                                          @Valid @RequestBody TakeActionOnReportRequestDTO actionRequest) {
+    public ResponseEntity<ApiResponse<String>> processReviewReportAction(
+            @Parameter(description = "조치를 취할 리뷰 신고의 ID")
+            @PathVariable Integer reportId,
+            @Parameter(description = "새로운 신고 처리 상태 정보", required = true,
+                    content = @Content(schema = @Schema(implementation = TakeActionOnReportRequestDTO.class)))
+            @Valid @RequestBody TakeActionOnReportRequestDTO actionRequest) {
+        // ... (이전 최종본과 동일)
         log.info("PUT /api/admin/reviews-reports/reports/{}/action - New status: {}", reportId, actionRequest.getNewStatus());
         try {
-            adminReviewService.processReportAction(reportId, actionRequest); // 이전 단계에서 메소드명 processReportAction으로 통일
+            adminReviewService.processReportAction(reportId, actionRequest);
             return ResponseEntity.ok(ApiResponse.success("신고 ID " + reportId + "의 상태가 성공적으로 '" + actionRequest.getNewStatus() + "' (으)로 업데이트되었습니다."));
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error(HttpStatus.NOT_FOUND.value(), e.getMessage()));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(ApiResponse.error(HttpStatus.BAD_REQUEST.value(), "잘못된 요청 데이터입니다: " + e.getMessage()));
-        } catch (Exception e) { // 사용자 첨부 파일에서 catch 블록 중괄호 문제 수정
+        } catch (Exception e) {
             log.error("Error processing action for reportId {}: {}", reportId, e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), "신고 조치 중 서버 오류가 발생했습니다."));
         }
-    } // processReviewReportAction 닫는 중괄호
+    }
 
+    @Operation(summary = "판매자 리뷰 상세 정보 조회"/* ... */)
     @GetMapping("/seller-reviews/{reviewId}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<AdminSellerReviewDetailDTO>> getSellerReviewDetail( // 제네릭 타입 명시
-                                                                                          @PathVariable Long reviewId) {
+    public ResponseEntity<ApiResponse<AdminSellerReviewDetailDTO>> getSellerReviewDetail(
+            @Parameter(description = "조회할 판매자 리뷰의 ID")
+            @PathVariable Long reviewId) {
+        // ... (이전 최종본과 동일)
         log.info("GET /api/admin/seller-reviews/{}", reviewId);
         try {
             AdminSellerReviewDetailDTO reviewDetail = adminReviewService.getSellerReviewDetail(reviewId);
@@ -105,18 +126,17 @@ public class AdminReviewController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), "리뷰 상세 정보 조회 중 서버 오류가 발생했습니다."));
         }
-    } // getSellerReviewDetail 닫는 중괄호
+    }
 
-    // getAllSellerReviews 엔드포인트 추가 (사용자 파일에 누락되어 있었음)
-    @Operation(summary = "전체 판매자 리뷰 목록 조회 (필터링 가능)",
-            description = "모든 판매자 리뷰 목록을 페이징하여 조회합니다. 상품명, 고객명, 또는 판매자명으로 필터링할 수 있습니다.")
+    @Operation(summary = "전체 판매자 리뷰 목록 조회 (필터링 가능)"/* ... */)
     @GetMapping("/seller-reviews")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Page<AdminSellerReviewListItemDTO>>> getAllSellerReviews(
             @PageableDefault(size = 10, sort = "createdAt,desc") Pageable pageable,
-            @RequestParam(required = false) Optional<String> productFilter,
-            @RequestParam(required = false) Optional<String> customerFilter,
-            @RequestParam(required = false) Optional<String> sellerFilter) {
+            @Parameter(description = "상품명 필터 (선택 사항)") @RequestParam(required = false) Optional<String> productFilter,
+            @Parameter(description = "고객명 필터 (선택 사항)") @RequestParam(required = false) Optional<String> customerFilter,
+            @Parameter(description = "판매자명 필터 (선택 사항)") @RequestParam(required = false) Optional<String> sellerFilter) {
+        // ... (이전 최종본과 동일)
         log.info("GET /api/admin/seller-reviews - Page: {}, Size: {}, Sort: {}, ProductFilter: {}, CustomerFilter: {}, SellerFilter: {}",
                 pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort(),
                 productFilter.orElse("N/A"), customerFilter.orElse("N/A"), sellerFilter.orElse("N/A"));
@@ -128,41 +148,53 @@ public class AdminReviewController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), "리뷰 목록 조회 중 서버 오류가 발생했습니다."));
         }
-    } // getAllSellerReviews 닫는 중괄호
+    }
 
-    // === "리뷰 삭제 API"를 위한 엔드포인트 추가 ===
-    @Operation(summary = "판매자 리뷰 삭제",
-            description = "관리자가 특정 판매자 리뷰를 시스템에서 삭제합니다.")
+    @Operation(summary = "판매자 리뷰 숨김/공개 상태 변경"/* ... */)
     @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "리뷰 삭제 성공",
+            // ... (Swagger 응답 정의는 이전 최종본과 동일)
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "리뷰 상태 변경 성공",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = AdminReviewController.StringApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "잘못된 요청 값 (예: isHidden 필드 누락 또는 유효하지 않은 값)",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiResponse.class))),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "삭제할 리뷰를 찾을 수 없음"),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "접근 권한 없음"),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "500", description = "서버 내부 오류")
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "해당 ID의 리뷰를 찾을 수 없음",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "접근 권한 없음 (관리자 권한 필요)",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "500", description = "서버 내부 오류",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiResponse.class)))
     })
-    @DeleteMapping("/seller-reviews/{reviewId}")
+    @PutMapping("/seller-reviews/{reviewId}/visibility")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<String>> deleteSellerReview(
-            @Parameter(description = "삭제할 판매자 리뷰의 ID", required = true, example = "1")
-            @PathVariable Long reviewId) {
-        log.info("DELETE /api/admin/seller-reviews/{}", reviewId);
+    public ResponseEntity<ApiResponse<String>> updateSellerReviewVisibility(
+            @Parameter(description = "상태를 변경할 판매자 리뷰의 ID", required = true, example = "1")
+            @PathVariable Long reviewId,
+            @Parameter(description = "새로운 숨김 상태 정보 (JSON 형식: {\"isHidden\": true} 또는 {\"isHidden\": false})", required = true,
+                    content = @Content(schema = @Schema(implementation = UpdateReviewVisibilityRequestDTO.class)))
+            @Valid @RequestBody UpdateReviewVisibilityRequestDTO requestDTO) {
+        // ... (이전 최종본과 동일)
+        log.info("PUT /api/admin/seller-reviews/{}/visibility - New isHidden status: {}", reviewId, requestDTO.getIsHidden());
         try {
-            adminReviewService.deleteSellerReview(reviewId);
-            return ResponseEntity.ok(ApiResponse.success("리뷰 ID " + reviewId + "이(가) 성공적으로 삭제되었습니다."));
+            adminReviewService.updateSellerReviewVisibility(reviewId, requestDTO.getIsHidden());
+            String message = String.format("리뷰 ID %d의 숨김 상태가 '%s'(으)로 성공적으로 업데이트되었습니다.", reviewId, requestDTO.getIsHidden() ? "숨김" : "공개");
+            return ResponseEntity.ok(ApiResponse.success(message));
         } catch (EntityNotFoundException e) {
-            log.warn("SellerReview not found for deletion with ID: {}. Error: {}", reviewId, e.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(ApiResponse.error(HttpStatus.NOT_FOUND.value(), e.getMessage()));
+            log.warn("SellerReview not found for visibility update with ID: {}. Error: {}", reviewId, e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error(HttpStatus.NOT_FOUND.value(), e.getMessage()));
+        } catch (IllegalArgumentException e) {
+            log.warn("Invalid argument for updating review visibility for reviewId {}. Error: {}", reviewId, e.getMessage());
+            return ResponseEntity.badRequest().body(ApiResponse.error(HttpStatus.BAD_REQUEST.value(), "잘못된 요청입니다: " + e.getMessage()));
         } catch (Exception e) {
-            log.error("Error deleting seller review with ID {}: {}", reviewId, e.getMessage(), e);
+            log.error("Error updating visibility for seller review ID {}: {}", reviewId, e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), "리뷰 삭제 중 서버 오류가 발생했습니다."));
+                    .body(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), "리뷰 상태 변경 중 서버 오류가 발생했습니다."));
         }
-    } // deleteSellerReview 닫는 중괄호
+    }
 
-    // --- Swagger 응답 스키마 정의를 위한 내부 정적 클래스들 ---
+    // --- Swagger 응답 스키마 정의를 위한 내부 정적 클래스들 (선택적) ---
     private static class AdminReviewReportListPageApiResponse extends ApiResponse<Page<AdminReviewReportListItemDTO>> {}
     private static class AdminSellerReviewDetailApiResponse extends ApiResponse<AdminSellerReviewDetailDTO> {}
     private static class AdminReviewReportDetailApiResponse extends ApiResponse<AdminReviewReportDetailDTO> {}
-    private static class AdminSellerReviewListPageApiResponse extends ApiResponse<Page<AdminSellerReviewListItemDTO>> {} // getAllSellerReviews 구현 시 필요
+    private static class AdminSellerReviewListPageApiResponse extends ApiResponse<Page<AdminSellerReviewListItemDTO>> {}
+    private static class StringApiResponse extends ApiResponse<String> {}
 }
