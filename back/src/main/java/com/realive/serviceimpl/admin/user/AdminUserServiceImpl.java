@@ -1,20 +1,21 @@
 package com.realive.serviceimpl.admin.user;
 
-// --- 필요한 import 문들 (이전 답변과 유사) ---
+
 import com.realive.domain.customer.Customer;
 import com.realive.domain.seller.Seller;
 import com.realive.domain.order.Order;
 import com.realive.domain.common.enums.OrderStatus;
-import com.realive.domain.common.enums.ReviewReportStatus; // ReviewReportStatus Enum
-import com.realive.domain.review.ReviewReport; // ReviewReport 엔티티
+import com.realive.domain.common.enums.ReviewReportStatus;
+import com.realive.domain.review.ReviewReport;
 import com.realive.domain.seller.SellerReview;
+// import com.realive.domain.product.Product; // 판매자 상품 처리 로직 추가 시 필요
 
 import com.realive.repository.customer.CustomerRepository;
 import com.realive.repository.seller.SellerRepository;
 import com.realive.repository.order.OrderRepository;
 import com.realive.repository.review.ReviewReportRepository;
 import com.realive.repository.review.SellerReviewRepository;
-// import com.realive.repository.product.ProductRepository; // 필요시
+// import com.realive.repository.product.ProductRepository; // 판매자 상품 처리 로직 추가 시 필요
 
 import com.realive.dto.admin.user.CustomerDetailDTO;
 import com.realive.dto.admin.user.SellerDetailDTO;
@@ -48,11 +49,8 @@ public class AdminUserServiceImpl implements AdminUserService {
     private final OrderRepository orderRepository;
     private final SellerReviewRepository sellerReviewRepository;
     private final ReviewReportRepository reviewReportRepository;
-    // private final ProductRepository productRepository; // 필요시 주입
+    // private final ProductRepository productRepository; // 판매자 상품 처리 로직 추가 시 필요
 
-    // --- getAllUsers, updateUserStatus, getCustomerDetails, getSellerDetails ---
-    // --- 및 DTO 변환 메소드들은 이전 최종본 답변의 코드와 동일하게 유지합니다. ---
-    // --- (코드 길이상 생략) ---
     @Override
     @Transactional(readOnly = true)
     public Page<UserManagementListItemDTO> getAllUsers(
@@ -60,15 +58,17 @@ public class AdminUserServiceImpl implements AdminUserService {
             Optional<String> userTypeFilter,
             Optional<String> searchTerm,
             Optional<Boolean> activeFilter) {
-        // 이전 최종본 답변의 코드 내용 (사용자님이 첨부해주신 [파일 1] 기반)
+        // 사용자님이 이전에 보여주신 코드의 로직을 유지합니다.
+        // (이 부분은 Repository 레벨에서 필터링/페이징하는 것이 성능상 더 효율적일 수 있습니다.)
         String type = userTypeFilter.orElse("").toUpperCase();
         String keyword = searchTerm.orElse("").toLowerCase().trim();
         List<UserManagementListItemDTO> finalContentList = new ArrayList<>();
         long totalMatchingElements = 0;
 
         if ("CUSTOMER".equals(type) || type.isEmpty()) {
-            List<Customer> customers = customerRepository.findAll();
+            List<Customer> customers = customerRepository.findAll(); // 실제로는 필터링된 결과를 가져오는 것이 좋음
             List<UserManagementListItemDTO> customerDTOs = customers.stream()
+                    // === 수정된 라인 (람다식 사용) ===
                     .filter(customer -> activeFilter.map(active -> customer.getIsActive() == active).orElse(true))
                     .filter(customer -> keyword.isEmpty() ||
                             (customer.getName() != null && customer.getName().toLowerCase().contains(keyword)) ||
@@ -82,9 +82,11 @@ public class AdminUserServiceImpl implements AdminUserService {
                 finalContentList.addAll(customerDTOs);
             }
         }
+
         if ("SELLER".equals(type) || type.isEmpty()) {
-            List<Seller> sellers = sellerRepository.findAll();
+            List<Seller> sellers = sellerRepository.findAll(); // 실제로는 필터링된 결과를 가져오는 것이 좋음
             List<UserManagementListItemDTO> sellerDTOs = sellers.stream()
+                    // === 수정된 라인 (람다식 사용) ===
                     .filter(seller -> activeFilter.map(active -> seller.isActive() == active).orElse(true))
                     .filter(seller -> keyword.isEmpty() ||
                             (seller.getName() != null && seller.getName().toLowerCase().contains(keyword)) ||
@@ -98,7 +100,8 @@ public class AdminUserServiceImpl implements AdminUserService {
                 finalContentList.addAll(sellerDTOs);
             }
         }
-        if (type.isEmpty()) {
+
+        if (type.isEmpty()) { // CUSTOMER 와 SELLER 모두 조회 시, 정렬 및 페이징
             finalContentList.sort(Comparator.comparing(UserManagementListItemDTO::getCreatedAt, Comparator.nullsLast(LocalDateTime::compareTo)).reversed());
             totalMatchingElements = finalContentList.size();
             int start = (int) pageable.getOffset();
@@ -112,7 +115,7 @@ public class AdminUserServiceImpl implements AdminUserService {
     @Transactional
     public boolean updateUserStatus(Long userId, String userType, boolean newIsActive)
             throws EntityNotFoundException, IllegalArgumentException {
-        // 이전 최종본 답변의 코드 내용
+        // 사용자님이 첨부해주신 [파일 1]의 로직을 유지합니다.
         if ("CUSTOMER".equalsIgnoreCase(userType)) {
             Customer customer = customerRepository.findById(userId)
                     .orElseThrow(() -> new EntityNotFoundException("Customer not found with id: " + userId));
@@ -133,10 +136,9 @@ public class AdminUserServiceImpl implements AdminUserService {
         }
     }
 
-
     /**
      * 사용자(고객 또는 판매자) 계정을 비활성화하고 관련 데이터를 처리합니다.
-     * (deleteUser 메소드의 기능을 "비활성화"로 변경)
+     * 인터페이스의 deleteUser 메소드 시그니처를 유지하며, 내부적으로 비활성화 로직을 수행합니다.
      */
     @Override
     @Transactional
@@ -148,12 +150,12 @@ public class AdminUserServiceImpl implements AdminUserService {
             Customer customer = customerRepository.findById(userId)
                     .orElseThrow(() -> new EntityNotFoundException("Customer not found with id: " + userId + " for deactivation."));
 
-            // 1. Customer 엔티티 비활성화
+            // 1. Customer 엔티티 비활성화 (isActive = false)
             customer.setIsActive(false);
             customerRepository.save(customer);
             log.info("Customer (ID: {}) has been set to inactive.", customer.getId());
 
-            // 2. 해당 고객의 주문(Order) 상태 변경
+            // 2. 해당 고객의 주문(Order)들의 상태를 'ORDER_CLOSED_BY_USER_DELETION'으로 변경
             List<Order> customerOrders = orderRepository.findAllByCustomerId(customer.getId());
             if (customerOrders != null && !customerOrders.isEmpty()) {
                 log.info("Updating status to ORDER_CLOSED_BY_USER_DELETION for {} orders of customer ID: {}",
@@ -164,7 +166,7 @@ public class AdminUserServiceImpl implements AdminUserService {
                 orderRepository.saveAll(customerOrders);
             }
 
-            // 3. 해당 고객이 작성한 판매자 리뷰(SellerReview) 숨김 처리
+            // 3. 해당 고객이 작성한 판매자 리뷰(SellerReview) 숨김 처리 (isHidden = true)
             List<SellerReview> customerReviews = sellerReviewRepository.findAllByCustomerId(customer.getId());
             if (customerReviews != null && !customerReviews.isEmpty()) {
                 log.info("Hiding {} seller reviews written by customer ID: {}", customerReviews.size(), customer.getId());
@@ -175,16 +177,12 @@ public class AdminUserServiceImpl implements AdminUserService {
             }
 
             // 4. 해당 고객이 신고한 리뷰 신고(ReviewReport) 상태 변경
-            // ReviewReport 엔티티의 reporterId 타입과 Customer ID 타입 일치 또는 변환 필요
-            // ReviewReport.reporterId가 Integer라고 가정
             if (customer.getId() != null) {
                 Integer reporterIdAsInt = null;
                 try {
-                    // Long to Integer 변환 시 데이터 손실 가능성 주의
-                    reporterIdAsInt = customer.getId().intValue();
+                    reporterIdAsInt = Math.toIntExact(customer.getId());
                 } catch (ArithmeticException e) {
-                    log.warn("Customer ID {} is too large to be converted to Integer for reporterId lookup.", customer.getId(), e);
-                    // 적절한 예외 처리 또는 로깅. 여기서는 null로 두고 아래에서 null 체크.
+                    log.warn("Customer ID {} is too large to be converted to Integer for reporterId lookup. Skipping ReviewReport update for this customer.", customer.getId(), e);
                 }
 
                 if (reporterIdAsInt != null) {
@@ -193,7 +191,7 @@ public class AdminUserServiceImpl implements AdminUserService {
                         log.info("Updating status to REPORTER_ACCOUNT_INACTIVE for {} review reports by customer ID: {} (reporterId: {})",
                                 customerReports.size(), customer.getId(), reporterIdAsInt);
                         for (ReviewReport report : customerReports) {
-                            report.updateStatus(ReviewReportStatus.REPORTER_ACCOUNT_INACTIVE); // <<< updateStatus 사용
+                            report.updateStatus(ReviewReportStatus.REPORTER_ACCOUNT_INACTIVE); // ReviewReport 엔티티의 updateStatus() 사용
                         }
                         reviewReportRepository.saveAll(customerReports);
                     }
@@ -204,12 +202,12 @@ public class AdminUserServiceImpl implements AdminUserService {
             Seller seller = sellerRepository.findById(userId)
                     .orElseThrow(() -> new EntityNotFoundException("Seller not found with id: " + userId + " for deactivation."));
 
-            // 1. Seller 엔티티 비활성화
+            // 1. Seller 엔티티 비활성화 (isActive = false)
             seller.setActive(false);
             sellerRepository.save(seller);
             log.info("Seller (ID: {}) has been set to inactive.", seller.getId());
 
-            // 2. 해당 판매자가 받은 판매자 리뷰(SellerReview) 숨김 처리
+            // 2. 해당 판매자가 받은 판매자 리뷰(SellerReview) 숨김 처리 (isHidden = true)
             List<SellerReview> sellerReceivedReviews = sellerReviewRepository.findAllBySellerId(seller.getId());
             if (sellerReceivedReviews != null && !sellerReceivedReviews.isEmpty()) {
                 log.info("Hiding {} seller reviews received by seller ID: {}", sellerReceivedReviews.size(), seller.getId());
@@ -219,9 +217,20 @@ public class AdminUserServiceImpl implements AdminUserService {
                 sellerReviewRepository.saveAll(sellerReceivedReviews);
             }
 
-            // 3. 해당 판매자의 상품(Product) 판매 중지 처리 (선택적)
-            log.info("Products for seller ID: {} should be handled (e.g., set to inactive).", seller.getId());
-            // 예: productRepository.deactivateProductsBySellerId(seller.getId());
+            // 3. 해당 판매자의 상품(Product) 판매 중지 처리 (선택적 로직)
+            log.info("Products for seller ID: {} should be handled (e.g., set to inactive). This part is optional and needs ProductRepository.", seller.getId());
+            /*
+            // 예시 (ProductRepository 주입 및 Product 엔티티에 setActive(boolean) 필요):
+            // private final ProductRepository productRepository;
+            List<Product> sellerProducts = productRepository.findBySellerId(seller.getId());
+            if (sellerProducts != null && !sellerProducts.isEmpty()) {
+                log.info("Deactivating {} products for seller ID: {}", sellerProducts.size(), seller.getId());
+                for (Product product : sellerProducts) {
+                    product.setActive(false);
+                }
+                productRepository.saveAll(sellerProducts);
+            }
+            */
 
         } else {
             log.warn("Invalid userType provided for deactivation: {}", userType);
@@ -230,11 +239,12 @@ public class AdminUserServiceImpl implements AdminUserService {
         log.info("Successfully processed user deactivation for {} (ID: {})", userType, userId);
     }
 
+
     @Override
     @Transactional(readOnly = true)
     public CustomerDetailDTO getCustomerDetails(Long customerId)
             throws EntityNotFoundException {
-        // 이전 최종본 답변의 코드 내용 (사용자님이 첨부해주신 [파일 1] 기반)
+        // 사용자님이 첨부해주신 [파일 1]의 로직을 유지합니다.
         Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new EntityNotFoundException("Customer not found with id: " + customerId));
         return convertToCustomerDetailDTO(customer);
@@ -244,13 +254,13 @@ public class AdminUserServiceImpl implements AdminUserService {
     @Transactional(readOnly = true)
     public SellerDetailDTO getSellerDetails(Long sellerId)
             throws EntityNotFoundException {
-        // 이전 최종본 답변의 코드 내용 (사용자님이 첨부해주신 [파일 1] 기반)
+        // 사용자님이 첨부해주신 [파일 1]의 로직을 유지합니다.
         Seller seller = sellerRepository.findById(sellerId)
                 .orElseThrow(() -> new EntityNotFoundException("Seller not found with id: " + sellerId));
         return convertToSellerDetailDTO(seller);
     }
 
-    // --- DTO 변환 메소드들 (이전 최종본 답변의 코드와 동일) ---
+    // --- DTO 변환 메소드들 (사용자님이 첨부해주신 [파일 1]의 로직을 유지합니다.) ---
     private UserManagementListItemDTO convertToUserManagementDTO(Customer customer) {
         return UserManagementListItemDTO.builder()
                 .id(customer.getId())

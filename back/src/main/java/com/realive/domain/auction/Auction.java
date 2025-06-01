@@ -22,6 +22,9 @@ public class Auction extends BaseTimeEntity {
     @Column(name = "product_id")
     private Integer productId;
 
+    @Column(name = "admin_product_id")
+    private  Integer adminproductId;
+
     @Column(name = "start_price")
     private Integer startPrice;
 
