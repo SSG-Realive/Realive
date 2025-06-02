@@ -121,6 +121,12 @@ public class JwtUtil {
     public Long getUserIdFromToken(String token) {
         return getClaims(token).get("id", Long.class);
     }
+
+    // 토큰에서 admin id 추출
+    public Long getAdminIdFromToken(String token) {
+        return getClaims(token).get("id", Long.class);
+    }
+
     // 토큰에서 email 추출
     public String getEmailFromToken(String token) {
         return getClaims(token).get("email", String.class);

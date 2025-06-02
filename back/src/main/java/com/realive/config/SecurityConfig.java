@@ -1,20 +1,21 @@
 package com.realive.config;
 
-
+import com.realive.security.AdminJwtAuthenticationFilter;
+import com.realive.security.SellerJwtAuthenticationFilter;
+import com.realive.security.customer.CustomerJwtAuthenticationFilter;
+import com.realive.security.customer.CustomLoginSuccessHandler;
+import com.realive.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.List;
 
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -25,43 +26,50 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import com.realive.security.customer.CustomLoginSuccessHandler;
-import com.realive.security.customer.CustomerJwtAuthenticationFilter;
+import java.util.List;
 
-
-// @EnableJpaAuditing //JPA Auditing 을 활성화. createDate, modifiedDate 자동으로 처리 
-@Configuration
+@EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
-@Slf4j
+@Configuration
 @RequiredArgsConstructor
-@Order(2)
+@Slf4j
 public class SecurityConfig {
 
-    private final CustomerJwtAuthenticationFilter jwtAuthenticationFilter;
+    private final CustomerJwtAuthenticationFilter customerJwtAuthenticationFilter;
+    private final SellerJwtAuthenticationFilter sellerJwtAuthenticationFilter;
     private final CustomLoginSuccessHandler customLoginSuccessHandler;
-    //private final CustomOAuth2UserService customOAuth2UserService;
-
+    private final JwtUtil jwtUtil;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        log.info("------------------Security Config-----------------------");
+        log.info("✅ 통합 SecurityConfig 적용");
+
+        // AdminJwtAuthenticationFilter 직접 생성
+        AdminJwtAuthenticationFilter adminJwtAuthenticationFilter = new AdminJwtAuthenticationFilter(jwtUtil);
 
         http
-            .securityMatcher("/api/customer/**", "/api/public/**")
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .csrf(csrf -> csrf.disable())
             .formLogin(form -> form.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
             .authorizeHttpRequests(auth -> auth
+                // 관리자 엔드포인트
+                .requestMatchers("/api/admin/login").permitAll()
+                .requestMatchers("/api/admin/**").authenticated()
+                // 판매자 엔드포인트
+                .requestMatchers("/api/seller/login").permitAll()
+                .requestMatchers("/api/seller/**").authenticated()
+                // 고객 엔드포인트
                 .requestMatchers("/api/public/**").permitAll()
                 .requestMatchers("/api/customer/**").authenticated()
-                //.requestMatchers("/oauth2/**").permitAll()
-                
-                
             )
             .oauth2Login(config -> config
-                .successHandler(customLoginSuccessHandler));  
+                .successHandler(customLoginSuccessHandler));
+
+        // 각 사용자 유형별 필터 추가
+        http.addFilterBefore(adminJwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(sellerJwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(customerJwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -77,25 +85,17 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    //static 자원들 로그인 체크를 막는 설정 
-    //servlet 들어간거로 import 주의!
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
+        log.info("✅ 정적 리소스 보안 설정 적용");
+        return (web) -> web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
+    }
 
-    	log.info("------------web configure-------------------");
-
-        //PathRequest impot 조심 -> servlet으로  
-    	return (web) -> web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
-
-	}
-
-    //CORS 설정(6버전)
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
-
         CorsConfiguration corsConfiguration = new CorsConfiguration();
 
-        corsConfiguration.setAllowedOriginPatterns(List.of("*")); // 어디서든 허락
+        corsConfiguration.setAllowedOriginPatterns(List.of("*"));
         corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS"));
         corsConfiguration.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
         corsConfiguration.setAllowCredentials(true);
@@ -105,7 +105,4 @@ public class SecurityConfig {
 
         return source;
     }
-
-
-
 }
