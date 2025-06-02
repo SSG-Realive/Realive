@@ -41,7 +41,7 @@ public class SellerQnaServiceImpl implements SellerQnaService {
     @Override
     @Transactional
     public Page<SellerQnaResponseDTO> getQnaListBySellerId(Long sellerId, Pageable pageable) {
-        return sellerQnaRepository.findBySellerIdAndIsActiveTrue(sellerId, pageable)
+        return sellerQnaRepository.findBySellerIdAndIsActiveTrueAndDeletedFalse(sellerId, pageable)
                 .map(q -> SellerQnaResponseDTO.builder()
                         .id(q.getId())
                         .title(q.getTitle())
