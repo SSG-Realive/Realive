@@ -16,6 +16,7 @@ import com.realive.dto.seller.SellerLoginResponseDTO;
 import com.realive.dto.seller.SellerResponseDTO;
 import com.realive.dto.seller.SellerSignupDTO;
 import com.realive.dto.seller.SellerUpdateDTO;
+import com.realive.event.FileUploadEvnetPublisher;
 import com.realive.repository.seller.SellerDocumentRepository;
 import com.realive.repository.seller.SellerRepository;
 import com.realive.security.JwtUtil;
@@ -25,8 +26,9 @@ import com.realive.service.seller.SellerService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
-@Log4j2
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class SellerServiceImpl implements SellerService{
@@ -36,6 +38,7 @@ public class SellerServiceImpl implements SellerService{
     private final JwtUtil jwtUtil;
     private final SellerDocumentRepository sellerDocumentRepository;
     private final FileUploadService fileUploadService;
+    private final FileUploadEvnetPublisher fileUploadEvnetPublisher;
 
      @Override
     public Seller getByEmail(String email){
@@ -93,7 +96,8 @@ public class SellerServiceImpl implements SellerService{
     // 회원가입
     @Override
     @Transactional
-    public Seller registerSeller(SellerSignupDTO dto){
+    public Seller registerSeller(SellerSignupDTO dto, MultipartFile businessLicense,
+        MultipartFile bankAccountCopy){
         
         
         //이메일 존재 유무 검증.
@@ -116,11 +120,15 @@ public class SellerServiceImpl implements SellerService{
                 .password(encodedPassword)
                 .businessNumber(dto.getBusinessNumber())
                 .isApproved(false)
+                .isActive(true)
                 .build();
         //dto 받은거 저장.
-        return sellerRepository.save(seller);
+        Seller savedSeller = sellerRepository.save(seller);
 
-        
+        // 4) “트랜잭션 내부”에서 이벤트 퍼블리시 → 커밋 직후 리스너( AFTER_COMMIT ) 실행
+        fileUploadEvnetPublisher.publish(savedSeller, businessLicense, bankAccountCopy);
+
+        return savedSeller;
     
     }   
     //회원수정

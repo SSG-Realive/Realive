@@ -57,7 +57,8 @@ public interface SellerService {
 
      통장사본과 사업자 등록증은 이벤트로 처리
      */
-    Seller registerSeller(SellerSignupDTO dto);
+    Seller registerSeller(SellerSignupDTO dto, MultipartFile businessLicense,
+        MultipartFile bankAccountCopy);
 
     /**
 
