@@ -62,7 +62,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/customer/**").authenticated()
             )
             .oauth2Login(config -> config
-                .successHandler(customLoginSuccessHandler));
+                .successHandler(customLoginSuccessHandler));  
 
         // 각 사용자 유형별 필터 추가 (순서 중요)
         http.addFilterBefore(adminJwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
@@ -86,8 +86,8 @@ public class SecurityConfig {
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         log.info("✅ 정적 리소스 보안 설정 적용");
-        return (web) -> web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
-    }
+    	return (web) -> web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
+	}
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
