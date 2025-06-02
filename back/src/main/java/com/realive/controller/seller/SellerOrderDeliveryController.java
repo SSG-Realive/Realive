@@ -20,7 +20,6 @@ public class SellerOrderDeliveryController {
 
     private final OrderDeliveryService orderDeliveryService;
 
-   
     // PATCH /api/seller/orders/{orderId}/delivery
     @PatchMapping("/{orderId}/delivery")
     public ResponseEntity<Void> updateDeliveryStatus(
