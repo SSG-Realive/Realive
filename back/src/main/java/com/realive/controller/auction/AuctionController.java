@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Sort;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -82,7 +83,7 @@ public class AuctionController {
      */
     @GetMapping
     public ResponseEntity<ApiResponse<Page<AuctionResponseDTO>>> getActiveAuctions(
-            @PageableDefault(size = 10, sort = "endTime,asc") Pageable pageable, // 기본 페이징: 10개씩, 마감시간 오름차순
+            @PageableDefault(size = 10, sort = "endTime", direction = Sort.Direction.ASC) Pageable pageable, // 기본 페이징: 10개씩, 마감시간 오름차순
             @RequestParam(required = false) String category,
             @RequestParam(required = false) String status,
             @AuthenticationPrincipal AdminPrincipal adminPrincipal
