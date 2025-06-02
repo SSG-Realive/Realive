@@ -59,7 +59,9 @@ public class ProductController {
             @ModelAttribute ProductSearchCondition condition) {
         
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String email = auth.getName();
+        Seller authenticatedSeller = (Seller) auth.getPrincipal();
+        String email = authenticatedSeller.getEmail();
+
 
         PageResponseDTO<ProductListDTO> response = productService.getProductsBySeller(email, condition);
 
