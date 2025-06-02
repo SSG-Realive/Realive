@@ -48,7 +48,7 @@ public class SellerServiceImpl implements SellerService{
     @Override
     public SellerLoginResponseDTO login(SellerLoginRequestDTO reqdto){
 
-       
+        log.debug("💡 Login attempt with email='{}', password='{}'", reqdto.getEmail(), reqdto.getPassword());
 
         // email로 사용자 찾기
         Seller seller = sellerRepository.findByEmailAndIsActiveTrue(reqdto.getEmail())

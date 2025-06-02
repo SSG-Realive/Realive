@@ -1,6 +1,5 @@
     package com.realive.config;
 
-    import com.realive.security.SellerJwtAuthenticationFilter;
     import lombok.RequiredArgsConstructor;
     import lombok.extern.slf4j.Slf4j;
 
@@ -13,6 +12,8 @@
     import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
     import org.springframework.context.annotation.Bean;
     import org.springframework.web.cors.CorsConfigurationSource;
+
+import com.realive.security.seller.SellerJwtAuthenticationFilter;
 
     @EnableMethodSecurity(prePostEnabled = true)
     @Configuration

@@ -20,18 +20,7 @@ public class SellerOrderDeliveryController {
 
     private final OrderDeliveryService orderDeliveryService;
 
-    //리스트 조회
-    @GetMapping
-    public ResponseEntity<List<OrderDeliveryResponseDTO>> getDeliveriesBySeller() {
-        // 🔐 로그인한 판매자 정보 가져오기
-        Seller seller = (Seller) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Long sellerId = seller.getId();
-
-        // 📦 서비스 호출
-        List<OrderDeliveryResponseDTO> result = orderDeliveryService.getDeliveriesBySeller(sellerId);
-        return ResponseEntity.ok(result);
-    }
-
+   
     // PATCH /api/seller/orders/{orderId}/delivery
     @PatchMapping("/{orderId}/delivery")
     public ResponseEntity<Void> updateDeliveryStatus(

@@ -34,7 +34,7 @@ public interface SellerService {
      @return 로그인 성공 시 JWT 토큰 등 포함된 응답 DTO
      */
     SellerLoginResponseDTO login(SellerLoginRequestDTO reqdto);
-
+    
     /**
 
      내 정보 조회
