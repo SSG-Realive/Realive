@@ -1,5 +1,6 @@
 package com.realive.dto.auction;
 
+import com.realive.domain.common.enums.AuctionStatus;
 import lombok.*;
 import java.time.LocalDateTime;
 
@@ -17,6 +18,5 @@ public class AuctionPreviewResponseDTO {
     private final LocalDateTime startTime;
     private final LocalDateTime endTime;
     private final Long remainingTime;  // 초 단위 남은 시간
-    private final Boolean isClosed;
-    private final String status;       // UPCOMING, ACTIVE, ENDED 등
+    private final AuctionStatus status;
 }
