@@ -9,6 +9,7 @@ import com.realive.repository.admin.AdminRepository;
 import com.realive.security.JwtUtil;
 import com.realive.service.admin.AdminService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +18,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AdminServiceImpl implements AdminService {
 
     private final AdminRepository adminRepository;
@@ -38,9 +40,14 @@ public class AdminServiceImpl implements AdminService {
             throw new UnauthorizedException("비밀번호가 일치하지 않습니다.");
         }
 
+        log.info("관리자 로그인 시도: email={}, id={}, name={}", admin.getEmail(), admin.getId(), admin.getName());
+
         // Admin 객체를 위한 토큰 생성 메소드 호출
         String accessToken = jwtUtil.generateAccessToken(admin);
         String refreshToken = jwtUtil.generateRefreshToken(admin);
+
+        log.info("생성된 Access Token: {}", accessToken);
+        log.info("생성된 Refresh Token: {}", refreshToken);
 
         return AdminLoginResponseDTO.builder()
                 .accessToken(accessToken)
