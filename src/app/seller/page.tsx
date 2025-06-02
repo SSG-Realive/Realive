@@ -22,7 +22,6 @@ const SellerLogin: React.FC = () => {
     }
   };
 
-  
   return (
     <div style={{ maxWidth: 400, margin: '0 auto', padding: '2rem' }}>
       <h1>판매자 로그인</h1>
