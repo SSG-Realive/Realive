@@ -1,7 +1,6 @@
 package com.realive.security;
 
 import com.realive.domain.admin.Admin;
-import com.realive.service.admin.AdminService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,7 +19,6 @@ import java.util.List;
 public class AdminJwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
-    private final AdminService adminService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -35,12 +33,15 @@ public class AdminJwtAuthenticationFilter extends OncePerRequestFilter {
 
             if (jwtUtil.validateToken(token)) {
                 String email = jwtUtil.getEmailFromToken(token);
+                Long adminId = jwtUtil.getAdminIdFromToken(token);
 
-                // 반드시 Admin 엔티티를 가져와서 AdminPrincipal 생성
-                Admin adminEntity = adminService.findAdminEntityByEmail(email).orElse(null);
-
-                if (adminEntity != null) {
-                    AdminPrincipal adminPrincipal = new AdminPrincipal(adminEntity);
+                if (email != null && adminId != null) {
+                    Admin admin = Admin.builder()
+                            .id(adminId.intValue())
+                            .email(email)
+                            .build();
+                    
+                    AdminPrincipal adminPrincipal = new AdminPrincipal(admin);
 
                     UsernamePasswordAuthenticationToken auth =
                             new UsernamePasswordAuthenticationToken(
