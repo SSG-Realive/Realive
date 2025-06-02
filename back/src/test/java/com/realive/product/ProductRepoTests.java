@@ -33,13 +33,13 @@ public class ProductRepoTests {
 
     @Autowired
     private EntityManager em;
-    
+
 
     // @Test
     // public void testSearch1() {
     //     // 페이지 번호 0, 페이지 크기 5로 요청
     //     Pageable pageable = PageRequest.of(0,10);
-        
+
     //     //페이징 조회
     //     List<ProductListDto> result = productRepository.productList(pageable);
 
@@ -49,9 +49,9 @@ public class ProductRepoTests {
     //     });
     // }
 
- 
+
     //더미데이터 추가해서 페이징 테스트
-    // @Rollback(false) 
+    // @Rollback(false)
     // @Test
     // public void testSearchWithMultipleDummyData() {
 
@@ -88,5 +88,5 @@ public class ProductRepoTests {
 
     //     assertEquals(10, result.size());
     // }
-    
+
 }

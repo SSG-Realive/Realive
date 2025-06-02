@@ -24,7 +24,7 @@ public class LoginTests {
     @Autowired
     private CustomerRepository customerRepository;
 
-    //PasswordEncoder 주입받기 
+    //PasswordEncoder 주입받기
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -60,5 +60,5 @@ public class LoginTests {
 
     // }
 
-    
+
 }
