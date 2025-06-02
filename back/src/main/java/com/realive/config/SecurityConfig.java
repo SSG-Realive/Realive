@@ -1,7 +1,7 @@
 package com.realive.config;
 
 import com.realive.security.AdminJwtAuthenticationFilter;
-import com.realive.security.SellerJwtAuthenticationFilter;
+import com.realive.security.seller.SellerJwtAuthenticationFilter;
 import com.realive.security.customer.CustomerJwtAuthenticationFilter;
 import com.realive.security.customer.CustomLoginSuccessHandler;
 import com.realive.security.JwtUtil;
