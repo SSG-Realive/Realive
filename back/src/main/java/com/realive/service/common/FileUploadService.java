@@ -54,38 +54,6 @@ public class FileUploadService {
         return "/uploads/" + subDirPath + newFilename;
     }
 
-
-    // 리뷰 image upload
-    public String upload(MultipartFile file, Long sellerId , Long customerId ) {
-
-        //파일 유효성 검사
-        if (file == null || file.isEmpty()) {
-            throw new RuntimeException("병신 ㅋㅋ");
-        }
-
-        //파일 외부(DB아닌 디렉토리 경로) 생성 및 파일 이름 생성 로직
-        String originalFilename = file.getOriginalFilename();
-        String uuid = UUID.randomUUID().toString();
-        String newFilename = uuid + "_rv_" + originalFilename;
-
-        String subDirPath = customerId + "/" + sellerId + "/";
-
-        File uploadDir = new File(UPLOAD_DIR + subDirPath);
-        if (!uploadDir.exists()) {
-            uploadDir.mkdirs();
-        }
-
-        File dest = new File(UPLOAD_DIR + subDirPath + newFilename);
-
-        try {
-            file.transferTo(dest);
-        } catch (IOException e) {
-            throw new RuntimeException("개병신 ㅋㅋ", e);
-        }
-
-        return "/uploads/" + subDirPath + newFilename;
-    }
-    
     /**
      * 파일이 존재하면 삭제
      * @param sellerId 판매자 ID

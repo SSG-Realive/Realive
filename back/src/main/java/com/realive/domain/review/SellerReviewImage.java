@@ -17,13 +17,13 @@ public class SellerReviewImage extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "review_id", nullable = false)
     private SellerReview review;
 
-    @Column(nullable = false) // 필수값으로 설정
+    @Column(name = "url", nullable = false) // 필수값으로 설정
     private String imageUrl;
 
     @Column(nullable = false) // 필수값으로 설정
