@@ -55,14 +55,14 @@ public class SecurityConfig {
                 .requestMatchers("/api/admin/login").permitAll()
                 .requestMatchers("/api/admin/**").authenticated()
                 // 판매자 엔드포인트
-                .requestMatchers("/api/seller/login").permitAll()
-                .requestMatchers("/api/seller/**").authenticated()
+                    .requestMatchers("/api/seller/signup", "/api/seller/login").permitAll()
+                    .requestMatchers("/api/seller/**").authenticated()
                 // 고객 엔드포인트
                 .requestMatchers("/api/public/**").permitAll()
                 .requestMatchers("/api/customer/**").authenticated()
             )
             .oauth2Login(config -> config
-                .successHandler(customLoginSuccessHandler));
+                .successHandler(customLoginSuccessHandler));  
 
         // 각 사용자 유형별 필터 추가 (순서 중요)
         http.addFilterBefore(adminJwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
@@ -86,8 +86,8 @@ public class SecurityConfig {
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         log.info("✅ 정적 리소스 보안 설정 적용");
-        return (web) -> web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
-    }
+    	return (web) -> web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
+	}
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {

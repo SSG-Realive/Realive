@@ -1,5 +1,6 @@
 package com.realive.dto.auction;
 
+import com.realive.domain.common.enums.AuctionStatus;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -15,7 +16,7 @@ public class AuctionListResponseDTO {
     private final Integer startPrice;
     private final Integer currentPrice;
     private final LocalDateTime endTime;
-    private final boolean closed;
+    private final AuctionStatus status;
 
     public static AuctionListResponseDTO fromEntity(com.realive.domain.auction.Auction entity) {
         return AuctionListResponseDTO.builder()
@@ -24,7 +25,7 @@ public class AuctionListResponseDTO {
                 .startPrice(entity.getStartPrice())
                 .currentPrice(entity.getCurrentPrice())
                 .endTime(entity.getEndTime())
-                .closed(entity.isClosed())
+                .status(entity.getStatus())
                 .build();
     }
 }

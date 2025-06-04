@@ -1,5 +1,6 @@
 package com.realive.dto.auction;
 
+import com.realive.domain.common.enums.AuctionStatus;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -20,5 +21,5 @@ public class AuctionUpdateRequestDTO {
     @Future(message = "종료 시간은 현재 시점 이후여야 합니다.")
     private LocalDateTime endTime;
 
-    private Boolean closed;
+    private AuctionStatus status;
 }
