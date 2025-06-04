@@ -4,7 +4,18 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="31883063-87fe-44f2-b836-458e49ca3558" name="Changes" comment="" />
+    <list default="true" id="31883063-87fe-44f2-b836-458e49ca3558" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/app/seller/products/[id]/edit/page.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/seller/products/[id]/page.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/seller/products/new/page.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/service/productService.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/types/common.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/types/product.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/resources/env.properties" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/resources/env.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/seller/products/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/seller/products/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/service/sellerService.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/service/sellerService.ts" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -25,6 +36,13 @@
     &quot;accountId&quot;: &quot;32499a95-bf39-4dd3-aaa3-8eb4759c180b&quot;
   }
 }</component>
+  <component name="KubernetesApiPersistence"><![CDATA[{}]]></component>
+  <component name="KubernetesApiProvider"><![CDATA[{
+  "isMigrated": true
+}]]></component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 2
 }</component>
@@ -66,7 +84,7 @@
       <option name="presentableId" value="Default" />
       <updated>1748851961155</updated>
       <workItem from="1748851962486" duration="2077000" />
-      <workItem from="1748995015675" duration="902000" />
+      <workItem from="1748995015675" duration="10494000" />
     </task>
     <servers />
   </component>

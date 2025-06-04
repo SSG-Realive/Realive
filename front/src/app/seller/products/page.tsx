@@ -1,58 +1,121 @@
+// 상품 목록 (GET)
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import apiClient from '@/lib/apiClient';
+import { useRouter, useSearchParams } from 'next/navigation';
+import Header from '@/components/Header';
+import { getMyProducts } from '@/service/productService';
+import { ProductListItem } from '@/types/product';
 
-interface Product {
-    id: number;
-    name: string;
-    price: number;
-    status: string;
-    isActive: boolean;
-    imageUrl: string;
-}
-
-export default function SellerProductList() {
+export default function ProductListPage() {
     const router = useRouter();
-    const [products, setProducts] = useState<Product[]>([]);
+    const searchParams = useSearchParams();
+
+    const [products, setProducts] = useState<ProductListItem[]>([]);
+    const [totalPages, setTotalPages] = useState(1);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [nameFilter, setNameFilter] = useState('');
+    const [statusFilter, setStatusFilter] = useState('');
 
     useEffect(() => {
-        apiClient.get('/seller/products')
-            .then(res => setProducts(res.data))
-            .catch(() => alert('상품 목록 불러오기 실패'));
-    }, []);
+        const page = parseInt(searchParams.get('page') || '1', 10);
+        setCurrentPage(page);
+        fetchProductList(page);
+    }, [searchParams]);
+
+    const fetchProductList = async (page: number) => {
+        try {
+            const { content, totalPages } = await getMyProducts({
+                page,
+                name: nameFilter,
+                status: statusFilter,
+            });
+            setProducts(content);
+            setTotalPages(totalPages);
+        } catch (err) {
+            console.error('상품 목록 조회 실패', err);
+        }
+    };
+
+    const goToPage = (page: number) => {
+        router.push(`/seller/products?page=${page}`);
+    };
+
+    const handleSearch = () => {
+        fetchProductList(1);
+        router.push(`/seller/products?page=1`);
+    };
+
+    const handleRegisterClick = () => {
+        router.push('/seller/products/new');
+    };
 
     return (
-        <div className="p-8">
-            <div className="flex justify-between items-center mb-4">
-                <h1 className="text-2xl font-bold">상품 목록</h1>
-                <button
-                    className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-                    onClick={() => router.push('/seller/products/new')}
-                >
-                    상품 등록
-                </button>
-            </div>
+        <>
+            <Header />
+            <div className="max-w-5xl mx-auto p-6">
+                <h1 className="text-2xl font-bold mb-4">내 상품 목록</h1>
 
-            <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-                {products.map((product) => (
-                    <div key={product.id} className="border p-4 rounded shadow-sm">
-                        <img src={product.imageUrl} alt={product.name} className="w-full h-48 object-cover rounded" />
-                        <h2 className="text-xl font-semibold mt-2">{product.name}</h2>
-                        <p className="text-gray-600">{product.price.toLocaleString()}원</p>
-                        <p className={`text-sm ${product.isActive ? 'text-green-600' : 'text-red-500'}`}>
-                            {product.isActive ? '판매중' : '판매중지'}
-                        </p>
+                {/* 🔍 검색 필터 */}
+                <div className="flex gap-4 mb-4">
+                    <input
+                        type="text"
+                        placeholder="상품명 검색"
+                        value={nameFilter}
+                        onChange={(e) => setNameFilter(e.target.value)}
+                        className="border p-2 w-1/3"
+                    />
+                    <select
+                        value={statusFilter}
+                        onChange={(e) => setStatusFilter(e.target.value)}
+                        className="border p-2 w-1/4"
+                    >
+                        <option value="">전체 상태</option>
+                        <option value="상">상</option>
+                        <option value="중">중</option>
+                        <option value="하">하</option>
+                    </select>
+                    <button onClick={handleSearch} className="bg-blue-600 text-white px-4 py-2 rounded">
+                        검색
+                    </button>
+                    {/* 📦 상품 등록 버튼 */}
+                    <button onClick={handleRegisterClick} className="ml-auto bg-green-600 text-white px-4 py-2 rounded">
+                        상품 등록
+                    </button>
+                </div>
+
+                {/* 📋 목록 */}
+                <div className="grid gap-4">
+                    {products.map((product) => (
+                        <div key={product.id} className="border p-4 rounded">
+                            <h2 className="font-semibold">{product.name}</h2>
+                            <p>가격: {product.price.toLocaleString()}원</p>
+                            <p>상태: {product.status}</p>
+                            <button
+                                onClick={() => router.push(`/seller/products/${product.id}`)}
+                                className="mt-2 px-4 py-1 bg-blue-600 text-white rounded"
+                            >
+                                상세 보기
+                            </button>
+                        </div>
+                    ))}
+                </div>
+
+                {/* 페이지네이션 */}
+                <div className="flex justify-center mt-6 space-x-2">
+                    {Array.from({ length: totalPages }, (_, i) => (
                         <button
-                            className="mt-2 text-blue-600 hover:underline"
-                            onClick={() => router.push(`/seller/products/edit/${product.id}`)}
+                            key={i + 1}
+                            onClick={() => goToPage(i + 1)}
+                            className={`px-3 py-1 border rounded ${
+                                currentPage === i + 1 ? 'bg-blue-600 text-white' : 'bg-white text-gray-800'
+                            }`}
                         >
-                            수정하기
+                            {i + 1}
                         </button>
-                    </div>
-                ))}
+                    ))}
+                </div>
             </div>
-        </div>
+        </>
     );
 }
