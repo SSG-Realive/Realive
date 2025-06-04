@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/seller/orders")
+@RequestMapping("/api/seller/orders/delivery")
 public class SellerOrderDeliveryController {
 
     private final OrderDeliveryService orderDeliveryService;
@@ -32,8 +32,8 @@ public class SellerOrderDeliveryController {
         return ResponseEntity.ok(result);
     }
 
-    // PATCH /api/seller/orders/{orderId}/delivery
-    @PatchMapping("/{orderId}/delivery")
+    // PATCH /api/seller/orders/delivery/{orderId}
+    @PatchMapping("/{orderId}")
     public ResponseEntity<Void> updateDeliveryStatus(
             @PathVariable Long orderId,
             @RequestBody DeliveryStatusUpdateDTO dto) {
@@ -49,7 +49,7 @@ public class SellerOrderDeliveryController {
         return ResponseEntity.ok().build();
     }
     // 배송 단건 조회 컨트롤러
-    @GetMapping("/{orderId}/delivery")
+    @GetMapping("/{orderId}")
     public ResponseEntity<OrderDeliveryResponseDTO> getDeliveryByOrderId(@PathVariable Long orderId) {
 
         Seller seller = (Seller) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
