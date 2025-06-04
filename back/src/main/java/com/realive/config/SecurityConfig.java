@@ -3,6 +3,9 @@ package com.realive.config;
 import com.realive.security.AdminJwtAuthenticationFilter;
 import com.realive.security.SellerJwtAuthenticationFilter;
 import com.realive.security.customer.CustomerJwtAuthenticationFilter;
+
+import jakarta.servlet.http.HttpServletResponse;
+
 import com.realive.security.customer.CustomLoginSuccessHandler;
 import com.realive.security.customer.CustomUserDetailsService;
 import com.realive.security.JwtUtil;
@@ -66,6 +69,18 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .formLogin(form -> form.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .exceptionHandling(exception -> exception
+                .authenticationEntryPoint((request, response, authException) -> {
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    response.setContentType("application/json");
+                    response.getWriter().write("{\"error\": \"Unauthorized\"}");
+                })
+                .accessDeniedHandler((request, response, accessDeniedException) -> {
+                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                    response.setContentType("application/json");
+                    response.getWriter().write("{\"error\": \"Forbidden\"}");
+                })
+            )
             .authorizeHttpRequests(auth -> auth
                 // 관리자 엔드포인트
                 .requestMatchers("/api/admin/login").permitAll()
@@ -79,7 +94,13 @@ public class SecurityConfig {
                 .requestMatchers("/api/customer/**").authenticated()
             )
             .oauth2Login(config -> config
-                .successHandler(customLoginSuccessHandler));  
+                .successHandler(customLoginSuccessHandler)
+                .failureHandler((request, response, exception) -> {
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    response.setContentType("application/json");
+                    response.getWriter().write("{\"error\": \"OAuth login failed\"}");
+                })
+            );
 
         // 각 사용자 유형별 필터 추가 (순서 중요)
         http.addFilterBefore(adminJwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
