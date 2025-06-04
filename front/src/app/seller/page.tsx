@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 
 export default function SellerIndexPage() {
   const router = useRouter();
-
+  
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
 

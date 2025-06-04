@@ -11,7 +11,7 @@ import { ProductListItem } from '@/types/productList';
 
 export default function ProductListPage() {
   const checking = useSellerAuthGuard();
-    if (checking) return <div className="p-8">인증 확인 중...</div>;
+   
 
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -57,6 +57,7 @@ export default function ProductListPage() {
     router.push('/seller/products/new');
   };
 
+    if (checking) return <div className="p-8">인증 확인 중...</div>;
   return (
     <>
       <Header />
