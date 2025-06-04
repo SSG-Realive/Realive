@@ -1,7 +1,7 @@
 import apiClient from '@/lib/apiClient';
+import { PageResponse } from '@/types/page/pageResponse';
 import { ProductDetail } from '@/types/product';
 
-import { PageResponse } from '@/types/common';
 import { ProductListItem } from '@/types/productList';
 
 // 판매자 상품 목록 조회 API

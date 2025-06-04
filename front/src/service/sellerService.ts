@@ -1,4 +1,7 @@
 import apiClient from '@/lib/apiClient';
+import { ProductSearchCondition } from '@/types/filter/productSearchCondition';
+import { PageResponse } from '@/types/page/pageResponse';
+import { ProductListItem } from '@/types/productList';
 
 export interface LoginResponse {
   accessToken: string;
@@ -53,52 +56,11 @@ export async function getDashboard() : Promise<SellerDashboardResponse> {
   return response.data;
 }
 
-
-export interface ProductResponse {
-  id: number;
-  name: string;
-  description: string;
-  price: number;
-  stock: number;
-  width: number;
-  depth: number;
-  height: number;
-  status: string;
-  isActive: boolean;
-  imageThumbnailUrl?: string;
-  videoThumbnailUrl?: string;
-  categoryName?: string;
-  sellerName?: string;
-}
-
-export interface ProductListItem {
-  id: number;
-  name: string;
-  price: number;
-  status: string;
-  isActive: boolean;
-  imageThumbnailUrl?: string;
-  parentCategoryName?: string;
-  categoryName?: string;
-  sellerName?: string;
-}
-
-export interface ProductSearchCondition {
-  page?: number;
-  size?: number;
-  keyword?: string;
-  minPrice?: number;
-  maxPrice?: number;
-  categoryId?: number;
-  status?: string;
-  isActive?: boolean;
-}
-
 /**
  * 🔹 상품 등록
  */
 export async function createProduct(formData: FormData): Promise<number> {
-  const res = await apiClient.post('/api/seller/products', formData, {
+  const res = await apiClient.post('/seller/products', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
@@ -110,7 +72,7 @@ export async function createProduct(formData: FormData): Promise<number> {
  * 🔹 상품 수정
  */
 export async function updateProduct(id: number, formData: FormData): Promise<void> {
-  await apiClient.put(`/api/seller/products/${id}`, formData, {
+  await apiClient.put(`/seller/products/${id}`, formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
@@ -121,27 +83,24 @@ export async function updateProduct(id: number, formData: FormData): Promise<voi
  * 🔹 상품 삭제
  */
 export async function deleteProduct(id: number): Promise<void> {
-  await apiClient.delete(`/api/seller/products/${id}`);
+  await apiClient.delete(`/seller/products/${id}`);
 }
 
 /**
  * 🔹 상품 단건 상세 조회
  */
-export async function getProductDetail(id: number): Promise<ProductResponse> {
-  const res = await apiClient.get(`/api/seller/products/${id}`);
-  return res.data;
-}
+// export async function getProductDetail(id: number): Promise<ProductResponse> {
+//   const res = await apiClient.get(`/seller/products/${id}`);
+//   return res.data;
+// }
 
 /**
  * 🔹 판매자 상품 목록 조회
  */
-export async function getMyProducts(params?: ProductSearchCondition): Promise<{
-  dtoList: ProductListItem[];
-  total: number;
-}> {
-  const res = await apiClient.get('/api/seller/products', {
-    params,
-  });
+export async function getMyProducts(
+  params?: ProductSearchCondition
+): Promise<PageResponse<ProductListItem>> {
+  const res = await apiClient.get('/seller/products', { params });
   return res.data;
 }
 
