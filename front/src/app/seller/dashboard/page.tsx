@@ -7,12 +7,14 @@ import { getDashboard, SellerDashboardResponse } from '@/service/sellerService';
 import { useEffect, useState } from 'react';
 
 export default function SellerDashboardPage() {
-    useSellerAuthGuard();
+    const checking = useSellerAuthGuard();
 
     const [dashboard, setDashboard] = useState<SellerDashboardResponse | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(()=> {
+        if (checking) return;
+
         const fetchDashboard = async () => {
             try {
                 const data = await getDashboard();
@@ -25,11 +27,11 @@ export default function SellerDashboardPage() {
             }            
         };
         fetchDashboard();
-    }, []);
+    }, [checking]);
 
     if (loading) return <div className="p-8">로딩 중...</div>;
     if (!dashboard) return <div className="p-8">데이터 없음</div>;
-
+    if (checking) return <div className="p-8">인증 확인 중...</div>;
   return (
     <>
       <Header />

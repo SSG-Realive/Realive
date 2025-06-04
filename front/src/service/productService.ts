@@ -1,7 +1,8 @@
 import apiClient from '@/lib/apiClient';
 import { ProductDetail } from '@/types/product';
-import { ProductListItem } from '@/types/productList';
+
 import { PageResponse } from '@/types/common';
+import { ProductListItem } from '@/types/productList';
 
 // 판매자 상품 목록 조회 API
 export async function fetchMyProducts(): Promise<ProductDetail[]> {

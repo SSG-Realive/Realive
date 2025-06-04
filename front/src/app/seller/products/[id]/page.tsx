@@ -11,7 +11,7 @@ import useSellerAuthGuard from '@/hooks/useSellerAuthGuard';
 
 export default function ProductDetailPage() {
      // 판매자 인증 가드를 적용
-    useSellerAuthGuard();
+    const checking = useSellerAuthGuard();
 
     const params = useParams();
     const router = useRouter();
@@ -21,6 +21,7 @@ export default function ProductDetailPage() {
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
+        if (checking) return;
         const token = localStorage.getItem('accessToken');
         if (!token) {
          router.push('/seller/login');
@@ -35,7 +36,7 @@ export default function ProductDetailPage() {
                 console.error(err);
                 setError('상품 정보를 불러오지 못했습니다.');
             });
-    }, [productId]);
+    }, [productId, checking]);
 
     const handleDelete = async () => {
         if (!confirm('정말로 이 상품을 삭제하시겠습니까?')) return;
@@ -56,7 +57,7 @@ export default function ProductDetailPage() {
 
     if (error) return <div className="p-4 text-red-600">{error}</div>;
     if (!product) return <div className="p-4">로딩 중...</div>;
-
+    if (checking) return <div className="p-8">인증 확인 중...</div>;
     return (
         <>
             <Header />
