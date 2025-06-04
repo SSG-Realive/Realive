@@ -54,7 +54,7 @@ build/generated/
 !**/config/QuerydslConfig.java
 
 # -------------------------------------
-# IntelliJ / Eclipse 잡파일 (현업에서 무조건 무시)
+# IntelliJ / Eclipse
 .idea/**/workspace.xml
 .idea/**/tasks.xml
 .idea/**/usage.statistics.xml
