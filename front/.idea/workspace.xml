@@ -4,39 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="31883063-87fe-44f2-b836-458e49ca3558" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/../back/src/main/resources/db/migration/V1.0.4__add_tick_size_to_auctions.sql" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../back/src/main/resources/db/migration/V1.0.5__add_status_to_auctions.sql" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../back/src/main/resources/db/migration/V1.0.5__remove_is_closed_from_auctions.sql" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../back/src/main/resources/db/migration/V1.0.6__remove_tick_size_from_auctions.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/config/SecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/controller/admin/AdminAuctionController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/controller/admin/AdminController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/controller/admin/AdminController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/controller/admin/AdminProductController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/controller/admin/AdminProductController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/controller/auction/AuctionController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/controller/auction/AuctionController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/controller/auction/BidController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/controller/auction/BidController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/controller/product/ProductController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/controller/product/ProductController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/auction/Auction.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/auction/Auction.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/auction/AuctionCreateRequestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/auction/AuctionCreateRequestDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/auction/AuctionListResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/auction/AuctionListResponseDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/auction/AuctionPreviewResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/auction/AuctionPreviewResponseDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/auction/AuctionResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/auction/AuctionResponseDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/auction/AuctionUpdateRequestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/auction/AuctionUpdateRequestDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/auction/AdminProductRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/auction/AdminProductRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/auction/AuctionRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/auction/AuctionRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/product/ProductRepositoryImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/product/ProductRepositoryImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/security/AdminJwtAuthenticationFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/security/AdminJwtAuthenticationFilter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/security/JwtUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/security/JwtUtil.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/security/seller/SellerJwtAuthenticationFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/security/seller/SellerJwtAuthenticationFilter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/admin/auction/AuctionService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/admin/auction/AuctionService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/admin/product/AdminProductService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/admin/product/AdminProductService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/product/ProductService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/product/ProductService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/serviceimpl/admin/AdminServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/serviceimpl/admin/AdminServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/serviceimpl/admin/auction/AuctionServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/serviceimpl/admin/auction/AuctionServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/serviceimpl/admin/auction/BidServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/serviceimpl/admin/auction/BidServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/serviceimpl/admin/product/AdminProductServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/serviceimpl/admin/product/AdminProductServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/serviceimpl/product/ProductServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/serviceimpl/product/ProductServiceImpl.java" afterDir="false" />
-    </list>
+    <list default="true" id="31883063-87fe-44f2-b836-458e49ca3558" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -69,7 +37,7 @@
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "Merging team2/jaehyun",
+    "git-widget-placeholder": "team2/jaehyun",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/SSG_KDT8/Realive/back",
     "node.js.detected.package.eslint": "true",
@@ -98,7 +66,7 @@
       <option name="presentableId" value="Default" />
       <updated>1748851961155</updated>
       <workItem from="1748851962486" duration="2077000" />
-      <workItem from="1748995015675" duration="576000" />
+      <workItem from="1748995015675" duration="902000" />
     </task>
     <servers />
   </component>
