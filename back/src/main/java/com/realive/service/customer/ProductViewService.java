@@ -4,10 +4,8 @@ import com.realive.dto.page.PageRequestDTO;
 import com.realive.dto.page.PageResponseDTO;
 import com.realive.dto.product.ProductListDTO;
 import com.realive.dto.product.ProductResponseDTO;
-import com.realive.dto.product.ProductListDTO;
-import com.realive.dto.product.ProductResponseDTO;
 
-// 상품 조회 서비스
+// [Customer] 상품 조회 Service
 
 public interface ProductViewService {
     

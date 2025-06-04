@@ -14,9 +14,12 @@ import com.realive.dto.product.ProductResponseDTO;
 
 import lombok.RequiredArgsConstructor;
 
+// [Customer] 상품 상세 조회 Repository 구현체
+
 @Repository
 @RequiredArgsConstructor
 public class ProductDetailImpl implements ProductDetail {
+    
     private final JPAQueryFactory queryFactory;
 
     @Override

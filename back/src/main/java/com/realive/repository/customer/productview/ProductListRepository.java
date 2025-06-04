@@ -4,8 +4,11 @@ import java.util.List;
 
 import com.realive.dto.product.ProductListDTO;
 
-// 상품 목록 조회 레포지토리
+// [Customer] 상품 목록 조회 Repository
 
 public interface ProductListRepository {
+
+    // 상품ID리스트로 목록 조회 정보 가져오기
     List<ProductListDTO> getWishlistedProducts(List<Long> productIds);
+
 }

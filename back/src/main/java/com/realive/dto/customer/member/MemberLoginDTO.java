@@ -1,7 +1,9 @@
-package com.realive.dto.member;
+package com.realive.dto.customer.member;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -12,32 +14,33 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import com.realive.domain.customer.SignupMethod;
 
+import jakarta.validation.constraints.NotBlank;
+
 import java.util.*;
 
-@Getter
-@Setter
+// [Customer] 로그인DTO
+
 public class MemberLoginDTO implements UserDetails, OAuth2User {
 
-
-    
+    @NotBlank(message = "이메일을 입력해주세요.")
     private String email;
+
+    @NotBlank(message = "비밀번호를 입력해주세요.")
     @ToString.Exclude
     private String password;
-    private SignupMethod signupMethod; 
 
-    // OAuth2 attributes (nullable)
+    private SignupMethod signupMethod;
+
     private Map<String, Object> attributes;
 
     public MemberLoginDTO() {
     }
-    
 
-    // 일반 로그인 시 사용되는 생성자
     public MemberLoginDTO(String email, String password) {
         this.email = email;
         this.password = password;
         this.attributes = new HashMap<>();
-        this.signupMethod = SignupMethod.USER; // USER로 지정
+        this.signupMethod = SignupMethod.USER;
     }
 
     public MemberLoginDTO(String email, String password, SignupMethod signupMethod, Map<String, Object> attributes) {
@@ -47,51 +50,71 @@ public class MemberLoginDTO implements UserDetails, OAuth2User {
         this.attributes = attributes;
     }
 
+    public String getEmail() {
+        return email;
+    }
 
-    // 권한 설정 (기본 사용자 권한)
-    //GrantedAuthority의 하위 타입만 들어갈 수 있음
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public SignupMethod getSignupMethod() {
+        return signupMethod;
+    }
+
+    public void setSignupMethod(SignupMethod signupMethod) {
+        this.signupMethod = signupMethod;
+    }
+
+    public void setAttributes(Map<String, Object> attributes) {
+        this.attributes = attributes;
+    }
+
+    // --- 인터페이스 구현부 ---
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
-    // 사용자명 반환
     @Override
     public String getUsername() {
         return this.email;
     }
 
-    // OAuth2 속성 반환
     @Override
     public Map<String, Object> getAttributes() {
         return this.attributes;
     }
 
-    // OAuth2 name (일반적으로 이메일이나 id)
     @Override
     public String getName() {
         return this.email;
     }
 
-    // 계정 만료 여부
     @Override
     public boolean isAccountNonExpired() {
         return true;
     }
 
-    // 계정 잠김 여부
     @Override
     public boolean isAccountNonLocked() {
         return true;
     }
 
-    // 자격 증명 만료 여부
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
     }
 
-    // 계정 활성화 여부
     @Override
     public boolean isEnabled() {
         return true;

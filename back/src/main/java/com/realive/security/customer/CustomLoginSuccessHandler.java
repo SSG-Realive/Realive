@@ -1,11 +1,10 @@
 package com.realive.security.customer;
 
-import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.extern.log4j.Log4j2;
 
+import lombok.extern.log4j.Log4j2;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -13,12 +12,13 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.realive.domain.customer.SignupMethod;
-import com.realive.dto.member.MemberLoginDTO;
+import com.realive.dto.customer.member.MemberLoginDTO;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+// [Customer] 로그인 성공 핸들러
 
 @Log4j2
 @Component
@@ -41,7 +41,7 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
         log.info("-----success handler 3 -----");
 		log.info(authentication);
 
-        //만일 social 임시회원이라면 회원정보를 수정하는 페이지로 이동
+        // 만일 social 임시회원이라면 회원정보를 수정하는 페이지로 이동
         MemberLoginDTO loginUser = (MemberLoginDTO) authentication.getPrincipal();
         log.info("로그인한 사용자 이메일: " + loginUser.getEmail());
         log.info("SignupMethod: " + loginUser.getSignupMethod());
@@ -61,6 +61,5 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
         response.setStatus(HttpServletResponse.SC_OK);
         objectMapper.writeValue(response.getWriter(), responseData);
     }
-
     
 }

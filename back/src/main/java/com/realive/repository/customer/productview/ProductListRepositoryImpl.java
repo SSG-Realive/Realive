@@ -17,6 +17,8 @@ import com.realive.dto.product.ProductListDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
+// [Customer] 상품 목록 조회 Repository 구현체
+
 @Repository
 @Log4j2
 @RequiredArgsConstructor
@@ -34,7 +36,6 @@ public class ProductListRepositoryImpl implements ProductListRepository{
         QSeller seller = QSeller.seller;
         QCategory category = QCategory.category;
       
-
         return queryFactory
             .select(Projections.bean(ProductListDTO.class,
                 product.id.as("id"),
@@ -56,5 +57,4 @@ public class ProductListRepositoryImpl implements ProductListRepository{
             .fetch();
     }
 
-    
 }
