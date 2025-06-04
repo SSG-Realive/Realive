@@ -5,6 +5,8 @@ import com.realive.dto.bid.BidResponseDTO;
 import com.realive.dto.common.ApiResponse;
 import com.realive.security.AdminPrincipal;
 import com.realive.service.admin.auction.BidService;
+import com.realive.service.admin.auction.AuctionService;
+import com.realive.util.TickSizeCalculator;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +28,7 @@ import java.util.NoSuchElementException;
 public class BidController {
 
     private final BidService bidService;
+    private final AuctionService auctionService;
 
     @PostMapping
     public ResponseEntity<ApiResponse<BidResponseDTO>> placeBid(
@@ -140,6 +143,26 @@ public class BidController {
             log.error("관리자가 고객(ID:{}) 입찰 내역 조회 중 알 수 없는 오류 발생", customerId, e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), "고객 입찰 내역 조회 중 오류가 발생했습니다."));
+        }
+    }
+
+    /**
+     * 경매 입찰 단위 정보 조회
+     */
+    @GetMapping("/auction/{auctionId}/tick-size")
+    public ResponseEntity<ApiResponse<Integer>> getTickSize(@PathVariable Integer auctionId) {
+        log.info("GET /api/bids/auction/{}/tick-size - 입찰 단위 정보 조회", auctionId);
+        try {
+            int startPrice = auctionService.getAuctionDetails(auctionId).getStartPrice();
+            int tickSize = TickSizeCalculator.calculateTickSize(startPrice);
+            return ResponseEntity.ok(ApiResponse.success(tickSize));
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(ApiResponse.error(HttpStatus.NOT_FOUND.value(), e.getMessage()));
+        } catch (Exception e) {
+            log.error("입찰 단위 정보 조회 중 오류 발생 - AuctionId: {}", auctionId, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), "입찰 단위 정보 조회 중 오류가 발생했습니다."));
         }
     }
 }
