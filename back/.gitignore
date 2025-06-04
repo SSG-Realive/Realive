@@ -48,9 +48,9 @@ application.properties
 # -------------------------------------
 # QueryDSL
 # 자동 생성 Q파일만 무시
-build/generated/
-**/generated/
-**/generated/querydsl/Q*.java
+# build/generated/
+# **/generated/
+# **/generated/querydsl/Q*.java
 !**/config/QuerydslConfig.java
 
 # -------------------------------------
