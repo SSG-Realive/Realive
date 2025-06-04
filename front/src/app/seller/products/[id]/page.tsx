@@ -6,6 +6,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { getProductDetail, deleteProduct } from '@/service/productService';
 import { ProductDetail } from '@/types/product';
 import Header from '@/components/Header';
+import SellerLayout from '@/components/layouts/SellerLayout';
 
 export default function ProductDetailPage() {
     const params = useParams();
@@ -48,6 +49,7 @@ export default function ProductDetailPage() {
     return (
         <>
             <Header />
+            <SellerLayout>
             <div className="max-w-3xl mx-auto p-6">
                 <h1 className="text-2xl font-bold mb-4">{product.name}</h1>
                 <p className="mb-2">상품 설명: {product.description}</p>
@@ -80,6 +82,7 @@ export default function ProductDetailPage() {
                     </button>
                 </div>
             </div>
+            </SellerLayout>
         </>
     );
 }

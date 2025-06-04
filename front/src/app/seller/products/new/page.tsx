@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Header from '@/components/Header'; // ✅ 판매자 전용 헤더 포함
 import { createProduct } from '@/service/productService';
+import SellerLayout from '@/components/layouts/SellerLayout';
 
 export default function ProductCreatePage() {
     const router = useRouter();
@@ -72,7 +73,7 @@ export default function ProductCreatePage() {
     return (
         <>
             <Header /> {/* ✅ 상단 고정 헤더 렌더링 */}
-
+            <SellerLayout>
             <div style={{ maxWidth: 600, margin: '0 auto', padding: '2rem' }}>
                 <h1 style={{ fontSize: '1.5rem', marginBottom: '1.5rem' }}>상품 등록</h1>
                 <form onSubmit={handleSubmit}>
@@ -184,6 +185,7 @@ export default function ProductCreatePage() {
                     </button>
                 </form>
             </div>
+            </SellerLayout>
         </>
     );
 }
