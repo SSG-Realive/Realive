@@ -69,18 +69,6 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .formLogin(form -> form.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .exceptionHandling(exception -> exception
-                .authenticationEntryPoint((request, response, authException) -> {
-                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                    response.setContentType("application/json");
-                    response.getWriter().write("{\"error\": \"Unauthorized\"}");
-                })
-                .accessDeniedHandler((request, response, accessDeniedException) -> {
-                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                    response.setContentType("application/json");
-                    response.getWriter().write("{\"error\": \"Forbidden\"}");
-                })
-            )
             .authorizeHttpRequests(auth -> auth
                 // 관리자 엔드포인트
                 .requestMatchers("/api/admin/login").permitAll()
@@ -92,14 +80,28 @@ public class SecurityConfig {
                 // 고객 엔드포인트
                 .requestMatchers("/api/public/**").permitAll()
                 .requestMatchers("/api/customer/**").authenticated()
+                // OAuth2 전용
+                .requestMatchers("/oauth2/**").permitAll()
+                // 나머지 전부 차단
+                .anyRequest().denyAll()
             )
-            .oauth2Login(config -> config
-                .successHandler(customLoginSuccessHandler)
-                .failureHandler((request, response, exception) -> {
+            .exceptionHandling(exception -> exception
+                .authenticationEntryPoint((request, response, authException) -> {
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                     response.setContentType("application/json");
-                    response.getWriter().write("{\"error\": \"OAuth login failed\"}");
+                    response.getWriter().write("{\"error\": \"Unauthorized\"}");
                 })
+                .accessDeniedHandler((request, response, accessDeniedException) -> {
+                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                    response.setContentType("application/json");
+                    response.getWriter().write("{\"error\": \"Access denied\"}");
+                })
+            )
+            .oauth2Login(config -> config
+                .loginPage("/oauth2/authorization/kakao")
+                .authorizationEndpoint(endpoint -> endpoint.baseUri("/oauth2/authorization"))
+                .redirectionEndpoint(endpoint -> endpoint.baseUri("/login/oauth2/code/*"))
+                .successHandler(customLoginSuccessHandler)
             );
 
         // 각 사용자 유형별 필터 추가 (순서 중요)
