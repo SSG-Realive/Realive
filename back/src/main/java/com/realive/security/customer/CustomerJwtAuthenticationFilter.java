@@ -48,7 +48,7 @@ public class CustomerJwtAuthenticationFilter extends OncePerRequestFilter {
 
             SecurityContextHolder.getContext().setAuthentication(auth);
             log.info("SecurityContextHolder에 인증 객체 등록 완료");
-        }else {
+        } else {
             log.info("토큰이 없거나 유효하지 않음");
         }
 
@@ -62,11 +62,4 @@ public class CustomerJwtAuthenticationFilter extends OncePerRequestFilter {
         }
         return null;
     }
-
-    @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        String uri = request.getRequestURI();
-        return uri.startsWith("/api/admin") || uri.startsWith("/api/seller");
-    }
-
 }
