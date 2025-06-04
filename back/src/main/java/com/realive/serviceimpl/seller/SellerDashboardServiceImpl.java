@@ -34,7 +34,7 @@ public class SellerDashboardServiceImpl implements SellerDashboardService {
         );
 
         return SellerDashboardResponseDTO.builder()
-                .totalProductCount(productRepository.countBySellerIdAndIsActiveTrue(sellerId))
+                .totalProductCount(productRepository.countBySellerIdAndActiveTrue(sellerId))
                 .unansweredQnaCount(sellerQnaRepository.countBySellerIdAndIsAnsweredFalseAndDeletedFalse(sellerId))
                 .todayProductCount(productRepository.countTodayProductBySellerId(sellerId, startOfDay, endOfDay))
                 .totalQnaCount(sellerQnaRepository.countBySellerIdAndIsActiveTrue(sellerId))
