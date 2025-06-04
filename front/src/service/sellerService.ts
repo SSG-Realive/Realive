@@ -145,15 +145,4 @@ export async function getMyProducts(params?: ProductSearchCondition): Promise<{
   return res.data;
 }
 
-/**
- * 🔹 관리자 전체 상품 목록 조회
- */
-export async function getAllProductsForAdmin(params?: ProductSearchCondition): Promise<{
-  dtoList: ProductListItem[];
-  total: number;
-}> {
-  const res = await apiClient.get('/api/seller/products/admin/products', {
-    params,
-  });
-  return res.data;
-}
+
