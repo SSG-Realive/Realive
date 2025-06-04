@@ -35,9 +35,8 @@ replay_pid*
 application.yml
 
 # QueryDSL Q파일
-build/generated/
-**/generated/querydsl/
-**/Q*.java
+build/generated/**/*.java
+**/generated/querydsl/Q*.java
 
 # -------------------------------------
 # IntelliJ / Eclipse
