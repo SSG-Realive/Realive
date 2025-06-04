@@ -31,6 +31,7 @@ public class CustomerJwtAuthenticationFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
+        log.info("[CustomerJwtAuthenticationFilter] doFilterInternal 호출, URI: {}", request.getRequestURI());                                
         String token = resolveToken(request);
         log.info("JWT 토큰 추출: {}", token);
 
@@ -44,7 +45,7 @@ public class CustomerJwtAuthenticationFilter extends OncePerRequestFilter {
             // 인증 객체 생성 및 SecurityContext에 등록
             UsernamePasswordAuthenticationToken auth =
                     new UsernamePasswordAuthenticationToken(memberDTO, null, memberDTO.getAuthorities());
-            log.info("로드한 MemberLoginDTO: {}", memberDTO);
+            //log.info("로드한 MemberLoginDTO: {}", memberDTO);
 
             SecurityContextHolder.getContext().setAuthentication(auth);
             log.info("SecurityContextHolder에 인증 객체 등록 완료");
@@ -66,7 +67,10 @@ public class CustomerJwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String uri = request.getRequestURI();
-        return uri.startsWith("/api/admin") || uri.startsWith("/api/seller");
+        log.info("shouldNotFilter 호출 - URI: {}", uri);
+        boolean result = uri.startsWith("/api/admin") || uri.startsWith("/api/seller") || uri.startsWith("/api/public");
+        log.info("필터 제외 여부: {}", result);
+        return result;
     }
 
 }

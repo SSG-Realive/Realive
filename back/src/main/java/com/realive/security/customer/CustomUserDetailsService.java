@@ -1,5 +1,6 @@
 package com.realive.security.customer;
 
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -14,7 +15,7 @@ import lombok.extern.log4j.Log4j2;
 
 // [Customer] UserDetailsService
 
-@Service
+@Service("customUserDetailsService")
 @Log4j2
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
