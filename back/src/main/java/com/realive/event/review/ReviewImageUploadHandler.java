@@ -7,6 +7,7 @@ import com.realive.repository.review.crud.SellerReviewImageRepository;
 import com.realive.service.review.upload.ReviewImageUploader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
@@ -23,8 +24,10 @@ public class ReviewImageUploadHandler {
     private final ReviewImageUploader reviewImageUploader;
     private final SellerReviewImageRepository sellerReviewImageRepository;
 
+    @Async("applicationEventTaskExecutor") // ⭐ 빈 이름 지정 ⭐
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void handleReviewImageUpload(ReviewImageUploadEvent event) {
+
         SellerReview sellerReview = event.getSellerReview();
         List<String> tempImageUrls = event.getTempImageUrls();
         List<String> successfullyConfirmedUrls = new ArrayList<>(); // 성공적으로 확정된 URL들을 추적

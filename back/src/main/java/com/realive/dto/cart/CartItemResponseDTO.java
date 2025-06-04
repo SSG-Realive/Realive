@@ -32,7 +32,7 @@ public class CartItemResponseDTO {
                 .productName(productDetailDto != null ? productDetailDto.getName() : null)
                 .quantity(cartItem.getQuantity())
                 .productPrice(productDetailDto != null ? productDetailDto.getPrice() : 0)
-                .productImage(productDetailDto != null ? productDetailDto.getThumbnailUrl() : null)
+                .productImage(productDetailDto != null ? productDetailDto.getImageThumbnailUrl() : null)
                 // builder로 totalPrice를 바로 계산해서 반환
                 .totalPrice(productDetailDto != null ? productDetailDto.getPrice() * cartItem.getQuantity() : 0)
                 .cartCreatedAt(cartItem.getCreatedAt())

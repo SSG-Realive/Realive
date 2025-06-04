@@ -39,7 +39,7 @@ public class ReviewCRUDServiceImpl implements ReviewCRUDService {
     @Override
     @Transactional
     public ReviewResponseDTO createReview(ReviewCreateRequestDTO requestDTO, Long customerId) {
-        reviewRepository.findByOrderIdAndCustomerIdAndSellerId(requestDTO.getOrderId(), customerId, requestDTO.getSellerId())
+        reviewRepository.findByOrder_IdAndCustomer_IdAndSeller_Id(requestDTO.getOrderId(), customerId, requestDTO.getSellerId())
                 .ifPresent(review -> {
                     log.warn("createReview - 이미 작성된 리뷰 시도: orderId={}, customerId={}, sellerId={}",
                             requestDTO.getOrderId(), customerId, requestDTO.getSellerId());
@@ -120,13 +120,13 @@ public class ReviewCRUDServiceImpl implements ReviewCRUDService {
         }
 
         // 기존 이미지 URL들을 DB에서 미리 가져옵니다. (파일 삭제 이벤트를 위해)
-        List<String> oldImageUrls = imageRepository.findBySellerReviewId(reviewId)
+        List<String> oldImageUrls = imageRepository.findByReview_Id(reviewId)
                 .stream()
                 .map(SellerReviewImage::getImageUrl)
                 .collect(Collectors.toList());
 
         // 기존 이미지들을 DB에서 삭제합니다. (파일 시스템 삭제는 이벤트 핸들러가 처리)
-        imageRepository.deleteByReviewId(reviewId);
+        imageRepository.deleteByReview_Id(reviewId);
         log.info("updateReview - 기존 리뷰 이미지 DB에서 삭제 완료: reviewId={}", reviewId);
 
         // 기존 이미지 파일 삭제 이벤트를 발행합니다.
@@ -147,7 +147,7 @@ public class ReviewCRUDServiceImpl implements ReviewCRUDService {
         }
 
         // DTO 반환 시, 업데이트된 이미지 목록을 DB에서 조회하여 반환하는 것이 가장 정확합니다.
-        List<String> finalImageUrlsFromDb = imageRepository.findBySellerReviewId(updatedReview.getId())
+        List<String> finalImageUrlsFromDb = imageRepository.findByReview_Id(updatedReview.getId())
                 .stream()
                 .map(SellerReviewImage::getImageUrl)
                 .collect(Collectors.toList());
@@ -182,13 +182,13 @@ public class ReviewCRUDServiceImpl implements ReviewCRUDService {
         }
 
         // 삭제할 이미지 URL들을 DB에서 미리 가져옵니다.
-        List<String> deletedImageUrls = imageRepository.findBySellerReviewId(reviewId)
+        List<String> deletedImageUrls = imageRepository.findByReview_Id(reviewId)
                 .stream()
                 .map(SellerReviewImage::getImageUrl)
                 .collect(Collectors.toList());
 
         // 관련 이미지 DB에서 삭제 (파일 시스템 삭제는 이벤트 핸들러가 처리)
-        imageRepository.deleteByReviewId(reviewId);
+        imageRepository.deleteByReview_Id(reviewId);
         log.info("deleteReview - 리뷰 이미지 DB에서 삭제 완료: reviewId={}", reviewId);
 
         // 리뷰 삭제

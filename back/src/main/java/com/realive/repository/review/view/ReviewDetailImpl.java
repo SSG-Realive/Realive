@@ -17,19 +17,20 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Repository; // 이 어노테이션을 추가하여 Spring 빈으로 등록
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Repository // 이제 ReviewDetailImpl이 직접 Spring 빈으로 등록됩니다.
 @RequiredArgsConstructor
-public class ReviewDetailImpl implements ReviewDetail {
+public class ReviewDetailImpl { // ReviewDetail 인터페이스 구현 제거
 
     private final JPAQueryFactory queryFactory;
 
     // 특정 리뷰의 상세 정보 조회
-    @Override
     public Optional<ReviewResponseDTO> findReviewDetailById(Long id) {
         QSellerReview sellerReview = QSellerReview.sellerReview;
         QSellerReviewImage sellerReviewImage = QSellerReviewImage.sellerReviewImage;
@@ -99,7 +100,6 @@ public class ReviewDetailImpl implements ReviewDetail {
     }
 
     // 판매자에 대한 리뷰 목록을 페이지네이션으로 조회
-    @Override
     public Page<ReviewResponseDTO> findSellerReviewsBySellerId(Long sellerId, Pageable pageable) {
         QSellerReview sellerReview = QSellerReview.sellerReview;
         QSellerReviewImage sellerReviewImage = QSellerReviewImage.sellerReviewImage;
@@ -181,7 +181,6 @@ public class ReviewDetailImpl implements ReviewDetail {
     }
 
     // 고객이 작성한 리뷰 목록을 페이지네이션으로 조회
-    @Override
     public Page<MyReviewResponseDTO> findMyReviewsByCustomerId(Long customerId, Pageable pageable) {
         QSellerReview sellerReview = QSellerReview.sellerReview;
         QSellerReviewImage sellerReviewImage = QSellerReviewImage.sellerReviewImage;

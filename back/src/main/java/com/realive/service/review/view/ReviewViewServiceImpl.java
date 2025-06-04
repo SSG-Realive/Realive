@@ -3,7 +3,7 @@ package com.realive.service.review.view;
 import com.realive.dto.review.MyReviewResponseDTO;
 import com.realive.dto.review.ReviewListResponseDTO;
 import com.realive.dto.review.ReviewResponseDTO;
-import com.realive.repository.review.view.ReviewDetail;
+import com.realive.repository.review.view.ReviewDetailImpl; // ReviewDetail 인터페이스 대신 ReviewDetailImpl을 import
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 @Log4j2
 public class ReviewViewServiceImpl implements ReviewViewService {
 
-    private final ReviewDetail reviewDetail;
+    private final ReviewDetailImpl reviewDetailImpl; // ReviewDetail 인터페이스 대신 ReviewDetailImpl을 주입받습니다.
 
     // 판매자에 대한 리뷰 리스트 조회
     @Override
@@ -26,7 +26,8 @@ public class ReviewViewServiceImpl implements ReviewViewService {
             throw new IllegalArgumentException("유효하지않은 판매자 ID입니다.");
         }
 
-        Page<ReviewResponseDTO> reviewsPage = reviewDetail.findSellerReviewsBySellerId(sellerId, pageable);
+        // reviewDetail.findSellerReviewsBySellerId 대신 reviewDetailImpl.findSellerReviewsBySellerId 호출
+        Page<ReviewResponseDTO> reviewsPage = reviewDetailImpl.findSellerReviewsBySellerId(sellerId, pageable);
 
         log.info("판매자 ID {}에 대한 총 {}개의 리뷰를 조회했습니다.", sellerId, reviewsPage.getTotalElements());
 
@@ -48,7 +49,8 @@ public class ReviewViewServiceImpl implements ReviewViewService {
             log.error("유효하지 않은 리뷰 ID: {}", id);
             throw new IllegalArgumentException("Invalid review ID");
         }
-        ReviewResponseDTO review = reviewDetail.findReviewDetailById(id)
+        // reviewDetail.findReviewDetailById 대신 reviewDetailImpl.findReviewDetailById 호출
+        ReviewResponseDTO review = reviewDetailImpl.findReviewDetailById(id)
                 .orElseThrow(() -> {
                     log.error("ID {}를 가진 리뷰를 찾을 수 없습니다.", id);
                     return new IllegalArgumentException("Review not found with id: " + id);
@@ -65,8 +67,8 @@ public class ReviewViewServiceImpl implements ReviewViewService {
             log.error("유효하지 않은 고객 ID: {}", customerId);
             throw new IllegalArgumentException("Invalid customer ID");
         }
-        // ReviewDetail의 메서드 이름과 반환 타입을 MyReviewResponseDTO에 맞게 변경
-        Page<MyReviewResponseDTO> myReviews = reviewDetail.findMyReviewsByCustomerId(customerId, pageable);
+        // reviewDetail.findMyReviewsByCustomerId 대신 reviewDetailImpl.findMyReviewsByCustomerId 호출
+        Page<MyReviewResponseDTO> myReviews = reviewDetailImpl.findMyReviewsByCustomerId(customerId, pageable);
         log.info("고객 ID {}에 대한 총 {}개의 리뷰를 조회했습니다.", customerId, myReviews.getTotalElements());
         return myReviews;
     }

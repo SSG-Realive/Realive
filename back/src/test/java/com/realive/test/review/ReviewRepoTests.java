@@ -1,4 +1,4 @@
-package com.realive.review;
+package com.realive.test.review;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.realive.domain.common.enums.MediaType;

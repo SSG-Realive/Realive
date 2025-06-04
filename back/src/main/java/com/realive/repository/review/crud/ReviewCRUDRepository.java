@@ -9,5 +9,5 @@ import java.util.Optional;
 @Repository
 public interface ReviewCRUDRepository extends JpaRepository<SellerReview, Long> {
 
-    Optional<SellerReview> findByOrderIdAndCustomerIdAndSellerId(Long orderId, Long customerId, Long sellerId);
+    Optional<SellerReview> findByOrder_IdAndCustomer_IdAndSeller_Id(Long orderId, Long customerId, Long sellerId);
 }

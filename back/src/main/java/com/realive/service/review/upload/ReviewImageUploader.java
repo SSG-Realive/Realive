@@ -11,19 +11,20 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.AtomicMoveNotSupportedException; // 추가: AtomicMoveNotSupportedException import
 import java.util.UUID;
 
 @Service
 @Log4j2
 public class ReviewImageUploader {
 
-    @Value("${upload.dir}")
+    @Value("${file.upload-dir}")
     private String UPLOAD_BASE_DIR;
 
     private static final String TEMP_DIR_NAME = "temp";
     private String TEMP_UPLOAD_DIR;
 
-    public ReviewImageUploader(@Value("${upload.dir}") String uploadBaseDir) {
+    public ReviewImageUploader(@Value("${file.upload-dir}") String uploadBaseDir) {
         this.UPLOAD_BASE_DIR = uploadBaseDir;
         this.TEMP_UPLOAD_DIR = UPLOAD_BASE_DIR + File.separator + TEMP_DIR_NAME;
         File tempDir = new File(TEMP_UPLOAD_DIR);
@@ -75,12 +76,12 @@ public class ReviewImageUploader {
      * 이 메서드는 이벤트 핸들러의 트랜잭션 내에서 호출됩니다.
      *
      * @param tempImageUrl 임시 업로드 시 반환된 URL (예: /uploads/temp/uuid_original.jpg)
-     * @param orderId      최종 저장될 주문 ID (경로 구성용)
+     * @param reviewId      최종 저장될 리뷰 ID (경로 구성용)
      * @return 최종 저장된 파일의 URL (예: /uploads/12345/uuid_original.jpg)
      * @throws IOException      파일 이동 실패 시
      * @throws RuntimeException 파일 경로 파싱 오류 시
      */
-    public String confirmImage(String tempImageUrl, Long orderId) throws IOException {
+    public String confirmImage(String tempImageUrl, Long reviewId) throws IOException { // orderId -> reviewId로 매개변수 이름 변경
         if (tempImageUrl == null || !tempImageUrl.startsWith("/uploads/" + TEMP_DIR_NAME + "/")) {
             log.warn("confirmImage - 유효하지 않은 임시 이미지 URL 입니다: {}", tempImageUrl);
             throw new IllegalArgumentException("유효하지 않은 임시 이미지 URL 입니다.");
@@ -91,10 +92,11 @@ public class ReviewImageUploader {
 
         if (!Files.exists(sourcePath)) {
             log.error("confirmImage - 확정하려는 임시 파일이 존재하지 않습니다: {}", sourcePath);
+            // 파일이 존재하지 않으면, 이동할 수 없으므로 예외를 던집니다.
             throw new IOException("확정하려는 임시 파일이 존재하지 않습니다.");
         }
 
-        String finalSubDirPath = orderId + File.separator;
+        String finalSubDirPath = reviewId + File.separator; // reviewId 사용
         String fullFinalDirPath = UPLOAD_BASE_DIR + File.separator + finalSubDirPath;
 
         File finalDir = new File(fullFinalDirPath);
@@ -110,44 +112,53 @@ public class ReviewImageUploader {
 
         Path destinationPath = Paths.get(fullFinalDirPath, filename);
 
-        // ATOMIC_MOVE 옵션으로 원자적으로 이동 시도 (성공 아니면 실패)
-        Files.move(sourcePath, destinationPath, StandardCopyOption.ATOMIC_MOVE);
-        log.info("confirmImage - 임시 파일 -> 최종 파일 이동 성공: {} -> {}", sourcePath, destinationPath);
+        try {
+            // ATOMIC_MOVE 옵션으로 원자적으로 이동 시도
+            Files.move(sourcePath, destinationPath, StandardCopyOption.ATOMIC_MOVE);
+            log.info("confirmImage - 임시 파일 -> 최종 파일 원자적 이동 성공: {} -> {}", sourcePath, destinationPath);
+        } catch (AtomicMoveNotSupportedException e) {
+            // ATOMIC_MOVE가 지원되지 않는 경우, 일반적인 이동으로 재시도
+            log.warn("confirmImage - 파일 시스템이 ATOMIC_MOVE를 지원하지 않아 일반 이동으로 재시도합니다: {} -> {}", sourcePath, destinationPath);
+            Files.move(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING);
+            log.info("confirmImage - 임시 파일 -> 최종 파일 일반 이동 성공: {} -> {}", sourcePath, destinationPath);
+        } catch (IOException e) {
+            log.error("confirmImage - 파일 이동 실패: {} -> {} : {}", sourcePath, destinationPath, e.getMessage(), e);
+            throw e; // 파일 이동 실패 시 예외를 던집니다.
+        }
 
-        return "/uploads/" + orderId + "/" + filename;
+        return "/uploads/" + reviewId + "/" + filename; // reviewId 사용
     }
 
     /**
      * 특정 임시 파일을 삭제합니다. (주로 이벤트 처리 실패 시 롤백 용도)
      * @param tempImageUrl 삭제할 임시 이미지 URL
      */
-    public void deleteTempImage(String tempImageUrl) {
+    public void deleteTempImage(String tempImageUrl) throws IOException { // IOException 던지도록 변경
         if (tempImageUrl == null || !tempImageUrl.startsWith("/uploads/" + TEMP_DIR_NAME + "/")) {
             log.warn("deleteTempImage - 삭제하려는 임시 이미지 URL이 유효하지 않습니다: {}", tempImageUrl);
-            return;
+            return; // 유효하지 않은 URL은 조용히 넘어갑니다.
         }
         String filename = tempImageUrl.substring(("/uploads/" + TEMP_DIR_NAME + "/").length());
         Path filePath = Paths.get(TEMP_UPLOAD_DIR, filename);
-        deleteFile(filePath);
+        deleteFile(filePath); // deleteFile이 IOException을 던지도록 변경
     }
 
     /**
      * 최종 위치에 있는 파일을 삭제합니다. (주로 리뷰 삭제/수정 시)
      * @param finalImageUrl 삭제할 최종 이미지 URL
      */
-    public void deleteFinalImage(String finalImageUrl) {
+    public void deleteFinalImage(String finalImageUrl) throws IOException { // IOException 던지도록 변경
         if (finalImageUrl == null || !finalImageUrl.startsWith("/uploads/")) {
             log.warn("deleteFinalImage - 삭제하려는 최종 이미지 URL이 유효하지 않습니다: {}", finalImageUrl);
-            return;
+            return; // 유효하지 않은 URL은 조용히 넘어갑니다.
         }
 
-        // /uploads/orderId/filename.jpg -> orderId/filename.jpg
         String relativePath = finalImageUrl.substring("/uploads/".length());
         Path filePath = Paths.get(UPLOAD_BASE_DIR, relativePath);
-        deleteFile(filePath);
+        deleteFile(filePath); // deleteFile이 IOException을 던지도록 변경
     }
 
-    private void deleteFile(Path filePath) {
+    private void deleteFile(Path filePath) throws IOException { // ⭐⭐⭐ IOException을 던지도록 변경 ⭐⭐⭐
         try {
             if (Files.exists(filePath)) {
                 Files.delete(filePath);
@@ -157,7 +168,8 @@ public class ReviewImageUploader {
             }
         } catch (IOException e) {
             log.error("deleteFile - 파일 삭제 실패: {} - {}", filePath, e.getMessage(), e);
-            // 파일 삭제 실패는 치명적이지 않을 수 있으므로 (스케줄러가 정리할 것임), 여기서 예외를 다시 던지지 않습니다.
+            // 파일 삭제 실패는 중요한 문제이므로, 예외를 다시 던져서 호출자가 처리하도록 합니다.
+            throw e;
         }
     }
 }
