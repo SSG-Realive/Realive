@@ -11,10 +11,7 @@ import {
   SellerProfile,
   SellerUpdateRequest,
 } from '@/service/sellerService';
-<<<<<<< HEAD
 import SellerLayout from '@/components/layouts/SellerLayout';
-=======
->>>>>>> origin/team2/jaehyun
 
 export default function SellerMePage() {
   const router = useRouter();
@@ -28,13 +25,10 @@ export default function SellerMePage() {
 
   useEffect(() => {
     const fetchProfile = async () => {
-<<<<<<< HEAD
       const token = localStorage.getItem('accessToken');
 
       if (!token)  return;
       
-=======
->>>>>>> origin/team2/jaehyun
       try {
         const data: SellerProfile = await getProfile();
         setEmail(data.email);
@@ -93,11 +87,7 @@ export default function SellerMePage() {
     <>
       {/* ↙ 여기서 Header를 먼저 렌더링 */}
       <Header />
-<<<<<<< HEAD
       <SellerLayout>
-=======
-
->>>>>>> origin/team2/jaehyun
       {/* 기존 로그인 폼처럼 생긴 부분을 그대로 둔 예시 */}
       <div style={{ maxWidth: 500, margin: '0 auto', padding: '2rem' }}>
         <h1>판매자 정보 수정</h1>
@@ -173,10 +163,7 @@ export default function SellerMePage() {
           </button>
         </form>
       </div>
-<<<<<<< HEAD
       </SellerLayout>
-=======
->>>>>>> origin/team2/jaehyun
     </>
   );
 }
