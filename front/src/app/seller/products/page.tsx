@@ -1,4 +1,4 @@
-// 상품 목록 (GET)
+// 상품 목록
 'use client';
 
 import { useEffect, useState } from 'react';
