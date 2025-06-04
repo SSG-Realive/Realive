@@ -10,8 +10,7 @@ import useSellerAuthGuard from '@/hooks/useSellerAuthGuard';
 
 export default function ProductEditPage() {
      // 판매자 인증 가드를 적용
-    useSellerAuthGuard();
-
+    const checking = useSellerAuthGuard();
     const router = useRouter();
     const params = useParams();
     const productId = params?.id as string;
@@ -23,6 +22,7 @@ export default function ProductEditPage() {
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
+        if (checking) return;
         if (!productId) return;
         const fetchData = async () => {
             try {
@@ -34,7 +34,7 @@ export default function ProductEditPage() {
             }
         };
         fetchData();
-    }, [productId]);
+    }, [productId, checking]);
 
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         if (!form) return;
@@ -82,7 +82,7 @@ export default function ProductEditPage() {
     };
 
     if (!form) return <div className="p-4">로딩 중...</div>;
-
+    if (checking) return <div className="p-8">인증 확인 중...</div>;
     return (
         <>
             <Header />

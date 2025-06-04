@@ -10,7 +10,7 @@ import useSellerAuthGuard from '@/hooks/useSellerAuthGuard';
 
 export default function ProductCreatePage() {
      // 판매자 인증 가드를 적용
-    useSellerAuthGuard();
+    const checking = useSellerAuthGuard();
 
     const router = useRouter();
 
@@ -73,7 +73,8 @@ export default function ProductCreatePage() {
             setError('상품 등록 중 오류가 발생했습니다.');
         }
     };
-
+    if (checking) return <div className="p-8">인증 확인 중...</div>;
+    
     return (
         <>
             <Header /> {/* ✅ 상단 고정 헤더 렌더링 */}

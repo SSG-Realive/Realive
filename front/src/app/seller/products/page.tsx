@@ -7,8 +7,12 @@ import Header from '@/components/Header';
 import { getMyProducts } from '@/service/productService';
 import { ProductListItem } from '@/types/product';
 import SellerLayout from '@/components/layouts/SellerLayout';
+import useSellerAuthGuard from '@/hooks/useSellerAuthGuard';
 
 export default function ProductListPage() {
+     // 판매자 인증 가드를 적용
+    useSellerAuthGuard();
+
     const router = useRouter();
     const searchParams = useSearchParams();
 
