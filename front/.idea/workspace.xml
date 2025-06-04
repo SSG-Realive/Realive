@@ -4,16 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="31883063-87fe-44f2-b836-458e49ca3558" name="Changes" comment="change">
-      <change afterPath="$PROJECT_DIR$/src/app/orders/[id]/page.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/orders/new/page.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/orders/page.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/service/orderService.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/types/order.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/types/productList.ts" afterDir="false" />
+    <list default="true" id="31883063-87fe-44f2-b836-458e49ca3558" name="Changes" comment="병합">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/orders/[id]/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/customer/orders/[id]/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/orders/new/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/customer/orders/new/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/orders/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/customer/orders/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/service/orderService.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/service/orderService.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/service/productService.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/service/productService.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/types/product.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/types/product.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -50,27 +47,27 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "team2/jaehyun",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/SSG_KDT8/Realive/back",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "ts.external.directory.path": "C:\\SSG_KDT8\\Realive\\front\\node_modules\\typescript\\lib",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;team2/jaehyun&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/SSG_KDT8/Realive/back&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;C:\\SSG_KDT8\\Realive\\front\\node_modules\\typescript\\lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "postgresql"
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;postgresql&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -89,7 +86,7 @@
       <updated>1748851961155</updated>
       <workItem from="1748851962486" duration="2077000" />
       <workItem from="1748995015675" duration="11567000" />
-      <workItem from="1749015148641" duration="4385000" />
+      <workItem from="1749015148641" duration="5067000" />
     </task>
     <task id="LOCAL-00001" summary="change">
       <option name="closed" value="true" />
@@ -123,7 +120,23 @@
       <option name="project" value="LOCAL" />
       <updated>1749017144237</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="주문">
+      <option name="closed" value="true" />
+      <created>1749020057478</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1749020057478</updated>
+    </task>
+    <task id="LOCAL-00006" summary="병합">
+      <option name="closed" value="true" />
+      <created>1749020114093</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1749020114093</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -131,6 +144,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="change" />
-    <option name="LAST_COMMIT_MESSAGE" value="change" />
+    <MESSAGE value="주문" />
+    <MESSAGE value="병합" />
+    <option name="LAST_COMMIT_MESSAGE" value="병합" />
   </component>
 </project>

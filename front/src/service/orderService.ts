@@ -5,7 +5,7 @@ import { OrderResponse, PageResponse } from '@/types/order';
  * 주문 목록 조회
  */
 export async function getMyOrders(page: number): Promise<PageResponse<OrderResponse>> {
-    const res = await apiClient.get(`/api/customer/orders?page=${page}`);
+    const res = await apiClient.get(`/customer/orders?page=${page}`);
     return res.data;
 }
 
@@ -13,7 +13,7 @@ export async function getMyOrders(page: number): Promise<PageResponse<OrderRespo
  * 주문 상세 조회
  */
 export async function getOrderDetail(orderId: number): Promise<OrderResponse> {
-    const res = await apiClient.get(`/api/customer/orders/${orderId}`);
+    const res = await apiClient.get(`/customer/orders/${orderId}`);
     return res.data;
 }
 
@@ -25,7 +25,7 @@ export async function createOrder(payload: {
     quantity: number;
     deliveryAddress: string;
 }): Promise<number> {
-    const res = await apiClient.post('/api/customer/orders', payload);
+    const res = await apiClient.post('/customer/orders', payload);
     return res.data;
 }
 
@@ -33,5 +33,5 @@ export async function createOrder(payload: {
  * 주문 취소
  */
 export async function cancelOrder(orderId: number): Promise<void> {
-    await apiClient.delete(`/api/customer/orders/${orderId}`);
+    await apiClient.delete(`/customer/orders/${orderId}`);
 }

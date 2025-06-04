@@ -1,6 +1,5 @@
 import apiClient from '@/lib/apiClient';
 import { ProductDetail } from '@/types/product';
-
 import { PageResponse } from '@/types/common';
 import { ProductListItem } from '@/types/productList';
 
