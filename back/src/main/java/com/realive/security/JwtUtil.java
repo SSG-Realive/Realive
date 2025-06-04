@@ -42,10 +42,11 @@ public class JwtUtil {
      * @param subject  토큰 주제 (판매자/관리자 구분용)
      * @param id       사용자 식별자
      * @param email    이메일 (액세스 토큰에만 포함)
+     * @param name     이름 (액세스 토큰에만 포함)
      * @param duration 토큰 만료 기간 (밀리초)
      * @return 생성된 JWT 토큰 문자열
      */
-    private String generateToken(String subject, Long id, String email, long duration) {
+    private String generateToken(String subject, Long id, String email, String name, long duration) {
         JwtBuilder builder = Jwts.builder()
                 .setSubject(subject)
                 .claim("id", id)
@@ -55,6 +56,9 @@ public class JwtUtil {
         if (email != null) {
             builder.claim("email", email);
         }
+        if (name != null) {
+            builder.claim("name", name);
+        }
 
         return builder
                 .signWith(key, SignatureAlgorithm.HS256)
@@ -63,25 +67,24 @@ public class JwtUtil {
 
     // 판매자 access 토큰 생성
     public String generateAccessToken(Seller seller) {
-        return generateToken(SUBJECT_SELLER, seller.getId(), seller.getEmail(), expiration);
+        return generateToken(SUBJECT_SELLER, seller.getId(), seller.getEmail(), seller.getName(), expiration);
     }
 
     // 판매자 refresh 토큰 생성
     public String generateRefreshToken(Seller seller) {
         long refreshDuration = expiration * 24 * 7;  // 7일간 유효
-        return generateToken(SUBJECT_SELLER_REFRESH, seller.getId(), null, refreshDuration);
+        return generateToken(SUBJECT_SELLER_REFRESH, seller.getId(), null, null, refreshDuration);
     }
-
 
     // 관리자 access 토큰 생성
     public String generateAccessToken(Admin admin) {
-        return generateToken(SUBJECT_ADMIN, Long.valueOf(admin.getId()), admin.getEmail(), expiration);
+        return generateToken(SUBJECT_ADMIN, Long.valueOf(admin.getId()), admin.getEmail(), admin.getName(), expiration);
     }
 
     // 관리자 refresh 토큰 생성
     public String generateRefreshToken(Admin admin) {
         long refreshDuration = expiration * 24 * 7;  // 7일간 유효
-        return generateToken(SUBJECT_ADMIN_REFRESH, Long.valueOf(admin.getId()), null, refreshDuration);
+        return generateToken(SUBJECT_ADMIN_REFRESH, Long.valueOf(admin.getId()), null, null, refreshDuration);
     }
 
     // 토큰 검증
@@ -132,6 +135,15 @@ public class JwtUtil {
         return getClaims(token).get("email", String.class);
     }
 
+    // 토큰에서 name 추출
+    public String getNameFromToken(String token) {
+        return getClaims(token).get("name", String.class);
+    }
+
+    // 토큰에서 subject 추출
+    public String getSubjectFromToken(String token) {
+        return getClaims(token).getSubject();
+    }
 
     // HTTP 요청 헤더에서 토큰 추출
     public String resolveToken(HttpServletRequest request) {

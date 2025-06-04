@@ -1,6 +1,7 @@
 package com.realive.repository.auction;
 
 import com.realive.domain.auction.Auction;
+import com.realive.domain.common.enums.AuctionStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -33,7 +34,7 @@ public interface AuctionRepository extends JpaRepository<Auction, Integer>, JpaS
      * @param productId 조회할 상품의 ID.
      * @return Optional 객체로 감싸진, 조건에 맞는 Auction 엔티티. 조건에 맞는 경매가 없으면 Optional.empty()를 반환합니다.
      */
-    Optional<Auction> findByProductIdAndIsClosedFalse(Integer productId);
+    Optional<Auction> findByProductIdAndStatus(Integer productId, AuctionStatus status);
 
     /**
      * 여러 상품 ID(productId) 목록에 해당하는 경매들을 페이징 처리하여 조회합니다.
@@ -77,13 +78,7 @@ public interface AuctionRepository extends JpaRepository<Auction, Integer>, JpaS
      * (참고용 또는 특정 상황용) 아직 종료되지 않은(isClosed = false) 모든 경매 목록을 조회합니다.
      * @return 조건에 맞는 Auction 엔티티 목록.
      */
-    List<Auction> findByIsClosedFalse();
-
-    /**
-     * (참고용 또는 특정 상황용) 이미 종료된(isClosed = true) 모든 경매 목록을 조회합니다.
-     * @return 조건에 맞는 Auction 엔티티 목록.
-     */
-    List<Auction> findByIsClosedTrue();
+    List<Auction> findByStatusNot(AuctionStatus status);
 
     /**
      * (참고용 또는 특정 상황용) 특정 현재 가격(currentPrice) 이상인 모든 경매 목록을 조회합니다.
@@ -91,4 +86,6 @@ public interface AuctionRepository extends JpaRepository<Auction, Integer>, JpaS
      * @return 조건에 맞는 Auction 엔티티 목록.
      */
     List<Auction> findByCurrentPriceGreaterThanEqual(Integer price);
+
+    Optional<Auction> findByProductIdAndStatusNot(Integer productId, AuctionStatus status);
 }
