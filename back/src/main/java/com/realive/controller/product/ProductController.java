@@ -23,7 +23,7 @@ public class ProductController {
 
     private final ProductService productService;
 
-    // 🔽 상품 등록
+    // 🔽 상품 등록(new)
     @PostMapping(value = "/new",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Long> createProduct(@Valid @ModelAttribute ProductRequestDTO dto) {
         Seller seller = (Seller) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -33,7 +33,7 @@ public class ProductController {
         return ResponseEntity.ok(id);
     }
 
-    // 🔽 상품 수정
+    // 🔽 상품 수정(alter)
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Void> updateProduct(@PathVariable Long id, @ModelAttribute ProductRequestDTO dto) {
         Seller seller = (Seller) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

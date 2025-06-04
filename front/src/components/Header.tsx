@@ -3,10 +3,25 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { logout } from '@/service/sellerService';
+import { getProfile, logout } from '@/service/sellerService';
+import { useEffect, useState } from 'react';
 
 export default function Header() {
   const router = useRouter();
+  const [name, setName] = useState<string>('');
+
+  useEffect(() =>{
+    const fetchName = async () => {
+      try {
+        const profile = await getProfile();
+        setName(profile.name);
+
+      } catch (err){
+        console.error('프로필 정보 가져오기 실패', err);
+      }
+      }
+      fetchName();
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -41,9 +56,12 @@ export default function Header() {
         href="/seller/dashboard"
         style={{ fontSize: '1.25rem', fontWeight: 'bold', textDecoration: 'none', color: '#333' }}
       >
-        Realive Seller
+        Realive 
       </Link>
-      <nav>
+
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+        {name && <span style={{ fontSize: '1rem', color: '#333' }}>{name}님</span>}
         <button
           onClick={handleLogout}
           style={{
@@ -56,7 +74,7 @@ export default function Header() {
         >
           로그아웃
         </button>
-      </nav>
+      </div>
     </header>
   );
 }
