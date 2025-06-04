@@ -3,6 +3,7 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+<<<<<<< HEAD
 import { getProfile, logout } from '@/service/sellerService';
 import { useEffect, useState } from 'react';
 
@@ -22,6 +23,12 @@ export default function Header() {
       }
       fetchName();
   }, []);
+=======
+import { logout } from '@/service/sellerService';
+
+export default function Header() {
+  const router = useRouter();
+>>>>>>> origin/team2/jaehyun
 
   const handleLogout = async () => {
     try {
@@ -56,12 +63,18 @@ export default function Header() {
         href="/seller/dashboard"
         style={{ fontSize: '1.25rem', fontWeight: 'bold', textDecoration: 'none', color: '#333' }}
       >
+<<<<<<< HEAD
         Realive 
       </Link>
 
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
         {name && <span style={{ fontSize: '1rem', color: '#333' }}>{name}님</span>}
+=======
+        Realive Seller
+      </Link>
+      <nav>
+>>>>>>> origin/team2/jaehyun
         <button
           onClick={handleLogout}
           style={{
@@ -74,7 +87,11 @@ export default function Header() {
         >
           로그아웃
         </button>
+<<<<<<< HEAD
       </div>
+=======
+      </nav>
+>>>>>>> origin/team2/jaehyun
     </header>
   );
 }
