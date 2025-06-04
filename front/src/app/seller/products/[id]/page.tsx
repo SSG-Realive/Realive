@@ -6,8 +6,13 @@ import { useParams, useRouter } from 'next/navigation';
 import { getProductDetail, deleteProduct } from '@/service/productService';
 import { ProductDetail } from '@/types/product';
 import Header from '@/components/Header';
+import SellerLayout from '@/components/layouts/SellerLayout';
+import useSellerAuthGuard from '@/hooks/useSellerAuthGuard';
 
 export default function ProductDetailPage() {
+     // 판매자 인증 가드를 적용
+    useSellerAuthGuard();
+
     const params = useParams();
     const router = useRouter();
     const productId = Number(params?.id);
@@ -16,7 +21,14 @@ export default function ProductDetailPage() {
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
+        const token = localStorage.getItem('accessToken');
+        if (!token) {
+         router.push('/seller/login');
+        return;
+        }
+     
         if (!productId) return;
+        
         getProductDetail(productId)
             .then(setProduct)
             .catch((err) => {
@@ -48,6 +60,7 @@ export default function ProductDetailPage() {
     return (
         <>
             <Header />
+            <SellerLayout>
             <div className="max-w-3xl mx-auto p-6">
                 <h1 className="text-2xl font-bold mb-4">{product.name}</h1>
                 <p className="mb-2">상품 설명: {product.description}</p>
@@ -80,6 +93,7 @@ export default function ProductDetailPage() {
                     </button>
                 </div>
             </div>
+            </SellerLayout>
         </>
     );
 }

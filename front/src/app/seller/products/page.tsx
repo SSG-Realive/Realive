@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Header from '@/components/Header';
 import { getMyProducts } from '@/service/productService';
 import { ProductListItem } from '@/types/product';
+import SellerLayout from '@/components/layouts/SellerLayout';
 
 export default function ProductListPage() {
     const router = useRouter();
@@ -53,6 +54,7 @@ export default function ProductListPage() {
     return (
         <>
             <Header />
+            <SellerLayout>
             <div className="max-w-5xl mx-auto p-6">
                 <h1 className="text-2xl font-bold mb-4">내 상품 목록</h1>
 
@@ -116,6 +118,7 @@ export default function ProductListPage() {
                     ))}
                 </div>
             </div>
+            </SellerLayout>
         </>
     );
 }

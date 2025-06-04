@@ -12,8 +12,12 @@ import {
   SellerUpdateRequest,
 } from '@/service/sellerService';
 import SellerLayout from '@/components/layouts/SellerLayout';
+import useSellerAuthGuard from '@/hooks/useSellerAuthGuard';
 
 export default function SellerMePage() {
+  // 판매자 인증 가드를 적용
+  useSellerAuthGuard();
+  
   const router = useRouter();
 
   const [email, setEmail] = useState<string>('');
