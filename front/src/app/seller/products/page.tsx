@@ -10,7 +10,8 @@ import { getMyProducts } from '@/service/productService';
 import { ProductListItem } from '@/types/productList';
 
 export default function ProductListPage() {
-  useSellerAuthGuard();
+  const checking = useSellerAuthGuard();
+    if (checking) return <div className="p-8">인증 확인 중...</div>;
 
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -26,7 +27,7 @@ export default function ProductListPage() {
     const page = parseInt(searchParams.get('page') || '1', 10);
     setCurrentPage(page);
     fetchProductList(page);
-  }, [searchParams]);
+  }, [searchParams, checking]);
 
   const fetchProductList = async (page: number) => {
     try {

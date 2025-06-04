@@ -1,14 +1,9 @@
 import apiClient from '@/lib/apiClient';
 import { ProductSearchCondition } from '@/types/filter/productSearchCondition';
+import { LoginResponse } from '@/types/login/loginResponse';
 import { PageResponse } from '@/types/page/pageResponse';
 import { ProductListItem } from '@/types/productList';
 
-export interface LoginResponse {
-  accessToken: string;
-  refreshToken: string;
-  email: string;
-  name: string;
-}
 
 // 로그인 요청
 export async function login(email: string, password: string): Promise<LoginResponse> {
