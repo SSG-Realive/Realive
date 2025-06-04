@@ -1,13 +1,12 @@
-package com.realive.dto.member;
+package com.realive.dto.customer.member;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import com.realive.domain.customer.Gender;
-
 import lombok.Data;
 
-//회원-회원정보조회
+// [Customer] 회원정보 조회DTO
+
 @Data
 public class MemberReadDTO {
 

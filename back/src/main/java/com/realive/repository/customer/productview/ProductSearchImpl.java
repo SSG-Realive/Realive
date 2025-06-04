@@ -17,6 +17,8 @@ import com.realive.dto.product.ProductListDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
+// [Customer] 상품 검색 Repository 구현체
+
 @Log4j2
 @RequiredArgsConstructor
 public class ProductSearchImpl implements ProductSearch {
@@ -25,6 +27,7 @@ public class ProductSearchImpl implements ProductSearch {
 
     @Override
     public PageResponseDTO<ProductListDTO> search(PageRequestDTO requestDTO, Long categoryId) {
+       
         QProduct product = QProduct.product;
         QCategory category = QCategory.category;
         QProductImage productImage = QProductImage.productImage;
@@ -56,8 +59,6 @@ public class ProductSearchImpl implements ProductSearch {
         int offset = requestDTO.getOffset();
         int limit = requestDTO.getLimit();
 
-        // 실제 데이터 조회
-        // 데이터 조회 JPQLQuery 생성
         JPQLQuery<ProductListDTO> query = queryFactory
             .select(Projections.bean(ProductListDTO.class,
                 product.id.as("id"),
@@ -103,4 +104,5 @@ public class ProductSearchImpl implements ProductSearch {
         // 예시에서는 간단하게 1개만
         return List.of(parentId);
     }
+
 }

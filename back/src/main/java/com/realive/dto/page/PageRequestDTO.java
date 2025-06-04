@@ -45,6 +45,9 @@ public class PageRequestDTO {
         return PageRequest.of(getPageIndex(), size, Sort.by(dir, sort));
     }
 
+
+    // [Customer] offset, limit
+
     public int getOffset() {
         return getPageIndex() * size;
     }

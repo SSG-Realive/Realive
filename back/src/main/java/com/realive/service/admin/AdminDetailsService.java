@@ -10,7 +10,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 // 관리자 정보 조회
-@Service
+@Service("adminDetailsService")
 @RequiredArgsConstructor
 public class AdminDetailsService implements UserDetailsService {
 

@@ -7,7 +7,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.realive.dto.member.MemberLoginDTO;
+import com.realive.dto.customer.member.MemberLoginDTO;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -16,8 +16,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
-//JWT 토큰을 이용한 인증 필터
-//토큰이 유효하면 SecurityContextHolder에 인증 객체를 등록
+// [Customer] JWT 토큰을 이용한 인증 필터
+
 @Component
 @RequiredArgsConstructor
 @Log4j2
@@ -31,6 +31,7 @@ public class CustomerJwtAuthenticationFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
+        log.info("[CustomerJwtAuthenticationFilter] doFilterInternal 호출, URI: {}", request.getRequestURI());                                
         String token = resolveToken(request);
         log.info("JWT 토큰 추출: {}", token);
 
@@ -44,11 +45,11 @@ public class CustomerJwtAuthenticationFilter extends OncePerRequestFilter {
             // 인증 객체 생성 및 SecurityContext에 등록
             UsernamePasswordAuthenticationToken auth =
                     new UsernamePasswordAuthenticationToken(memberDTO, null, memberDTO.getAuthorities());
-            log.info("로드한 MemberLoginDTO: {}", memberDTO);
+            //log.info("로드한 MemberLoginDTO: {}", memberDTO);
 
             SecurityContextHolder.getContext().setAuthentication(auth);
             log.info("SecurityContextHolder에 인증 객체 등록 완료");
-        } else {
+        }else {
             log.info("토큰이 없거나 유효하지 않음");
         }
 
@@ -62,4 +63,14 @@ public class CustomerJwtAuthenticationFilter extends OncePerRequestFilter {
         }
         return null;
     }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String uri = request.getRequestURI();
+        log.info("shouldNotFilter 호출 - URI: {}", uri);
+        boolean result = uri.startsWith("/api/admin") || uri.startsWith("/api/seller") || uri.startsWith("/api/public");
+        log.info("필터 제외 여부: {}", result);
+        return result;
+    }
+
 }

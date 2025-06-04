@@ -13,7 +13,10 @@ import com.realive.dto.product.ProductResponseDTO;
 import com.realive.repository.customer.productview.ProductDetail;
 import com.realive.repository.customer.productview.ProductSearch;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.log4j.Log4j2;
+
+// [Customer] 상품 조회 Service 구현체
 
 @Service
 @Transactional
@@ -30,7 +33,6 @@ public class ProductViewServiceImpl implements ProductViewService {
         this.productDetail = productDetail;
     }
 
-
     @Override
     public PageResponseDTO<ProductListDTO> search(PageRequestDTO dto, Long categoryId) {
         return productSearch.search(dto, categoryId);
@@ -39,7 +41,7 @@ public class ProductViewServiceImpl implements ProductViewService {
     @Override
     public ProductResponseDTO getProductDetail(Long id) {
         return productDetail.findProductDetailById(id)
-                .orElseThrow(() -> new NoSuchElementException("해당 상품이 존재하지 않습니다. id=" + id));
+                .orElseThrow(() -> new EntityNotFoundException("해당 상품이 존재하지 않습니다. id=" + id));
     }
 
 }

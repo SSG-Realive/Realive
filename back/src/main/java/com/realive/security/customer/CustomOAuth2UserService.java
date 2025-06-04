@@ -2,6 +2,7 @@ package com.realive.security.customer;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+
 import java.util.Optional;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,14 +16,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.realive.domain.customer.Customer;
 import com.realive.domain.customer.SignupMethod;
-import com.realive.dto.member.MemberLoginDTO;
+import com.realive.dto.customer.member.MemberLoginDTO;
 import com.realive.repository.customer.CustomerRepository;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 
-//소셜로그인하면 인증 대신 -> 인증한 정보를 사용하기
+// [Customer] 소셜 UserService
+
 @Log4j2
 @Transactional
 @Service
@@ -114,6 +115,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         );
 
     }
+    
     private String getKakaoEmail(Map<String, Object> paramMap){
 
         log.info("KAKAO-----------------------------------------");
