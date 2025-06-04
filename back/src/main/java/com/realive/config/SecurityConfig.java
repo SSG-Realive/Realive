@@ -1,92 +1,142 @@
 package com.realive.config;
 
+import com.realive.security.AdminJwtAuthenticationFilter;
+import com.realive.security.SellerJwtAuthenticationFilter;
+import com.realive.security.customer.CustomerJwtAuthenticationFilter;
+
+import jakarta.servlet.http.HttpServletResponse;
+
+import com.realive.security.customer.CustomLoginSuccessHandler;
+import com.realive.security.customer.CustomUserDetailsService;
+import com.realive.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-//import com.realive.security.customer.CustomLoginSuccessHandler;
-//import com.realive.security.customer.CustomerJwtAuthenticationFilter; // CustomerJwtAuthenticationFilter import 제거
-
 import java.util.List;
 
-@Configuration
+@EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
-@Slf4j
+@Configuration
 @RequiredArgsConstructor
-@Order(2)
+@Slf4j
 public class SecurityConfig {
 
-    //private final CustomerJwtAuthenticationFilter jwtAuthenticationFilter; // CustomerJwtAuthenticationFilter 필드 제거
-//    private final CustomLoginSuccessHandler customLoginSuccessHandler;
+    private final CustomerJwtAuthenticationFilter customerJwtAuthenticationFilter;
+    private final SellerJwtAuthenticationFilter sellerJwtAuthenticationFilter;
+    private final AdminJwtAuthenticationFilter adminJwtAuthenticationFilter;
+    private final CustomLoginSuccessHandler customLoginSuccessHandler;
+    private final JwtUtil jwtUtil;
+    
+
+    @Autowired
+    @Qualifier("customUserDetailsService")
+    private UserDetailsService customUserDetailsService;
+
+    @Autowired
+    @Qualifier("adminDetailsService")
+    private UserDetailsService adminDetailsService;
+
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        log.info("------------------Security Config-----------------------");
+        log.info("✅ 통합 SecurityConfig 적용");
 
         http
-                .securityMatcher("/api/customer/**", "/api/public/**")
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .csrf(csrf -> csrf.disable())
-                .formLogin(form -> form.disable())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                //.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) // JWT 필터 제거
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/public/**").permitAll()
-                        .requestMatchers("/api/customer/**").authenticated()
-                        // 임시적으로 /api/admin/** 경로에 대한 접근을 허용 (테스트용)
-                        .requestMatchers("/api/admin/**").permitAll() // 이 부분을 추가
-                );
-//                .oauth2Login(config -> config
-//                        .successHandler(customLoginSuccessHandler));
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .csrf(csrf -> csrf.disable())
+            .formLogin(form -> form.disable())
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .exceptionHandling(exception -> exception
+                .authenticationEntryPoint((request, response, authException) -> {
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    response.setContentType("application/json");
+                    response.getWriter().write("{\"error\": \"Unauthorized\"}");
+                })
+                .accessDeniedHandler((request, response, accessDeniedException) -> {
+                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                    response.setContentType("application/json");
+                    response.getWriter().write("{\"error\": \"Forbidden\"}");
+                })
+            )
+            .authorizeHttpRequests(auth -> auth
+                // 관리자 엔드포인트
+                .requestMatchers("/api/admin/login").permitAll()
+                .requestMatchers("/api/admin/**").authenticated()
+                // 판매자 엔드포인트
+                .requestMatchers("/api/seller/signup", "/api/seller/login").permitAll()
+                .requestMatchers("/api/seller/**").authenticated()
+                // 고객 엔드포인트
+                .requestMatchers("/api/public/**").permitAll()
+                .requestMatchers("/api/customer/**").authenticated()
+            )
+            .oauth2Login(config -> config
+                .successHandler(customLoginSuccessHandler)
+                .failureHandler((request, response, exception) -> {
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    response.setContentType("application/json");
+                    response.getWriter().write("{\"error\": \"OAuth login failed\"}");
+                })
+            );
 
+        // 각 사용자 유형별 필터 추가 (순서 중요)
+        http.addFilterBefore(adminJwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(sellerJwtAuthenticationFilter, AdminJwtAuthenticationFilter.class);
+        http.addFilterBefore(customerJwtAuthenticationFilter, SellerJwtAuthenticationFilter.class);
         return http.build();
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
-        return http.getSharedObject(AuthenticationManagerBuilder.class)
-                .build();
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+        return configuration.getAuthenticationManager();
     }
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    //static 자원들 로그인 체크를 막는 설정
-    //servlet 들어간거로 import 주의!
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
-        log.info("------------web configure-------------------");
-        return (web) -> web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
-    }
+        log.info("✅ 정적 리소스 보안 설정 적용");
+    	return (web) -> web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
+	}
 
-    //CORS 설정(6버전)
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:3000"));
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
-        configuration.setAllowCredentials(true);
+        CorsConfiguration corsConfiguration = new CorsConfiguration();
+
+        corsConfiguration.setAllowedOriginPatterns(List.of("*"));
+        corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS"));
+        corsConfiguration.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
+        corsConfiguration.setAllowCredentials(true);
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
+        source.registerCorsConfiguration("/**", corsConfiguration);
+
         return source;
     }
 }

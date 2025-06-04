@@ -1,5 +1,7 @@
 package com.realive.dto.error;
 
+import java.util.Map;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,4 +27,7 @@ public class ErrorResponse {
 
     /** 에러 메시지 (예: "Invalid request", "User not found" 등) */
     private String message;
+
+    
+
 }

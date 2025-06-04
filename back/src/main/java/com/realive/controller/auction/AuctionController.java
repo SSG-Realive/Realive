@@ -1,7 +1,9 @@
 package com.realive.controller.auction;
 
+import com.realive.dto.auction.AuctionCancelResponseDTO;
 import com.realive.dto.auction.AuctionCreateRequestDTO;
 import com.realive.dto.auction.AuctionResponseDTO;
+import com.realive.dto.auction.AuctionUpdateRequestDTO;
 import com.realive.dto.common.ApiResponse;
 import com.realive.security.AdminPrincipal; // 실제 AdminPrincipal 경로
 import com.realive.service.admin.auction.AuctionService;
@@ -16,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Sort;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -82,7 +85,7 @@ public class AuctionController {
      */
     @GetMapping
     public ResponseEntity<ApiResponse<Page<AuctionResponseDTO>>> getActiveAuctions(
-            @PageableDefault(size = 10, sort = "endTime,asc") Pageable pageable, // 기본 페이징: 10개씩, 마감시간 오름차순
+            @PageableDefault(size = 10, sort = "endTime", direction = Sort.Direction.ASC) Pageable pageable,
             @RequestParam(required = false) String category,
             @RequestParam(required = false) String status,
             @AuthenticationPrincipal AdminPrincipal adminPrincipal
@@ -96,7 +99,7 @@ public class AuctionController {
         try {
             Page<AuctionResponseDTO> activeAuctions = auctionService.getActiveAuctions(pageable, category, status);
             if (activeAuctions.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.OK) // 결과가 없어도 200 OK
+                return ResponseEntity.status(HttpStatus.OK)
                         .body(ApiResponse.success("조건에 맞는 경매가 없습니다.", activeAuctions));
             }
             return ResponseEntity.ok(ApiResponse.success(activeAuctions));
@@ -147,7 +150,7 @@ public class AuctionController {
     @GetMapping("/seller/{sellerId}")
     public ResponseEntity<ApiResponse<Page<AuctionResponseDTO>>> getAuctionsBySeller(
             @PathVariable Long sellerId,
-            @PageableDefault(size = 10, sort = "createdAt,desc") Pageable pageable, // 기본: 등록시간 내림차순
+            @PageableDefault(size = 10, sort = "startTime", direction = Sort.Direction.DESC) Pageable pageable,
             @AuthenticationPrincipal AdminPrincipal adminPrincipal
     ) {
         log.info("GET /api/admin/auctions/seller/{} - 관리자가 특정 판매자 경매 목록 조회. AdminId: {}",
@@ -200,6 +203,91 @@ public class AuctionController {
             log.error("관리자가 상품(ID:{})의 현재 경매 조회 중 알 수 없는 오류 발생: {}", productId, e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), "상품의 현재 경매 조회 중 오류가 발생했습니다."));
+        }
+    }
+
+    /**
+     * 관리자가 특정 경매를 취소/중단하는 API.
+     * @param auctionId 취소할 경매의 ID
+     * @param reason 취소 사유 (선택)
+     * @param adminPrincipal 인증된 관리자 정보
+     * @return 취소 결과 또는 에러 응답
+     */
+    @PostMapping("/{auctionId}/cancel")
+    public ResponseEntity<ApiResponse<AuctionCancelResponseDTO>> cancelAuction(
+            @PathVariable Integer auctionId,
+            @RequestParam(required = false) String reason,
+            @AuthenticationPrincipal AdminPrincipal adminPrincipal
+    ) {
+        log.info("POST /api/admin/auctions/{}/cancel - 관리자 경매 취소 요청. AdminId: {}, 사유: {}",
+                auctionId, (adminPrincipal != null && adminPrincipal.getAdmin() != null ? adminPrincipal.getAdmin().getId() : "null"), reason);
+
+        if (adminPrincipal == null || adminPrincipal.getAdmin() == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error(HttpStatus.UNAUTHORIZED.value(), "관리자 로그인이 필요합니다."));
+        }
+
+        try {
+            AuctionCancelResponseDTO result = auctionService.cancelAuction(auctionId, adminPrincipal.getAdmin().getId().longValue(), reason);
+            return ResponseEntity.ok(ApiResponse.success(result));
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(ApiResponse.error(HttpStatus.NOT_FOUND.value(), e.getMessage()));
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(ApiResponse.error(HttpStatus.BAD_REQUEST.value(), e.getMessage()));
+        } catch (AccessDeniedException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(ApiResponse.error(HttpStatus.FORBIDDEN.value(), e.getMessage()));
+        } catch (Exception e) {
+            log.error("관리자 경매 취소 중 알 수 없는 오류 발생. AuctionId: {}, AdminId: {}", auctionId, adminPrincipal.getAdmin().getId(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), "경매 취소 중 서버 내부 오류가 발생했습니다."));
+        }
+    }
+
+    /**
+     * 관리자가 특정 경매 정보를 수정하는 API.
+     * @param auctionId 수정할 경매의 ID
+     * @param requestDto 수정할 경매 정보
+     * @param adminPrincipal 인증된 관리자 정보
+     * @return 수정된 경매 정보 또는 에러 응답
+     */
+    @PutMapping("/{auctionId}")
+    public ResponseEntity<ApiResponse<AuctionResponseDTO>> updateAuction(
+            @PathVariable Integer auctionId,
+            @Valid @RequestBody AuctionUpdateRequestDTO requestDto,
+            @AuthenticationPrincipal AdminPrincipal adminPrincipal
+    ) {
+        log.info("PUT /api/admin/auctions/{} - 관리자 경매 수정 요청. AdminId: {}, DTO: {}",
+                auctionId, (adminPrincipal != null && adminPrincipal.getAdmin() != null ? adminPrincipal.getAdmin().getId() : "null"), requestDto);
+
+        if (adminPrincipal == null || adminPrincipal.getAdmin() == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error(HttpStatus.UNAUTHORIZED.value(), "관리자 로그인이 필요합니다."));
+        }
+
+        if (!auctionId.equals(requestDto.getId())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(ApiResponse.error(HttpStatus.BAD_REQUEST.value(), "경로의 경매 ID와 요청 본문의 ID가 일치하지 않습니다."));
+        }
+
+        try {
+            AuctionResponseDTO updatedAuction = auctionService.updateAuction(requestDto, adminPrincipal.getAdmin().getId().longValue());
+            return ResponseEntity.ok(ApiResponse.success(updatedAuction));
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(ApiResponse.error(HttpStatus.NOT_FOUND.value(), e.getMessage()));
+        } catch (IllegalStateException | IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(ApiResponse.error(HttpStatus.BAD_REQUEST.value(), e.getMessage()));
+        } catch (AccessDeniedException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(ApiResponse.error(HttpStatus.FORBIDDEN.value(), e.getMessage()));
+        } catch (Exception e) {
+            log.error("관리자 경매 수정 중 알 수 없는 오류 발생. AuctionId: {}, AdminId: {}", auctionId, adminPrincipal.getAdmin().getId(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), "경매 수정 중 서버 내부 오류가 발생했습니다."));
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.realive.dto.auction;
 
+import com.realive.domain.common.enums.AuctionStatus;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -41,7 +42,7 @@ public class AuctionCreateRequestDTO {
                 .currentPrice(this.startPrice)
                 .startTime(now)
                 .endTime(this.endTime)
-                .isClosed(false)
+                .status(AuctionStatus.PROCEEDING)
                 .build();
     }
 }

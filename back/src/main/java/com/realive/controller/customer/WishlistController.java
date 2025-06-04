@@ -11,15 +11,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.realive.dto.customer.wishlist.WishlistDTO;
 import com.realive.dto.product.ProductListDTO;
-import com.realive.dto.wishlist.WishlistDTO;
 import com.realive.service.customer.CustomerService;
 import com.realive.service.customer.WishlistService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
-// 찜 컨트롤러
+// [Customer] 찜 관련 컨트롤러
 
 @RestController
 @RequestMapping("/api/customer/wishlist")
@@ -48,6 +48,5 @@ public class WishlistController {
         List<ProductListDTO> wishlists = wishlistService.getWishlistForCustomer(customerId);
         return ResponseEntity.ok(wishlists);
     }
-
     
 }
