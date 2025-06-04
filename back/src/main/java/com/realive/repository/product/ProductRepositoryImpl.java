@@ -76,9 +76,7 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
         BooleanBuilder builder = new BooleanBuilder();
 
         // 판매자 ID 조건 (필수)
-        if (sellerId != null) {
-            builder.and(product.seller.id.eq(sellerId));
-        }
+        builder.and(product.seller.id.eq(sellerId));
 
         // 활성 여부 조건
         if (cond.getIsActive() != null) {

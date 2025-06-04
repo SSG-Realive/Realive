@@ -73,10 +73,4 @@ public class SellerJwtAuthenticationFilter extends OncePerRequestFilter {
         // 6. 다음 필터 체인으로 전달
         filterChain.doFilter(request, response);
     }
-
-    @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) {
-        String path = request.getRequestURI();
-        return !path.startsWith("/api/seller");
-    }
 }
