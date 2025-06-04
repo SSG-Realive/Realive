@@ -60,7 +60,7 @@ public class ProductController {
     @GetMapping
     public ResponseEntity<PageResponseDTO<ProductListDTO>> getMyProducts(
             @ModelAttribute ProductSearchCondition condition) {
-        
+
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String email = auth.getName();
 
@@ -74,18 +74,5 @@ public class ProductController {
     public ResponseEntity<ProductResponseDTO> getProductDetail(@PathVariable Long id) {
         ProductResponseDTO dto = productService.getProductDetail(id);
         return ResponseEntity.ok(dto);
-    }
-
-    /**
-     * 관리자용 전체 상품 목록 조회
-     * - 모든 판매자의 상품을 조회
-     * - 필터링: 카테고리, 상태, 활성화 여부, 가격 범위, 키워드 검색
-     */
-    @GetMapping("/admin/products")
-    public ResponseEntity<PageResponseDTO<ProductListDTO>> getAllProductsForAdmin(
-            @ModelAttribute ProductSearchCondition condition) {
-        log.info("관리자용 전체 상품 목록 조회 요청 - 조건: {}", condition);
-        PageResponseDTO<ProductListDTO> response = productService.getAllProductsForAdmin(condition);
-        return ResponseEntity.ok(response);
     }
 }

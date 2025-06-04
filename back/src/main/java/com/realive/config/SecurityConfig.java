@@ -86,9 +86,8 @@ public class SecurityConfig {
                 .requestMatchers("/api/admin/login").permitAll()
                 .requestMatchers("/api/admin/**").authenticated()
                 // 판매자 엔드포인트
-                .requestMatchers("/api/seller/login").permitAll()
+                .requestMatchers("/api/seller/signup", "/api/seller/login").permitAll()
                 .requestMatchers("/api/seller/**").authenticated()
-                .requestMatchers("/api/seller/signup").permitAll()
                 // 고객 엔드포인트
                 .requestMatchers("/api/public/**").permitAll()
                 .requestMatchers("/api/customer/**").authenticated()
