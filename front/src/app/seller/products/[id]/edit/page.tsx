@@ -6,8 +6,12 @@ import { useRouter, useParams } from 'next/navigation';
 import Header from '@/components/Header';
 import { getProductDetail, updateProduct } from '@/service/productService';
 import { ProductDetail } from '@/types/product';
+import useSellerAuthGuard from '@/hooks/useSellerAuthGuard';
 
 export default function ProductEditPage() {
+     // 판매자 인증 가드를 적용
+    useSellerAuthGuard();
+
     const router = useRouter();
     const params = useParams();
     const productId = params?.id as string;

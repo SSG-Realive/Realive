@@ -6,8 +6,12 @@ import { useRouter } from 'next/navigation';
 import Header from '@/components/Header'; // ✅ 판매자 전용 헤더 포함
 import { createProduct } from '@/service/productService';
 import SellerLayout from '@/components/layouts/SellerLayout';
+import useSellerAuthGuard from '@/hooks/useSellerAuthGuard';
 
 export default function ProductCreatePage() {
+     // 판매자 인증 가드를 적용
+    useSellerAuthGuard();
+
     const router = useRouter();
 
     // 상품 정보 입력

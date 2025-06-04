@@ -2,10 +2,12 @@
 
 import Header from '@/components/Header';
 import SellerLayout from '@/components/layouts/SellerLayout';
+import useSellerAuthGuard from '@/hooks/useSellerAuthGuard';
 import { getDashboard, SellerDashboardResponse } from '@/service/sellerService';
 import { useEffect, useState } from 'react';
 
 export default function SellerDashboardPage() {
+    useSellerAuthGuard();
 
     const [dashboard, setDashboard] = useState<SellerDashboardResponse | null>(null);
     const [loading, setLoading] = useState(true);

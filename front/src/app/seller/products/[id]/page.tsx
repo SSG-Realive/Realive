@@ -7,8 +7,12 @@ import { getProductDetail, deleteProduct } from '@/service/productService';
 import { ProductDetail } from '@/types/product';
 import Header from '@/components/Header';
 import SellerLayout from '@/components/layouts/SellerLayout';
+import useSellerAuthGuard from '@/hooks/useSellerAuthGuard';
 
 export default function ProductDetailPage() {
+     // 판매자 인증 가드를 적용
+    useSellerAuthGuard();
+
     const params = useParams();
     const router = useRouter();
     const productId = Number(params?.id);
@@ -17,7 +21,14 @@ export default function ProductDetailPage() {
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
+        const token = localStorage.getItem('accessToken');
+        if (!token) {
+         router.push('/seller/login');
+        return;
+        }
+     
         if (!productId) return;
+        
         getProductDetail(productId)
             .then(setProduct)
             .catch((err) => {
