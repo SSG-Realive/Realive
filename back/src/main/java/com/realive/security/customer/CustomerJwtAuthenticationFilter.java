@@ -4,11 +4,15 @@ import java.io.IOException;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.realive.dto.customer.member.MemberLoginDTO;
+import com.realive.dto.error.ErrorResponse;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -31,29 +35,54 @@ public class CustomerJwtAuthenticationFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        log.info("[CustomerJwtAuthenticationFilter] doFilterInternal 호출, URI: {}", request.getRequestURI());                                
-        String token = resolveToken(request);
-        log.info("JWT 토큰 추출: {}", token);
+    try {
+            log.info("[CustomerJwtAuthenticationFilter] doFilterInternal 호출, URI: {}", request.getRequestURI());                                
+            String token = resolveToken(request);
+            log.info("JWT 토큰 추출: {}", token);
 
-        if (token != null && jwtTokenProvider.validateToken(token)) {
-            String email = jwtTokenProvider.getUsername(token);
-            log.info("토큰에서 추출한 사용자명(email): {}", email);
+            if (token != null && jwtTokenProvider.validateToken(token)) {
+                String email = jwtTokenProvider.getUsername(token);
+                log.info("토큰에서 추출한 사용자명(email): {}", email);
 
-            // DB에서 유저 정보 로드 (MemberLoginDTO는 UserDetails를 구현해야 함)
-            MemberLoginDTO memberDTO = (MemberLoginDTO) customUserDetailsService.loadUserByUsername(email);
+                MemberLoginDTO memberDTO = (MemberLoginDTO) customUserDetailsService.loadUserByUsername(email);
 
-            // 인증 객체 생성 및 SecurityContext에 등록
-            UsernamePasswordAuthenticationToken auth =
-                    new UsernamePasswordAuthenticationToken(memberDTO, null, memberDTO.getAuthorities());
-            //log.info("로드한 MemberLoginDTO: {}", memberDTO);
+                UsernamePasswordAuthenticationToken auth =
+                        new UsernamePasswordAuthenticationToken(memberDTO, null, memberDTO.getAuthorities());
+                SecurityContextHolder.getContext().setAuthentication(auth);
+                log.info("SecurityContextHolder에 인증 객체 등록 완료");
+            }
 
-            SecurityContextHolder.getContext().setAuthentication(auth);
-            log.info("SecurityContextHolder에 인증 객체 등록 완료");
-        }else {
-            log.info("토큰이 없거나 유효하지 않음");
+            filterChain.doFilter(request, response);
+
+        } catch (UsernameNotFoundException | EntityNotFoundException ex) {
+            log.error("인증 실패: {}", ex.getMessage());
+
+            // 직접 ErrorResponse 응답
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json;charset=UTF-8");
+
+            ErrorResponse error = ErrorResponse.builder()
+                    .status(401)
+                    .code("UNAUTHORIZED")
+                    .message("인증에 실패하였습니다: " + ex.getMessage())
+                    .build();
+
+            new ObjectMapper().writeValue(response.getWriter(), error);
+
+        } catch (Exception ex) {
+            log.error("JWT 필터 처리 중 알 수 없는 예외 발생", ex);
+
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.setContentType("application/json;charset=UTF-8");
+
+            ErrorResponse error = ErrorResponse.builder()
+                    .status(500)
+                    .code("INTERNAL_SERVER_ERROR")
+                    .message("서버 오류가 발생했습니다")
+                    .build();
+
+            new ObjectMapper().writeValue(response.getWriter(), error);
         }
-
-        filterChain.doFilter(request, response);
     }
 
     private String resolveToken(HttpServletRequest request) {
