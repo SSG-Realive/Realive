@@ -4,21 +4,19 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="31883063-87fe-44f2-b836-458e49ca3558" name="Changes" comment="수정">
-      <change afterPath="$PROJECT_DIR$/src/app/seller/orders/[id]/page.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/seller/orders/page.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/service/sellerOrderService.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/types/sellerOrder.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/product/DeliveryPolicy.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/product/DeliveryPolicy.java" afterDir="false" />
+    <list default="true" id="31883063-87fe-44f2-b836-458e49ca3558" name="Changes" comment="병합">
+      <change afterPath="$PROJECT_DIR$/src/app/seller/qna/[id]/edit/page.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/seller/qna/[id]/page.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/seller/qna/new/page.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/seller/qna/page.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/sellerQna/QnaDetail.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/sellerQna/QnaListItem.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/service/sellerQnaService.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/types/sellerQna.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/customer/orders/[id]/page.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/customer/orders/new/page.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/customer/orders/page.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/seller/products/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/seller/products/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/service/orderService.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/service/productService.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/service/productService.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/types/common.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/types/common.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/types/order.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/seller/orders/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/seller/orders/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/service/sellerOrderService.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/service/sellerOrderService.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/service/sellerService.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/service/sellerService.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -100,7 +98,7 @@
       <workItem from="1748851962486" duration="2077000" />
       <workItem from="1748995015675" duration="11567000" />
       <workItem from="1749015148641" duration="11125000" />
-      <workItem from="1749081532612" duration="3334000" />
+      <workItem from="1749081532612" duration="9305000" />
     </task>
     <task id="LOCAL-00001" summary="change">
       <option name="closed" value="true" />
@@ -158,7 +156,23 @@
       <option name="project" value="LOCAL" />
       <updated>1749020646568</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="sellerorder">
+      <option name="closed" value="true" />
+      <created>1749085272882</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1749085272882</updated>
+    </task>
+    <task id="LOCAL-00009" summary="병합">
+      <option name="closed" value="true" />
+      <created>1749085369147</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1749085369147</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -167,9 +181,10 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="change" />
     <MESSAGE value="주문" />
-    <MESSAGE value="병합" />
     <MESSAGE value="수정" />
-    <option name="LAST_COMMIT_MESSAGE" value="수정" />
+    <MESSAGE value="sellerorder" />
+    <MESSAGE value="병합" />
+    <option name="LAST_COMMIT_MESSAGE" value="병합" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
