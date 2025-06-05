@@ -4,8 +4,6 @@
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Header from '@/components/Header';
-import { getMyProducts } from '@/service/productService';
-import { ProductListItem } from '@/types/product';
 import SellerLayout from '@/components/layouts/SellerLayout';
 import useSellerAuthGuard from '@/hooks/useSellerAuthGuard';
 

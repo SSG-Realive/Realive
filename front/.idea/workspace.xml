@@ -4,13 +4,21 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="31883063-87fe-44f2-b836-458e49ca3558" name="Changes" comment="병합">
+    <list default="true" id="31883063-87fe-44f2-b836-458e49ca3558" name="Changes" comment="수정">
+      <change afterPath="$PROJECT_DIR$/src/app/seller/orders/[id]/page.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/seller/orders/page.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/service/sellerOrderService.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/types/sellerOrder.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/product/DeliveryPolicy.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/product/DeliveryPolicy.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/orders/[id]/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/customer/orders/[id]/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/orders/new/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/customer/orders/new/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/orders/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/customer/orders/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/service/orderService.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/service/orderService.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/customer/orders/[id]/page.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/customer/orders/new/page.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/customer/orders/page.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/seller/products/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/seller/products/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/service/orderService.ts" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/service/productService.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/service/productService.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/types/common.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/types/common.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/types/order.ts" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,27 +55,32 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;team2/jaehyun&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/SSG_KDT8/Realive/back&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;C:\\SSG_KDT8\\Realive\\front\\node_modules\\typescript\\lib&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "team2/jaehyun",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/SSG_KDT8/Realive/front",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "ts.external.directory.path": "C:\\SSG_KDT8\\Realive\\front\\node_modules\\typescript\\lib",
+    "vue.rearranger.settings.migration": "true"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;DatabaseDriversLRU&quot;: [
-      &quot;postgresql&quot;
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "postgresql"
     ]
   }
-}</component>
+}]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\SSG_KDT8\Realive\front\src\app\customer" />
+    </key>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -86,7 +99,8 @@
       <updated>1748851961155</updated>
       <workItem from="1748851962486" duration="2077000" />
       <workItem from="1748995015675" duration="11567000" />
-      <workItem from="1749015148641" duration="5067000" />
+      <workItem from="1749015148641" duration="11125000" />
+      <workItem from="1749081532612" duration="3334000" />
     </task>
     <task id="LOCAL-00001" summary="change">
       <option name="closed" value="true" />
@@ -136,7 +150,15 @@
       <option name="project" value="LOCAL" />
       <updated>1749020114093</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="수정">
+      <option name="closed" value="true" />
+      <created>1749020646568</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1749020646568</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -146,6 +168,18 @@
     <MESSAGE value="change" />
     <MESSAGE value="주문" />
     <MESSAGE value="병합" />
-    <option name="LAST_COMMIT_MESSAGE" value="병합" />
+    <MESSAGE value="수정" />
+    <option name="LAST_COMMIT_MESSAGE" value="수정" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/src/app/seller/dashboard/page.tsx</url>
+          <line>2</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

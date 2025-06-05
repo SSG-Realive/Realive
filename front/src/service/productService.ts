@@ -1,7 +1,5 @@
 import apiClient from '@/lib/apiClient';
 import { ProductDetail } from '@/types/product';
-import { PageResponse } from '@/types/common';
-import { ProductListItem } from '@/types/productList';
 
 // 판매자 상품 목록 조회 API
 export async function fetchMyProducts(): Promise<ProductDetail[]> {
@@ -36,15 +34,6 @@ export async function getProductDetail(id: number): Promise<ProductDetail> {
     return res.data;
 }
 
-/**
- * 상품 목록 조회 API (판매자)
- * @param searchParams - 페이지, 키워드 등 검색 조건
- */
-export async function getMyProducts(searchParams: Record<string, any> = {}): Promise<PageResponse<ProductListItem>> {
-    const query = new URLSearchParams(searchParams).toString();
-    const res = await apiClient.get(`/seller/products?${query}`);
-    return res.data;
-}
 
 /**
  * 상품 삭제 API
