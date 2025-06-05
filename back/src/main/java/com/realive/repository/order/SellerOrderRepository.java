@@ -15,17 +15,17 @@ import java.util.List;
 @Repository
 public interface SellerOrderRepository extends JpaRepository<Order, Long>, JpaSpecificationExecutor<Order> {
 
-    // Page<Order> findByProductId(Long productId, Pageable pageable);
-
-    // long countByProductId(Long productId);
-
-    // @Query("SELECT o FROM Order o WHERE o.product.seller.id = :sellerId")
-    // Page<Order> findByProductSellerId(@Param("sellerId") Long sellerId, Pageable pageable);
-
-    // @Query("SELECT COUNT(o.id) FROM Order o WHERE o.product.seller.id = :sellerId")
-    // long countByProductSellerId(@Param("sellerId") Long sellerId);
-
-    // @Query("SELECT o.product FROM Order o GROUP BY o.product.id ORDER BY COUNT(o.product.id) DESC")
-    // List<Product> findTopOrderedProducts(Pageable pageable);
+//     Page<Order> findByProductId(Long productId, Pageable pageable);
+//
+//     long countByProductId(Long productId);
+//
+//     @Query("SELECT o FROM Order o WHERE o.product.seller.id = :sellerId")
+//     Page<Order> findByProductSellerId(@Param("sellerId") Long sellerId, Pageable pageable);
+//
+//     @Query("SELECT COUNT(o.id) FROM Order o WHERE o.product.seller.id = :sellerId")
+//     long countByProductSellerId(@Param("sellerId") Long sellerId);
+//
+//     @Query("SELECT o.product FROM Order o GROUP BY o.product.id ORDER BY COUNT(o.product.id) DESC")
+//     List<Product> findTopOrderedProducts(Pageable pageable);
 
 }
