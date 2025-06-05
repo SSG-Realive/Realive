@@ -5,6 +5,7 @@ import com.realive.domain.auction.AdminProduct;
 import com.realive.domain.common.enums.MediaType;
 import com.realive.domain.product.Product;
 import com.realive.domain.seller.Seller;
+import com.realive.dto.admin.ProductDetailDTO;
 import com.realive.dto.auction.AdminPurchaseRequestDTO;
 import com.realive.dto.auction.AdminProductDTO;
 import com.realive.dto.page.PageResponseDTO;
@@ -15,6 +16,7 @@ import com.realive.repository.auction.AdminProductRepository;
 import com.realive.repository.product.ProductImageRepository;
 import com.realive.repository.product.ProductRepository;
 import com.realive.service.admin.product.AdminProductService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
@@ -271,5 +273,21 @@ public class AdminProductServiceImpl implements AdminProductService {
                     return AdminProductDTO.fromEntity(adminProduct, product);
                 })
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public ProductDetailDTO getProductDetails(Long productId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new EntityNotFoundException("Product not found"));
+        return ProductDetailDTO.from(product, null);
+    }
+
+    @Override
+    @Transactional
+    public void deactivateProduct(Long productId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new EntityNotFoundException("Product not found"));
+        product.setActive(false);
+        productRepository.save(product);
     }
 } 
