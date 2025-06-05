@@ -2,7 +2,8 @@
 
 import { useState, FormEvent, ChangeEvent } from 'react';
 import { useRouter } from 'next/navigation';
-import { login, LoginResponse } from '@/service/sellerService';
+import { login,  } from '@/service/sellerService';
+import { LoginResponse } from '@/types/login/loginResponse';
 
 export default function SellerLoginPage() {
   const [email, setEmail] = useState<string>('');

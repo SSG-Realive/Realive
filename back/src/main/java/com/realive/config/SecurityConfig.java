@@ -2,6 +2,9 @@ package com.realive.config;
 
 import com.realive.security.AdminJwtAuthenticationFilter;
 import com.realive.security.seller.SellerJwtAuthenticationFilter;
+
+import jakarta.servlet.http.HttpServletResponse;
+
 import com.realive.security.customer.CustomerJwtAuthenticationFilter;
 import com.realive.security.customer.CustomLoginSuccessHandler;
 import com.realive.security.JwtUtil;
@@ -64,6 +67,19 @@ public class SecurityConfig {
                 .requestMatchers("/api/public/**").permitAll()
                 .requestMatchers("/api/customer/**").authenticated()
             )
+            .exceptionHandling(handeler -> handeler
+                .authenticationEntryPoint((request, response, authException)->{
+                    String path = request.getRequestURI();
+                    
+                    if (path.startsWith("/api/seller" )|| path.startsWith("/api/admin")) {
+                        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                        response.setContentType("application/json");
+                        response.getWriter().write("{\"error\": \"Unauthorized\"}");       
+                    } else{
+                        response.sendRedirect("/oauth2/authorization/kakao");
+                    }
+                })
+                )
             .oauth2Login(config -> config
                 .successHandler(customLoginSuccessHandler));
 
