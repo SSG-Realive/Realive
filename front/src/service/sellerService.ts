@@ -40,63 +40,16 @@ export async function updateProfile(data: SellerUpdateRequest): Promise<void> {
 }
 //대시보드
 export interface SellerDashboardResponse{
-  totalProducts : number;
-  todayProducts : number;
-  totalQna : number;
-  unansweredQna : number;
-  activeOrders : number;
+  totalProductCount : number;
+  todayProductCount : number;
+  totalQnaCount : number;
+  unansweredQnaCount : number;
+  inProgressOrderCount : number;
 }
 export async function getDashboard() : Promise<SellerDashboardResponse> {
   const response = await apiClient.get('/seller/dashboard');
   return response.data;
 }
 
-/**
- * 🔹 상품 등록
- */
-export async function createProduct(formData: FormData): Promise<number> {
-  const res = await apiClient.post('/seller/products', formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  });
-  return res.data;
-}
-
-/**
- * 🔹 상품 수정
- */
-export async function updateProduct(id: number, formData: FormData): Promise<void> {
-  await apiClient.put(`/seller/products/${id}`, formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  });
-}
-
-/**
- * 🔹 상품 삭제
- */
-export async function deleteProduct(id: number): Promise<void> {
-  await apiClient.delete(`/seller/products/${id}`);
-}
-
-/**
- * 🔹 상품 단건 상세 조회
- */
-// export async function getProductDetail(id: number): Promise<ProductResponse> {
-//   const res = await apiClient.get(`/seller/products/${id}`);
-//   return res.data;
-// }
-
-/**
- * 🔹 판매자 상품 목록 조회
- */
-export async function getMyProducts(
-  params?: ProductSearchCondition
-): Promise<PageResponse<ProductListItem>> {
-  const res = await apiClient.get('/seller/products', { params });
-  return res.data;
-}
 
 

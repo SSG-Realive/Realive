@@ -1,4 +1,5 @@
 import apiClient from '@/lib/apiClient';
+import { ProductSearchCondition } from '@/types/filter/productSearchCondition';
 import { PageResponse } from '@/types/page/pageResponse';
 import { ProductDetail } from '@/types/product';
 
@@ -14,7 +15,7 @@ export async function fetchMyProducts(): Promise<ProductDetail[]> {
  * 상품 등록 API
  */
 export async function createProduct(formData: FormData): Promise<number> {
-    const res = await apiClient.post('/seller/products', formData, {
+    const res = await apiClient.post('/seller/products/new', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
     });
     return res.data;
@@ -38,14 +39,15 @@ export async function getProductDetail(id: number): Promise<ProductDetail> {
 }
 
 /**
- * 상품 목록 조회 API (판매자)
- * @param searchParams - 페이지, 키워드 등 검색 조건
+ * 🔹 판매자 상품 목록 조회
  */
-export async function getMyProducts(searchParams: Record<string, any> = {}): Promise<PageResponse<ProductListItem>> {
-    const query = new URLSearchParams(searchParams).toString();
-    const res = await apiClient.get(`/seller/products?${query}`);
-    return res.data;
+export async function getMyProducts(
+  params?: ProductSearchCondition
+): Promise<PageResponse<ProductListItem>> {
+  const res = await apiClient.get('/seller/products', { params });
+  return res.data;
 }
+
 
 /**
  * 상품 삭제 API

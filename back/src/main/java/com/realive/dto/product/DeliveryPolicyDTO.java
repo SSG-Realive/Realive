@@ -22,7 +22,7 @@ public class DeliveryPolicyDTO {
     private DeliveryType type;      // 배송 유형: 무료배송, 유료배송
 
     @Min(0)
-    private int cost;               // 배송비 (원 단위, 0이면 무료)
+    private Integer cost;               // 배송비 (원 단위, 0이면 무료)
 
     private String regionLimit;     // 지역 제한 정보 (예: "서울/경기만 가능")
 }

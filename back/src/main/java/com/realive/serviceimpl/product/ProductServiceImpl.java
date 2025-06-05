@@ -244,6 +244,10 @@ public class ProductServiceImpl implements ProductService {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
 
+
+        DeliveryPolicy policy = deliveryPolicyRepository.findByProduct(product)
+            .orElseThrow(() -> new IllegalArgumentException("배송 정책이 없습니다."));
+
         return ProductResponseDTO.builder()
                 .id(product.getId())
                 .name(product.getName())
@@ -259,6 +263,12 @@ public class ProductServiceImpl implements ProductService {
                 .videoThumbnailUrl(getThumbnailUrlByType(productId, MediaType.VIDEO))
                 .categoryName(Category.getCategoryFullPath(product.getCategory()))
                 .sellerName(product.getSeller().getName())
+                .deliveryPolicy(DeliveryPolicyDTO.builder()
+                        .type(policy.getType())
+                        .cost(policy.getCost())
+                        .regionLimit(policy.getRegionLimit())
+                        .build())
+                
                 .build();
     }
 

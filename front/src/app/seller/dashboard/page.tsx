@@ -42,22 +42,22 @@ export default function SellerDashboardPage() {
           <div className="grid grid-cols-2 gap-6">
             <section className="bg-white p-6 rounded shadow">
               <h2 className="text-lg font-semibold mb-2">등록 상품 수</h2>
-              <p>{dashboard.totalProducts}개</p>
+              <p>{dashboard.totalProductCount}개</p>
             </section>
 
             <section className="bg-white p-6 rounded shadow">
               <h2 className="text-lg font-semibold mb-2">미답변 문의 수</h2>
-              <p>{dashboard.unansweredQna}건</p>
+              <p>{dashboard.unansweredQnaCount}건</p>
             </section>
 
             <section className="bg-white p-6 rounded shadow">
               <h2 className="text-lg font-semibold mb-2">오늘 등록된 상품</h2>
-              <p>{dashboard.todayProducts}개</p>
+              <p>{dashboard.todayProductCount}개</p>
             </section>
 
             <section className="bg-white p-6 rounded shadow">
               <h2 className="text-lg font-semibold mb-2">진행 중인 주문</h2>
-              <p>{dashboard.activeOrders}건</p>
+              <p>{dashboard.inProgressOrderCount}건</p>
             </section>
           </div>
         </main>
