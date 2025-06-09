@@ -57,6 +57,7 @@ public class SecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 // 관리자 엔드포인트
+                .requestMatchers("/uploads/**").permitAll()
                 .requestMatchers("/api/admin/login").permitAll()
                 .requestMatchers("/api/admin/**").authenticated()
                 // 판매자 엔드포인트

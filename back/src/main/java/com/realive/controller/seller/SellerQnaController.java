@@ -18,7 +18,7 @@ public class SellerQnaController {
     private final SellerQnaService sellerQnaService;
 
     // ✅ QnA 작성
-    @PostMapping
+    @PostMapping("/new")
     public ResponseEntity<Void> createQna(@RequestBody SellerQnaRequestDTO dto) {
         Seller seller = (Seller) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         sellerQnaService.createQna(seller.getId(), dto);
