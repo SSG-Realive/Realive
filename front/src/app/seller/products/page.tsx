@@ -10,121 +10,136 @@ import { getMyProducts } from '@/service/productService';
 import { ProductListItem } from '@/types/productList';
 
 export default function ProductListPage() {
-  const checking = useSellerAuthGuard();
-   
+    const checking = useSellerAuthGuard();
 
-  const router = useRouter();
-  const searchParams = useSearchParams();
 
-  const [products, setProducts] = useState<ProductListItem[]>([]);
-  const [totalPages, setTotalPages] = useState(1);
-  const [currentPage, setCurrentPage] = useState(1);
+    const router = useRouter();
+    const searchParams = useSearchParams();
 
-  const [keyword, setKeyword] = useState('');
-  const [statusFilter, setStatusFilter] = useState('');
+    const [products, setProducts] = useState<ProductListItem[]>([]);
+    const [totalPages, setTotalPages] = useState(1);
+    const [currentPage, setCurrentPage] = useState(1);
 
-  useEffect(() => {
-    const page = parseInt(searchParams.get('page') || '1', 10);
-    setCurrentPage(page);
-    fetchProductList(page);
-  }, [searchParams, checking]);
+    const [keyword, setKeyword] = useState('');
+    const [statusFilter, setStatusFilter] = useState('');
 
-  const fetchProductList = async (page: number) => {
-    try {
-      const data = await getMyProducts({
-        page,
-        keyword,
-        status: statusFilter,
-      });
+    useEffect(() => {
+        const page = parseInt(searchParams.get('page') || '1', 10);
+        setCurrentPage(page);
+        fetchProductList(page);
+    }, [searchParams, checking]);
 
-      setProducts(data.dtoList);
-      setTotalPages(Math.ceil(data.total / data.size));
-    } catch (err) {
-      console.error('상품 목록 조회 실패', err);
-    }
-  };
+    const fetchProductList = async (page: number) => {
+        try {
+            const data = await getMyProducts({
+                page,
+                keyword,
+                status: statusFilter,
+            });
 
-  const goToPage = (page: number) => {
-    router.push(`/seller/products?page=${page}`);
-  };
+            setProducts(data.dtoList);
+            setTotalPages(Math.ceil(data.total / data.size));
+        } catch (err) {
+            console.error('상품 목록 조회 실패', err);
+        }
+    };
 
-  const handleSearch = () => {
-    fetchProductList(1);
-    router.push(`/seller/products?page=1`);
-  };
+    const goToPage = (page: number) => {
+        router.push(`/seller/products?page=${page}`);
+    };
 
-  const handleRegisterClick = () => {
-    router.push('/seller/products/new');
-  };
+    const handleSearch = () => {
+        fetchProductList(1);
+        router.push(`/seller/products?page=1`);
+    };
+
+    const handleRegisterClick = () => {
+        router.push('/seller/products/new');
+    };
 
     if (checking) return <div className="p-8">인증 확인 중...</div>;
-  return (
-    <>
-      <Header />
-      <SellerLayout>
-        <div className="max-w-5xl mx-auto p-6">
-          <h1 className="text-2xl font-bold mb-4">내 상품 목록</h1>
+    return (
+        <>
+            
+            
+                <div className="max-w-5xl mx-auto p-6">
+                    <h1 className="text-2xl font-bold mb-4">내 상품 목록</h1>
 
-          {/* 🔍 검색 필터 */}
-          <div className="flex gap-4 mb-4">
-            <input
-              type="text"
-              placeholder="상품명 검색"
-              value={keyword}
-              onChange={(e) => setKeyword(e.target.value)}
-              className="border p-2 w-1/3"
-            />
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="border p-2 w-1/4"
-            >
-              <option value="">전체 상태</option>
-              <option value="상">상</option>
-              <option value="중">중</option>
-              <option value="하">하</option>
-            </select>
-            <button onClick={handleSearch} className="bg-blue-600 text-white px-4 py-2 rounded">
-              검색
-            </button>
-            <button onClick={handleRegisterClick} className="ml-auto bg-green-600 text-white px-4 py-2 rounded">
-              상품 등록
-            </button>
-          </div>
+                    {/* 🔍 검색 필터 */}
+                    <div className="flex gap-4 mb-4">
+                        <input
+                            type="text"
+                            placeholder="상품명 검색"
+                            value={keyword}
+                            onChange={(e) => setKeyword(e.target.value)}
+                            className="border p-2 w-1/3"
+                        />
+                        <select
+                            value={statusFilter}
+                            onChange={(e) => setStatusFilter(e.target.value)}
+                            className="border p-2 w-1/4"
+                        >
+                            <option value="">전체 상태</option>
+                            <option value="상">상</option>
+                            <option value="중">중</option>
+                            <option value="하">하</option>
+                        </select>
+                        <button onClick={handleSearch} className="bg-blue-600 text-white px-4 py-2 rounded">
+                            검색
+                        </button>
+                        <button onClick={handleRegisterClick} className="ml-auto bg-green-600 text-white px-4 py-2 rounded">
+                            상품 등록
+                        </button>
+                    </div>
 
-          {/* 📋 목록 */}
-          <div className="grid gap-4">
-            {products.map((product) => (
-              <div key={product.id} className="border p-4 rounded">
-                <h2 className="font-semibold">{product.name}</h2>
-                <p>가격: {product.price.toLocaleString()}원</p>
-                <p>상태: {product.status}</p>
-                <button
-                  onClick={() => router.push(`/seller/products/${product.id}`)}
-                  className="mt-2 px-4 py-1 bg-blue-600 text-white rounded"
-                >
-                  상세 보기
-                </button>
-              </div>
-            ))}
-          </div>
 
-          {/* 페이지네이션 */}
-          <div className="flex justify-center mt-6 space-x-2">
-            {Array.from({ length: totalPages }, (_, i) => (
-              <button
-                key={i + 1}
-                onClick={() => goToPage(i + 1)}
-                className={`px-3 py-1 border rounded ${
-                  currentPage === i + 1 ? 'bg-blue-600 text-white' : 'bg-white text-gray-800'
-                }`}
-              >
-                {i + 1}
-              </button>
-            ))}
-          </div>
-        </div>
-      </SellerLayout>
-    </>
-  );
+                    {/* 📋 목록 */}
+                    <div className="grid gap-4">
+                        {products.map((product) => (
+                            <div
+                                key={product.id}
+                                className="border p-4 rounded flex justify-between items-center"
+                            >
+                                {/* 왼쪽: 상품 정보 */}
+                                <div>
+                                    <h2 className="font-semibold">{product.name}</h2>
+                                    <p>가격: {product.price.toLocaleString()}원</p>
+                                    <p>상태: {product.status}</p>
+                                    <button
+                                        onClick={() => router.push(`/seller/products/${product.id}`)}
+                                        className="mt-2 px-4 py-1 bg-blue-600 text-white rounded"
+                                    >
+                                        상세 보기
+                                    </button>
+                                </div>
+
+                                {/* 오른쪽: 썸네일 */}
+                                <div className="ml-4">
+                                    <img
+                                        src={product.imageThumbnailUrl || '/default-thumbnail.png'}
+                                        alt="썸네일"
+                                        className="w-24 h-24 object-cover rounded"
+                                    />
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* 페이지네이션 */}
+                    <div className="flex justify-center mt-6 space-x-2">
+                        {Array.from({ length: totalPages }, (_, i) => (
+                            <button
+                                key={i + 1}
+                                onClick={() => goToPage(i + 1)}
+                                className={`px-3 py-1 border rounded ${currentPage === i + 1 ? 'bg-blue-600 text-white' : 'bg-white text-gray-800'
+                                    }`}
+                            >
+                                {i + 1}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            
+        </>
+    );
 }

@@ -14,7 +14,7 @@ const menuItems: MenuItem[] = [
   { label: "상품관리", href: "/seller/products" },
   { label: "주문관리", href: "/seller/orders" },
   { label: "정산관리", href: "/seller/settlements" },
-  { label: "고객문의확인", href: "/seller/contacts" },
+  { label: "고객문의확인", href: "/seller/qna" },
 ];
 
 const Sidebar: FC = () => {
