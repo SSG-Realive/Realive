@@ -96,6 +96,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/admin/login").permitAll()
                 .anyRequest().authenticated()
+//                            .anyRequest().permitAll() // 임시로 모든 요청 허용 나중에 지우기
             )
             .addFilterBefore(adminJwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
@@ -123,27 +124,27 @@ public class SecurityConfig {
     }
 
     // === Customer + Public Security Chain ===
-    @Bean
-    @Order(3)
-    public SecurityFilterChain customerSecurityFilterChain(HttpSecurity http) throws Exception {
-        log.info("Customer SecurityConfig 적용");
-
-        http
-            .securityMatcher("/api/**") // 나머지 API
-            .authenticationManager(authenticationManager()) 
-            .csrf(csrf -> csrf.disable())
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/public/**").permitAll()
-                .requestMatchers("/api/customer/**").authenticated()
-                .anyRequest().denyAll()
-            )
-            .oauth2Login(config -> config.successHandler(customLoginSuccessHandler))
-            .addFilterBefore(customerJwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-
-        return http.build();
-    }
+//    @Bean
+//    @Order(3)
+//    public SecurityFilterChain customerSecurityFilterChain(HttpSecurity http) throws Exception {
+//        log.info("Customer SecurityConfig 적용");
+//
+//        http
+//            .securityMatcher("/api/**") // 나머지 API
+//            .authenticationManager(authenticationManager())
+//            .csrf(csrf -> csrf.disable())
+//            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+//            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+//            .authorizeHttpRequests(auth -> auth
+//                .requestMatchers("/api/public/**").permitAll()
+//                .requestMatchers("/api/customer/**").authenticated()
+//                .anyRequest().denyAll()
+//            )
+//            .oauth2Login(config -> config.successHandler(customLoginSuccessHandler))
+//            .addFilterBefore(customerJwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+//
+//        return http.build();
+//    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {

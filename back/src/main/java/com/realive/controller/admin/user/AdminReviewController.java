@@ -43,7 +43,7 @@ public class AdminReviewController {
 
     @Operation(summary = "신고된 리뷰 목록 조회"/* ... */)
     @GetMapping("/reviews-reports/reports")
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Page<AdminReviewReportListItemDTO>>> getReportedReviews(
             @Parameter(description = "조회할 리뷰 신고의 처리 상태 (예: PENDING, RESOLVED_KEPT)")
             @RequestParam ReviewReportStatus status,
@@ -65,7 +65,7 @@ public class AdminReviewController {
 
     @Operation(summary = "리뷰 신고 상세 정보 조회"/* ... */)
     @GetMapping("/reviews-reports/reports/{reportId}")
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<AdminReviewReportDetailDTO>> getReportDetail(
             @Parameter(description = "조회할 리뷰 신고의 ID")
             @PathVariable Integer reportId) {
@@ -85,7 +85,7 @@ public class AdminReviewController {
 
     @Operation(summary = "리뷰 신고 조치 실행"/* ... */)
     @PutMapping("/reviews-reports/reports/{reportId}/action")
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<String>> processReviewReportAction(
             @Parameter(description = "조치를 취할 리뷰 신고의 ID")
             @PathVariable Integer reportId,
@@ -110,7 +110,7 @@ public class AdminReviewController {
 
     @Operation(summary = "판매자 리뷰 상세 정보 조회"/* ... */)
     @GetMapping("/seller-reviews/{reviewId}")
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<AdminSellerReviewDetailDTO>> getSellerReviewDetail(
             @Parameter(description = "조회할 판매자 리뷰의 ID")
             @PathVariable Long reviewId) {
@@ -130,7 +130,7 @@ public class AdminReviewController {
 
     @Operation(summary = "전체 판매자 리뷰 목록 조회 (필터링 가능)"/* ... */)
     @GetMapping("/seller-reviews")
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Page<AdminSellerReviewListItemDTO>>> getAllSellerReviews(
             @PageableDefault(size = 10, sort = "createdAt,desc") Pageable pageable,
             @Parameter(description = "상품명 필터 (선택 사항)") @RequestParam(required = false) Optional<String> productFilter,
@@ -165,7 +165,7 @@ public class AdminReviewController {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiResponse.class)))
     })
     @PutMapping("/seller-reviews/{reviewId}/visibility")
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<String>> updateSellerReviewVisibility(
             @Parameter(description = "상태를 변경할 판매자 리뷰의 ID", required = true, example = "1")
             @PathVariable Long reviewId,
