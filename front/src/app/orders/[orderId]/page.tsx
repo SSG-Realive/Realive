@@ -1,36 +1,14 @@
-// src/app/orders/[orderId]/page.tsx
 
 import { redirect } from 'next/navigation';
-import Image from 'next/image'; // Next.js Image 컴포넌트를 사용하여 이미지 최적화
+import Image from 'next/image';
+import { OrderResponseDTO } from '@/types/orders/orderResponseDTO';
+
 
 interface PageProps {
     params: {
         orderId: string; // URL 경로에서 오는 주문 ID (예: /orders/123 에서 123)
     };
     searchParams?: Record<string, string | string[] | undefined>; // URL 쿼리 파라미터 (customerId용)
-}
-
-// --- DTO 인터페이스 (백엔드의 OrderResponseDTO와 일치하도록 정의) ---
-// 백엔드의 OrderItemResponseDTO에 맞춰 정의
-interface OrderItemResponseDTO {
-    productId: number;
-    productName: string;
-    quantity: number;
-    price: number;
-    imageUrl?: string; // 상품 썸네일 URL
-}
-
-// 백엔드의 OrderResponseDTO에 맞춰 정의
-interface OrderResponseDTO {
-    orderId: number;
-    customerEmail: string; // `memberEmail`이 `customerEmail`로 매핑되었다고 가정
-    totalPrice: number;
-    orderedAt: string; // ISO 8601 형식의 날짜 문자열
-    orderStatus: 'ORDER' | 'CANCEL'; // 가능한 주문 상태 (ORDER, CANCEL)
-    totalDeliveryFee: number;
-    paymentType: string;
-    currentDeliveryStatus: string;
-    items: OrderItemResponseDTO[]; // 주문 상품 목록
 }
 
 // --- 데이터 페칭 함수 ---
@@ -55,7 +33,6 @@ async function fetchOrderDetail(
         console.warn(`API 요청이 인증/인가 실패 상태 코드 ${response.status}를 반환했거나 로그인 페이지로 리다이렉트되었습니다. 최종 URL: ${response.url}.`);
         // 백엔드의 OAuth2 로그인 시작 URL로 리다이렉트
         redirect('http://localhost:8080/oauth2/authorization/kakao');
-        // --- 수정된 부분: return; 대신 throw new Error()를 사용 ---
         // redirect()가 내부적으로 에러를 던지므로, 명시적으로 에러를 던져
         // TypeScript에 이 경로가 정상적인 값 반환 경로가 아님을 알립니다.
         throw new Error("NEXT_REDIRECT_INTERRUPTED_FETCH"); // 고유한 메시지로 식별
@@ -119,7 +96,7 @@ export default async function OrdersDetailPage({ params, searchParams }: PagePro
     } catch (err) {
         // Next.js의 내부 리다이렉트 오류 또는 우리가 던진 에러를 정상적으로 처리
         if (err && typeof err === 'object' && 'message' in err &&
-            (err as Error).message.includes("NEXT_REDIRECT") || (err as Error).message.includes("NEXT_REDIRECT_INTERRUPTED_FETCH")) {
+            ((err as Error).message.includes("NEXT_REDIRECT") || (err as Error).message.includes("NEXT_REDIRECT_INTERRUPTED_FETCH"))) {
             console.log("Next.js 리다이렉트 오류 발생. 페이지 전환 중단.");
             // 리다이렉트가 처리되었으므로 에러 상태를 설정할 필요 없음
         } else {
@@ -167,13 +144,17 @@ export default async function OrdersDetailPage({ params, searchParams }: PagePro
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-700">
                     <div>
                         <p className="text-lg font-semibold mb-2">주문 번호: <span className="font-normal text-blue-600">{orderData.orderId}</span></p>
-                        <p className="text-lg font-semibold mb-2">회원 이메일: <span className="font-normal">{orderData.customerEmail}</span></p>
+                        <p className="text-lg font-semibold mb-2">고객 ID: <span className="font-normal">{orderData.customerId}</span></p>
+                        <p className="text-lg font-semibold mb-2">배송 주소: <span className="font-normal">{orderData.deliveryAddress}</span></p>
                         <p className="text-lg font-semibold mb-2">총 주문 가격: <span className="font-normal text-green-700">{orderData.totalPrice.toLocaleString()}원</span></p>
                     </div>
                     <div>
-                        <p className="text-lg font-semibold mb-2">주문 일시: <span className="font-normal">{new Date(orderData.orderedAt).toLocaleString()}</span></p>
+                        <p className="text-lg font-semibold mb-2">주문 일시: <span className="font-normal">{new Date(orderData.orderCreatedAt).toLocaleString()}</span></p>
+                        <p className="text-lg font-semibold mb-2">최종 업데이트: <span className="font-normal">{new Date(orderData.updatedAt).toLocaleString()}</span></p>
                         <p className="text-lg font-semibold mb-2">결제 방식: <span className="font-normal">{orderData.paymentType}</span></p>
-                        <p className="text-lg font-semibold mb-2">배송비: <span className="font-normal">{orderData.totalDeliveryFee.toLocaleString()}원</span></p>
+                        <p className="text-lg font-semibold mb-2">배송비: <span className="font-normal">{orderData.deliveryFee.toLocaleString()}원</span></p>
+                        <p className="text-lg font-semibold mb-2">수령인: <span className="font-normal">{orderData.receiverName}</span></p>
+                        <p className="text-lg font-semibold mb-2">연락처: <span className="font-normal">{orderData.phone}</span></p>
                     </div>
                 </div>
                 <p className="text-lg font-semibold mt-4">
@@ -185,23 +166,22 @@ export default async function OrdersDetailPage({ params, searchParams }: PagePro
                                 : "bg-red-100 text-red-800"
                         }`}
                     >
-            {orderData.orderStatus === "ORDER" ? "주문 완료" : "주문 취소"}
+            {orderData.orderStatus === "ORDER" ? "주문 완료" : orderData.orderStatus === "CANCEL" ? "주문 취소" : orderData.orderStatus}
           </span>
-                    <span className="ml-4 text-gray-600">({orderData.currentDeliveryStatus})</span>
+                    <span className="ml-4 text-gray-600">({orderData.deliveryStatus})</span>
                 </p>
             </div>
 
             <div className="bg-white shadow-xl rounded-lg p-8 border border-gray-200">
                 <h2 className="text-3xl font-bold mb-6 text-gray-800 border-b pb-3">주문 상품 목록</h2>
-                {orderData.items.length === 0 ? (
+                {orderData.orderItems.length === 0 ? (
                     <p className="text-lg text-gray-600 text-center py-4">주문된 상품이 없습니다.</p>
                 ) : (
                     <div className="space-y-6">
-                        {orderData.items.map((item) => (
+                        {orderData.orderItems.map((item) => (
                             <div key={item.productId} className="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-6 p-4 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
                                 <div className="flex-shrink-0">
-                                    {/* Next.js Image 컴포넌트를 사용하여 이미지 최적화 */}
-                                    {item.imageUrl ? (
+                                    {item.imageUrl && item.imageUrl.trim() !== '' ? (
                                         <Image
                                             src={item.imageUrl}
                                             alt={item.productName}
