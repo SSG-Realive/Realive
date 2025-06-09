@@ -42,6 +42,4 @@ public interface BidService {
      * @throws NoSuchElementException 해당 customerId의 고객 정보를 찾을 수 없을 경우.
      */
     Page<BidResponseDTO> getBidsByCustomer(Long customerId, Pageable pageable);
-
-    Page<BidResponseDTO> getBidsByAuction(Long auctionId, Pageable pageable);
 }

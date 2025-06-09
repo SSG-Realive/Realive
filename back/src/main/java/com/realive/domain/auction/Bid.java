@@ -1,4 +1,4 @@
-                                package com.realive.domain.auction;
+package com.realive.domain.auction;
 
 import com.realive.domain.common.BaseTimeEntity;
 import jakarta.persistence.*;

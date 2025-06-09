@@ -25,7 +25,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     //사용자 정보를 로드하는 메서드
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-
+        
         log.info("loadUserByUsername: " + username);
 
         // email 기준으로 Customer 찾기
@@ -33,13 +33,11 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("이메일이 존재하지 않습니다: " + username));
 
         // MemberLoginDTO로 변환해서 리턴
-        MemberLoginDTO memberLoginDTO = new MemberLoginDTO(
+        return new MemberLoginDTO(
                 customer.getEmail(),
                 customer.getPassword()
         );
-        memberLoginDTO.setId(customer.getId());
-        return memberLoginDTO;
 
     }
-
+    
 }
