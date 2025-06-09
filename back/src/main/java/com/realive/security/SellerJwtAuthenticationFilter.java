@@ -1,8 +1,11 @@
 package com.realive.security;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -16,6 +19,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
 /**
  * JwtAuthenticationFilter
@@ -54,14 +58,14 @@ public class SellerJwtAuthenticationFilter extends OncePerRequestFilter {
 
                 // 5. 판매자가 존재하면 인증 객체 생성 및 등록
                 if (seller != null) {
+                    List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_SELLER"));
                     UsernamePasswordAuthenticationToken authentication =
-                            new UsernamePasswordAuthenticationToken(
-                                    seller, null, null); // 권한은 null 처리
+                            new UsernamePasswordAuthenticationToken(seller, null, authorities);
 
-                    // SecurityContext에 인증 정보 설정
                     SecurityContextHolder.getContext()
                             .setAuthentication(authentication);
                 }
+
             }
         }
 

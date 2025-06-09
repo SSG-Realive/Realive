@@ -4,20 +4,25 @@ import com.realive.security.AdminJwtAuthenticationFilter;
 import com.realive.security.SellerJwtAuthenticationFilter;
 import com.realive.security.customer.CustomerJwtAuthenticationFilter;
 import com.realive.security.customer.CustomLoginSuccessHandler;
-import com.realive.security.JwtUtil;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -39,43 +44,105 @@ public class SecurityConfig {
     private final SellerJwtAuthenticationFilter sellerJwtAuthenticationFilter;
     private final AdminJwtAuthenticationFilter adminJwtAuthenticationFilter;
     private final CustomLoginSuccessHandler customLoginSuccessHandler;
-    private final JwtUtil jwtUtil;
 
+
+    @Autowired
+    @Qualifier("customUserDetailsService")
+    private UserDetailsService customUserDetailsService;
+
+    @Autowired
+    @Qualifier("adminDetailsService")
+    private UserDetailsService adminDetailsService;
+
+    // Provider를 명시적으로 등록
+    // customerAuthProvider, adminAuthProvider를 직접 수동 생성해 ProviderManager에 주입
+    // Spring Security가 내부적으로 자동 설정X
+
+    // Admin 인증 Provider
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        log.info("✅ 통합 SecurityConfig 적용");
+    public DaoAuthenticationProvider adminAuthProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(adminDetailsService);
+        provider.setPasswordEncoder(passwordEncoder());
+        return provider;
+    }
+
+    // Customer 인증 Provider
+    @Bean
+    public DaoAuthenticationProvider customerAuthProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(customUserDetailsService);
+        provider.setPasswordEncoder(passwordEncoder());
+        return provider;
+    }
+
+    // AuthenticationManager에 명시적으로 등록
+    @Bean
+    public AuthenticationManager authenticationManager() {
+        return new ProviderManager(List.of(customerAuthProvider(), adminAuthProvider()));
+    }
+
+    // === Admin Security Chain ===
+    @Bean
+    @Order(1)
+    public SecurityFilterChain adminSecurityFilterChain(HttpSecurity http) throws Exception {
+        log.info("Admin SecurityConfig 적용");
 
         http
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            .csrf(csrf -> csrf.disable())
-            .formLogin(form -> form.disable())
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(auth -> auth
-                // 관리자 엔드포인트
-                .requestMatchers("/api/admin/login").permitAll()
-                .requestMatchers("/api/admin/**").authenticated()
-                // 판매자 엔드포인트
-                    .requestMatchers("/api/seller/signup", "/api/seller/login").permitAll()
-                    .requestMatchers("/api/seller/**").authenticated()
-                // 고객 엔드포인트
-                .requestMatchers("/api/public/**").permitAll()
-                .requestMatchers("/api/customer/**").authenticated()
-            )
-            .oauth2Login(config -> config
-                .successHandler(customLoginSuccessHandler));  
-
-        // 각 사용자 유형별 필터 추가 (순서 중요)
-        http.addFilterBefore(adminJwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-        http.addFilterBefore(sellerJwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-        http.addFilterBefore(customerJwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .securityMatcher("/api/admin/**")
+                .authenticationManager(authenticationManager()) // 명시적 연결
+                .csrf(csrf -> csrf.disable())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/admin/login").permitAll()
+                        .anyRequest().authenticated()
+                )
+                .addFilterBefore(adminJwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
+    // === Seller Security Chain ===
     @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
-        return http.getSharedObject(AuthenticationManagerBuilder.class)
-                .build();
+    @Order(2)
+    public SecurityFilterChain sellerSecurityFilterChain(HttpSecurity http) throws Exception {
+        log.info("Seller SecurityConfig 적용");
+
+        http
+                .securityMatcher("/api/seller/**")
+                .authenticationManager(authenticationManager())
+                .csrf(csrf -> csrf.disable())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/seller/login", "/api/seller/signup").permitAll()
+                        .anyRequest().authenticated()
+                )
+                .addFilterBefore(sellerJwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }
+
+    // === Customer + Public Security Chain ===
+    @Bean
+    @Order(3)
+    public SecurityFilterChain customerSecurityFilterChain(HttpSecurity http) throws Exception {
+        log.info("Customer SecurityConfig 적용");
+
+        http
+                .securityMatcher("/api/**") // 나머지 API
+                .authenticationManager(authenticationManager())
+                .csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/public/**").permitAll()
+                        .requestMatchers("/api/customer/**").authenticated()
+                        .anyRequest().denyAll()
+                )
+                .oauth2Login(config -> config.successHandler(customLoginSuccessHandler))
+                .addFilterBefore(customerJwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
     }
 
     @Bean
@@ -86,8 +153,8 @@ public class SecurityConfig {
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         log.info("✅ 정적 리소스 보안 설정 적용");
-    	return (web) -> web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
-	}
+        return (web) -> web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
+    }
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {

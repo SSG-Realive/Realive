@@ -9,6 +9,7 @@ import com.realive.repository.auction.AuctionRepository;
 import com.realive.repository.auction.BidRepository;
 import com.realive.repository.customer.CustomerRepository;
 import com.realive.service.admin.auction.BidService;
+import com.realive.util.TickSizeCalculator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -63,9 +64,23 @@ public class BidServiceImpl implements BidService {
             throw new IllegalStateException("비활성화된 계정입니다.");
         }
 
-        // 3. 입찰가 검증
-        if (requestDto.getBidPrice() <= auction.getCurrentPrice()) {
-            throw new IllegalArgumentException("입찰가는 현재가보다 높아야 합니다.");
+        // 3. 입찰 단위 및 최소 입찰가 검증
+        int tickSize = TickSizeCalculator.calculateTickSize(auction.getStartPrice());
+        int minBidPrice = TickSizeCalculator.calculateMinBidPrice(
+            auction.getCurrentPrice(), 
+            auction.getStartPrice()
+        );
+
+        if (requestDto.getBidPrice() % tickSize != 0) {
+            throw new IllegalArgumentException(
+                String.format("입찰가는 %d원 단위로만 가능합니다.", tickSize)
+            );
+        }
+
+        if (requestDto.getBidPrice() < minBidPrice) {
+            throw new IllegalArgumentException(
+                String.format("최소 입찰가는 %d원입니다.", minBidPrice)
+            );
         }
 
         // 4. 입찰 정보 생성 및 저장
@@ -73,6 +88,7 @@ public class BidServiceImpl implements BidService {
                 .auctionId(auction.getId())
                 .customerId(customerId.intValue())
                 .bidPrice(requestDto.getBidPrice())
+                .bidTime(LocalDateTime.now())
                 .build();
 
         Bid savedBid = bidRepository.save(bid);
@@ -113,5 +129,12 @@ public class BidServiceImpl implements BidService {
                 .map(BidResponseDTO::fromEntity)
                 .collect(Collectors.toList());
         return new PageImpl<>(bidResponseDTOs, pageable, bidPage.getTotalElements());
+    }
+
+    @Override
+    public Page<BidResponseDTO> getBidsByAuction(Long auctionId, Pageable pageable) {
+        log.info("특정 경매의 입찰 내역 조회 처리 - AuctionId: {}, Pageable: {}", auctionId, pageable);
+        Page<Bid> bids = bidRepository.findByAuctionIdOrderByBidTimeDesc(auctionId.intValue(), pageable);
+        return bids.map(BidResponseDTO::fromEntity);
     }
 }
