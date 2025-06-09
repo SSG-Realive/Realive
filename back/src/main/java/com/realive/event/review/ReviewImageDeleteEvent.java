@@ -8,5 +8,5 @@ import java.util.List;
 @Getter
 @RequiredArgsConstructor
 public class ReviewImageDeleteEvent {
-    private final List<String> imageUrlsToDelete; // 삭제할 이미지 URL 리스트 (최종 URL)
+    private final List<String> imageUrlsToDelete;
 }

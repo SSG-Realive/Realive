@@ -69,8 +69,7 @@ public class ReviewImageUploadHandler {
 
         } catch (Exception e) {
             log.error("ReviewImageUploadHandler - 리뷰 이미지 처리 중 예상치 못한 오류 발생: reviewId={}, error={}", sellerReview.getId(), e.getMessage(), e);
-            // 이 핸들러의 트랜잭션이 실패한 경우, 이미 성공적으로 이동/저장된 파일들은 롤백되지 않습니다.
-            // 고아 파일이 발생할 수 있으며, 스케줄러가 최종 정리할 것입니다.
+
             throw new RuntimeException("리뷰 이미지 처리 중 오류가 발생했습니다.", e);
         }
     }

@@ -80,16 +80,7 @@ public class ReviewCRUDServiceImpl implements ReviewCRUDService {
             log.info("createReview - 리뷰 이미지 확정 이벤트 발행: reviewId={}, 이미지 수: {}", savedReview.getId(), requestDTO.getImageUrls().size());
         }
 
-        // DTO 반환 시, 이미지는 이벤트 핸들러에 의해 비동기적으로 저장되므로
-        // 이 시점에서는 아직 DB에 저장되지 않았을 수 있습니다.
-        // 따라서, 초기 DTO에서는 이미지 URL을 빈 리스트로 반환하거나
-        // `requestDTO.getImageUrls()`를 임시로 반환하고,
-        // 클라이언트가 이후에 이미지가 완전히 처리된 후 다시 조회하도록 하는 것이 일반적입니다.
-        // 여기서는 임시로 requestDTO.getImageUrls()를 반환합니다.
-        // 또는 트랜잭션 커밋 후 DB에서 조회하는 방법도 가능하지만, 이는 동기적으로 동작해야 합니다.
-        // 가장 안전한 방법은 커밋 후 imageRepository.findBySellerReviewId(savedReview.getId())를 호출하는 것입니다.
-        // 현재는 requestDTO.getImageUrls()를 반환하고, 실제 이미지 URL은 핸들러가 처리 후 DB에 기록합니다.
-        // 그리고 클라이언트가 나중에 API 조회로 가져가도록 합니다.
+
         return ReviewResponseDTO.builder()
                 .reviewId(savedReview.getId())
                 .orderId(savedReview.getOrder().getId())
@@ -98,7 +89,7 @@ public class ReviewCRUDServiceImpl implements ReviewCRUDService {
                 .productName(null)
                 .rating(savedReview.getRating())
                 .content(savedReview.getContent())
-                .imageUrls(requestDTO.getImageUrls() != null ? requestDTO.getImageUrls() : List.of()) // 초기에는 요청받은 URL 반환
+                .imageUrls(requestDTO.getImageUrls() != null ? requestDTO.getImageUrls() : List.of())
                 .createdAt(savedReview.getCreatedAt())
                 .isHidden(savedReview.isHidden())
                 .build();

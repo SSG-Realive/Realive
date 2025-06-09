@@ -18,7 +18,7 @@ public class ReviewImageDeleteHandler {
 
     private final ReviewImageUploader reviewImageUploader;
 
-    @Async("applicationEventTaskExecutor") // ⭐ 빈 이름 지정 ⭐
+    @Async("applicationEventTaskExecutor")
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void handleReviewImageDelete(ReviewImageDeleteEvent event) {
         List<String> imageUrlsToDelete = event.getImageUrlsToDelete();
@@ -32,13 +32,13 @@ public class ReviewImageDeleteHandler {
                     continue;
                 }
 
-                try { // ⭐⭐ try-catch 블록 추가 ⭐⭐
+                try {
                     if (imageUrl.contains("/temp/")) {
                         reviewImageUploader.deleteTempImage(imageUrl);
                     } else {
                         reviewImageUploader.deleteFinalImage(imageUrl);
                     }
-                } catch (IOException e) { // ⭐⭐ IOException 처리 ⭐⭐
+                } catch (IOException e) {
                     log.error("ReviewImageDeleteHandler - 이미지 파일 삭제 중 오류 발생: URL={}, 에러={}", imageUrl, e.getMessage(), e);
                     // 특정 파일 삭제 실패 시에도 다른 파일 삭제는 계속 진행되도록 합니다.
                     // 필요에 따라 이 예외를 상위로 다시 던지거나, 트랜잭션을 롤백하는 등의 추가 처리를 고려할 수 있습니다.

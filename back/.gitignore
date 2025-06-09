@@ -99,7 +99,7 @@ build/
 next-env.d.ts
 
 # local env files
-.env*
+src/main/resources/.env.properties
 *.pem
 
 # Vercel deploy
@@ -114,4 +114,4 @@ next-env.d.ts
 
 # 업로드 파일 제외
 uploads/
-.env.properties
+src/main/resources/.env.properties
