@@ -1,4 +1,4 @@
-package com.realive.security;
+package com.realive.security.seller;
 
 import java.io.IOException;
 import java.util.List;
@@ -12,6 +12,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.realive.domain.seller.Seller;
 import com.realive.repository.seller.SellerRepository;
+import com.realive.security.JwtUtil;
 
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
@@ -71,11 +72,5 @@ public class SellerJwtAuthenticationFilter extends OncePerRequestFilter {
 
         // 6. 다음 필터 체인으로 전달
         filterChain.doFilter(request, response);
-    }
-
-    @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) {
-        String path = request.getRequestURI();
-        return !path.startsWith("/api/seller");
     }
 }

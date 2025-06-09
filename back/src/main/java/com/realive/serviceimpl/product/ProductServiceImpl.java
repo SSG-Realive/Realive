@@ -15,10 +15,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,15 +22,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class ProductServiceImpl implements ProductService {
 
-    private static final Logger log = LoggerFactory.getLogger(ProductServiceImpl.class);
         
     private final ProductImageRepository productImageRepository;
     private final ProductRepository productRepository;
@@ -252,6 +244,10 @@ public class ProductServiceImpl implements ProductService {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
 
+
+        DeliveryPolicy policy = deliveryPolicyRepository.findByProduct(product)
+            .orElseThrow(() -> new IllegalArgumentException("배송 정책이 없습니다."));
+
         return ProductResponseDTO.builder()
                 .id(product.getId())
                 .name(product.getName())
@@ -267,6 +263,12 @@ public class ProductServiceImpl implements ProductService {
                 .videoThumbnailUrl(getThumbnailUrlByType(productId, MediaType.VIDEO))
                 .categoryName(Category.getCategoryFullPath(product.getCategory()))
                 .sellerName(product.getSeller().getName())
+                .deliveryPolicy(DeliveryPolicyDTO.builder()
+                        .type(policy.getType())
+                        .cost(policy.getCost())
+                        .regionLimit(policy.getRegionLimit())
+                        .build())
+                
                 .build();
     }
 
@@ -308,37 +310,4 @@ public class ProductServiceImpl implements ProductService {
                 .total((int) result.getTotalElements())
                 .build();
         }
-
-    @Override
-    public PageResponseDTO<ProductListDTO> getAllProductsForAdmin(ProductSearchCondition condition) {
-        log.info("관리자용 전체 상품 목록 조회 - 조건: {}", condition);
-        
-        // QueryDSL 기반 커스텀 메서드 사용
-        Page<Product> result = productRepository.searchProducts(condition, null); // sellerId 없이 전체 조회
-        List<Product> products = result.getContent();
-
-        // 상품 id 목록 추출
-        List<Long> productIds = products.stream()
-                .map(Product::getId)
-                .toList();
-
-        // 썸네일 이미지 매핑
-        List<Object[]> rows = productImageRepository.findThumbnailUrlsByProductIds(productIds, MediaType.IMAGE);
-        Map<Long, String> imageMap = rows.stream()
-                .collect(Collectors.toMap(
-                        row -> (Long) row[0],
-                        row -> (String) row[1]
-                ));
-
-        // DTO 변환
-        List<ProductListDTO> dtoList = products.stream()
-                .map(product -> ProductListDTO.from(product, imageMap.get(product.getId())))
-                .collect(Collectors.toList());
-
-        return PageResponseDTO.<ProductListDTO>withAll()
-                .pageRequestDTO(condition)
-                .dtoList(dtoList)
-                .total((int) result.getTotalElements())
-                .build();
-    }
 }

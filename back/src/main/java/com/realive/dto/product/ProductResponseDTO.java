@@ -1,5 +1,5 @@
 package com.realive.dto.product;
-
+import com.realive.dto.product.DeliveryPolicyDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,4 +28,5 @@ public class ProductResponseDTO {
     private String videoThumbnailUrl; // 대표 영상 썸네일 (선택)
     private String categoryName;      // 카테고리 이름 (선택)
     private String sellerName;        // 판매자 이름 (선택)
+    private DeliveryPolicyDTO deliveryPolicy;
 }

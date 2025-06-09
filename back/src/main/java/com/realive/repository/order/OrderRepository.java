@@ -1,29 +1,43 @@
 package com.realive.repository.order;
 
+import com.realive.domain.common.enums.OrderStatus;
 import com.realive.domain.order.Order;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Optional;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
+
+    // 고객 ID와 주문 ID로 단건 조회
     Optional<Order> findByCustomer_IdAndId(Long customerId, Long id);
 
-    @Query(value = "SELECT o FROM Order o JOIN FETCH o.customer ORDER BY o.OrderedAt DESC",
-            countQuery = "SELECT count(o) FROM Order o")
+    // 관리자 전체 주문 목록 조회 (Customer 정보 포함)
+    @Query(value = """
+            SELECT o FROM Order o
+            JOIN FETCH o.customer
+            ORDER BY o.OrderedAt DESC
+            """,
+            countQuery = "SELECT COUNT(o) FROM Order o")
     Page<Order> findAllOrders(Pageable pageable);
 
-    /**
-     * 특정 고객 ID에 해당하는 모든 주문 목록을 조회합니다.
-     * 사용자가 비활성화될 때 관련 주문들의 상태를 변경하기 위해 사용됩니다.
-     *
-     * @param customerId 조회할 고객의 ID
-     * @return 해당 고객의 모든 주문 리스트
-     */
-    List<Order> findAllByCustomerId(Long customerId);
+    // 판매자 기준 진행 중인 주문 수 조회
+    @Query("""
+            SELECT COUNT(DISTINCT o)
+            FROM Order o
+            JOIN o.orderItems oi
+            JOIN oi.product p
+            WHERE p.seller.id = :sellerId
+              AND o.status IN :statuses
+            """)
+    long countInProgressOrders(
+            @Param("sellerId") Long sellerId,
+            @Param("statuses") Collection<OrderStatus> statuses
+    );
 }

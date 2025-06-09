@@ -7,7 +7,9 @@ import com.realive.domain.seller.Seller;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+
 @Getter
+
 @RequiredArgsConstructor
 public class SellerFileUploadEvent {
     
@@ -15,4 +17,5 @@ public class SellerFileUploadEvent {
     private final MultipartFile licensFile;
     private final MultipartFile bankFile;
     
+  
 }

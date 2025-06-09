@@ -1,7 +1,10 @@
 package com.realive.config;
 
 import com.realive.security.AdminJwtAuthenticationFilter;
-import com.realive.security.SellerJwtAuthenticationFilter;
+import com.realive.security.seller.SellerJwtAuthenticationFilter;
+
+import jakarta.servlet.http.HttpServletResponse;
+
 import com.realive.security.customer.CustomerJwtAuthenticationFilter;
 import com.realive.security.customer.CustomLoginSuccessHandler;
 
@@ -42,7 +45,6 @@ public class SecurityConfig {
 
     private final CustomerJwtAuthenticationFilter customerJwtAuthenticationFilter;
     private final SellerJwtAuthenticationFilter sellerJwtAuthenticationFilter;
-    private final AdminJwtAuthenticationFilter adminJwtAuthenticationFilter;
     private final CustomLoginSuccessHandler customLoginSuccessHandler;
 
 
@@ -87,6 +89,9 @@ public class SecurityConfig {
     @Order(1)
     public SecurityFilterChain adminSecurityFilterChain(HttpSecurity http) throws Exception {
         log.info("Admin SecurityConfig 적용");
+
+        // AdminJwtAuthenticationFilter 직접 생성
+        AdminJwtAuthenticationFilter adminJwtAuthenticationFilter = new AdminJwtAuthenticationFilter(jwtUtil);
 
         http
                 .securityMatcher("/api/admin/**")
@@ -160,7 +165,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
 
-        corsConfiguration.setAllowedOriginPatterns(List.of("*"));
+        corsConfiguration.setAllowedOriginPatterns(List.of("http://localhost:3000"));
         corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS"));
         corsConfiguration.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
         corsConfiguration.setAllowCredentials(true);
