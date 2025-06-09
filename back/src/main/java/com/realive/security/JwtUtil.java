@@ -23,10 +23,10 @@ public class JwtUtil {
     public static final String SUBJECT_ADMIN = "admin";               // 관리자 액세스 토큰 subject
     public static final String SUBJECT_ADMIN_REFRESH = "admin_refresh";   // 관리자 리프레시 토큰 subject
 
-    @Value("${jwt.secret}")
+    @Value("${JWT_SECRET}")
     private String secretKey;
 
-    @Value("${jwt.expiration}")
+    @Value("${JWT_EXPIRATION}")
     private long expiration;
 
     private Key key;
