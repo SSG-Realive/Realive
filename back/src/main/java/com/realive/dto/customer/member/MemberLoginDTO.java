@@ -1,10 +1,5 @@
 package com.realive.dto.customer.member;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -28,6 +23,8 @@ public class MemberLoginDTO implements UserDetails, OAuth2User {
     @NotBlank(message = "비밀번호를 입력해주세요.")
     @ToString.Exclude
     private String password;
+
+    private Long id;
 
     private SignupMethod signupMethod;
 
@@ -64,6 +61,14 @@ public class MemberLoginDTO implements UserDetails, OAuth2User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getId() {
+        return this.id;
     }
 
     public SignupMethod getSignupMethod() {
