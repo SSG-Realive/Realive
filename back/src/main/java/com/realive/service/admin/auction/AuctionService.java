@@ -2,8 +2,6 @@ package com.realive.service.admin.auction;
 
 import com.realive.dto.auction.AuctionCreateRequestDTO;
 import com.realive.dto.auction.AuctionResponseDTO;
-import com.realive.dto.auction.AuctionCancelResponseDTO;
-import com.realive.dto.auction.AuctionUpdateRequestDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException; // 명시적 import
@@ -61,30 +59,4 @@ public interface AuctionService {
      * @return 진행 중인 경매 정보 Optional 객체. 없을 경우 Optional.empty() 반환.
      */
     Optional<AuctionResponseDTO> getCurrentAuctionForProduct(Integer productId);
-
-    /**
-     * 경매를 취소/중단합니다.
-     *
-     * @param auctionId 취소할 경매의 ID
-     * @param adminUserId 취소를 요청한 관리자의 ID
-     * @param reason 취소 사유 (선택)
-     * @return 취소 결과 정보를 담은 DTO
-     * @throws NoSuchElementException 해당 경매를 찾을 수 없을 경우
-     * @throws IllegalStateException 이미 종료된 경매를 취소하려 할 경우
-     * @throws AccessDeniedException 관리자 권한이 없을 경우
-     */
-    AuctionCancelResponseDTO cancelAuction(Integer auctionId, Long adminUserId, String reason);
-
-    /**
-     * 경매 정보를 수정합니다.
-     *
-     * @param requestDto 수정할 경매 정보를 담은 DTO
-     * @param adminUserId 수정을 요청한 관리자의 ID
-     * @return 수정된 경매 정보를 담은 DTO
-     * @throws NoSuchElementException 해당 경매를 찾을 수 없을 경우
-     * @throws IllegalStateException 이미 종료된 경매를 수정하려 할 경우
-     * @throws IllegalArgumentException 수정하려는 정보가 유효하지 않을 경우
-     * @throws AccessDeniedException 관리자 권한이 없을 경우
-     */
-    AuctionResponseDTO updateAuction(AuctionUpdateRequestDTO requestDto, Long adminUserId);
 }

@@ -26,13 +26,14 @@ import com.realive.service.seller.SellerService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 
 
-
+@Slf4j
 @RestController
 @RequestMapping("/api/seller")
 @RequiredArgsConstructor
@@ -82,24 +83,25 @@ public class SellerController {
     
 
     // 📝 회원가입
-    @PostMapping("/signup")
-    public ResponseEntity<Void> signup(
-            @RequestPart @Valid SellerSignupDTO dto,
-            @RequestPart MultipartFile businessLicense,
-            @RequestPart MultipartFile bankAccountCopy) {
-
-        Seller savedSeller = sellerService.registerSeller(dto);
-
-        fileUploadEvnetPublisher.publish(savedSeller,businessLicense, bankAccountCopy);
-        return ResponseEntity.ok().build();
-    }
+        @PostMapping("/signup")     
+        public ResponseEntity<Void> signup(
+                @RequestPart @Valid SellerSignupDTO dto,
+                @RequestPart MultipartFile businessLicense,
+                @RequestPart MultipartFile bankAccountCopy) {
+            
+            sellerService.registerSeller(dto, businessLicense, bankAccountCopy);
+            return ResponseEntity.ok().build(); 
+        }
 
     // 🔄 판매자 정보 수정
     @PutMapping("/me")
     public ResponseEntity<Void> updateSeller(
             @RequestBody @Valid SellerUpdateDTO dto) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String email = auth.getName();
+        
+        Seller authenticatedSeller = (Seller) auth.getPrincipal();
+        String email = authenticatedSeller.getEmail();
+
 
         sellerService.updateSeller(email, dto);
         return ResponseEntity.ok().build();
@@ -109,7 +111,8 @@ public class SellerController {
     @GetMapping("/me")
     public ResponseEntity<SellerResponseDTO> getMyInfo() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String email = auth.getName();
+        Seller authenticatedSeller = (Seller) auth.getPrincipal();
+        String email = authenticatedSeller.getEmail();
 
         SellerResponseDTO dto = sellerService.getMyInfo(email);
         return ResponseEntity.ok(dto);

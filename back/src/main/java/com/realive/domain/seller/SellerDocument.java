@@ -46,7 +46,13 @@ public class SellerDocument extends BaseTimeEntity {
     // 승인된 시간 (nullable)
     private LocalDateTime verifiedAt;
 
+
+    
+    }
+
+   
+    
+
   
 
     
-}

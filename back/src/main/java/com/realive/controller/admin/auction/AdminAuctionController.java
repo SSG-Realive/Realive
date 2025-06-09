@@ -1,9 +1,7 @@
 package com.realive.controller.admin.auction;
 
-import com.realive.dto.auction.AuctionCancelResponseDTO;
 import com.realive.dto.auction.AuctionCreateRequestDTO;
 import com.realive.dto.auction.AuctionResponseDTO;
-import com.realive.dto.auction.AuctionUpdateRequestDTO;
 import com.realive.dto.common.ApiResponse;
 import com.realive.security.AdminPrincipal;
 import com.realive.service.admin.auction.AuctionService;
@@ -18,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.data.domain.Sort;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -67,7 +64,7 @@ public class AdminAuctionController {
 
     @GetMapping
     public ResponseEntity<ApiResponse<Page<AuctionResponseDTO>>> getActiveAuctions(
-            @PageableDefault(size = 10, sort = "endTime", direction = Sort.Direction.ASC) Pageable pageable,
+            @PageableDefault(size = 10, sort = "endTime,asc") Pageable pageable, // 기본 페이징: 10개씩, 마감시간 오름차순
             @RequestParam(required = false) String category,
             @RequestParam(required = false) String status,
             @AuthenticationPrincipal AdminPrincipal adminPrincipal
@@ -81,7 +78,7 @@ public class AdminAuctionController {
         try {
             Page<AuctionResponseDTO> activeAuctions = auctionService.getActiveAuctions(pageable, category, status);
             if (activeAuctions.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.OK)
+                return ResponseEntity.status(HttpStatus.OK) // 결과가 없어도 200 OK
                         .body(ApiResponse.success("조건에 맞는 경매가 없습니다.", activeAuctions));
             }
             return ResponseEntity.ok(ApiResponse.success(activeAuctions));
@@ -119,7 +116,7 @@ public class AdminAuctionController {
     @GetMapping("/seller/{sellerId}")
     public ResponseEntity<ApiResponse<Page<AuctionResponseDTO>>> getAuctionsBySeller(
             @PathVariable Long sellerId,
-            @PageableDefault(size = 10, sort = "startTime", direction = Sort.Direction.DESC) Pageable pageable,
+            @PageableDefault(size = 10, sort = "createdAt,desc") Pageable pageable, // 기본: 등록시간 내림차순
             @AuthenticationPrincipal AdminPrincipal adminPrincipal
     ) {
         log.info("GET /api/admin/auctions/seller/{} - 관리자가 특정 판매자 경매 목록 조회. AdminId: {}",

@@ -1,6 +1,5 @@
 package com.realive.dto.auction;
 
-import com.realive.domain.common.enums.AuctionStatus;
 import lombok.*;
 import java.time.LocalDateTime;
 
@@ -18,7 +17,7 @@ public class AuctionResponseDTO {
     private Integer currentPrice;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
-    private AuctionStatus status;
+    private Boolean isClosed;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -36,7 +35,7 @@ public class AuctionResponseDTO {
                 .currentPrice(auction.getCurrentPrice())
                 .startTime(auction.getStartTime())
                 .endTime(auction.getEndTime())
-                .status(auction.getStatus())
+                .isClosed(auction.isClosed())
                 .createdAt(auction.getCreatedAt())
                 .updatedAt(auction.getUpdatedAt())
                 .adminProduct(productDTO)

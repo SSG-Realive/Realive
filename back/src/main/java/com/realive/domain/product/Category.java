@@ -17,7 +17,7 @@ import lombok.*;
 public class Category {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Long id;
 
     // 카테고리 이름 (예: 소파, 침대 등)
