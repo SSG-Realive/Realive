@@ -444,8 +444,8 @@ public class OrderServiceImpl implements OrderService {
                 .status(OrderStatus.PAYMENT_COMPLETED)
                 .totalPrice(finalTotalPrice)
                 .deliveryAddress(deliveryAddress)
-                .OrderedAt(LocalDateTime.now())
-                .UpdatedAt(LocalDateTime.now())
+                .orderedAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
                 .build();
         order = orderRepository.save(order);
 

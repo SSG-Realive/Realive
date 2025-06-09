@@ -15,7 +15,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     Optional<Order> findByCustomer_IdAndId(Long customerId, Long id);
 
     // 모든 주문 조회
-    @Query(value = "SELECT o FROM Order o JOIN FETCH o.customer ORDER BY o.OrderedAt DESC",
+    @Query(value = "SELECT o FROM Order o JOIN FETCH o.customer ORDER BY o.orderedAt DESC",
             countQuery = "SELECT count(o) FROM Order o")
     Page<Order> findAllOrders(Pageable pageable);
 }

@@ -2,7 +2,6 @@ package com.realive.dto.order;
 
 import com.realive.domain.customer.Customer;
 import com.realive.domain.order.Order;
-import com.realive.domain.common.enums.DeliveryStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

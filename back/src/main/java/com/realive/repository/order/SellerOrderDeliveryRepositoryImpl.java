@@ -50,11 +50,11 @@ public Page<SellerOrderListDTO> getOrderListBySeller(
     }
 
     if (condition.getFromDate() != null) {
-        builder.and(order.OrderedAt.goe(condition.getFromDate()));
+        builder.and(order.orderedAt.goe(condition.getFromDate()));
     }
 
     if (condition.getToDate() != null) {
-        builder.and(order.OrderedAt.loe(condition.getToDate()));
+        builder.and(order.orderedAt.loe(condition.getToDate()));
     }
 
     // 실제 데이터 조회
@@ -68,7 +68,7 @@ public Page<SellerOrderListDTO> getOrderListBySeller(
         delivery.trackingNumber,
         delivery.startDate,
         delivery.completeDate,
-        order.OrderedAt
+        order.orderedAt
     ))
     .from(orderItem)
     .join(orderItem.order, order)
