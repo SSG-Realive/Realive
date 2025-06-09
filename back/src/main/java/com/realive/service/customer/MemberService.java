@@ -1,24 +1,22 @@
 package com.realive.service.customer;
 
-
-import java.time.LocalDate;
-
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.realive.domain.customer.Customer;
 import com.realive.domain.customer.SignupMethod;
-import com.realive.dto.member.MemberJoinDTO;
-import com.realive.dto.member.MemberReadDTO;
+import com.realive.dto.customer.member.MemberJoinDTO;
+import com.realive.dto.customer.member.MemberModifyDTO;
+import com.realive.dto.customer.member.MemberReadDTO;
+import com.realive.exception.DuplicateEmailException;
 import com.realive.repository.customer.CustomerRepository;
 import com.realive.security.customer.JwtTokenProvider;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
-// 회원 관련 서비스
+// [Customer] 회원가입 및 탈퇴, 회원정보 Service
 
 @Transactional
 @Service
@@ -32,9 +30,10 @@ public class MemberService {
 
     // 회원가입: 소셜로그인(임시회원정보 수정)
     public void updateTemporaryUserInfo(MemberJoinDTO request, String authenticatedEmail) {
+        
         // 인증된 사용자 이메일로 회원 조회
         Customer customer = customerRepository.findByEmailIncludingSocial(authenticatedEmail)
-                .orElseThrow(() -> new RuntimeException("회원 정보를 찾을 수 없습니다."));
+                .orElseThrow(() -> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
 
         // 회원정보 업데이트
         customer.setName(request.getName());
@@ -58,10 +57,11 @@ public class MemberService {
 
     // 일반회원가입
     public String register(MemberJoinDTO dto) {
+        
         // 1) 이미 USER로 가입된 이메일인지 체크
         if (customerRepository.findByEmailIncludingSocial(dto.getEmail()).isPresent()
                 && customerRepository.findByEmail(dto.getEmail()).isPresent()) {
-            throw new IllegalArgumentException("이미 가입된 이메일입니다.");
+            throw new DuplicateEmailException("이미 가입된 이메일입니다.");
         }
 
         // 2) 엔티티 생성
@@ -89,7 +89,7 @@ public class MemberService {
     public MemberReadDTO getMyProfile(String email) {
         Customer customer = customerRepository
             .findByEmailIncludingSocial(email) // 소셜·일반 모두 조회 가능
-            .orElseThrow(() -> new RuntimeException("회원 정보를 찾을 수 없습니다."));
+            .orElseThrow(() -> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
 
         MemberReadDTO dto = new MemberReadDTO();
         dto.setEmail(customer.getEmail());
@@ -102,9 +102,9 @@ public class MemberService {
     }
 
     // 회원정보 수정
-    public void updateMember(String email, MemberReadDTO dto) {
+    public void updateMember(String email, MemberModifyDTO dto) {
         Customer customer = customerRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다"));
+                .orElseThrow(() -> new EntityNotFoundException("회원이 존재하지 않습니다"));
 
         customer.setName(dto.getName());
         customer.setPhone(dto.getPhone());
@@ -117,7 +117,7 @@ public class MemberService {
     // 회원 탈퇴(소프트): 비활성화
     public void deactivateByEmail(String email) {
         Customer customer = customerRepository.findByEmailIncludingSocial(email)
-                .orElseThrow(() -> new RuntimeException("회원이 존재하지 않습니다."));
+                .orElseThrow(() -> new EntityNotFoundException("회원이 존재하지 않습니다."));
 
         customer.deactivate();
     }

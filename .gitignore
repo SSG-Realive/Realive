@@ -1,11 +1,16 @@
 # -------------------------------------
-# IDE / Tool 설정
+# IDE / Editor 설정
 # -------------------------------------
 .idea/
 *.iml
 .vscode/
 .history/
 *.sublime*
+*.swp
+*.tmp
+*~
+*.backup.*
+*.back.*
 .DS_Store
 Thumbs.db
 desktop.ini
@@ -17,31 +22,39 @@ desktop.ini
 *.log
 *.jar
 *.war
-*.nar
 *.ear
+*.nar
 *.zip
 *.tar.gz
 *.rar
 *.hprof
-.gradle
+.gradle/
 build/
 out/
+**/bin/
 cmake-build-*/
 hs_err_pid*
 replay_pid*
 .gradletasknamecache
 
-# Spring Boot 설정 파일
+# Spring Boot 설정 파일 (로컬 환경 설정)
 application.yml
+application-*.yml
+application.properties
+.env*
+.env.properties
+*.pem
 
-# QueryDSL Q파일
+# -------------------------------------
+# QueryDSL
+# 자동 생성 Q파일만 무시
 build/generated/
-**/generated/querydsl/
-**/Q*.java
+**/generated/
+**/generated/querydsl/Q*.java
+!**/config/QuerydslConfig.java
 
 # -------------------------------------
 # IntelliJ / Eclipse
-# IntelliJ cache files
 .idea/**/workspace.xml
 .idea/**/tasks.xml
 .idea/**/usage.statistics.xml
@@ -62,12 +75,11 @@ build/generated/
 .idea/httpRequests
 .idea/**/azureSettings.xml
 .idea_modules/
-atlassian-ide-plugin.xml
 .project
 .classpath
 
 # -------------------------------------
-# Node.js / React / Next.js / Yarn
+# Node.js / React / Next.js / Yarn / Vite
 node_modules/
 .pnp
 .pnp.*
@@ -82,10 +94,12 @@ bower_components/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-.pnpm-debug.log*
+pnpm-debug.log*
+.vite/
 
-# testing
+# coverage & reports
 coverage/
+lcov-report/
 
 # Next.js build artifacts
 .next/
@@ -98,20 +112,10 @@ build/
 *.tsbuildinfo
 next-env.d.ts
 
-# local env files
-.env*
-*.pem
-
-# Vercel deploy
+# local dev server artifacts
 .vercel
+dist/
 
-# 기타 백업/임시 파일
-*.swp
-*.tmp
-*~
-*.backup.*
-*.back.*
-
-# 업로드 파일 제외
+# -------------------------------------
+# 업로드 파일 / 기타
 uploads/
-.env.properties

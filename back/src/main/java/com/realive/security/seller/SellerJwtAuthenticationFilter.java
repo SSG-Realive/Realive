@@ -20,6 +20,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
 /**
  * JwtAuthenticationFilter
@@ -58,15 +59,14 @@ public class SellerJwtAuthenticationFilter extends OncePerRequestFilter {
 
                 // 5. 판매자가 존재하면 인증 객체 생성 및 등록
                 if (seller != null) {
-                    List<GrantedAuthority> auths = List.of(new SimpleGrantedAuthority("ROLE_SELLER"));
+                    List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_SELLER"));
                     UsernamePasswordAuthenticationToken authentication =
-                            new UsernamePasswordAuthenticationToken(
-                                    seller, null, auths); // 권한은 SELLER 처리
+                            new UsernamePasswordAuthenticationToken(seller, null, authorities);
 
-                    // SecurityContext에 인증 정보 설정
                     SecurityContextHolder.getContext()
                             .setAuthentication(authentication);
                 }
+
             }
         }
 

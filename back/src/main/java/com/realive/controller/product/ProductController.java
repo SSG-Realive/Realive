@@ -57,7 +57,7 @@ public class ProductController {
     @GetMapping
     public ResponseEntity<PageResponseDTO<ProductListDTO>> getMyProducts(
             @ModelAttribute ProductSearchCondition condition) {
-        
+
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Seller authenticatedSeller = (Seller) auth.getPrincipal();
         String email = authenticatedSeller.getEmail();
@@ -74,6 +74,4 @@ public class ProductController {
         ProductResponseDTO dto = productService.getProductDetail(id);
         return ResponseEntity.ok(dto);
     }
-
-    
 }
