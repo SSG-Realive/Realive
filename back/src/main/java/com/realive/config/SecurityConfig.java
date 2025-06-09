@@ -96,7 +96,6 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/admin/login").permitAll()
                 .anyRequest().authenticated()
-//                            .anyRequest().permitAll() // 임시로 모든 요청 허용 나중에 지우기
             )
             .addFilterBefore(adminJwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
