@@ -31,7 +31,7 @@ public class CustomerJwtAuthenticationFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        log.info("[CustomerJwtAuthenticationFilter] doFilterInternal 호출, URI: {}", request.getRequestURI());                                
+        log.info("[CustomerJwtAuthenticationFilter] doFilterInternal 호출, URI: {}", request.getRequestURI());
         String token = resolveToken(request);
         log.info("JWT 토큰 추출: {}", token);
 
@@ -58,8 +58,11 @@ public class CustomerJwtAuthenticationFilter extends OncePerRequestFilter {
 
     private String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
+        log.info("Authorization 헤더: {}", bearerToken);
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7); // "Bearer " 이후 토큰만 추출
+            String token = bearerToken.substring(7); // "Bearer " 이후 토큰만 추출
+            log.info("추출된 토큰: {}", token);
+            return token;
         }
         return null;
     }

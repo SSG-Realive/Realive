@@ -130,4 +130,11 @@ public class BidServiceImpl implements BidService {
                 .collect(Collectors.toList());
         return new PageImpl<>(bidResponseDTOs, pageable, bidPage.getTotalElements());
     }
+
+    @Override
+    public Page<BidResponseDTO> getBidsByAuction(Long auctionId, Pageable pageable) {
+        log.info("특정 경매의 입찰 내역 조회 처리 - AuctionId: {}, Pageable: {}", auctionId, pageable);
+        Page<Bid> bids = bidRepository.findByAuctionIdOrderByBidTimeDesc(auctionId.intValue(), pageable);
+        return bids.map(BidResponseDTO::fromEntity);
+    }
 }
