@@ -15,6 +15,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.MediaType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,6 +24,7 @@ import org.springframework.http.MediaType;
 public class ProductController {
 
     private final ProductService productService;
+    private static final Logger log = LoggerFactory.getLogger(ProductController.class);
 
     // 🔽 상품 등록(new)
     @PostMapping(value = "/new",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -33,7 +36,7 @@ public class ProductController {
         return ResponseEntity.ok(id);
     }
 
-    // 🔽 상품 수정(alter)
+    // 🔽 상품 수정
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Void> updateProduct(@PathVariable Long id, @ModelAttribute ProductRequestDTO dto) {
         Seller seller = (Seller) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -57,11 +60,9 @@ public class ProductController {
     @GetMapping
     public ResponseEntity<PageResponseDTO<ProductListDTO>> getMyProducts(
             @ModelAttribute ProductSearchCondition condition) {
-        
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Seller authenticatedSeller = (Seller) auth.getPrincipal();
-        String email = authenticatedSeller.getEmail();
 
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = auth.getName();
 
         PageResponseDTO<ProductListDTO> response = productService.getProductsBySeller(email, condition);
 
@@ -74,6 +75,4 @@ public class ProductController {
         ProductResponseDTO dto = productService.getProductDetail(id);
         return ResponseEntity.ok(dto);
     }
-
-    
 }

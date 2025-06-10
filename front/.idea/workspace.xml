@@ -5,18 +5,295 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="31883063-87fe-44f2-b836-458e49ca3558" name="Changes" comment="병합">
-      <change afterPath="$PROJECT_DIR$/src/app/seller/qna/[id]/edit/page.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/seller/qna/[id]/page.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/seller/qna/new/page.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/seller/qna/page.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/components/sellerQna/QnaDetail.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/components/sellerQna/QnaListItem.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/service/sellerQnaService.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/types/sellerQna.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/ErrorCode.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/ErrorCode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/RealiveApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/RealiveApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/config/JpaAuditingConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/config/JpaAuditingConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/config/QuerydslConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/config/QuerydslConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/config/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/controller/admin/AdminAuctionController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/controller/admin/AdminController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/controller/admin/AdminController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/controller/admin/AdminProductController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/controller/admin/AdminProductController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/controller/admin/AdminSellerApprovalController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/controller/admin/AdminSellerApprovalController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/controller/admin/AdminStatsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/controller/admin/AdminStatsController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/controller/auction/AuctionController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/controller/auction/BidController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/controller/auth/RefreshController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/controller/auth/RefreshController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/controller/cart/CartController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/controller/cart/CartController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/controller/customer/MemberController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/controller/customer/MemberController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/controller/customer/QnaController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/controller/customer/WishlistController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/controller/customer/WishlistController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/controller/order/OrderController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/controller/order/OrderController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/controller/product/ProductController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/controller/product/ProductController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/controller/public_api/KakaoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/controller/public_api/KakaoController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/controller/public_api/LoginController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/controller/public_api/LoginController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/controller/public_api/ProductViewController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/controller/public_api/ProductViewController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/controller/review/ReviewController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/controller/review/ReviewController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/controller/seller/SellerController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/controller/seller/SellerController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/controller/seller/SellerDashboardController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/controller/seller/SellerDashboardController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/controller/seller/SellerOrderController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/controller/seller/SellerOrderController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/controller/seller/SellerOrderDeliveryController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/controller/seller/SellerOrderDeliveryController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/controller/seller/SellerQnaController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/controller/seller/SellerQnaController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/admin/Admin.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/admin/Admin.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/auction/AdminProduct.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/auction/AdminProduct.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/auction/Auction.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/auction/Auction.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/auction/Bid.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/auction/Bid.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/common/BaseTimeEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/common/BaseTimeEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/common/enums/AuctionStatus.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/common/enums/AuctionStatus.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/common/enums/AuctionWinResultType.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/common/enums/AuctionWinResultType.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/common/enums/BidResultType.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/common/enums/BidResultType.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/common/enums/DeliveryStatus.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/common/enums/DeliveryStatus.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/common/enums/DeliveryType.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/common/enums/DeliveryType.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/common/enums/MediaType.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/common/enums/MediaType.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/common/enums/OrderCancelReason.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/common/enums/OrderCancelReason.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/common/enums/OrderStatus.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/common/enums/OrderStatus.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/common/enums/PaymentFailureReason.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/common/enums/PaymentFailureReason.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/common/enums/PaymentType.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/common/enums/PaymentType.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/common/enums/ProductStatus.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/common/enums/ProductStatus.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/common/enums/SellerFileType.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/common/enums/SellerFileType.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/common/enums/SignupMethod.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/common/enums/SignupMethod.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/customer/CartItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/customer/CartItem.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/customer/Customer.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/customer/Customer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/customer/CustomerQna.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/customer/CustomerQna.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/customer/Gender.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/customer/Gender.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/customer/SignupMethod.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/customer/SignupMethod.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/customer/Wishlist.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/customer/Wishlist.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/logs/CommissionLog.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/logs/CommissionLog.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/logs/PayoutLog.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/logs/PayoutLog.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/logs/PenaltyLog.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/logs/PenaltyLog.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/logs/SalesLog.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/logs/SalesLog.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/order/Order.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/order/Order.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/order/OrderDelivery.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/order/OrderDelivery.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/order/OrderItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/order/OrderItem.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/product/Category.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/product/Category.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/product/DeliveryPolicy.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/product/DeliveryPolicy.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/product/Product.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/product/Product.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/product/ProductImage.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/product/ProductImage.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/review/ReviewReport.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/review/ReviewReport.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/review/SellerReview.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/review/SellerReview.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/review/SellerReviewImage.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/review/SellerReviewImage.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/seller/SellerDocument.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/seller/SellerDocument.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/seller/SellerQna.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/domain/seller/SellerQna.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/admin/AdminInfoResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/admin/AdminInfoResponseDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/admin/AdminLoginRequestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/admin/AdminLoginRequestDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/admin/AdminLoginResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/admin/AdminLoginResponseDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/admin/AdminReadDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/admin/AdminReadDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/admin/approval/ApproveSellerRequestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/admin/approval/ApproveSellerRequestDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/admin/approval/ApproveSellerResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/admin/approval/ApproveSellerResponseDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/admin/approval/PendingSellerDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/admin/approval/PendingSellerDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/admin/approval/SellerDecisionRequestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/admin/approval/SellerDecisionRequestDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/auction/AdminProductDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/auction/AdminProductDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/auction/AdminPurchaseRequestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/auction/AdminPurchaseRequestDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/auction/AuctionCancelResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/auction/AuctionCancelResponseDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/auction/AuctionCreateRequestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/auction/AuctionCreateRequestDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/auction/AuctionHistoryResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/auction/AuctionHistoryResponseDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/auction/AuctionListResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/auction/AuctionListResponseDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/auction/AuctionPreviewResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/auction/AuctionPreviewResponseDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/auction/AuctionResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/auction/AuctionResponseDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/auction/AuctionResultResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/auction/AuctionResultResponseDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/auction/AuctionStatisticsResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/auction/AuctionStatisticsResponseDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/auction/AuctionUpdateRequestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/auction/AuctionUpdateRequestDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/auction/ProductStatusUpdateRequestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/auction/ProductStatusUpdateRequestDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/bid/BidCreateRequestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/bid/BidCreateRequestDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/bid/BidHistoryDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/bid/BidHistoryDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/bid/BidRequestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/bid/BidRequestDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/bid/BidResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/bid/BidResponseDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/cart/CartItemAddRequestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/cart/CartItemAddRequestDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/cart/CartItemDeleteRequestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/cart/CartItemDeleteRequestDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/cart/CartItemResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/cart/CartItemResponseDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/cart/CartItemUpdateRequestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/cart/CartItemUpdateRequestDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/cart/CartListResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/cart/CartListResponseDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/common/ApiResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/common/ApiResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/error/ErrorResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/error/ErrorResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/logs/AdminDashboardDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/logs/AdminDashboardDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/logs/CommissionLogDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/logs/CommissionLogDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/logs/PayoutLogDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/logs/PayoutLogDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/logs/PenaltyLogDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/logs/PenaltyLogDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/logs/ProductLogDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/logs/ProductLogDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/logs/SalesLogDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/logs/SalesLogDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/logs/SalesWithCommissionDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/logs/SalesWithCommissionDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/logs/salessum/CategorySalesSummaryDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/logs/salessum/CategorySalesSummaryDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/logs/salessum/DailySalesSummaryDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/logs/salessum/DailySalesSummaryDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/logs/salessum/MonthlySalesLogDetailListDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/logs/salessum/MonthlySalesLogDetailListDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/logs/salessum/MonthlySalesSummaryDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/logs/salessum/MonthlySalesSummaryDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/logs/salessum/SalesLogDetailListDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/logs/salessum/SalesLogDetailListDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/logs/stats/AuctionPeriodStatsDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/logs/stats/AuctionPeriodStatsDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/logs/stats/AuctionSummaryStatsDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/logs/stats/AuctionSummaryStatsDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/logs/stats/DateBasedValueDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/logs/stats/DateBasedValueDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/logs/stats/MemberPeriodStatsDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/logs/stats/MemberPeriodStatsDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/logs/stats/MemberSummaryStatsDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/logs/stats/MemberSummaryStatsDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/logs/stats/MonthBasedValueDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/logs/stats/MonthBasedValueDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/logs/stats/ReviewPeriodStatsDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/logs/stats/ReviewPeriodStatsDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/logs/stats/ReviewSummaryStatsDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/logs/stats/ReviewSummaryStatsDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/logs/stats/SalesPeriodStatsDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/logs/stats/SalesPeriodStatsDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/logs/stats/SalesSummaryStatsDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/logs/stats/SalesSummaryStatsDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/logs/stats/SellerSalesDetailDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/logs/stats/SellerSalesDetailDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/member/MemberJoinDTO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/member/MemberLoginDTO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/member/MemberModifyDTO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/member/MemberReadDTO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/order/DeliveryStatusUpdateDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/order/DeliveryStatusUpdateDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/order/OrderCancelRequestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/order/OrderCancelRequestDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/order/OrderConfirmRequestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/order/OrderConfirmRequestDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/order/OrderDeleteRequestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/order/OrderDeleteRequestDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/order/OrderDeliveryResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/order/OrderDeliveryResponseDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/order/OrderItemResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/order/OrderItemResponseDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/order/OrderResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/order/OrderResponseDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/order/PayRequestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/order/PayRequestDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/order/ProductQuantityDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/order/ProductQuantityDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/order/SellerOrderListDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/order/SellerOrderListDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/order/SellerOrderSearchCondition.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/order/SellerOrderSearchCondition.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/page/PageRequestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/page/PageRequestDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/page/PageResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/page/PageResponseDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/product/CustomerProductSearchCondition.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/product/CustomerProductSearchCondition.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/product/DeliveryPolicyDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/product/DeliveryPolicyDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/product/ProductListDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/product/ProductListDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/product/ProductRequestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/product/ProductRequestDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/product/ProductResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/product/ProductResponseDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/product/ProductSearchCondition.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/product/ProductSearchCondition.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/qna/CustomerQnaRequestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/qna/CustomerQnaRequestDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/qna/QnaDetailDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/qna/QnaDetailDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/qna/QnaListDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/qna/QnaListDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/review/MyReviewResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/review/MyReviewResponseDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/review/ReviewCreateRequestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/review/ReviewCreateRequestDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/review/ReviewListResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/review/ReviewListResponseDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/review/ReviewReportDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/review/ReviewReportDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/review/ReviewReportViewDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/review/ReviewReportViewDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/review/ReviewResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/review/ReviewResponseDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/review/ReviewUpdateRequestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/review/ReviewUpdateRequestDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/seller/SellerDashboardResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/seller/SellerDashboardResponseDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/seller/SellerLoginRequestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/seller/SellerLoginRequestDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/seller/SellerLoginResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/seller/SellerLoginResponseDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/seller/SellerResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/seller/SellerResponseDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/seller/SellerSignupDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/seller/SellerSignupDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/seller/SellerUpdateDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/seller/SellerUpdateDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/sellerqna/SellerQnaAnswerRequestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/sellerqna/SellerQnaAnswerRequestDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/sellerqna/SellerQnaDetailResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/sellerqna/SellerQnaDetailResponseDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/sellerqna/SellerQnaRequestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/sellerqna/SellerQnaRequestDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/sellerqna/SellerQnaResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/sellerqna/SellerQnaResponseDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/sellerqna/SellerQnaUpdateRequestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/sellerqna/SellerQnaUpdateRequestDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/wishlist/WishlistDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/dto/wishlist/WishlistDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/event/FileUploadEvnetPublisher.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/event/FileUploadEvnetPublisher.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/event/SellerFileUploadEvent.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/event/SellerFileUploadEvent.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/event/SellerFileUploadHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/event/SellerFileUploadHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/exception/GlobalExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/exception/GlobalExceptionHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/exception/NotFoundException.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/exception/NotFoundException.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/exception/RealiveException.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/exception/RealiveException.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/exception/UnauthorizedException.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/exception/UnauthorizedException.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/admin/AdminRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/admin/AdminRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/admin/approval/ApprovalRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/admin/approval/ApprovalRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/auction/AdminProductRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/auction/AdminProductRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/auction/AuctionRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/auction/AuctionRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/auction/BidRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/auction/BidRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/cart/CartItemRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/cart/CartItemRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/cart/CartItemRepositoryCustom.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/cart/CartItemRepositoryCustom.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/cart/CartItemRepositoryImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/cart/CartItemRepositoryImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/common/EmailLookupRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/common/EmailLookupRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/customer/CustomerQnaRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/customer/CustomerQnaRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/customer/CustomerRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/customer/CustomerRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/customer/WishlistRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/customer/WishlistRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/customer/productview/ProductDetail.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/customer/productview/ProductDetail.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/customer/productview/ProductDetailImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/customer/productview/ProductDetailImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/customer/productview/ProductListRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/customer/productview/ProductListRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/customer/productview/ProductListRepositoryImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/customer/productview/ProductListRepositoryImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/customer/productview/ProductSearch.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/customer/productview/ProductSearch.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/customer/productview/ProductSearchImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/customer/productview/ProductSearchImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/customer/productview/ProductViewRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/customer/productview/ProductViewRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/logs/CommissionLogRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/logs/CommissionLogRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/logs/PayoutLogRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/logs/PayoutLogRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/logs/PenaltyLogRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/logs/PenaltyLogRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/logs/SalesLogRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/logs/SalesLogRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/order/OrderDeliveryRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/order/OrderDeliveryRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/order/OrderItemRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/order/OrderItemRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/order/OrderRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/order/OrderRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/order/SellerOrderDeliveryRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/order/SellerOrderDeliveryRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/order/SellerOrderDeliveryRepositoryCustom.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/order/SellerOrderDeliveryRepositoryCustom.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/order/SellerOrderDeliveryRepositoryImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/order/SellerOrderDeliveryRepositoryImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/order/SellerOrderRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/product/CategoryRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/product/CategoryRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/product/DeliveryPolicyRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/product/DeliveryPolicyRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/product/ProductImageRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/product/ProductImageRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/product/ProductRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/product/ProductRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/product/ProductRepositoryCustom.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/product/ProductRepositoryCustom.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/product/ProductRepositoryImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/product/ProductRepositoryImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/review/ReviewReportRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/review/ReviewReportRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/review/SellerReviewRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/review/SellerReviewRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/review/crud/ReviewCRUDRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/review/crud/ReviewCRUDRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/review/crud/SellerReviewImageRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/review/crud/SellerReviewImageRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/review/view/ReviewDetail.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/review/view/ReviewDetail.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/review/view/ReviewDetailImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/review/view/ReviewDetailImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/review/view/ReviewViewRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/review/view/ReviewViewRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/seller/SellerDocumentRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/seller/SellerDocumentRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/seller/SellerQnaRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/seller/SellerQnaRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/seller/SellerRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/repository/seller/SellerRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/security/AdminJwtAuthenticationFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/security/AdminJwtAuthenticationFilter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/security/AdminPrincipal.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/security/AdminPrincipal.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/security/JwtUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/security/JwtUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/security/customer/CustomLoginSuccessHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/security/customer/CustomLoginSuccessHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/security/customer/CustomOAuth2UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/security/customer/CustomOAuth2UserService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/security/customer/CustomUserDetailsService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/security/customer/CustomUserDetailsService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/security/customer/CustomerJwtAuthenticationFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/security/customer/CustomerJwtAuthenticationFilter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/security/customer/JwtResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/security/customer/JwtResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/security/customer/JwtTokenProvider.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/security/customer/JwtTokenProvider.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/security/seller/SellerJwtAuthenticationFilter.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/admin/AdminDetailsService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/admin/AdminDetailsService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/admin/AdminService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/admin/AdminService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/admin/approval/SellerApprovalService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/admin/approval/SellerApprovalService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/admin/auction/AuctionService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/admin/auction/AuctionService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/admin/auction/BidService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/admin/auction/BidService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/admin/logs/StatService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/admin/logs/StatService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/admin/logs/StatServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/admin/logs/StatServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/admin/product/AdminProductService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/admin/product/AdminProductService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/cart/crud/CartService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/cart/crud/CartService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/cart/crud/CartServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/cart/crud/CartServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/cart/view/CartViewService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/cart/view/CartViewService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/cart/view/CartViewServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/cart/view/CartViewServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/common/FileUploadService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/common/FileUploadService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/customer/CustomerQnaService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/customer/CustomerQnaService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/customer/CustomerService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/customer/CustomerService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/customer/MemberService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/customer/MemberService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/customer/ProductViewService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/customer/ProductViewService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/customer/ProductViewServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/customer/ProductViewServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/customer/WishlistService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/customer/WishlistService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/order/OrderDeliveryService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/order/OrderDeliveryService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/order/OrderService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/order/OrderService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/order/OrderServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/order/OrderServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/order/SellerOrderService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/order/SellerOrderService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/product/ProductService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/product/ProductService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/review/crud/ReviewCRUDService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/review/crud/ReviewCRUDService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/review/crud/ReviewCRUDServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/review/crud/ReviewCRUDServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/review/view/ReviewViewService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/review/view/ReviewViewService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/review/view/ReviewViewServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/review/view/ReviewViewServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/seller/SellerDashboardService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/seller/SellerDashboardService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/seller/SellerQnaService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/seller/SellerQnaService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/seller/SellerService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/service/seller/SellerService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/serviceimpl/admin/AdminServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/serviceimpl/admin/AdminServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/serviceimpl/admin/approval/SellerApprovalServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/serviceimpl/admin/approval/SellerApprovalServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/serviceimpl/admin/auction/AuctionServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/serviceimpl/admin/auction/AuctionServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/serviceimpl/admin/auction/BidServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/serviceimpl/admin/auction/BidServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/serviceimpl/admin/product/AdminProductServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/serviceimpl/admin/product/AdminProductServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/serviceimpl/order/OrderDeliveryServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/serviceimpl/order/OrderDeliveryServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/serviceimpl/order/SellerOrderServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/serviceimpl/order/SellerOrderServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/serviceimpl/product/ProductServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/serviceimpl/product/ProductServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/serviceimpl/seller/SellerDashboardServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/serviceimpl/seller/SellerDashboardServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/serviceimpl/seller/SellerQnaServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/serviceimpl/seller/SellerQnaServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/serviceimpl/seller/SellerServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/main/java/com/realive/serviceimpl/seller/SellerServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/util/ImageUploader.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/main/java/com/realive/util/LocalDiskImageUploader.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/test/java/com/realive/RealiveApplicationTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back/src/test/java/com/realive/RealiveApplicationTests.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/test/java/com/realive/login/LoginTests.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/test/java/com/realive/order/OrderDeliveryServiceTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/test/java/com/realive/product/ProductRepoTests.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/test/java/com/realive/realive/AdminSellerApprovalControllerTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/test/java/com/realive/realive/AdminSignupTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/test/java/com/realive/realive/AuctionControllerTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/test/java/com/realive/realive/RealiveApplicationTests.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/test/java/com/realive/realive/StatControllerTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/test/java/com/realive/review/ReviewRepoTests.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back/src/test/resources/application.yml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/seller/orders/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/seller/orders/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/seller/orders/[id]/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/seller/orders/[id]/page.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/service/sellerOrderService.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/service/sellerOrderService.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/service/sellerService.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/service/sellerService.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/types/sellerOrder.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/types/sellerOrder.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -53,27 +330,27 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "team2/jaehyun",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/SSG_KDT8/Realive/front",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "ts.external.directory.path": "C:\\SSG_KDT8\\Realive\\front\\node_modules\\typescript\\lib",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;team2/jaehyun&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/SSG_KDT8/Realive/back&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;C:\\SSG_KDT8\\Realive\\front\\node_modules\\typescript\\lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "postgresql"
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;postgresql&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\SSG_KDT8\Realive\front\src\app\customer" />
@@ -99,6 +376,7 @@
       <workItem from="1748995015675" duration="11567000" />
       <workItem from="1749015148641" duration="11125000" />
       <workItem from="1749081532612" duration="9305000" />
+      <workItem from="1749546415896" duration="3062000" />
     </task>
     <task id="LOCAL-00001" summary="change">
       <option name="closed" value="true" />
@@ -178,6 +456,17 @@
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="change" />
     <MESSAGE value="주문" />
@@ -185,16 +474,5 @@
     <MESSAGE value="sellerorder" />
     <MESSAGE value="병합" />
     <option name="LAST_COMMIT_MESSAGE" value="병합" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/src/app/seller/dashboard/page.tsx</url>
-          <line>2</line>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
 </project>

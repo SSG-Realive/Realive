@@ -1,7 +1,7 @@
 package com.realive.domain.product;
 
 import com.realive.domain.common.BaseTimeEntity;
-import com.realive.domain.common.enums.Type;
+import com.realive.domain.common.enums.DeliveryType;
 import jakarta.persistence.*;
 import lombok.*;
 

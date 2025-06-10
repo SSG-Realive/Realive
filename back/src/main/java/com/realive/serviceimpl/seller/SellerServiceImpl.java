@@ -16,7 +16,6 @@ import com.realive.dto.seller.SellerLoginResponseDTO;
 import com.realive.dto.seller.SellerResponseDTO;
 import com.realive.dto.seller.SellerSignupDTO;
 import com.realive.dto.seller.SellerUpdateDTO;
-import com.realive.event.FileUploadEvnetPublisher;
 import com.realive.repository.seller.SellerDocumentRepository;
 import com.realive.repository.seller.SellerRepository;
 import com.realive.security.JwtUtil;
@@ -26,9 +25,8 @@ import com.realive.service.seller.SellerService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
+@Log4j2
 @Service
 @RequiredArgsConstructor
 public class SellerServiceImpl implements SellerService{
@@ -38,7 +36,6 @@ public class SellerServiceImpl implements SellerService{
     private final JwtUtil jwtUtil;
     private final SellerDocumentRepository sellerDocumentRepository;
     private final FileUploadService fileUploadService;
-    private final FileUploadEvnetPublisher fileUploadEvnetPublisher;
 
      @Override
     public Seller getByEmail(String email){
@@ -51,7 +48,7 @@ public class SellerServiceImpl implements SellerService{
     @Override
     public SellerLoginResponseDTO login(SellerLoginRequestDTO reqdto){
 
-        log.debug("💡 Login attempt with email='{}', password='{}'", reqdto.getEmail(), reqdto.getPassword());
+       
 
         // email로 사용자 찾기
         Seller seller = sellerRepository.findByEmailAndIsActiveTrue(reqdto.getEmail())
@@ -77,11 +74,8 @@ public class SellerServiceImpl implements SellerService{
 
     // 판매자 정보 조회 
     @Override
-    public SellerResponseDTO getMyInfo(String email){
-        // 이메일로 판매자 찾기
-        Seller seller = sellerRepository.findByEmail(email)
-                .orElseThrow(()-> new IllegalArgumentException("존재하지 않는 판매자입니다."));
-
+    public SellerResponseDTO getMyInfo(Seller seller){
+        
         // 판매자 정보 생성
         return SellerResponseDTO.builder()
                 .email(seller.getEmail())
@@ -96,8 +90,7 @@ public class SellerServiceImpl implements SellerService{
     // 회원가입
     @Override
     @Transactional
-    public Seller registerSeller(SellerSignupDTO dto, MultipartFile businessLicense,
-        MultipartFile bankAccountCopy){
+    public Seller registerSeller(SellerSignupDTO dto){
         
         
         //이메일 존재 유무 검증.
@@ -119,25 +112,22 @@ public class SellerServiceImpl implements SellerService{
                 .phone(dto.getPhone())
                 .password(encodedPassword)
                 .businessNumber(dto.getBusinessNumber())
-                .isApproved(false)
                 .isActive(true)
+                .isApproved(false)
                 .build();
         //dto 받은거 저장.
-        Seller savedSeller = sellerRepository.save(seller);
+        return sellerRepository.save(seller);
 
-        // 4) “트랜잭션 내부”에서 이벤트 퍼블리시 → 커밋 직후 리스너( AFTER_COMMIT ) 실행
-        fileUploadEvnetPublisher.publish(savedSeller, businessLicense, bankAccountCopy);
-
-        return savedSeller;
+        
     
     }   
     //회원수정
     @Override
     @Transactional
-    public void updateSeller(String email, SellerUpdateDTO dto) {
-        // 이메일로 판매자 찾기
-        Seller seller = sellerRepository.findByEmail(email)
-                .orElseThrow(()-> new IllegalArgumentException("존재하지 않는 판매자입니다."));
+    public void updateSeller(Seller seller, SellerUpdateDTO dto) {
+        // 판매자 정보 조회 
+        seller.setName(dto.getName());
+        seller.setPhone(dto.getPhone());
         //판매자 이름 수정 및 검증
         if (!seller.getName().equals(dto.getName())) {
             if(sellerRepository.existsByName(dto.getName())){

@@ -1,4 +1,3 @@
-//주문 상세 및 배송 상태 변경
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -7,14 +6,25 @@ import {
     getOrderDetail,
     updateDeliveryStatus,
 } from '@/service/sellerOrderService';
-import { SellerOrderDetailResponse } from '@/types/sellerOrder';
+import {
+    SellerOrderDetailResponse,
+    DeliveryStatus,
+} from '@/types/sellerOrder';
 
 export default function SellerOrderDetailPage() {
     const params = useParams();
     const orderId = Number(params?.id);
     const router = useRouter();
+
     const [order, setOrder] = useState<SellerOrderDetailResponse | null>(null);
-    const [newStatus, setNewStatus] = useState<string>('');
+    const [newStatus, setNewStatus] = useState<DeliveryStatus>('DELIVERY_PREPARING');
+
+    // 배송 상태 enum 값 목록
+    const DELIVERY_STATUSES: DeliveryStatus[] = [
+        'DELIVERY_PREPARING',
+        'DELIVERY_IN_PROGRESS',
+        'DELIVERY_COMPLETED',
+    ];
 
     useEffect(() => {
         const fetchData = async () => {
@@ -26,7 +36,9 @@ export default function SellerOrderDetailPage() {
     }, [orderId]);
 
     const handleUpdate = async () => {
-        await updateDeliveryStatus(orderId, newStatus);
+        await updateDeliveryStatus(orderId, {
+            deliveryStatus: newStatus,
+        });
         alert('배송 상태가 변경되었습니다.');
         router.refresh();
     };
@@ -54,12 +66,16 @@ export default function SellerOrderDetailPage() {
                 <label className="block mb-2 font-semibold">배송 상태 변경</label>
                 <select
                     value={newStatus}
-                    onChange={(e) => setNewStatus(e.target.value)}
+                    onChange={(e) => setNewStatus(e.target.value as DeliveryStatus)}
                     className="border p-2"
                 >
-                    <option value="배송준비중">배송준비중</option>
-                    <option value="배송중">배송중</option>
-                    <option value="배송완료">배송완료</option>
+                    {DELIVERY_STATUSES.map((status) => (
+                        <option key={status} value={status}>
+                            {status === 'DELIVERY_PREPARING' && '배송준비중'}
+                            {status === 'DELIVERY_IN_PROGRESS' && '배송중'}
+                            {status === 'DELIVERY_COMPLETED' && '배송완료'}
+                        </option>
+                    ))}
                 </select>
 
                 <button

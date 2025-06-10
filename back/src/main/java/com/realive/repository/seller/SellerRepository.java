@@ -14,4 +14,6 @@ public interface SellerRepository extends JpaRepository<Seller,Long>, EmailLooku
     Optional<Seller> findByEmailAndIsActiveTrue(String email); //로그인용(소프트삭제)
     Optional<Seller> findByEmail(String email);
 
+    
+
 }

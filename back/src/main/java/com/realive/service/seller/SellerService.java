@@ -34,7 +34,7 @@ public interface SellerService {
      @return 로그인 성공 시 JWT 토큰 등 포함된 응답 DTO
      */
     SellerLoginResponseDTO login(SellerLoginRequestDTO reqdto);
-    
+
     /**
 
      내 정보 조회
@@ -45,7 +45,7 @@ public interface SellerService {
 
      @return 판매자 정보 DTO
      */
-    SellerResponseDTO getMyInfo(String email);
+    SellerResponseDTO getMyInfo(Seller seller);
 
     /**
 
@@ -57,8 +57,7 @@ public interface SellerService {
 
      통장사본과 사업자 등록증은 이벤트로 처리
      */
-    Seller registerSeller(SellerSignupDTO dto, MultipartFile businessLicense,
-        MultipartFile bankAccountCopy);
+    Seller registerSeller(SellerSignupDTO dto);
 
     /**
 
@@ -70,7 +69,7 @@ public interface SellerService {
 
      @param dto 수정 요청 DTO
      */
-    void updateSeller(String email, SellerUpdateDTO dto);
+    void updateSeller(Seller seller, SellerUpdateDTO dto);
 
     /**
 

@@ -32,7 +32,7 @@ public class SellerQnaServiceImpl implements SellerQnaService {
                 .content(dto.getContent())
                 .isAnswered(false)
                 .isActive(true)
-                .deleted(false)
+                
                 .build();
 
         sellerQnaRepository.save(qna);
@@ -41,7 +41,7 @@ public class SellerQnaServiceImpl implements SellerQnaService {
     @Override
     @Transactional
     public Page<SellerQnaResponseDTO> getQnaListBySellerId(Long sellerId, Pageable pageable) {
-        return sellerQnaRepository.findBySellerIdAndIsActiveTrueAndDeletedFalse(sellerId, pageable)
+        return sellerQnaRepository.findBySellerIdAndIsActiveTrue(sellerId, pageable)
                 .map(q -> SellerQnaResponseDTO.builder()
                         .id(q.getId())
                         .title(q.getTitle())
@@ -58,7 +58,7 @@ public class SellerQnaServiceImpl implements SellerQnaService {
     @Transactional
     public SellerQnaDetailResponseDTO getQnaDetail(Long sellerId, Long qnaId) {
         SellerQna qna = sellerQnaRepository.findById(qnaId)
-                .filter(q -> q.getSeller().getId().equals(sellerId) && !q.isDeleted())
+                .filter(q -> q.getSeller().getId().equals(sellerId) && q.isActive())
                 .orElseThrow(() -> new IllegalArgumentException("QnA가 존재하지 않거나 권한이 없습니다."));
 
         return SellerQnaDetailResponseDTO.builder()
@@ -83,7 +83,7 @@ public class SellerQnaServiceImpl implements SellerQnaService {
                 .filter(q -> q.getSeller().getId().equals(sellerId))
                 .orElseThrow(() -> new IllegalArgumentException("삭제할 권한이 없습니다."));
 
-        qna.setDeleted(true);
+
         qna.setActive(false);
     }
 
