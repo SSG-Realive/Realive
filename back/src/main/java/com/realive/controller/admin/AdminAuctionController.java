@@ -1,4 +1,4 @@
 package com.realive.controller.admin;
 
-public class AdminAuctionController {sealed
+public class AdminAuctionController { sss
 }
