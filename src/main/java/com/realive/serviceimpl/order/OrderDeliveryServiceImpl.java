@@ -2,9 +2,10 @@ package com.realive.serviceimpl.order;
 
 import com.realive.domain.common.enums.DeliveryStatus;
 import com.realive.domain.order.OrderDelivery;
+import com.realive.domain.order.OrderItem;
 import com.realive.dto.order.DeliveryStatusUpdateDTO;
 import com.realive.dto.order.OrderDeliveryResponseDTO;
-import com.realive.repository.order.OrderDeliveryRepository;
+import com.realive.repository.order.OrderItemRepository;
 import com.realive.repository.order.SellerOrderDeliveryRepository;
 import com.realive.service.order.OrderDeliveryService;
 import lombok.RequiredArgsConstructor;
@@ -19,12 +20,11 @@ import java.util.List;
 public class OrderDeliveryServiceImpl implements OrderDeliveryService {
 
     private final SellerOrderDeliveryRepository sellerOrderDeliveryRepository;
-    private final OrderDeliveryRepository orderDeliveryRepository;
+    private final OrderItemRepository orderItemRepository;
 
     @Override
     @Transactional
     public void updateDeliveryStatus(Long sellerId, Long orderId, DeliveryStatusUpdateDTO dto) {
-        // 여기는 상태 변경이므로 엔티티 필요 → 기존 findByOrderIdAndSellerId (OrderDelivery 반환)도 유지 필요
         OrderDelivery delivery = sellerOrderDeliveryRepository
                 .findByOrderIdAndSellerId(orderId, sellerId)
                 .orElseThrow(() -> new IllegalArgumentException("배송 정보가 존재하지 않습니다."));
@@ -63,16 +63,54 @@ public class OrderDeliveryServiceImpl implements OrderDeliveryService {
     @Override
     @Transactional(readOnly = true)
     public List<OrderDeliveryResponseDTO> getDeliveriesBySeller(Long sellerId) {
-        // 👉 DTO projection 바로 사용
-        return sellerOrderDeliveryRepository.findAllDeliveryDTOBySellerId(sellerId);
+        List<OrderDelivery> deliveries = sellerOrderDeliveryRepository.findAllBySellerId(sellerId);
+
+        return deliveries.stream()
+                .map(d -> {
+                    List<OrderItem> orderItems = orderItemRepository.findByOrderId(d.getOrder().getId());
+                    String productName = orderItems.isEmpty() ? "상품 없음" : orderItems.get(0).getProduct().getName();
+
+                    return OrderDeliveryResponseDTO.builder()
+                            .orderId(d.getOrder().getId())
+                            .productName(productName)
+                            .buyerId(d.getOrder().getCustomer().getId())
+                            .deliveryStatus(d.getStatus())
+                            .startDate(d.getStartDate())
+                            .completeDate(d.getCompleteDate())
+                            .trackingNumber(d.getTrackingNumber())
+                            .carrier(d.getCarrier())
+                            .build();
+                })
+                .toList();
     }
 
     @Override
     @Transactional(readOnly = true)
     public OrderDeliveryResponseDTO getDeliveryByOrderId(Long sellerId, Long orderId) {
-        // 👉 DTO projection 바로 사용
-        return sellerOrderDeliveryRepository
-                .findDeliveryDTOByOrderIdAndSellerId(orderId, sellerId)
+        OrderDelivery delivery = sellerOrderDeliveryRepository
+                .findByOrderIdAndSellerId(orderId, sellerId)
                 .orElseThrow(() -> new IllegalArgumentException("배송 정보가 존재하지 않습니다."));
+
+        List<OrderItem> orderItems = orderItemRepository.findByOrderId(orderId);
+        if (orderItems.isEmpty()) {
+            throw new IllegalArgumentException("주문에 상품이 없습니다.");
+        }
+
+        if (!orderItems.get(0).getProduct().getSeller().getId().equals(sellerId)) {
+            throw new SecurityException("자신의 주문이 아닙니다.");
+        }
+
+        String productName = orderItems.get(0).getProduct().getName();
+
+        return OrderDeliveryResponseDTO.builder()
+                .orderId(delivery.getOrder().getId())
+                .productName(productName)
+                .buyerId(delivery.getOrder().getCustomer().getId())
+                .deliveryStatus(delivery.getStatus())
+                .startDate(delivery.getStartDate())
+                .completeDate(delivery.getCompleteDate())
+                .trackingNumber(delivery.getTrackingNumber())
+                .carrier(delivery.getCarrier())
+                .build();
     }
 }

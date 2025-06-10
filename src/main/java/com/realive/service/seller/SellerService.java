@@ -45,7 +45,7 @@ public interface SellerService {
 
      @return 판매자 정보 DTO
      */
-    SellerResponseDTO getMyInfo(String email);
+    SellerResponseDTO getMyInfo(Seller seller);
 
     /**
 
@@ -69,7 +69,7 @@ public interface SellerService {
 
      @param dto 수정 요청 DTO
      */
-    void updateSeller(String email, SellerUpdateDTO dto);
+    void updateSeller(Seller seller, SellerUpdateDTO dto);
 
     /**
 

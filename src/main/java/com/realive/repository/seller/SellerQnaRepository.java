@@ -20,7 +20,7 @@ public interface SellerQnaRepository extends JpaRepository<SellerQna, Long> {
     Optional<SellerQna> findByIdAndSellerIdAndIsActiveTrue(Long id, Long sellerId);
 
     // 미답변 필터링 조회
-    Page<SellerQna> findBySellerIdAndIsAnsweredFalseAndDIsActiveTrue(Long sellerId, Pageable pageable);
+    Page<SellerQna> findBySellerIdAndIsAnsweredFalseAndIsActiveTrue(Long sellerId, Pageable pageable);
 
     // 미답변 QnA 수
     long countBySellerIdAndIsAnsweredFalseAndIsActiveTrue(Long sellerId);

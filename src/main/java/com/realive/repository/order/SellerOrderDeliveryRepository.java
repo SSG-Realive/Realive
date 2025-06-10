@@ -1,6 +1,5 @@
 package com.realive.repository.order;
 
-import com.realive.dto.order.OrderDeliveryResponseDTO;
 import com.realive.domain.order.OrderDelivery;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -12,61 +11,31 @@ import java.util.Optional;
 public interface SellerOrderDeliveryRepository
         extends JpaRepository<OrderDelivery, Long>, SellerOrderDeliveryRepositoryCustom {
 
-@Query("""
+    // ✅ 단건 조회 (orderId + sellerId) → 엔티티 반환
+    @Query("""
         SELECT d FROM OrderDelivery d
         JOIN d.order o
-        JOIN o.orderItems oi
-        JOIN oi.product p
-        WHERE o.id = :orderId AND p.seller.id = :sellerId
+        WHERE o.id = :orderId
+          AND EXISTS (
+              SELECT 1 FROM OrderItem oi
+              WHERE oi.order = o
+              AND oi.product.seller.id = :sellerId
+          )
     """)
     Optional<OrderDelivery> findByOrderIdAndSellerId(
             @Param("orderId") Long orderId,
             @Param("sellerId") Long sellerId
     );
 
-
-
-    // ✅ 단건 조회 (orderId + sellerId) → DTO Projection
+    // ✅ 전체 조회 (sellerId 기준) → 엔티티 반환
     @Query("""
-        SELECT new com.realive.dto.order.OrderDeliveryResponseDTO(
-            o.id,
-            p.name,
-            o.customer.id,
-            d.status,
-            d.startDate,
-            d.completeDate,
-            d.trackingNumber,
-            d.carrier
-        )
-        FROM OrderDelivery d
+        SELECT DISTINCT d FROM OrderDelivery d
         JOIN d.order o
-        JOIN o.orderItems oi
-        JOIN oi.product p
-        WHERE o.id = :orderId
-          AND p.seller.id = :sellerId
-    """)
-    Optional<OrderDeliveryResponseDTO> findDeliveryDTOByOrderIdAndSellerId(
-            @Param("orderId") Long orderId,
-            @Param("sellerId") Long sellerId
-    );
-
-    // ✅ 전체 조회 (sellerId 기준) → DTO Projection
-    @Query("""
-        SELECT new com.realive.dto.order.OrderDeliveryResponseDTO(
-            o.id,
-            p.name,
-            o.customer.id,
-            d.status,
-            d.startDate,
-            d.completeDate,
-            d.trackingNumber,
-            d.carrier
+        WHERE EXISTS (
+            SELECT 1 FROM OrderItem oi
+            WHERE oi.order = o
+            AND oi.product.seller.id = :sellerId
         )
-        FROM OrderDelivery d
-        JOIN d.order o
-        JOIN o.orderItems oi
-        JOIN oi.product p
-        WHERE p.seller.id = :sellerId
     """)
-    List<OrderDeliveryResponseDTO> findAllDeliveryDTOBySellerId(@Param("sellerId") Long sellerId);
+    List<OrderDelivery> findAllBySellerId(@Param("sellerId") Long sellerId);
 }
