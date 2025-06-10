@@ -28,4 +28,14 @@ public interface ProductRepository extends JpaRepository<Product, Long>, Product
 
     List<Product> findAllByIdIn(List<Long> ids); // 여러 ID로 조회
 
+    // 등록된 상품 수 (isActive = true)
+    long countBySellerIdAndActiveTrue(Long sellerId);
+
+    // 오늘 등록된 상품 수
+    @Query("SELECT COUNT(p) FROM Product p WHERE p.seller.id = :sellerId AND p.createdAt BETWEEN :startOfDay AND :endOfDay")
+    long countTodayProductBySellerId(@Param("sellerId") Long sellerId,
+                                     @Param("startOfDay") LocalDateTime startOfDay,
+                                     @Param("endOfDay") LocalDateTime endOfDay);
+
+
 }

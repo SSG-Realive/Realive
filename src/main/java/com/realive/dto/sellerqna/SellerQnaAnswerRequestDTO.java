@@ -1,4 +1,4 @@
-package com.realive.dto.seller;
+package com.realive.dto.sellerqna;
 
 import lombok.*;
 
