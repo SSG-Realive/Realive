@@ -28,16 +28,12 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     Page<Order> findAllOrders(Pageable pageable);
 
     // 판매자 기준 진행 중인 주문 수 조회
-    @Query("""
-            SELECT COUNT(DISTINCT o)
-            FROM Order o
-            JOIN o.orderItems oi
-            JOIN oi.product p
-            WHERE p.seller.id = :sellerId
-              AND o.status IN :statuses
-            """)
-    long countInProgressOrders(
-            @Param("sellerId") Long sellerId,
-            @Param("statuses") Collection<OrderStatus> statuses
-    );
+@Query("""
+    SELECT COUNT(DISTINCT oi.order)
+    FROM OrderItem oi
+    JOIN oi.product p
+    WHERE p.seller.id = :sellerId
+    AND oi.order.status IN :statuses
+""")
+long countInProgressOrders(@Param("sellerId") Long sellerId, @Param("statuses") Collection<OrderStatus> statuses);
 }
