@@ -79,8 +79,8 @@ export default function ProductDetailPage() {
                     <p className="mb-2">재고: {product.stock}</p>
                     <p className="mb-2">크기: {product.width} x {product.depth} x {product.height}</p>
                     <p className="mb-2">상태: {product.status}</p>
-                    <p className="mb-2">활성화 여부: {product.isActive ? '활성' : '비활성'}</p>
-                    <p className="mb-2">카테고리 ID: {product.categoryId}</p>
+                    <p className="mb-2">활성화 여부: {product.active ? '활성' : '비활성'}</p>
+                    <p className="mb-2">카테고리 : {product.categoryName}</p>
 
                     <h2 className="mt-6 font-semibold">배송 정보</h2>
                     {product.deliveryPolicy ? (

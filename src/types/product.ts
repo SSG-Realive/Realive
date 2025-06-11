@@ -18,5 +18,6 @@ export interface ProductDetail {
     status: string;
     active: boolean;
     categoryId: number;
+    categoryName: string;
     deliveryPolicy: DeliveryPolicy;
 }
