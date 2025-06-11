@@ -10,7 +10,7 @@ import useSellerAuthGuard from '@/hooks/useSellerAuthGuard';
 
 export default function ProductCreatePage() {
      // 판매자 인증 가드를 적용
-    const checking = useSellerAuthGuard();
+     const checking = useSellerAuthGuard();
 
     const router = useRouter();
 

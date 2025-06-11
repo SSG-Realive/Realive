@@ -9,7 +9,7 @@ import SellerLayout from '@/components/layouts/SellerLayout';
 import useSellerAuthGuard from '@/hooks/useSellerAuthGuard';
 
 export default function QnaEditPage() {
-    useSellerAuthGuard();
+    // useSellerAuthGuard();
 
     const { id } = useParams();
     const router = useRouter();

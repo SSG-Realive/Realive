@@ -4,9 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="31883063-87fe-44f2-b836-458e49ca3558" name="Changes" comment=".">
+    <list default="true" id="31883063-87fe-44f2-b836-458e49ca3558" name="Changes" comment="예외처리, 인증가드">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/seller/orders/[id]/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/seller/orders/[id]/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/seller/orders/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/seller/orders/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/seller/products/new/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/seller/products/new/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/seller/qna/[id]/edit/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/seller/qna/[id]/edit/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/seller/qna/[id]/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/seller/qna/[id]/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/seller/qna/new/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/seller/qna/new/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/seller/qna/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/seller/qna/page.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -90,7 +96,7 @@
       <workItem from="1749015148641" duration="11125000" />
       <workItem from="1749081532612" duration="9305000" />
       <workItem from="1749546415896" duration="3277000" />
-      <workItem from="1749600037565" duration="7028000" />
+      <workItem from="1749600037565" duration="9155000" />
     </task>
     <task id="LOCAL-00001" summary="change">
       <option name="closed" value="true" />
@@ -220,7 +226,15 @@
       <option name="project" value="LOCAL" />
       <updated>1749604366525</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="예외처리, 인증가드">
+      <option name="closed" value="true" />
+      <created>1749608121580</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1749608121580</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -246,6 +260,19 @@
     <MESSAGE value="인증 가드" />
     <MESSAGE value="병합" />
     <MESSAGE value="." />
-    <option name="LAST_COMMIT_MESSAGE" value="." />
+    <MESSAGE value="예외처리, 인증가드" />
+    <option name="LAST_COMMIT_MESSAGE" value="예외처리, 인증가드" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/src/app/seller/orders/page.tsx</url>
+          <line>8</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

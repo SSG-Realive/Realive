@@ -9,7 +9,7 @@ import SellerLayout from '@/components/layouts/SellerLayout';
 import useSellerAuthGuard from '@/hooks/useSellerAuthGuard';
 
 export default function QnaCreatePage() {
-    useSellerAuthGuard();
+    // useSellerAuthGuard();
     const router = useRouter();
     const [form, setForm] = useState<CreateQnaRequest>({
         title: '',

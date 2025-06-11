@@ -6,8 +6,11 @@ import { SellerQnaResponse } from '@/types/sellerQna';
 import QnaListItem from '@/components/sellerQna/QnaListItem';
 import useSellerAuthGuard from '@/hooks/useSellerAuthGuard';
 
+import SellerLayout from '@/components/layouts/SellerLayout';
+import Header from '@/components/Header';
+
 export default function SellerQnaPage() {
-    useSellerAuthGuard(); //
+    // useSellerAuthGuard();
 
     const [qnaList, setQnaList] = useState<SellerQnaResponse[]>([]);
     const [totalPages, setTotalPages] = useState(1);
@@ -34,40 +37,43 @@ export default function SellerQnaPage() {
     }, [page]);
 
     return (
-        <div className="max-w-3xl mx-auto">
-            <h1 className="text-2xl font-bold mb-4">판매자 QnA 목록</h1>
+        <SellerLayout>
+            <Header />
+            <div className="max-w-3xl mx-auto p-6">
+                <h1 className="text-2xl font-bold mb-4">판매자 QnA 목록</h1>
 
-            {loading ? (
-                <p className="text-gray-500">로딩 중...</p>
-            ) : error ? (
-                <p className="text-red-500">{error}</p>
-            ) : (
-                <ul>
-                    {Array.isArray(qnaList) && qnaList.length > 0 ? (
-                        qnaList.map((qna) => <QnaListItem key={qna.id} qna={qna} />)
-                    ) : (
-                        <li className="text-gray-400">등록된 질문이 없습니다.</li>
-                    )}
-                </ul>
-            )}
+                {loading ? (
+                    <p className="text-gray-500">로딩 중...</p>
+                ) : error ? (
+                    <p className="text-red-500">{error}</p>
+                ) : (
+                    <ul>
+                        {Array.isArray(qnaList) && qnaList.length > 0 ? (
+                            qnaList.map((qna) => <QnaListItem key={qna.id} qna={qna} />)
+                        ) : (
+                            <li className="text-gray-400">등록된 질문이 없습니다.</li>
+                        )}
+                    </ul>
+                )}
 
-            <div className="mt-4 flex gap-2">
-                <button
-                    onClick={() => setPage((p) => Math.max(p - 1, 1))}
-                    disabled={page === 1}
-                    className="px-3 py-1 border rounded disabled:opacity-50"
-                >
-                    이전
-                </button>
-                <span>{page} / {totalPages}</span>
-                <button
-                    onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
-                    disabled={page === totalPages}
-                    className="px-3 py-1 border rounded disabled:opacity-50"
-                >
-                    다음
-                </button>
+                <div className="mt-4 flex gap-2">
+                    <button
+                        onClick={() => setPage((p) => Math.max(p - 1, 1))}
+                        disabled={page === 1}
+                        className="px-3 py-1 border rounded disabled:opacity-50"
+                    >
+                        이전
+                    </button>
+                    <span>{page} / {totalPages}</span>
+                    <button
+                        onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
+                        disabled={page === totalPages}
+                        className="px-3 py-1 border rounded disabled:opacity-50"
+                    >
+                        다음
+                    </button>
+                </div>
             </div>
-        </div>
+        </SellerLayout>
     );
 }

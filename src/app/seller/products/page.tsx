@@ -24,6 +24,8 @@ export default function ProductListPage() {
   const [statusFilter, setStatusFilter] = useState('');
 
   useEffect(() => {
+    if (checking) return;
+
     const page = parseInt(searchParams.get('page') || '1', 10);
     setCurrentPage(page);
     fetchProductList(page);
@@ -49,6 +51,7 @@ export default function ProductListPage() {
   };
 
   const handleSearch = () => {
+    if (checking) return;
     fetchProductList(1);
     router.push(`/seller/products?page=1`);
   };
@@ -57,7 +60,7 @@ export default function ProductListPage() {
     router.push('/seller/products/new');
   };
 
-    if (checking) return <div className="p-8">인증 확인 중...</div>;
+    if (checking) return <div className="p-8">인증 확인 중...</div>; // ✅ 인증 확인 중 UI 
   return (
     <>
       <Header />

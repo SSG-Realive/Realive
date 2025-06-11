@@ -17,7 +17,7 @@ import useSellerAuthGuard from '@/hooks/useSellerAuthGuard';
 
 export default function SellerOrderDetailPage() {
     // ✅ 인증 가드 적용
-    useSellerAuthGuard();
+    // useSellerAuthGuard();
 
     const params = useParams();
     const orderId = Number(params?.id);

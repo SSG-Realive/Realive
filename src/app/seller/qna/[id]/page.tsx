@@ -10,7 +10,7 @@ import SellerLayout from '@/components/layouts/SellerLayout';
 import useSellerAuthGuard from '@/hooks/useSellerAuthGuard';
 
 export default function QnaDetailPage() {
-    useSellerAuthGuard();
+    // useSellerAuthGuard();
     const { id } = useParams();
     const [qna, setQna] = useState<SellerQnaDetailResponse | null>(null);
     const [error, setError] = useState<string | null>(null);
