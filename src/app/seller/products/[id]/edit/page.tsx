@@ -3,8 +3,7 @@
 import { useEffect, useState, ChangeEvent, FormEvent } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Header from '@/components/Header';
-import { getProductDetail, updateProduct } from '@/service/productService';
-import { fetchCategories } from '@/service/productService';
+import { getProductDetail, updateProduct, fetchCategories } from '@/service/productService';
 import { SellerCategoryDTO } from '@/types/category/sellerCategory';
 import { ProductDetail } from '@/types/product';
 import useSellerAuthGuard from '@/hooks/useSellerAuthGuard';
@@ -58,7 +57,7 @@ export default function ProductEditPage() {
         fetchData();
     }, [productId, checking]);
 
-    const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         if (!form) return;
         const { name, value } = e.target;
         setForm({ ...form, [name]: value });
@@ -84,7 +83,7 @@ export default function ProductEditPage() {
         formData.append('depth', String(form.depth || 0));
         formData.append('height', String(form.height || 0));
         formData.append('status', form.status);
-        formData.append('active', String(form.isActive));
+        formData.append('active', String(form.active));
         formData.append('categoryId', String(form.categoryId));
 
         // 이미지
@@ -126,7 +125,6 @@ export default function ProductEditPage() {
     if (loading) return <div className="p-4">로딩 중...</div>;
     if (error) return <div className="p-4 text-red-600">{error}</div>;
     if (!form) return <div className="p-4">상품 정보를 불러올 수 없습니다.</div>;
-    
 
     const parentCategories = categories.filter(cat => cat.parentId === null);
     const subCategories = categories.filter(cat => cat.parentId === Number(parentCategoryId));
@@ -169,25 +167,76 @@ export default function ProductEditPage() {
                         </select>
                     </div>
 
-                    {/* 기존 상품명/가격/설명/재고 등 기존 폼 그대로 유지 */}
+                    {/* 상품명 */}
                     <div className="mb-4">
                         <label>상품명</label>
                         <input name="name" value={form.name} onChange={handleChange} required className="w-full p-2 border mt-1" />
                     </div>
 
+                    {/* 가격 */}
                     <div className="mb-4">
                         <label>가격</label>
                         <input type="number" name="price" value={form.price} onChange={handleChange} required className="w-full p-2 border mt-1" />
                     </div>
 
+                    {/* 상품 설명 */}
                     <div className="mb-4">
                         <label>상품 설명</label>
                         <textarea name="description" value={form.description} onChange={handleChange} className="w-full p-2 border mt-1" rows={5} />
                     </div>
 
+                    {/* 재고 */}
                     <div className="mb-4">
                         <label>재고</label>
                         <input type="number" name="stock" value={form.stock} onChange={handleChange} className="w-full p-2 border mt-1" />
+                    </div>
+
+                    {/* 크기 */}
+                    <div className="mb-4">
+                        <label>가로 (Width)</label>
+                        <input type="number" name="width" value={form.width} onChange={handleChange} className="w-full p-2 border mt-1" />
+                    </div>
+
+                    <div className="mb-4">
+                        <label>세로 (Depth)</label>
+                        <input type="number" name="depth" value={form.depth} onChange={handleChange} className="w-full p-2 border mt-1" />
+                    </div>
+
+                    <div className="mb-4">
+                        <label>높이 (Height)</label>
+                        <input type="number" name="height" value={form.height} onChange={handleChange} className="w-full p-2 border mt-1" />
+                    </div>
+
+                    {/* 상태 */}
+                    <div className="mb-4">
+                        <label>상품 상태</label>
+                        <select
+                            name="status"
+                            value={form.status}
+                            onChange={handleChange}
+                            className="w-full p-2 border mt-1"
+                            required
+                        >
+                            <option value="상">상</option>
+                            <option value="중">중</option>
+                            <option value="하">하</option>
+                        </select>
+                    </div>
+
+                    {/* 활성화 여부 */}
+                    <div className="mb-4">
+                        <label>활성화 여부</label>
+                        <select
+                            name="active"
+                            value={form.active ? 'true' : 'false'}
+                            onChange={(e) =>
+                                setForm({ ...form, active: e.target.value === 'true' })
+                            }
+                            className="w-full p-2 border mt-1"
+                        >
+                            <option value="true">활성</option>
+                            <option value="false">비활성</option>
+                        </select>
                     </div>
 
                     {/* 썸네일 및 서브 이미지 */}
@@ -195,10 +244,12 @@ export default function ProductEditPage() {
                         <label>대표 이미지</label>
                         <input type="file" accept="image/*" onChange={(e) => setImageThumbnail(e.target.files?.[0] || null)} className="w-full p-2 border mt-1" />
                     </div>
+
                     <div className="mb-4">
                         <label>대표 영상</label>
                         <input type="file" accept="video/*" onChange={(e) => setVideoThumbnail(e.target.files?.[0] || null)} className="w-full p-2 border mt-1" />
                     </div>
+
                     <div className="mb-4">
                         <label>서브 이미지</label>
                         <input type="file" accept="image/*" multiple onChange={(e) => setSubImages(e.target.files)} className="w-full p-2 border mt-1" />
