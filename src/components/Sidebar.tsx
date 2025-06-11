@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation"; // ✅ 수정된 부분
+import { usePathname  } from "next/navigation"; // ✅ 수정된 부분
 import { FC } from "react";
 
 interface MenuItem {
@@ -18,9 +18,8 @@ const menuItems: MenuItem[] = [
 ];
 
 const Sidebar: FC = () => {
-  const router = useRouter();
-  const currentPath = typeof window !== "undefined" ? window.location.pathname : "";
-
+  const pathname = usePathname ();
+  const currentPath = pathname;
   return (
     <aside className="w-60 min-h-screen bg-gray-800 text-white flex-shrink-0">
       <div className="px-6 py-8">

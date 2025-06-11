@@ -12,8 +12,12 @@ import {
   SellerUpdateRequest,
 } from '@/service/sellerService';
 import SellerLayout from '@/components/layouts/SellerLayout';
+import useSellerAuthGuard from '@/hooks/useSellerAuthGuard';
 
 export default function SellerMePage() {
+  // 판매자 인증 가드를 적용
+  const checking = useSellerAuthGuard();
+
   const router = useRouter();
 
   const [email, setEmail] = useState<string>('');
@@ -24,6 +28,8 @@ export default function SellerMePage() {
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
+     if (checking) return;
+
     const fetchProfile = async () => {
       const token = localStorage.getItem('accessToken');
 
@@ -42,7 +48,7 @@ export default function SellerMePage() {
       }
     };
     fetchProfile();
-  }, [router]);
+  }, [router, checking]);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -82,6 +88,7 @@ export default function SellerMePage() {
   if (loading) {
     return <div>로딩 중...</div>;
   }
+  if (checking) return <div className="p-8">인증 확인 중...</div>;
 
   return (
     <>
