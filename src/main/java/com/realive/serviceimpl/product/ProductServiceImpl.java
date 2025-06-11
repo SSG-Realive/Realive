@@ -251,9 +251,15 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductResponseDTO getProductDetail(Long productId) {
+       Seller seller = (Seller) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Long sellerId = seller.getId();
+       
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
 
+        if (!product.getSeller().getId().equals(sellerId)) {
+        throw new SecurityException("해당 상품에 대한 조회 권한이 없습니다.");
+    }
         return ProductResponseDTO.builder()
                 .id(product.getId())
                 .name(product.getName())
