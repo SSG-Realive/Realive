@@ -16,7 +16,8 @@ export interface ProductDetail {
     depth: number;
     height: number;
     status: string;
-    isActive: boolean;
+    active: boolean;
     categoryId: number;
+    categoryName: string;
     deliveryPolicy: DeliveryPolicy;
 }

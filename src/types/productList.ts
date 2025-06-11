@@ -3,7 +3,7 @@ export interface ProductListItem {
     name: string;
     price: number;
     status: string;
-    isActive: boolean;
+    active: boolean;
     imageThumbnailUrl: string;
     categoryName: string;
     parentCategoryName: string | null;
