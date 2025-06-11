@@ -7,11 +7,14 @@ import com.realive.repository.product.ProductRepository;
 import com.realive.repository.seller.SellerQnaRepository;
 import com.realive.service.seller.SellerDashboardService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class SellerDashboardServiceImpl implements SellerDashboardService {
@@ -32,6 +35,10 @@ public class SellerDashboardServiceImpl implements SellerDashboardService {
                 OrderStatus.DELIVERY_PREPARING,
                 OrderStatus.DELIVERY_IN_PROGRESS
         );
+
+        log.info("대시보드: sellerId={} 상품 개수 조회 시작", sellerId);
+        long totalProductCount = productRepository.countBySellerIdAndActiveTrue(sellerId);
+        log.info("대시보드: totalProductCount={}", totalProductCount);
 
         return SellerDashboardResponseDTO.builder()
                 .totalProductCount(productRepository.countBySellerIdAndActiveTrue(sellerId))
