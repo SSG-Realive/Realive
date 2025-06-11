@@ -19,6 +19,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -219,8 +220,9 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public PageResponseDTO<ProductListDTO> getProductsBySeller(String email, ProductSearchCondition condition) {
         
-        Seller seller = sellerService.getByEmail(email);
-        Long sellerId = seller.getId(); 
+        Seller seller = (Seller) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Long sellerId = seller.getId();
+
 
         Page<Product> result = productRepository.searchProducts(condition, sellerId);
         List<Product> products = result.getContent();
