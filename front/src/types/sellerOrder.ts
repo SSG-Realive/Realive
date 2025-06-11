@@ -25,6 +25,8 @@ export interface SellerOrderDetailResponse extends SellerOrderResponse {
         quantity: number;
         price: number;
     }[];
+
+    paymentType?: string;
 }
 
 // 🔹 배송 상태 변경 요청용

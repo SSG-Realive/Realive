@@ -5,18 +5,19 @@ import { useParams } from 'next/navigation';
 import { getQnaDetail } from '@/service/sellerQnaService';
 import { SellerQnaDetailResponse } from '@/types/sellerQna';
 import QnaDetail from '@/components/sellerQna/QnaDetail';
+import Header from '@/components/Header';
+import SellerLayout from '@/components/layouts/SellerLayout';
+import useSellerAuthGuard from '@/hooks/useSellerAuthGuard';
 
 export default function QnaDetailPage() {
+    useSellerAuthGuard();
     const { id } = useParams();
-
     const [qna, setQna] = useState<SellerQnaDetailResponse | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
 
-    // QnA 상세 정보 조회
     useEffect(() => {
         if (!id) return;
-
         const fetchDetail = async () => {
             try {
                 setLoading(true);
@@ -33,15 +34,18 @@ export default function QnaDetailPage() {
         fetchDetail();
     }, [id]);
 
-    if (loading) return <div className="text-center text-gray-500">로딩 중...</div>;
-    if (error) return <div className="text-center text-red-500">{error}</div>;
-    if (!qna) return <div className="text-center text-gray-500">QnA 정보가 없습니다.</div>;
-
     return (
-        <div className="max-w-3xl mx-auto">
-            <h1 className="text-2xl font-bold mb-4">QnA 상세</h1>
-
-            <QnaDetail qna={qna} />
-        </div>
+        <SellerLayout>
+            <Header />
+            <div className="max-w-3xl mx-auto p-6">
+                {loading ? (
+                    <p>로딩 중...</p>
+                ) : error ? (
+                    <p className="text-red-500">{error}</p>
+                ) : qna ? (
+                    <QnaDetail qna={qna} />
+                ) : null}
+            </div>
+        </SellerLayout>
     );
 }

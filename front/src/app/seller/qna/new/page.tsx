@@ -1,12 +1,15 @@
-// QnA 작성
 'use client';
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createQna } from '@/service/sellerQnaService';
 import { CreateQnaRequest } from '@/types/sellerQna';
+import Header from '@/components/Header';
+import SellerLayout from '@/components/layouts/SellerLayout';
+import useSellerAuthGuard from '@/hooks/useSellerAuthGuard';
 
 export default function QnaCreatePage() {
+    useSellerAuthGuard();
     const router = useRouter();
     const [form, setForm] = useState<CreateQnaRequest>({
         title: '',
@@ -24,30 +27,33 @@ export default function QnaCreatePage() {
     };
 
     return (
-        <div className="max-w-2xl mx-auto p-4">
-            <h1 className="text-2xl font-bold mb-4">QnA 작성</h1>
+        <SellerLayout>
+            <Header />
+            <div className="max-w-2xl mx-auto p-6">
+                <h1 className="text-2xl font-bold mb-4">QnA 작성</h1>
 
-            <input
-                type="text"
-                name="title"
-                placeholder="제목"
-                value={form.title}
-                onChange={handleChange}
-                className="w-full border p-2 mb-3 rounded"
-            />
-            <textarea
-                name="content"
-                placeholder="질문 내용을 입력하세요"
-                value={form.content}
-                onChange={handleChange}
-                className="w-full border p-2 h-40 rounded"
-            />
-            <button
-                onClick={handleSubmit}
-                className="mt-4 px-4 py-2 bg-blue-600 text-white rounded"
-            >
-                등록
-            </button>
-        </div>
+                <input
+                    type="text"
+                    name="title"
+                    placeholder="제목"
+                    value={form.title}
+                    onChange={handleChange}
+                    className="border border-gray-300 p-2 w-full mb-4"
+                />
+                <textarea
+                    name="content"
+                    placeholder="내용"
+                    value={form.content}
+                    onChange={handleChange}
+                    className="border border-gray-300 p-2 w-full mb-4 h-40"
+                />
+                <button
+                    onClick={handleSubmit}
+                    className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
+                >
+                    등록하기
+                </button>
+            </div>
+        </SellerLayout>
     );
 }

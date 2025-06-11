@@ -4,8 +4,14 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { getSellerOrders } from '@/service/sellerOrderService';
 import { SellerOrderResponse } from '@/types/sellerOrder';
+import Header from '@/components/Header';
+import SellerLayout from '@/components/layouts/SellerLayout';
+import useSellerAuthGuard from '@/hooks/useSellerAuthGuard';
 
 export default function SellerOrderListPage() {
+    // ✅ 인증 가드 적용
+    // useSellerAuthGuard();
+
     const [orders, setOrders] = useState<SellerOrderResponse[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -29,30 +35,33 @@ export default function SellerOrderListPage() {
     }, []);
 
     return (
-        <div className="p-6">
-            <h1 className="text-xl font-bold mb-4">판매자 주문 목록</h1>
+        <SellerLayout>
+            <Header />
+            <div className="p-6 max-w-4xl mx-auto">
+                <h1 className="text-2xl font-bold mb-4">판매자 주문 목록</h1>
 
-            {loading ? (
-                <p className="text-gray-500">로딩 중...</p>
-            ) : error ? (
-                <p className="text-red-500">{error}</p>
-            ) : orders.length === 0 ? (
-                <p className="text-gray-400">등록된 주문이 없습니다.</p>
-            ) : (
-                <ul className="space-y-4">
-                    {orders.map((order) => (
-                        <li
-                            key={order.orderId}
-                            className="border p-4 rounded hover:bg-gray-100 cursor-pointer"
-                            onClick={() => router.push(`/seller/orders/${order.orderId}`)}
-                        >
-                            <p><strong>주문번호:</strong> {order.orderId}</p>
-                            <p><strong>상태:</strong> {order.orderStatus}</p>
-                            <p><strong>총액:</strong> {order.totalPrice.toLocaleString()}원</p>
-                        </li>
-                    ))}
-                </ul>
-            )}
-        </div>
+                {loading ? (
+                    <p className="text-gray-500">로딩 중...</p>
+                ) : error ? (
+                    <p className="text-red-500">{error}</p>
+                ) : orders.length === 0 ? (
+                    <p className="text-gray-400">등록된 주문이 없습니다.</p>
+                ) : (
+                    <ul className="space-y-4">
+                        {orders.map((order) => (
+                            <li
+                                key={order.orderId}
+                                className="bg-white shadow-md rounded-lg p-4 cursor-pointer hover:bg-gray-50"
+                                onClick={() => router.push(`/seller/orders/${order.orderId}`)}
+                            >
+                                <p>주문 ID: {order.orderId}</p>
+                                <p>총 가격: {order.totalPrice.toLocaleString()}원</p>
+                                <p>상태: {order.orderStatus}</p>
+                            </li>
+                        ))}
+                    </ul>
+                )}
+            </div>
+        </SellerLayout>
     );
 }
