@@ -1,11 +1,8 @@
 import apiClient from '@/lib/apiClient';
+import { SellerDashboardResponse } from '@/types/dashboard/sellerDashboardResponse';
+import { LoginResponse } from '@/types/login/loginResponse';
 
-export interface LoginResponse {
-  accessToken: string;
-  refreshToken: string;
-  email: string;
-  name: string;
-}
+
 
 // 로그인 요청
 export async function login(email: string, password: string): Promise<LoginResponse> {
@@ -41,13 +38,7 @@ export async function updateProfile(data: SellerUpdateRequest): Promise<void> {
   await apiClient.put('/seller/me', data);
 }
 //대시보드
-export interface SellerDashboardResponse{
-  totalProducts : number;
-  todayProducts : number;
-  totalQna : number;
-  unansweredQna : number;
-  activeOrders : number;
-}
+
 export async function getDashboard() : Promise<SellerDashboardResponse> {
   const response = await apiClient.get('/seller/dashboard');
   return response.data;
