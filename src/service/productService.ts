@@ -1,4 +1,5 @@
 import apiClient from '@/lib/apiClient';
+import { SellerCategoryDTO } from '@/types/category/sellerCategory';
 import { PageResponse } from '@/types/page/pageResponse';
 import { ProductDetail } from '@/types/product';
 
@@ -42,9 +43,11 @@ export async function getProductDetail(id: number): Promise<ProductDetail> {
  * @param searchParams - 페이지, 키워드 등 검색 조건
  */
 export async function getMyProducts(searchParams: Record<string, any> = {}): Promise<PageResponse<ProductListItem>> {
-    const query = new URLSearchParams(searchParams).toString();
-    const res = await apiClient.get(`/seller/products?${query}`);
-    return res.data;
+    const query = buildSearchParams(searchParams); // ✅ 빈 값 빼고 쿼리스트링 구성
+  console.log('→ 최종 요청 URL:', `/seller/products?${query}`); // 디버그 확인용
+
+  const res = await apiClient.get(`/seller/products?${query}`);
+  return res.data;
 }
 
 /**
@@ -52,4 +55,19 @@ export async function getMyProducts(searchParams: Record<string, any> = {}): Pro
  */
 export async function deleteProduct(id: number): Promise<void> {
     await apiClient.delete(`/seller/products/${id}`);
+}
+
+//쿼리 빈값 제거
+const buildSearchParams = (params: Record<string, any>): string => {
+  const validParams = Object.entries(params)
+    .filter(([_, v]) => v !== undefined && v !== null && v !== '') // 빈 값 제거
+    .reduce((acc, [k, v]) => ({ ...acc, [k]: v }), {});
+
+  return new URLSearchParams(validParams).toString();
+};
+
+//물건 등록시 카테고리 
+export async function fetchCategories(): Promise<SellerCategoryDTO[]> {
+    const res = await apiClient.get('/seller/categories');
+    return res.data;
 }
