@@ -34,19 +34,29 @@ export default function SellerOrderDetailPage() {
 
     useEffect(() => {
         const fetchData = async () => {
-            const data = await getOrderDetail(orderId);
-            setOrder(data);
-            setNewStatus(data.deliveryStatus);
+            try {
+                const data = await getOrderDetail(orderId);
+                setOrder(data);
+                setNewStatus(data.deliveryStatus);
+            } catch (err) {
+                console.error('주문 상세 조회 실패:', err);
+                alert('주문 정보를 불러오지 못했습니다.');
+            }
         };
         fetchData();
     }, [orderId]);
 
     const handleUpdate = async () => {
-        await updateDeliveryStatus(orderId, {
-            deliveryStatus: newStatus,
-        });
-        alert('배송 상태가 변경되었습니다.');
-        router.refresh();
+        try {
+            await updateDeliveryStatus(orderId, {
+                deliveryStatus: newStatus,
+            });
+            alert('배송 상태가 변경되었습니다.');
+            router.refresh();
+        } catch (err) {
+            console.error('배송 상태 변경 실패:', err);
+            alert('배송 상태 변경에 실패했습니다.');
+        }
     };
 
     if (!order) return <div className="p-6">로딩 중...</div>;

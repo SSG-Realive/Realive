@@ -10,7 +10,7 @@ import useSellerAuthGuard from '@/hooks/useSellerAuthGuard';
 
 export default function SellerOrderListPage() {
     // ✅ 인증 가드 적용
-    // useSellerAuthGuard();
+     useSellerAuthGuard();
 
     const [orders, setOrders] = useState<SellerOrderResponse[]>([]);
     const [loading, setLoading] = useState(true);

@@ -4,8 +4,11 @@ import { useEffect, useState } from 'react';
 import { getQnaList } from '@/service/sellerQnaService';
 import { SellerQnaResponse } from '@/types/sellerQna';
 import QnaListItem from '@/components/sellerQna/QnaListItem';
+import useSellerAuthGuard from '@/hooks/useSellerAuthGuard';
 
 export default function SellerQnaPage() {
+    useSellerAuthGuard(); //
+
     const [qnaList, setQnaList] = useState<SellerQnaResponse[]>([]);
     const [totalPages, setTotalPages] = useState(1);
     const [page, setPage] = useState(1);
@@ -48,7 +51,6 @@ export default function SellerQnaPage() {
                 </ul>
             )}
 
-            {/* 페이지 네비게이션 */}
             <div className="mt-4 flex gap-2">
                 <button
                     onClick={() => setPage((p) => Math.max(p - 1, 1))}
