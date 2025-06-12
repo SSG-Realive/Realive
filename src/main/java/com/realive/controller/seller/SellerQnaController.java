@@ -44,7 +44,7 @@ public class SellerQnaController {
     }
 
     // ✅ QnA 수정 (답변 전)
-    @PatchMapping("/{qnaId}")
+    @PutMapping("/{qnaId}/edit")
     public ResponseEntity<Void> updateQna(
             @PathVariable Long qnaId,
             @RequestBody SellerQnaUpdateRequestDTO dto) {
@@ -54,7 +54,7 @@ public class SellerQnaController {
     }
 
     // ✅ QnA 삭제 (soft delete)
-    @DeleteMapping("/{qnaId}")
+    @PatchMapping("/{qnaId}/edit")
     public ResponseEntity<Void> deleteQna(@PathVariable Long qnaId) {
         Seller seller = (Seller) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         sellerQnaService.deleteQna(seller.getId(), qnaId);

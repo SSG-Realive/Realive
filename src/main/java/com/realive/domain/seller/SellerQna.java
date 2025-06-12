@@ -54,10 +54,8 @@ public class SellerQna extends BaseTimeEntity {
 
     @Column(name = "is_active")
     private boolean isActive = true;
-    // 문의 작성 시간
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
-
+    
+    
     // public Boolean getIsAnswered() {
     //     return isAnswered;
     // }
