@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="3a9c9313-5fd8-4edc-b654-48397c8539b7" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/realive/controller/seller/SellerPayoutController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/realive/service/seller/SellerPayoutService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/realive/serviceimpl/seller/SellerPayoutServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/realive/config/JpaAuditingConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/realive/config/JpaAuditingConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/realive/serviceimpl/seller/SellerQnaServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/realive/serviceimpl/seller/SellerQnaServiceImpl.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <projects_view>
+          <tree_state>
+            <expand />
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="KubernetesApiPersistence">{}</component>
+  <component name="KubernetesApiProvider">{
+  &quot;isMigrated&quot;: true
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 4
+}</component>
+  <component name="ProjectId" id="2y1vxIzzuNj0fDZF72KJnNknJZV" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Gradle.Build back.executor": "Run",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "Spring Boot.RealiveApplication.executor": "Run",
+    "git-widget-placeholder": "team2/jaehyun",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/SSG_KDT8/Realive/front",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "project.propVCSSupport.DirectoryMappings",
+    "vue.rearranger.settings.migration": "true"
+  },
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "postgresql"
+    ]
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\SSG_KDT8\Realive\back\src\main\java\com\realive\dto\sellerqna" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\SSG_KDT8\Realive\back\src\main" />
+      <recent name="C:\SSG_KDT8\Realive\back\src" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <option name="filePath" />
+      <method v="2" />
+    </configuration>
+    <configuration name="RealiveApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+      <module name="realive.main" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.realive.RealiveApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-a94e463ab2e7-intellij.indexing.shared.core-IU-243.26053.27" />
+        <option value="bundled-js-predefined-d6986cc7102b-1632447f56bf-JavaScript-IU-243.26053.27" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="3a9c9313-5fd8-4edc-b654-48397c8539b7" name="Changes" comment="" />
+      <created>1749015142013</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1749015142013</updated>
+      <workItem from="1749015142168" duration="9608000" />
+      <workItem from="1749081469754" duration="15355000" />
+      <workItem from="1749513533288" duration="1267000" />
+      <workItem from="1749525466367" duration="364000" />
+      <workItem from="1749532736219" duration="1121000" />
+      <workItem from="1749533902350" duration="11668000" />
+      <workItem from="1749545746089" duration="302000" />
+      <workItem from="1749546056382" duration="126000" />
+      <workItem from="1749546207362" duration="181000" />
+      <workItem from="1749546406061" duration="3612000" />
+      <workItem from="1749599960448" duration="7845000" />
+      <workItem from="1749616149087" duration="13319000" />
+      <workItem from="1749686583034" duration="1957000" />
+      <workItem from="1749688578769" duration="1772000" />
+      <workItem from="1749690401535" duration="174000" />
+      <workItem from="1749690585866" duration="6175000" />
+    </task>
+    <task id="LOCAL-00001" summary="병합">
+      <option name="closed" value="true" />
+      <created>1749514179542</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1749514179542</updated>
+    </task>
+    <task id="LOCAL-00002" summary="병합">
+      <option name="closed" value="true" />
+      <created>1749534090073</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1749534090073</updated>
+    </task>
+    <task id="LOCAL-00003" summary="6/12 9시57분">
+      <option name="closed" value="true" />
+      <created>1749689849990</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1749689849990</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="병합" />
+    <MESSAGE value="6/12 9시57분" />
+    <MESSAGE value="Back" />
+    <option name="LAST_COMMIT_MESSAGE" value="Back" />
+  </component>
+</project>

@@ -13,7 +13,10 @@ import com.realive.service.seller.SellerService;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+<<<<<<< HEAD
 import lombok.extern.slf4j.Slf4j;
+=======
+>>>>>>> origin/team2/jaehyun
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -34,7 +37,10 @@ import org.slf4j.LoggerFactory;
 @Service
 @RequiredArgsConstructor
 @Transactional
+<<<<<<< HEAD
 @Slf4j
+=======
+>>>>>>> origin/team2/jaehyun
 public class ProductServiceImpl implements ProductService {
 
     private static final Logger log = LoggerFactory.getLogger(ProductServiceImpl.class);
@@ -175,8 +181,11 @@ public class ProductServiceImpl implements ProductService {
         }
 
         // 상품 정보 수정
+<<<<<<< HEAD
         log.info("Product Update - active 값 수신: {}", dto.getActive());
 
+=======
+>>>>>>> origin/team2/jaehyun
         product.setName(dto.getName());
         product.setDescription(dto.getDescription());
         product.setPrice(dto.getPrice());
