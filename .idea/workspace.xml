@@ -4,57 +4,71 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="31883063-87fe-44f2-b836-458e49ca3558" name="Changes" comment="병합">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="3a9c9313-5fd8-4edc-b654-48397c8539b7" name="Changes" comment="병합" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
   </component>
-  <component name="GitHubPullRequestSearchHistory">{
-  &quot;lastFilter&quot;: {
-    &quot;state&quot;: &quot;OPEN&quot;,
-    &quot;assignee&quot;: &quot;18160087&quot;
-  }
-}</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/Gudo00/Realive.git&quot;,
-    &quot;accountId&quot;: &quot;32499a95-bf39-4dd3-aaa3-8eb4759c180b&quot;
-  }
-}</component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <projects_view>
+          <tree_state>
+            <expand />
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
   <component name="KubernetesApiPersistence">{}</component>
   <component name="KubernetesApiProvider">{
   &quot;isMigrated&quot;: true
 }</component>
-  <component name="ProblemsViewState">
-    <option name="selectedTabId" value="CurrentFile" />
-  </component>
   <component name="ProjectColorInfo">{
-  &quot;associatedIndex&quot;: 2
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 4
 }</component>
-  <component name="ProjectId" id="2xwbD8yJJXiqpT4n4JPAuNPyomS" />
+  <component name="ProjectId" id="2y1vxIzzuNj0fDZF72KJnNknJZV" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Gradle.Build back.executor": "Run",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
+    "Spring Boot.RealiveApplication.executor": "Run",
     "git-widget-placeholder": "team2/jaehyun",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/SSG_KDT8/Realive/back",
+    "last_opened_file_path": "C:/SSG_KDT8/Realive/front",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "ts.external.directory.path": "C:\\SSG_KDT8\\Realive\\front\\node_modules\\typescript\\lib",
+    "settings.editor.selected.configurable": "project.propVCSSupport.DirectoryMappings",
     "vue.rearranger.settings.migration": "true"
   },
   "keyToStringList": {
@@ -64,9 +78,27 @@
   }
 }]]></component>
   <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\SSG_KDT8\Realive\front\src\app\customer" />
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\SSG_KDT8\Realive\back\src\main\java\com\realive\dto\sellerqna" />
     </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\SSG_KDT8\Realive\back\src\main" />
+      <recent name="C:\SSG_KDT8\Realive\back\src" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <option name="filePath" />
+      <method v="2" />
+    </configuration>
+    <configuration name="RealiveApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+      <module name="realive.main" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.realive.RealiveApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
@@ -79,171 +111,42 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="31883063-87fe-44f2-b836-458e49ca3558" name="Changes" comment="" />
-      <created>1748851961155</created>
+      <changelist id="3a9c9313-5fd8-4edc-b654-48397c8539b7" name="Changes" comment="" />
+      <created>1749015142013</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1748851961155</updated>
-      <workItem from="1748851962486" duration="2077000" />
-      <workItem from="1748995015675" duration="11567000" />
-      <workItem from="1749015148641" duration="11125000" />
-      <workItem from="1749081532612" duration="9305000" />
-      <workItem from="1749546415896" duration="3277000" />
-      <workItem from="1749600037565" duration="13157000" />
+      <updated>1749015142013</updated>
+      <workItem from="1749015142168" duration="9608000" />
+      <workItem from="1749081469754" duration="15355000" />
+      <workItem from="1749513533288" duration="1267000" />
+      <workItem from="1749525466367" duration="364000" />
+      <workItem from="1749532736219" duration="1121000" />
+      <workItem from="1749533902350" duration="11668000" />
+      <workItem from="1749545746089" duration="302000" />
+      <workItem from="1749546056382" duration="126000" />
+      <workItem from="1749546207362" duration="181000" />
+      <workItem from="1749546406061" duration="3612000" />
+      <workItem from="1749599960448" duration="7845000" />
+      <workItem from="1749616149087" duration="13319000" />
+      <workItem from="1749686583034" duration="1957000" />
     </task>
-    <task id="LOCAL-00001" summary="change">
+    <task id="LOCAL-00001" summary="병합">
       <option name="closed" value="true" />
-      <created>1749010230569</created>
+      <created>1749514179542</created>
       <option name="number" value="00001" />
       <option name="presentableId" value="LOCAL-00001" />
       <option name="project" value="LOCAL" />
-      <updated>1749010230569</updated>
+      <updated>1749514179542</updated>
     </task>
-    <task id="LOCAL-00002" summary="change">
+    <task id="LOCAL-00002" summary="병합">
       <option name="closed" value="true" />
-      <created>1749010237994</created>
+      <created>1749534090073</created>
       <option name="number" value="00002" />
       <option name="presentableId" value="LOCAL-00002" />
       <option name="project" value="LOCAL" />
-      <updated>1749010237994</updated>
+      <updated>1749534090073</updated>
     </task>
-    <task id="LOCAL-00003" summary="change">
-      <option name="closed" value="true" />
-      <created>1749017086543</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
-      <option name="project" value="LOCAL" />
-      <updated>1749017086543</updated>
-    </task>
-    <task id="LOCAL-00004" summary="change">
-      <option name="closed" value="true" />
-      <created>1749017144237</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL-00004" />
-      <option name="project" value="LOCAL" />
-      <updated>1749017144237</updated>
-    </task>
-    <task id="LOCAL-00005" summary="주문">
-      <option name="closed" value="true" />
-      <created>1749020057478</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
-      <option name="project" value="LOCAL" />
-      <updated>1749020057478</updated>
-    </task>
-    <task id="LOCAL-00006" summary="병합">
-      <option name="closed" value="true" />
-      <created>1749020114093</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1749020114093</updated>
-    </task>
-    <task id="LOCAL-00007" summary="수정">
-      <option name="closed" value="true" />
-      <created>1749020646568</created>
-      <option name="number" value="00007" />
-      <option name="presentableId" value="LOCAL-00007" />
-      <option name="project" value="LOCAL" />
-      <updated>1749020646568</updated>
-    </task>
-    <task id="LOCAL-00008" summary="sellerorder">
-      <option name="closed" value="true" />
-      <created>1749085272882</created>
-      <option name="number" value="00008" />
-      <option name="presentableId" value="LOCAL-00008" />
-      <option name="project" value="LOCAL" />
-      <updated>1749085272882</updated>
-    </task>
-    <task id="LOCAL-00009" summary="병합">
-      <option name="closed" value="true" />
-      <created>1749085369147</created>
-      <option name="number" value="00009" />
-      <option name="presentableId" value="LOCAL-00009" />
-      <option name="project" value="LOCAL" />
-      <updated>1749085369147</updated>
-    </task>
-    <task id="LOCAL-00010" summary="통합수정">
-      <option name="closed" value="true" />
-      <created>1749550158632</created>
-      <option name="number" value="00010" />
-      <option name="presentableId" value="LOCAL-00010" />
-      <option name="project" value="LOCAL" />
-      <updated>1749550158632</updated>
-    </task>
-    <task id="LOCAL-00011" summary="통합수정">
-      <option name="closed" value="true" />
-      <created>1749550193855</created>
-      <option name="number" value="00011" />
-      <option name="presentableId" value="LOCAL-00011" />
-      <option name="project" value="LOCAL" />
-      <updated>1749550193855</updated>
-    </task>
-    <task id="LOCAL-00012" summary="인증 가드">
-      <option name="closed" value="true" />
-      <created>1749603608220</created>
-      <option name="number" value="00012" />
-      <option name="presentableId" value="LOCAL-00012" />
-      <option name="project" value="LOCAL" />
-      <updated>1749603608220</updated>
-    </task>
-    <task id="LOCAL-00013" summary="병합">
-      <option name="closed" value="true" />
-      <created>1749603810469</created>
-      <option name="number" value="00013" />
-      <option name="presentableId" value="LOCAL-00013" />
-      <option name="project" value="LOCAL" />
-      <updated>1749603810469</updated>
-    </task>
-    <task id="LOCAL-00014" summary="병합">
-      <option name="closed" value="true" />
-      <created>1749603962393</created>
-      <option name="number" value="00014" />
-      <option name="presentableId" value="LOCAL-00014" />
-      <option name="project" value="LOCAL" />
-      <updated>1749603962393</updated>
-    </task>
-    <task id="LOCAL-00015" summary=".">
-      <option name="closed" value="true" />
-      <created>1749604349825</created>
-      <option name="number" value="00015" />
-      <option name="presentableId" value="LOCAL-00015" />
-      <option name="project" value="LOCAL" />
-      <updated>1749604349825</updated>
-    </task>
-    <task id="LOCAL-00016" summary=".">
-      <option name="closed" value="true" />
-      <created>1749604366525</created>
-      <option name="number" value="00016" />
-      <option name="presentableId" value="LOCAL-00016" />
-      <option name="project" value="LOCAL" />
-      <updated>1749604366525</updated>
-    </task>
-    <task id="LOCAL-00017" summary="예외처리, 인증가드">
-      <option name="closed" value="true" />
-      <created>1749608121580</created>
-      <option name="number" value="00017" />
-      <option name="presentableId" value="LOCAL-00017" />
-      <option name="project" value="LOCAL" />
-      <updated>1749608121580</updated>
-    </task>
-    <task id="LOCAL-00018" summary="병합">
-      <option name="closed" value="true" />
-      <created>1749614600740</created>
-      <option name="number" value="00018" />
-      <option name="presentableId" value="LOCAL-00018" />
-      <option name="project" value="LOCAL" />
-      <updated>1749614600740</updated>
-    </task>
-    <task id="LOCAL-00019" summary="병합">
-      <option name="closed" value="true" />
-      <created>1749615909541</created>
-      <option name="number" value="00019" />
-      <option name="presentableId" value="LOCAL-00019" />
-      <option name="project" value="LOCAL" />
-      <updated>1749615909541</updated>
-    </task>
-    <option name="localTasksCounter" value="20" />
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -261,27 +164,7 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="change" />
-    <MESSAGE value="주문" />
-    <MESSAGE value="수정" />
-    <MESSAGE value="sellerorder" />
-    <MESSAGE value="통합수정" />
-    <MESSAGE value="인증 가드" />
-    <MESSAGE value="." />
-    <MESSAGE value="예외처리, 인증가드" />
     <MESSAGE value="병합" />
     <option name="LAST_COMMIT_MESSAGE" value="병합" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/src/app/seller/orders/page.tsx</url>
-          <line>8</line>
-          <properties lambdaOrdinal="-1" />
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
 </project>
