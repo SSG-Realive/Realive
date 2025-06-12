@@ -4,13 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3a9c9313-5fd8-4edc-b654-48397c8539b7" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/realive/controller/seller/SellerPayoutController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/realive/service/seller/SellerPayoutService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/realive/serviceimpl/seller/SellerPayoutServiceImpl.java" afterDir="false" />
+    <list default="true" id="3a9c9313-5fd8-4edc-b654-48397c8539b7" name="Changes" comment="Back">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/realive/config/JpaAuditingConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/realive/config/JpaAuditingConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/realive/serviceimpl/seller/SellerQnaServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/realive/serviceimpl/seller/SellerQnaServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/realive/controller/seller/SellerPayoutController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/realive/controller/seller/SellerPayoutController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/realive/service/seller/SellerPayoutService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/realive/service/seller/SellerPayoutService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/realive/serviceimpl/seller/SellerPayoutServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/realive/serviceimpl/seller/SellerPayoutServiceImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -67,9 +65,9 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "Spring Boot.RealiveApplication.executor": "Run",
-    "git-widget-placeholder": "team2/jaehyun",
+    "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/SSG_KDT8/Realive/front",
+    "last_opened_file_path": "C:/SSG_KDT8/Realive/back/gradle/wrapper",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -86,6 +84,7 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\SSG_KDT8\Realive\back\gradle\wrapper" />
       <recent name="C:\SSG_KDT8\Realive\back\src\main\java\com\realive\dto\sellerqna" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
@@ -139,6 +138,7 @@
       <workItem from="1749688578769" duration="1772000" />
       <workItem from="1749690401535" duration="174000" />
       <workItem from="1749690585866" duration="6175000" />
+      <workItem from="1749701394228" duration="7825000" />
     </task>
     <task id="LOCAL-00001" summary="병합">
       <option name="closed" value="true" />
