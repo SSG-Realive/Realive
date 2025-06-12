@@ -13,7 +13,6 @@ import com.realive.service.seller.SellerService;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -34,7 +33,6 @@ import org.slf4j.LoggerFactory;
 @Service
 @RequiredArgsConstructor
 @Transactional
-@Slf4j
 public class ProductServiceImpl implements ProductService {
 
     private static final Logger log = LoggerFactory.getLogger(ProductServiceImpl.class);
@@ -175,8 +173,6 @@ public class ProductServiceImpl implements ProductService {
         }
 
         // 상품 정보 수정
-        log.info("Product Update - active 값 수신: {}", dto.getActive());
-
         product.setName(dto.getName());
         product.setDescription(dto.getDescription());
         product.setPrice(dto.getPrice());
@@ -264,17 +260,6 @@ public class ProductServiceImpl implements ProductService {
         if (!product.getSeller().getId().equals(sellerId)) {
         throw new SecurityException("해당 상품에 대한 조회 권한이 없습니다.");
     }
-        DeliveryPolicy policy = deliveryPolicyRepository.findByProduct(product)
-                .orElse(null);
-        
-        DeliveryPolicyDTO deliveryPolicyDTO = null;
-        if (policy != null) {
-        deliveryPolicyDTO = DeliveryPolicyDTO.builder()
-                .type(policy.getType())
-                .cost(policy.getCost())
-                .regionLimit(policy.getRegionLimit())
-                .build();
-    }
         return ProductResponseDTO.builder()
                 .id(product.getId())
                 .name(product.getName())
@@ -290,7 +275,6 @@ public class ProductServiceImpl implements ProductService {
                 .videoThumbnailUrl(getThumbnailUrlByType(productId, MediaType.VIDEO))
                 .categoryName(Category.getCategoryFullPath(product.getCategory()))
                 .sellerName(product.getSeller().getName())
-                .deliveryPolicy(deliveryPolicyDTO)
                 .build();
     }
 

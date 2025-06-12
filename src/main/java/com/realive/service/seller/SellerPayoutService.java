@@ -1,4 +1,9 @@
 package com.realive.service.seller;
 
-public class SellerPayoutService {
+import com.realive.dto.logs.PayoutLogDTO;
+
+import java.util.List;
+
+public interface SellerPayoutService {
+    List<PayoutLogDTO> getPayoutLogsBySellerId(Long sellerId);
 }
