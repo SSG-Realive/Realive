@@ -22,7 +22,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @Query(value = """
             SELECT o FROM Order o
             JOIN FETCH o.customer
-            ORDER BY o.OrderedAt DESC
+            ORDER BY o.orderedAt DESC
             """,
             countQuery = "SELECT COUNT(o) FROM Order o")
     Page<Order> findAllOrders(Pageable pageable);

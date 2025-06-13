@@ -17,11 +17,11 @@ import lombok.NoArgsConstructor;
 public class SellerOrderListDTO {
 
     private Long orderId;
-    private LocalDateTime orderDate;
+    private LocalDateTime orderedAt;
     private String customerName;
     private String productName;
     private int quantity;
-    
+
     private DeliveryStatus deliveryStatus;
     private String deleiveryStatusText;
 
@@ -31,9 +31,18 @@ public class SellerOrderListDTO {
 
     private DeliveryType deliveryType;
 
-    public SellerOrderListDTO(Long orderId, String productName, String customerName, int quantity,
-                               DeliveryStatus deliveryStatus, String trackingNumber,
-                               LocalDateTime startDate, LocalDateTime completeDate, LocalDateTime orderDate) {
+    // Projection 생성자
+    public SellerOrderListDTO(
+            Long orderId,
+            String productName,
+            String customerName,
+            int quantity,
+            DeliveryStatus deliveryStatus,
+            String trackingNumber,
+            LocalDateTime startDate,
+            LocalDateTime completeDate,
+            LocalDateTime orderedAt
+    ) {
         this.orderId = orderId;
         this.productName = productName;
         this.customerName = customerName;
@@ -42,7 +51,6 @@ public class SellerOrderListDTO {
         this.trackingNumber = trackingNumber;
         this.startDate = startDate;
         this.completeDate = completeDate;
-        this.orderDate = orderDate;
+        this.orderedAt = orderedAt;
     }
-    
 }
