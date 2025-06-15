@@ -5,6 +5,7 @@ import com.realive.domain.admin.Admin;
 import com.realive.dto.admin.AdminInfoResponseDTO;
 import com.realive.dto.admin.AdminLoginRequestDTO;
 import com.realive.dto.admin.AdminLoginResponseDTO;
+import com.realive.dto.admin.AdminRegisterRequestDTO;
 import com.realive.security.AdminPrincipal;
 import com.realive.security.JwtUtil;
 import com.realive.service.admin.AdminService;
@@ -26,6 +27,13 @@ public class AdminController {
 
     private final AdminService adminService;
     private final JwtUtil jwtUtil;
+
+    // 관리자 회원가입
+    @PostMapping("/register")
+    public ResponseEntity<String> register(@RequestBody AdminRegisterRequestDTO dto) {
+        adminService.register(dto);
+        return ResponseEntity.ok("관리자 회원가입 완료");
+    }
 
     //  관리자 로그인
     @PostMapping("/login")

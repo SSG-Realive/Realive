@@ -4,19 +4,23 @@ import com.realive.domain.admin.Admin;
 import com.realive.domain.auction.AdminProduct;
 import com.realive.domain.auction.Auction;
 import com.realive.domain.common.enums.AuctionStatus;
+import com.realive.domain.common.enums.MediaType;
 import com.realive.domain.product.Product;
+import com.realive.domain.product.ProductImage;
 import com.realive.dto.auction.AdminProductDTO;
 import com.realive.dto.auction.AuctionCreateRequestDTO;
 import com.realive.dto.auction.AuctionResponseDTO;
 import com.realive.dto.auction.AuctionCancelResponseDTO;
 import com.realive.dto.auction.AuctionUpdateRequestDTO;
+import com.realive.dto.auction.AdminPurchaseRequestDTO;
 import com.realive.repository.admin.AdminRepository;
 import com.realive.repository.auction.AdminProductRepository;
 import com.realive.repository.auction.AuctionRepository;
+import com.realive.repository.product.ProductImageRepository;
 import com.realive.repository.product.ProductRepository;
 import com.realive.service.admin.auction.AuctionService;
 import jakarta.persistence.criteria.Join;
-import jakarta.persistence.criteria.JoinType; // JoinType 명시적 import
+import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,7 +51,8 @@ public class AuctionServiceImpl implements AuctionService {
     private final AuctionRepository auctionRepository;
     private final ProductRepository productRepository;
     private final AdminProductRepository adminProductRepository;
-    private final AdminRepository adminRepository; // 관리자 정보 조회를 위해 주입
+    private final AdminRepository adminRepository;
+    private final ProductImageRepository productImageRepository;
 
     @Override
     @Transactional
@@ -66,11 +71,10 @@ public class AuctionServiceImpl implements AuctionService {
                 .orElseThrow(() -> new NoSuchElementException("관리자 상품 목록에서 해당 상품을 찾을 수 없습니다. Product ID: " + requestDto.getProductId()));
 
         // 3. 현재 진행 중인 경매 확인
-        Optional<Auction> existingActiveAuction = auctionRepository.findByProductIdAndStatusNot(requestDto.getProductId(), AuctionStatus.COMPLETED);
-        if (existingActiveAuction.isPresent()) {
-            Auction existingAuction = existingActiveAuction.get();
-            if (existingAuction.getStatus() != AuctionStatus.CANCELLED) {
-                throw new IllegalStateException("이미 해당 상품으로 진행 중인 다른 경매가 있습니다. Product ID: " + requestDto.getProductId());
+        List<Auction> existingAuctions = auctionRepository.findByProductId(requestDto.getProductId());
+        for (Auction existingAuction : existingAuctions) {
+            if (existingAuction.getStatus() == AuctionStatus.PROCEEDING) {
+                throw new IllegalStateException("이미 해당 상품으로 진행 중인 경매가 있습니다. Product ID: " + requestDto.getProductId());
             }
         }
 
@@ -96,7 +100,10 @@ public class AuctionServiceImpl implements AuctionService {
                 adminProduct.getId(), adminProduct.getProductId(), adminUserId);
 
         // 6. 응답 DTO 생성
-        AdminProductDTO adminProductDtoForResponse = AdminProductDTO.fromEntity(adminProduct, originalProduct);
+        AdminProductDTO adminProductDtoForResponse = AdminProductDTO.fromEntity(adminProduct, originalProduct,
+            productImageRepository.findFirstByProductIdAndIsThumbnailTrueAndMediaType(originalProduct.getId(), MediaType.IMAGE)
+                .map(ProductImage::getUrl)
+                .orElse(null));
         return AuctionResponseDTO.fromEntity(savedAuction, adminProductDtoForResponse);
     }
 
@@ -166,7 +173,10 @@ public class AuctionServiceImpl implements AuctionService {
         AdminProduct adminProduct = adminProductRepository.findByProductId(auction.getProductId())
                 .orElseThrow(() -> new NoSuchElementException("경매에 연결된 관리자 상품 정보를 찾을 수 없습니다. Product ID: " + auction.getProductId()));
         Product product = productRepository.findById(adminProduct.getProductId().longValue()).orElse(null);
-        AdminProductDTO adminProductDto = AdminProductDTO.fromEntity(adminProduct, product);
+        AdminProductDTO adminProductDto = AdminProductDTO.fromEntity(adminProduct, product,
+            productImageRepository.findFirstByProductIdAndIsThumbnailTrueAndMediaType(product.getId(), MediaType.IMAGE)
+                .map(ProductImage::getUrl)
+                .orElse(null));
         return AuctionResponseDTO.fromEntity(auction, adminProductDto);
     }
 
@@ -201,7 +211,11 @@ public class AuctionServiceImpl implements AuctionService {
             if (adminProduct != null) {
                 product = productRepository.findById(adminProduct.getProductId().longValue()).orElse(null);
             }
-            AdminProductDTO adminProductDto = (adminProduct != null) ? AdminProductDTO.fromEntity(adminProduct, product) : null;
+            AdminProductDTO adminProductDto = (adminProduct != null) ? 
+                AdminProductDTO.fromEntity(adminProduct, product,
+                    productImageRepository.findFirstByProductIdAndIsThumbnailTrueAndMediaType(product.getId(), MediaType.IMAGE)
+                        .map(ProductImage::getUrl)
+                        .orElse(null)) : null;
             return AuctionResponseDTO.fromEntity(auction, adminProductDto);
         });
     }
@@ -252,7 +266,10 @@ public class AuctionServiceImpl implements AuctionService {
                         product = finalProductMap.get(adminProduct.getProductId().longValue());
                     }
                     AdminProductDTO adminProductDto = (adminProduct != null) ?
-                            AdminProductDTO.fromEntity(adminProduct, product) : null;
+                            AdminProductDTO.fromEntity(adminProduct, product,
+                                productImageRepository.findFirstByProductIdAndIsThumbnailTrueAndMediaType(product.getId(), MediaType.IMAGE)
+                                    .map(ProductImage::getUrl)
+                                    .orElse(null)) : null;
                     return AuctionResponseDTO.fromEntity(auctionEntity, adminProductDto);
                 })
                 .collect(Collectors.toList());
@@ -345,7 +362,10 @@ public class AuctionServiceImpl implements AuctionService {
         AdminProduct adminProduct = adminProductRepository.findByProductId(savedAuction.getProductId())
                 .orElseThrow(() -> new NoSuchElementException("경매에 연결된 관리자 상품 정보를 찾을 수 없습니다. Product ID: " + savedAuction.getProductId()));
         Product product = productRepository.findById(adminProduct.getProductId().longValue()).orElse(null);
-        AdminProductDTO adminProductDto = AdminProductDTO.fromEntity(adminProduct, product);
+        AdminProductDTO adminProductDto = AdminProductDTO.fromEntity(adminProduct, product,
+            productImageRepository.findFirstByProductIdAndIsThumbnailTrueAndMediaType(product.getId(), MediaType.IMAGE)
+                .map(ProductImage::getUrl)
+                .orElse(null));
         return AuctionResponseDTO.fromEntity(savedAuction, adminProductDto);
     }
 }

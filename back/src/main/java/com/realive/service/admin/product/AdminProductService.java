@@ -1,5 +1,6 @@
 package com.realive.service.admin.product;
 
+import com.realive.dto.admin.ProductDetailDTO;
 import com.realive.dto.auction.AdminPurchaseRequestDTO;
 import com.realive.dto.auction.AdminProductDTO;
 import com.realive.dto.page.PageResponseDTO;
@@ -51,4 +52,11 @@ public interface AdminProductService {
      * @return 페이징된 ProductListDTO 목록
      */
     PageResponseDTO<ProductListDTO> getAdminProducts(ProductSearchCondition condition);
+
+    // 상품 상세 조회
+    ProductDetailDTO getProductDetails(Long productId);
+
+    // 상품 비활성화 (삭제 대체)
+    void deactivateProduct(Long productId);
+
 } 

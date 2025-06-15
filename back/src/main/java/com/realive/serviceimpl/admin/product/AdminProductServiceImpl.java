@@ -4,7 +4,9 @@ import com.realive.domain.admin.Admin;
 import com.realive.domain.auction.AdminProduct;
 import com.realive.domain.common.enums.MediaType;
 import com.realive.domain.product.Product;
+import com.realive.domain.product.ProductImage;
 import com.realive.domain.seller.Seller;
+import com.realive.dto.admin.ProductDetailDTO;
 import com.realive.dto.auction.AdminPurchaseRequestDTO;
 import com.realive.dto.auction.AdminProductDTO;
 import com.realive.dto.page.PageResponseDTO;
@@ -15,6 +17,7 @@ import com.realive.repository.auction.AdminProductRepository;
 import com.realive.repository.product.ProductImageRepository;
 import com.realive.repository.product.ProductRepository;
 import com.realive.service.admin.product.AdminProductService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
@@ -88,13 +91,13 @@ public class AdminProductServiceImpl implements AdminProductService {
 
         // 7. 판매자의 상품 수량 감소
         product.setStock(product.getStock() - 1);
+        product.setActive(false);
         productRepository.save(product);
 
         // 8. AdminProduct 생성
         AdminProduct adminProduct = AdminProduct.builder()
             .productId(requestDTO.getProductId())
             .purchasePrice(requestDTO.getPurchasePrice())
-            .purchasedFromSellerId(seller.getId().intValue())
             .purchasedAt(LocalDateTime.now())
             .isAuctioned(false)
             .build();
@@ -103,7 +106,10 @@ public class AdminProductServiceImpl implements AdminProductService {
         AdminProduct savedAdminProduct = adminProductRepository.save(adminProduct);
         log.info("관리자 상품 매입 완료: adminProductId={}", savedAdminProduct.getId());
 
-        return AdminProductDTO.fromEntity(savedAdminProduct, product);
+        return AdminProductDTO.fromEntity(savedAdminProduct, product,
+            productImageRepository.findFirstByProductIdAndIsThumbnailTrueAndMediaType(product.getId(), MediaType.IMAGE)
+                .map(ProductImage::getUrl)
+                .orElse(null));
     }
 
     @Override
@@ -114,7 +120,10 @@ public class AdminProductServiceImpl implements AdminProductService {
         Product product = productRepository.findById(productId.longValue())
                 .orElse(null);
 
-        return AdminProductDTO.fromEntity(adminProduct, product);
+        return AdminProductDTO.fromEntity(adminProduct, product,
+            productImageRepository.findFirstByProductIdAndIsThumbnailTrueAndMediaType(product.getId(), MediaType.IMAGE)
+                .map(ProductImage::getUrl)
+                .orElse(null));
     }
 
     @Override
@@ -153,11 +162,15 @@ public class AdminProductServiceImpl implements AdminProductService {
     @Override
     public Optional<AdminProductDTO> getAdminProductDetails(Integer adminProductId) {
         log.info("관리자 물품 상세 정보 조회 요청 - AdminProductId: {}", adminProductId);
-        
+    
         return adminProductRepository.findById(adminProductId)
                 .map(adminProduct -> {
                     Product product = productRepository.findById(adminProduct.getProductId().longValue()).orElse(null);
-                    return AdminProductDTO.fromEntity(adminProduct, product);
+                    String thumbnailUrl = product != null ?
+                            productImageRepository.findFirstByProductIdAndIsThumbnailTrueAndMediaType(product.getId(), MediaType.IMAGE)
+                                    .map(ProductImage::getUrl)
+                                    .orElse(null) : null;
+                    return AdminProductDTO.fromEntity(adminProduct, product, thumbnailUrl);
                 });
     }
 
@@ -264,12 +277,38 @@ public class AdminProductServiceImpl implements AdminProductService {
         Map<Long, Product> productMap = productRepository.findAllByIdIn(productIds).stream()
                 .collect(Collectors.toMap(Product::getId, p -> p, (p1, p2) -> p1));
 
-        // 3. DTO 변환
+        // 3. 썸네일 URL 일괄 조회
+        Map<Long, String> thumbnailUrlMap = productImageRepository.findThumbnailUrlsByProductIds(productIds, MediaType.IMAGE)
+                .stream()
+                .collect(Collectors.toMap(
+                    row -> (Long) row[0],
+                    row -> (String) row[1]
+                ));
+
+        // 4. DTO 변환
         return adminProducts.stream()
                 .map(adminProduct -> {
                     Product product = productMap.get(adminProduct.getProductId().longValue());
-                    return AdminProductDTO.fromEntity(adminProduct, product);
+                    String thumbnailUrl = product != null ? 
+                        thumbnailUrlMap.get(product.getId()) : null;
+                    return AdminProductDTO.fromEntity(adminProduct, product, thumbnailUrl);
                 })
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public ProductDetailDTO getProductDetails(Long productId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new EntityNotFoundException("Product not found"));
+        return ProductDetailDTO.from(product, null);
+    }
+
+    @Override
+    @Transactional
+    public void deactivateProduct(Long productId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new EntityNotFoundException("Product not found"));
+        product.setActive(false);
+        productRepository.save(product);
     }
 } 

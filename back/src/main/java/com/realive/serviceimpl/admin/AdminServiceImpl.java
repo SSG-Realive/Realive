@@ -4,6 +4,7 @@ import com.realive.domain.admin.Admin;
 import com.realive.dto.admin.AdminLoginRequestDTO;
 import com.realive.dto.admin.AdminLoginResponseDTO;
 import com.realive.dto.admin.AdminReadDTO;
+import com.realive.dto.admin.AdminRegisterRequestDTO;
 import com.realive.exception.UnauthorizedException;
 import com.realive.repository.admin.AdminRepository;
 import com.realive.security.JwtUtil;
@@ -24,6 +25,30 @@ public class AdminServiceImpl implements AdminService {
     private final AdminRepository adminRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil; // Admin용 토큰 생성 메소드가 있는 JwtUtil 주입
+
+    @Override
+    @Transactional
+    public Admin register(AdminRegisterRequestDTO dto) {
+        if (dto.getEmail() == null || dto.getEmail().trim().isEmpty()
+                || dto.getPassword() == null || dto.getPassword().isEmpty()
+                || dto.getName() == null || dto.getName().trim().isEmpty()) {
+            throw new IllegalArgumentException("이름, 이메일, 비밀번호를 모두 입력해주세요.");
+        }
+
+        if (adminRepository.findByEmail(dto.getEmail()).isPresent()) {
+            throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
+        }
+
+        Admin admin = Admin.builder()
+                .name(dto.getName())
+                .email(dto.getEmail())
+                .password(passwordEncoder.encode(dto.getPassword()))
+                .build();
+
+        Admin saved = adminRepository.save(admin);
+        log.info("관리자 회원가입 완료: id={}, email={}", saved.getId(), saved.getEmail());
+        return saved;
+    }
 
     @Override
     @Transactional(readOnly = true)

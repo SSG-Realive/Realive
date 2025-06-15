@@ -1,5 +1,5 @@
 // src/main/java/com/realive/service/admin/logs/StatServiceImpl.java
-package com.realive.service.admin.logs;
+package com.realive.serviceimpl.admin.log;
 
 // --- 기존 import 문들 ---
 import com.realive.domain.logs.CommissionLog;
@@ -32,6 +32,7 @@ import com.realive.repository.seller.SellerRepository;
 // 아래 패키지에 SalesPeriodStatsDTO, SellerSalesDetailDTO 등이 수정된 버전으로 있다고 가정
 import com.realive.dto.logs.stats.*;
 
+import com.realive.service.admin.logs.StatService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

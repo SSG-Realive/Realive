@@ -6,6 +6,8 @@ import java.util.Optional;
 
 public interface AdminService {
 
+    Admin register(AdminRegisterRequestDTO dto);
+
     AdminLoginResponseDTO login(AdminLoginRequestDTO loginRequestDto);
 
     AdminLoginResponseDTO getMyInfo(Integer adminId);

@@ -2,6 +2,7 @@ package com.realive.repository.product;
 
 import com.realive.domain.product.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -12,7 +13,8 @@ import java.util.List;
 /**
  * 상품 정보를 DB에서 조회/저장/삭제하는 JPA Repository
  */
-public interface ProductRepository extends JpaRepository<Product, Long>, ProductRepositoryCustom {
+public interface ProductRepository extends JpaRepository<Product, Long>, ProductRepositoryCustom,
+        JpaSpecificationExecutor<Product> {
 
     /**
      * 판매자 ID로 상품 목록 조회

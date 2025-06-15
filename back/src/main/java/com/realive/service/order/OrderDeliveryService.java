@@ -1,5 +1,7 @@
 package com.realive.service.order;
 
+import com.realive.domain.common.enums.DeliveryStatus;
+import com.realive.domain.order.OrderDelivery;
 import com.realive.dto.order.DeliveryStatusUpdateDTO;
 import com.realive.dto.order.OrderDeliveryResponseDTO;
 
@@ -25,7 +27,6 @@ public interface OrderDeliveryService {
      * @return 배송 내역 목록
      */
     List<OrderDeliveryResponseDTO> getDeliveriesBySeller(Long sellerId);
-
 
     OrderDeliveryResponseDTO getDeliveryByOrderId(Long sellerId, Long orderId);
 }

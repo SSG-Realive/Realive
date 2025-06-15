@@ -36,7 +36,7 @@ public class AdminBidController {
         log.info("GET /api/admin/bids/auction/{} - 관리자가 특정 경매 입찰 내역 조회. AdminId: {}", 
                 auctionId, adminPrincipal.getAdmin().getId());
         try {
-            Page<BidResponseDTO> bids = bidService.getBidsForAuction(auctionId, pageable);
+            Page<BidResponseDTO> bids = bidService.getBidsByAuction(auctionId, pageable);
             return ResponseEntity.ok(ApiResponse.success(bids));
         } catch (Exception e) {
             log.error("관리자가 특정 경매(ID:{}) 입찰 내역 조회 중 알 수 없는 오류 발생", auctionId, e);
@@ -53,7 +53,7 @@ public class AdminBidController {
         log.info("GET /api/admin/bids/customer/{} - 관리자가 고객 입찰 내역 조회. AdminId: {}", 
                 customerId, adminPrincipal.getAdmin().getId());
         try {
-            Page<BidResponseDTO> bids = bidService.getBidsByCustomer(customerId, pageable);
+            Page<BidResponseDTO> bids = bidService.getBidsByCustomer(customerId.intValue(), pageable);
             return ResponseEntity.ok(ApiResponse.success(bids));
         } catch (Exception e) {
             log.error("관리자가 고객(ID:{}) 입찰 내역 조회 중 알 수 없는 오류 발생", customerId, e);

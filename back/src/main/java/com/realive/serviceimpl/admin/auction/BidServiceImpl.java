@@ -1,10 +1,12 @@
 package com.realive.serviceimpl.admin.auction;
 
 import com.realive.domain.auction.Auction;
+import com.realive.domain.common.enums.AuctionStatus;
 import com.realive.domain.auction.Bid;
 import com.realive.domain.customer.Customer;
 import com.realive.dto.bid.BidRequestDTO;
 import com.realive.dto.bid.BidResponseDTO;
+import com.realive.exception.BidException;
 import com.realive.repository.auction.AuctionRepository;
 import com.realive.repository.auction.BidRepository;
 import com.realive.repository.customer.CustomerRepository;
@@ -12,129 +14,137 @@ import com.realive.service.admin.auction.BidService;
 import com.realive.util.TickSizeCalculator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.PessimisticLockingFailureException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class BidServiceImpl implements BidService {
 
-    private final BidRepository bidRepository;
     private final AuctionRepository auctionRepository;
+    private final BidRepository bidRepository;
     private final CustomerRepository customerRepository;
+    private final TickSizeCalculator tickSizeCalculator;
 
     @Override
-    @Transactional
-    public BidResponseDTO placeBid(BidRequestDTO requestDto, Long customerId) {
-        log.info("입찰 요청 처리 시작 - CustomerId: {}, AuctionId: {}, BidPrice: {}", 
-                customerId, requestDto.getAuctionId(), requestDto.getBidPrice());
-
-        // 1. 경매 정보 조회 및 상태 검증
-        Auction auction = auctionRepository.findById(requestDto.getAuctionId())
-                .orElseThrow(() -> new NoSuchElementException("경매 정보를 찾을 수 없습니다. ID: " + requestDto.getAuctionId()));
-
-        if (auction.isClosed()) {
-            throw new IllegalStateException("이미 종료된 경매입니다.");
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    public BidResponseDTO placeBid(Integer auctionId, Integer customerId, BidRequestDTO requestDTO) {
+        int maxRetries = 3;
+        int retryCount = 0;
+        
+        while (retryCount < maxRetries) {
+            try {
+                log.info("입찰 처리 시작 - 경매ID: {}, 고객ID: {}, 입찰가: {}", 
+                    auctionId, customerId, requestDTO.getBidPrice());
+                
+                // 경매 조회 (Pessimistic Lock 적용)
+                Auction auction = auctionRepository.findByIdWithLock(auctionId)
+                    .orElseThrow(() -> new BidException("존재하지 않는 경매입니다."));
+                
+                // 경매 상태 확인
+                if (auction.getStatus() != AuctionStatus.PROCEEDING) {
+                    throw new BidException("종료된 경매입니다.");
+                }
+                
+                // 입찰가 검증
+                int minBidPrice = tickSizeCalculator.calculateMinBidPrice(auction.getCurrentPrice(), auction.getStartPrice());
+                if (requestDTO.getBidPrice() < minBidPrice) {
+                    throw new BidException("입찰 단위가 맞지 않습니다.");
+                }
+                
+                if (requestDTO.getBidPrice() <= auction.getCurrentPrice()) {
+                    throw new BidException("현재가보다 높은 금액을 입력해주세요.");
+                }
+                
+                // 고객 정보 조회
+                Customer customer = customerRepository.findById(customerId.longValue())
+                    .orElseThrow(() -> new BidException("존재하지 않는 고객입니다."));
+                
+                // 입찰 생성
+                Bid bid = Bid.builder()
+                    .auctionId(auction.getId())
+                    .customerId(customerId)
+                    .bidPrice(requestDTO.getBidPrice())
+                    .build();
+                
+                // 입찰 저장
+                bid = bidRepository.save(bid);
+                
+                // 경매 현재가 업데이트
+                auction.setCurrentPrice(requestDTO.getBidPrice());
+                auctionRepository.save(auction);
+                
+                log.info("입찰 처리 완료 - 입찰ID: {}, 고객명: {}", bid.getId(), customer.getName());
+                
+                return BidResponseDTO.fromEntity(bid, customer.getName());
+                
+            } catch (PessimisticLockingFailureException e) {
+                retryCount++;
+                log.warn("입찰 처리 재시도 {} - 경매ID: {}, 고객ID: {}", retryCount, auctionId, customerId);
+                
+                if (retryCount == maxRetries) {
+                    log.error("입찰 처리 최대 재시도 횟수 초과 - 경매ID: {}, 고객ID: {}", auctionId, customerId);
+                    throw new BidException("입찰 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+                }
+                
+                try {
+                    Thread.sleep(100); // 100ms 대기 후 재시도
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    throw new BidException("입찰 처리가 중단되었습니다.");
+                }
+            }
         }
-
-        if (LocalDateTime.now().isBefore(auction.getStartTime())) {
-            throw new IllegalStateException("아직 시작되지 않은 경매입니다.");
-        }
-
-        if (LocalDateTime.now().isAfter(auction.getEndTime())) {
-            throw new IllegalStateException("이미 종료된 경매입니다.");
-        }
-
-        // 2. 고객 정보 조회 및 상태 검증
-        Customer customer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new NoSuchElementException("고객 정보를 찾을 수 없습니다. ID: " + customerId));
-
-        if (!customer.getIsActive()) {
-            throw new IllegalStateException("비활성화된 계정입니다.");
-        }
-
-        // 3. 입찰 단위 및 최소 입찰가 검증
-        int tickSize = TickSizeCalculator.calculateTickSize(auction.getStartPrice());
-        int minBidPrice = TickSizeCalculator.calculateMinBidPrice(
-            auction.getCurrentPrice(), 
-            auction.getStartPrice()
-        );
-
-        if (requestDto.getBidPrice() % tickSize != 0) {
-            throw new IllegalArgumentException(
-                String.format("입찰가는 %d원 단위로만 가능합니다.", tickSize)
-            );
-        }
-
-        if (requestDto.getBidPrice() < minBidPrice) {
-            throw new IllegalArgumentException(
-                String.format("최소 입찰가는 %d원입니다.", minBidPrice)
-            );
-        }
-
-        // 4. 입찰 정보 생성 및 저장
-        Bid bid = Bid.builder()
-                .auctionId(auction.getId())
-                .customerId(customerId.intValue())
-                .bidPrice(requestDto.getBidPrice())
-                .bidTime(LocalDateTime.now())
-                .build();
-
-        Bid savedBid = bidRepository.save(bid);
-
-        // 5. 경매 현재가 업데이트
-        auction.setCurrentPrice(requestDto.getBidPrice());
-        auctionRepository.save(auction);
-
-        log.info("입찰 성공 - BidId: {}, AuctionId: {}, CustomerId: {}, BidPrice: {}", 
-                savedBid.getId(), savedBid.getAuctionId(), savedBid.getCustomerId(), savedBid.getBidPrice());
-
-        return BidResponseDTO.fromEntity(savedBid);
+        
+        throw new BidException("입찰 처리 중 오류가 발생했습니다.");
     }
 
     @Override
-    public Page<BidResponseDTO> getBidsForAuction(Integer auctionId, Pageable pageable) {
-        log.info("특정 경매의 입찰 내역 조회 처리 - AuctionId: {}, Pageable: {}", auctionId, pageable);
-        if (!auctionRepository.existsById(auctionId)) {
-            throw new NoSuchElementException("해당 경매 정보를 찾을 수 없습니다. ID: " + auctionId);
-        }
-        Page<Bid> bidPage = bidRepository.findByAuctionIdOrderByBidTimeDesc(auctionId, pageable);
-
-        List<BidResponseDTO> bidResponseDTOs = bidPage.getContent().stream()
-                .map(BidResponseDTO::fromEntity)
-                .collect(Collectors.toList());
-        return new PageImpl<>(bidResponseDTOs, pageable, bidPage.getTotalElements());
+    @Transactional(readOnly = true)
+    public List<BidResponseDTO> getBidsForAuction(Integer auctionId) {
+        return bidRepository.findByAuctionId(auctionId).stream()
+            .map(bid -> {
+                Customer customer = customerRepository.findById(bid.getCustomerId().longValue())
+                    .orElseThrow(() -> new BidException("존재하지 않는 고객입니다."));
+                return BidResponseDTO.fromEntity(bid, customer.getName());
+            })
+            .collect(Collectors.toList());
     }
 
     @Override
-    public Page<BidResponseDTO> getBidsByCustomer(Long customerId, Pageable pageable) {
-        log.info("특정 고객의 입찰 내역 조회 처리 - CustomerId: {}, Pageable: {}", customerId, pageable);
-        if (!customerRepository.existsById(customerId)) {
-            throw new NoSuchElementException("해당 고객 정보를 찾을 수 없습니다. ID: " + customerId);
-        }
-        Page<Bid> bidPage = bidRepository.findByCustomerIdOrderByBidTimeDesc(customerId.intValue(), pageable);
-
-        List<BidResponseDTO> bidResponseDTOs = bidPage.getContent().stream()
-                .map(BidResponseDTO::fromEntity)
-                .collect(Collectors.toList());
-        return new PageImpl<>(bidResponseDTOs, pageable, bidPage.getTotalElements());
+    @Transactional(readOnly = true)
+    public Page<BidResponseDTO> getBidsByAuction(Integer auctionId, Pageable pageable) {
+        Page<Bid> bids = bidRepository.findByAuctionId(auctionId, pageable);
+        List<BidResponseDTO> bidDTOs = bids.getContent().stream()
+            .map(bid -> {
+                Customer customer = customerRepository.findById(bid.getCustomerId().longValue())
+                    .orElseThrow(() -> new BidException("존재하지 않는 고객입니다."));
+                return BidResponseDTO.fromEntity(bid, customer.getName());
+            })
+            .collect(Collectors.toList());
+        return new PageImpl<>(bidDTOs, pageable, bids.getTotalElements());
     }
 
     @Override
-    public Page<BidResponseDTO> getBidsByAuction(Long auctionId, Pageable pageable) {
-        log.info("특정 경매의 입찰 내역 조회 처리 - AuctionId: {}, Pageable: {}", auctionId, pageable);
-        Page<Bid> bids = bidRepository.findByAuctionIdOrderByBidTimeDesc(auctionId.intValue(), pageable);
-        return bids.map(BidResponseDTO::fromEntity);
+    @Transactional(readOnly = true)
+    public Page<BidResponseDTO> getBidsByCustomer(Integer customerId, Pageable pageable) {
+        Page<Bid> bids = bidRepository.findByCustomerId(customerId, pageable);
+        List<BidResponseDTO> bidDTOs = bids.getContent().stream()
+            .map(bid -> {
+                Customer customer = customerRepository.findById(bid.getCustomerId().longValue())
+                    .orElseThrow(() -> new BidException("존재하지 않는 고객입니다."));
+                return BidResponseDTO.fromEntity(bid, customer.getName());
+            })
+            .collect(Collectors.toList());
+        return new PageImpl<>(bidDTOs, pageable, bids.getTotalElements());
     }
 }

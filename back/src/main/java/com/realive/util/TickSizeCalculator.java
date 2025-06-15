@@ -1,10 +1,26 @@
 package com.realive.util;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import org.springframework.stereotype.Component;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class TickSizeCalculator {
+public interface TickSizeCalculator {
+    /**
+     * 시작가에 따른 입찰 단위를 계산합니다.
+     * @param startPrice 경매 시작가
+     * @return 입찰 단위
+     */
+    int calculateTickSize(int startPrice);
+
+    /**
+     * 현재가와 시작가를 기반으로 최소 입찰가를 계산합니다.
+     * @param currentPrice 현재가
+     * @param startPrice 시작가
+     * @return 최소 입찰가
+     */
+    int calculateMinBidPrice(int currentPrice, int startPrice);
+}
+
+@Component
+class DefaultTickSizeCalculator implements TickSizeCalculator {
     // 가구 가격대별 입찰 단위 상수
     private static final int LOW_PRICE_THRESHOLD = 10_000;      // 1만원
     private static final int MID_PRICE_THRESHOLD = 100_000;     // 10만원
@@ -15,12 +31,8 @@ public class TickSizeCalculator {
     private static final int HIGH_PRICE_TICK = 10_000;  // 1만원
     private static final int PREMIUM_TICK = 100_000;    // 10만원
 
-    /**
-     * 시작가에 따른 입찰 단위를 계산합니다.
-     * @param startPrice 경매 시작가
-     * @return 입찰 단위
-     */
-    public static int calculateTickSize(int startPrice) {
+    @Override
+    public int calculateTickSize(int startPrice) {
         if (startPrice < LOW_PRICE_THRESHOLD) {
             return LOW_PRICE_TICK;
         } else if (startPrice < MID_PRICE_THRESHOLD) {
@@ -32,13 +44,8 @@ public class TickSizeCalculator {
         }
     }
 
-    /**
-     * 현재가와 시작가를 기반으로 최소 입찰가를 계산합니다.
-     * @param currentPrice 현재가
-     * @param startPrice 시작가
-     * @return 최소 입찰가
-     */
-    public static int calculateMinBidPrice(int currentPrice, int startPrice) {
+    @Override
+    public int calculateMinBidPrice(int currentPrice, int startPrice) {
         int tickSize = calculateTickSize(startPrice);
         return currentPrice + tickSize;
     }

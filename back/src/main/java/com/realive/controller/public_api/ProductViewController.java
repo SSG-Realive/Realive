@@ -42,12 +42,12 @@ public class ProductViewController {
 
         PageResponseDTO<ProductListDTO> result = productViewService.search(pageRequestDTO, categoryId);
         return ResponseEntity.ok(result);
-    }
+    }   
 
     // 상품 상세 조회
     @GetMapping("/{id}")
     public ResponseEntity<ProductResponseDTO> getProductDetail(@PathVariable("id") Long id) {
-
+        
         ProductResponseDTO productDetail = productViewService.getProductDetail(id);
         return ResponseEntity.ok(productDetail);
     }
@@ -57,8 +57,8 @@ public class ProductViewController {
     public ResponseEntity<List<CustomerQnaListDTO>> getProductQnaList(@PathVariable("productId") Long productId){
 
         List<CustomerQnaListDTO> qnaLists = customerQnaService.listProductQnaWith(productId);
-        return ResponseEntity.ok(qnaLists);
+        return ResponseEntity.ok(qnaLists); 
 
     }
-
+    
 }

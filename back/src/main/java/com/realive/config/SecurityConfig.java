@@ -44,7 +44,7 @@ public class SecurityConfig {
     private final SellerJwtAuthenticationFilter sellerJwtAuthenticationFilter;
     private final AdminJwtAuthenticationFilter adminJwtAuthenticationFilter;
     private final CustomLoginSuccessHandler customLoginSuccessHandler;
-
+    
 
     @Autowired
     @Qualifier("customUserDetailsService")
@@ -94,13 +94,16 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/admin/login").permitAll()
+                        .requestMatchers("/api/admin/login", "/api/admin/register").permitAll() // 관리자 로그인 임시 허용(개발용)
+                        // 운영시에 주석 풀기
+                        //.requestMatchers("/api/admin/register").denyAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(adminJwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
+
 
     // === Seller Security Chain ===
     @Bean
@@ -109,15 +112,15 @@ public class SecurityConfig {
         log.info("Seller SecurityConfig 적용");
 
         http
-                .securityMatcher("/api/seller/**")
-                .authenticationManager(authenticationManager())
-                .csrf(csrf -> csrf.disable())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/seller/login", "/api/seller/signup").permitAll()
-                        .anyRequest().authenticated()
-                )
-                .addFilterBefore(sellerJwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+            .securityMatcher("/api/seller/**")
+            .authenticationManager(authenticationManager()) 
+            .csrf(csrf -> csrf.disable())
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/api/seller/login", "/api/seller/signup").permitAll()
+                .anyRequest().authenticated()
+            )
+            .addFilterBefore(sellerJwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -129,18 +132,18 @@ public class SecurityConfig {
         log.info("Customer SecurityConfig 적용");
 
         http
-                .securityMatcher("/api/**") // 나머지 API
-                .authenticationManager(authenticationManager())
-                .csrf(csrf -> csrf.disable())
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/public/**").permitAll()
-                        .requestMatchers("/api/customer/**").authenticated()
-                        .anyRequest().denyAll()
-                )
-                .oauth2Login(config -> config.successHandler(customLoginSuccessHandler))
-                .addFilterBefore(customerJwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+            .securityMatcher("/api/**") // 나머지 API
+            .authenticationManager(authenticationManager()) 
+            .csrf(csrf -> csrf.disable())
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/api/public/**").permitAll()
+                .requestMatchers("/api/customer/**").authenticated()
+                .anyRequest().denyAll()
+            )
+            .oauth2Login(config -> config.successHandler(customLoginSuccessHandler))
+            .addFilterBefore(customerJwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -153,8 +156,8 @@ public class SecurityConfig {
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         log.info("✅ 정적 리소스 보안 설정 적용");
-        return (web) -> web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
-    }
+    	return (web) -> web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
+	}
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {

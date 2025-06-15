@@ -1,10 +1,12 @@
 package com.realive.controller.admin;
 
+import com.realive.dto.admin.ProductDetailDTO;
 import com.realive.dto.auction.AdminPurchaseRequestDTO;
 import com.realive.dto.auction.AdminProductDTO;
 import com.realive.dto.common.ApiResponse;
 import com.realive.dto.page.PageResponseDTO;
 import com.realive.dto.product.ProductListDTO;
+import com.realive.dto.admin.ProductDetailDTO;
 import com.realive.dto.product.ProductSearchCondition;
 import com.realive.security.AdminPrincipal;
 import com.realive.service.product.ProductService;
@@ -81,5 +83,27 @@ public class AdminProductController {
         log.info("관리자 물품 목록 조회 요청 - 조건: {}", condition);
         PageResponseDTO<ProductListDTO> response = adminProductService.getAdminProducts(condition);
         return ResponseEntity.ok(response);
+    }
+
+    // 상품 상세 조회
+    @GetMapping("/{productId}")
+    public ResponseEntity<ProductDetailDTO> getProductDetails(@PathVariable Long productId) {
+        // 이미지 썸네일 등 필요한 경우, 서비스에서 처리
+        return ResponseEntity.ok(
+                adminProductService.getProductDetails(productId)
+        );
+    }
+
+    // 상품 비활성화(삭제 대체)
+    @DeleteMapping("/{productId}")
+    public ResponseEntity<Void> deactivateProduct(@PathVariable Long productId) {
+        adminProductService.deactivateProduct(productId);
+        return ResponseEntity.noContent().build();
+    }
+
+    // 예외 처리 (선택)
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<String> handleException(Exception e) {
+        return ResponseEntity.badRequest().body(e.getMessage());
     }
 } 
