@@ -4,6 +4,8 @@ import com.realive.domain.auction.Bid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -43,4 +45,10 @@ public interface BidRepository extends JpaRepository<Bid, Integer> {
     List<Bid> findByAuctionId(Integer auctionId);
     Page<Bid> findByAuctionId(Integer auctionId, Pageable pageable);
     Page<Bid> findByCustomerId(Integer customerId, Pageable pageable);
+
+    @Query("SELECT b FROM Bid b WHERE b.auctionId = :auctionId ORDER BY b.bidPrice DESC")
+    Page<Bid> findByAuctionIdOrderByBidPriceDesc(@Param("auctionId") Integer auctionId, Pageable pageable);
+    
+    @Query("SELECT b FROM Bid b WHERE b.auctionId = :auctionId ORDER BY b.bidPrice DESC")
+    Optional<Bid> findTopByAuctionIdOrderByBidPriceDesc(@Param("auctionId") Integer auctionId);
 }

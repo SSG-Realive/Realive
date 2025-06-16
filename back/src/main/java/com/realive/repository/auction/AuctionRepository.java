@@ -86,12 +86,6 @@ public interface AuctionRepository extends JpaRepository<Auction, Integer>, JpaS
      */
     List<Auction> findByStatusNot(AuctionStatus status);
 
-    /**
-     * (참고용 또는 특정 상황용) 특정 현재 가격(currentPrice) 이상인 모든 경매 목록을 조회합니다.
-     * @param price 조회 기준 현재 가격.
-     * @return 조건에 맞는 Auction 엔티티 목록.
-     */
-    List<Auction> findByCurrentPriceGreaterThanEqual(Integer price);
 
     Optional<Auction> findByProductIdAndStatusNot(Integer productId, AuctionStatus status);
 
@@ -99,4 +93,7 @@ public interface AuctionRepository extends JpaRepository<Auction, Integer>, JpaS
     @QueryHints({@QueryHint(name = "jakarta.persistence.lock.timeout", value = "5000")})
     @Query("SELECT a FROM Auction a WHERE a.id = :id")
     Optional<Auction> findByIdWithLock(@Param("id") Integer id);
+
+    List<Auction> findByStatusAndEndTimeBefore(AuctionStatus status, LocalDateTime endTime);
+
 }
