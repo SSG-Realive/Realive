@@ -4,7 +4,6 @@ import java.time.Duration;
 
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,11 +24,13 @@ import com.realive.service.seller.SellerService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/seller")
 @RequiredArgsConstructor
@@ -50,7 +51,7 @@ public class SellerController {
         ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", refreshToken)
                 .httpOnly(true)
                 .secure(true)
-                .sameSite("none")
+                .sameSite("None")
                 .path("/")
                 .maxAge(Duration.ofDays(7))
                 .build();
@@ -60,10 +61,10 @@ public class SellerController {
         return ResponseEntity.ok(resdto);
     }
 
-    //로그아웃(토큰덮어쓰기)
+    // 로그아웃 (토큰 덮어쓰기)
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(HttpServletResponse response) {
-        ResponseCookie deleteCookie = ResponseCookie.from("refreshToken","")
+        ResponseCookie deleteCookie = ResponseCookie.from("refreshToken", "")
                 .httpOnly(true)
                 .secure(true)
                 .sameSite("None")
@@ -84,28 +85,31 @@ public class SellerController {
             @RequestPart MultipartFile bankAccountCopy) {
 
         Seller savedSeller = sellerService.registerSeller(dto);
+
         fileUploadEvnetPublisher.publish(savedSeller, businessLicense, bankAccountCopy);
         return ResponseEntity.ok().build();
     }
 
     // 🔄 판매자 정보 수정
     @PutMapping("/me")
-    public ResponseEntity<Void> updateSeller(
-            @RequestBody @Valid SellerUpdateDTO dto) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String email = auth.getName();
+    public ResponseEntity<Void> updateSeller(@RequestBody @Valid SellerUpdateDTO dto) {
+        Seller seller = (Seller) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+       
 
-        sellerService.updateSeller(email, dto);
+        sellerService.updateSeller(seller, dto);
         return ResponseEntity.ok().build();
     }
 
     // 🙋‍♀️ 마이페이지 조회 (판매자 정보)
     @GetMapping("/me")
     public ResponseEntity<SellerResponseDTO> getMyInfo() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String email = auth.getName();
+        Seller seller = (Seller) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        
 
-        SellerResponseDTO dto = sellerService.getMyInfo(email);
+        log.info("Seller email: {}", seller.getEmail());
+
+        SellerResponseDTO dto = sellerService.getMyInfo(seller);
         return ResponseEntity.ok(dto);
     }
+
 }

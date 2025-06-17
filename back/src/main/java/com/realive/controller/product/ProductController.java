@@ -26,7 +26,7 @@ public class ProductController {
     private final ProductService productService;
     private static final Logger log = LoggerFactory.getLogger(ProductController.class);
 
-    // 🔽 상품 등록
+    // 🔽 상품 등록(new)
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Long> createProduct(@Valid @ModelAttribute ProductRequestDTO dto) {
         Seller seller = (Seller) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

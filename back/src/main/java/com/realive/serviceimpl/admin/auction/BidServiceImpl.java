@@ -32,6 +32,7 @@ public class BidServiceImpl implements BidService {
     private final CustomerRepository customerRepository;
 //    private final NotificationService notificationService;
 
+    // 동시성 제어
     @Override
     public BidResponseDTO placeBid(Integer auctionId, Integer customerId, BidRequestDTO requestDTO) {
         Auction auction = auctionRepository.findById(auctionId)

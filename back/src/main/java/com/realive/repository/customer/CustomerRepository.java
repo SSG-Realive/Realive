@@ -26,5 +26,10 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     // 이메일로 고객 찾기 (임시회원 포함)
     @Query("SELECT c FROM Customer c WHERE c.email = :email")
     Optional<Customer> findByEmailIncludingSocial(@Param("email") String email);
+
+    // 활성화된 일반 회원 수
+    @Query("SELECT COUNT(c) FROM Customer c WHERE c.isActive = true")
+    long countActiveUsers();
+
     
 }

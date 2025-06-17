@@ -276,7 +276,6 @@ public class OrderServiceImpl implements OrderService {
         }
 
         order.setStatus(OrderStatus.PURCHASE_CANCELED); // OrderStatus enum에 PURCHASE_CANCELED 필요
-        order.setUpdatedAt(LocalDateTime.now());
         orderRepository.save(order);
 
         optionalOrderDelivery.ifPresent(delivery -> {
@@ -319,7 +318,6 @@ public class OrderServiceImpl implements OrderService {
         }
 
         order.setStatus(OrderStatus.PURCHASE_CONFIRMED); // OrderStatus enum에 PURCHASE_CONFIRMED 필요
-        order.setUpdatedAt(LocalDateTime.now());
         orderRepository.save(order);
 
         log.info("주문 상태가 '구매확정'으로 변경되었습니다: 주문 ID {}", orderId);
@@ -433,8 +431,6 @@ public class OrderServiceImpl implements OrderService {
                 .status(OrderStatus.PAYMENT_COMPLETED)
                 .totalPrice(finalTotalPrice)
                 .deliveryAddress(deliveryAddress)
-                .OrderedAt(LocalDateTime.now())
-                .UpdatedAt(LocalDateTime.now())
                 // Order 엔티티에 PaymentType 필드가 있다면 여기에 추가
                 // .paymentType(paymentType)
                 .build();
@@ -447,8 +443,11 @@ public class OrderServiceImpl implements OrderService {
 
         OrderDelivery orderDelivery = OrderDelivery.builder()
                 .order(order)
-                .status(DeliveryStatus.DELIVERY_PREPARING) // 현재 enum에 있는 '배송준비중' 상태 사용
-                .startDate(LocalDateTime.now())
+                .status(DeliveryStatus.INIT) // 현재 enum에 있는 '판매자 대기' 상태 사용
+                .startDate(null)             
+                .completeDate(null)
+                .trackingNumber(null)
+                .carrier(null)
                 .build();
         orderDeliveryRepository.save(orderDelivery);
 

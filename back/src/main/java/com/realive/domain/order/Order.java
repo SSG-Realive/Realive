@@ -1,5 +1,6 @@
 package com.realive.domain.order;
 
+import com.realive.domain.common.BaseTimeEntity;
 import com.realive.domain.customer.Customer;
 import com.realive.domain.common.enums.DeliveryStatus;
 import com.realive.domain.common.enums.OrderStatus;
@@ -19,7 +20,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @Table(name = "orders")
-public class Order {
+public class Order  {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,10 +37,10 @@ public class Order {
     private String deliveryAddress;
 
     @Column(name = "ordered_at", nullable =  false, updatable = false)
-    private LocalDateTime OrderedAt;
+    private LocalDateTime orderedAt;
 
     @Column(name = "updated_at", nullable =  false)
-    private LocalDateTime UpdatedAt;
+    private LocalDateTime updatedAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customers_id", nullable = false)

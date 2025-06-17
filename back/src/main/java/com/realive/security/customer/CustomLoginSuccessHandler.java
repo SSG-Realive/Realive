@@ -10,13 +10,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.realive.domain.customer.SignupMethod;
 import com.realive.dto.customer.member.MemberLoginDTO;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 // [Customer] 로그인 성공 핸들러
 
@@ -24,7 +23,6 @@ import java.util.Map;
 @Component
 public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
      
-    private final ObjectMapper objectMapper = new ObjectMapper();
     private final JwtTokenProvider jwtTokenProvider;
 
     // 생성자 주입
@@ -49,17 +47,34 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
         // 임시 회원 여부 판단
         boolean isTemporary = loginUser.getSignupMethod() != SignupMethod.USER;
 
-        // JwtTokenProvider로 토큰 생성
         String token = jwtTokenProvider.createToken(authentication);
+        log.info("토큰 생성 완료: " + token.substring(0, 20) + "...");
 
-        Map<String, Object> responseData = new HashMap<>();
-        responseData.put("email", loginUser.getEmail());
-        responseData.put("temporaryUser", isTemporary);
-        responseData.put("token", token);
+        // 세션에서 원래 redirectTo (콜백 URL) 가져오기
+        String callbackUrl = (String) request.getSession().getAttribute("redirectTo");
+        log.info("세션에서 가져온 callbackUrl: " + callbackUrl);
+        request.getSession().removeAttribute("redirectTo");
 
-        response.setContentType("application/json;charset=UTF-8");
-        response.setStatus(HttpServletResponse.SC_OK);
-        objectMapper.writeValue(response.getWriter(), responseData);
+        if (callbackUrl == null) {
+            callbackUrl = "/customer/oauth/callback"; // 기본 콜백 URL
+            log.info("기본 콜백 URL 사용: " + callbackUrl);
+        }
+
+        try {
+            // 토큰과 사용자 정보를 쿼리 파라미터로 추가
+            String redirectUrl = callbackUrl + 
+                "?token=" + URLEncoder.encode(token, StandardCharsets.UTF_8) +
+                "&email=" + URLEncoder.encode(loginUser.getEmail(), StandardCharsets.UTF_8) +
+                "&temporaryUser=" + isTemporary;
+
+            log.info("리다이렉트 URL: " + redirectUrl);
+            response.sendRedirect(redirectUrl);
+            
+        } catch (Exception e) {
+            log.error("리다이렉트 처리 중 오류 발생", e);
+            response.sendRedirect("/login?error=redirect_failed");
+        }
+
     }
     
 }
