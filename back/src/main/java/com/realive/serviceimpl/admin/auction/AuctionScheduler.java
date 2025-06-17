@@ -5,7 +5,7 @@ import com.realive.domain.auction.Bid;
 import com.realive.domain.common.enums.AuctionStatus;
 import com.realive.repository.auction.AuctionRepository;
 import com.realive.repository.auction.BidRepository;
-import com.realive.service.notification.NotificationService;
+//import com.realive.service.notification.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -22,7 +22,7 @@ public class AuctionScheduler {
 
     private final AuctionRepository auctionRepository;
     private final BidRepository bidRepository;
-    private final NotificationService notificationService;
+//    private final NotificationService notificationService;
 
     @Scheduled(fixedRate = 60000) // 1분마다 실행
     @Transactional
@@ -46,11 +46,11 @@ public class AuctionScheduler {
                     auctionRepository.save(auction);
                     
                     // 낙찰자에게 알림
-                    notificationService.sendAuctionWinNotification(
-                        winningBid.getCustomerId(),
-                        auction.getId(),
-                        winningBid.getBidPrice()
-                    );
+//                    notificationService.sendAuctionWinNotification(
+//                        winningBid.getCustomerId(),
+//                        auction.getId(),
+//                        winningBid.getBidPrice()
+//                    );
                     
                     log.info("경매 종료 처리 완료 - 경매ID: {}, 낙찰자ID: {}, 낙찰가: {}", 
                         auction.getId(), winningBid.getCustomerId(), winningBid.getBidPrice());

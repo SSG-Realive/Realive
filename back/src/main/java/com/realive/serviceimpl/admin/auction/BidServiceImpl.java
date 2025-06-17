@@ -10,7 +10,7 @@ import com.realive.repository.auction.AuctionRepository;
 import com.realive.repository.auction.BidRepository;
 import com.realive.repository.customer.CustomerRepository;
 import com.realive.service.admin.auction.BidService;
-import com.realive.service.notification.NotificationService;
+//import com.realive.service.notification.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -30,7 +30,7 @@ public class BidServiceImpl implements BidService {
     private final BidRepository bidRepository;
     private final AuctionRepository auctionRepository;
     private final CustomerRepository customerRepository;
-    private final NotificationService notificationService;
+//    private final NotificationService notificationService;
 
     @Override
     public BidResponseDTO placeBid(Integer auctionId, Integer customerId, BidRequestDTO requestDTO) {
@@ -53,19 +53,19 @@ public class BidServiceImpl implements BidService {
         Bid savedBid = bidRepository.save(bid);
         
         // 이전 입찰자에게 알림
-        if (auction.getCurrentPrice() != null && auction.getCurrentPrice() < requestDTO.getBidPrice()) {
-            // 현재 입찰자 ID를 가져오기 위해 가장 최근 입찰 조회
-            Bid currentBid = bidRepository.findTopByAuctionIdOrderByBidPriceDesc(auctionId)
-                    .orElse(null);
-            
-            if (currentBid != null && !currentBid.getCustomerId().equals(customerId)) {
-                notificationService.sendBidOutbidNotification(
-                    currentBid.getCustomerId(),
-                    auctionId,
-                    requestDTO.getBidPrice()
-                );
-            }
-        }
+//        if (auction.getCurrentPrice() != null && auction.getCurrentPrice() < requestDTO.getBidPrice()) {
+//            // 현재 입찰자 ID를 가져오기 위해 가장 최근 입찰 조회
+//            Bid currentBid = bidRepository.findTopByAuctionIdOrderByBidPriceDesc(auctionId)
+//                    .orElse(null);
+//
+//            if (currentBid != null && !currentBid.getCustomerId().equals(customerId)) {
+//                notificationService.sendBidOutbidNotification(
+//                    currentBid.getCustomerId(),
+//                    auctionId,
+//                    requestDTO.getBidPrice()
+//                );
+//            }
+//        }
 
         return BidResponseDTO.fromEntity(savedBid, customer.getName());
     }
