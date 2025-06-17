@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Sort;
 
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -27,8 +26,8 @@ public class CustomerAuctionController {
     @GetMapping
     public ResponseEntity<ApiResponse<Page<AuctionResponseDTO>>> getActiveAuctions(
             @PageableDefault(size = 10, sort = "endTime", direction = Sort.Direction.ASC) Pageable pageable,
-            @RequestParam(required = false) String category,
-            @RequestParam(required = false) String status
+            @RequestParam(name = "category", required = false) String category,
+            @RequestParam(name = "status", required = false) String status
     ) {
         log.info("GET /api/customer/auctions - 고객 경매 목록 조회. Category: {}, Status: {}", category, status);
         try {

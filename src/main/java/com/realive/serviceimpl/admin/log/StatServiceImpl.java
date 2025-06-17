@@ -20,6 +20,7 @@ import com.realive.dto.logs.salessum.MonthlySalesLogDetailListDTO;
 import com.realive.dto.logs.salessum.MonthlySalesSummaryDTO;
 import com.realive.dto.logs.salessum.SalesLogDetailListDTO;
 import com.realive.repository.admin.approval.ApprovalRepository;
+import com.realive.repository.customer.CustomerRepository;
 import com.realive.repository.logs.CommissionLogRepository;
 import com.realive.repository.logs.PayoutLogRepository;
 import com.realive.repository.logs.PenaltyLogRepository;
@@ -67,12 +68,10 @@ public class StatServiceImpl implements StatService {
     private final PayoutLogRepository payoutLogRepository;
     private final CommissionLogRepository commissionLogRepository;
     private final SellerRepository sellerRepository;
-    // private final UserRepository userRepository;
+    private final CustomerRepository customerRepository;
 
     @Override
     public AdminDashboardDTO getAdminDashboard(LocalDate date, String periodType) {
-        // (이전 최종본과 동일 - 내용 생략)
-        // 핵심: MemberSummaryStatsDTO.builder()에 unique, engaged, active 필드 모두 Mock 데이터 할당
         log.info("getAdminDashboard 호출됨 - 날짜: {}, 기간타입: {}", date, periodType);
 
         LocalDate startDate = date;
@@ -86,87 +85,97 @@ public class StatServiceImpl implements StatService {
         }
         log.debug("조회 기간 설정: {} ~ {}", startDate, endDate);
 
+        // 1. 승인 대기 판매자 수
         int pendingSellerCount = 0;
         if (approvalRepository != null) {
             List<Seller> pendingSellers = approvalRepository.findByIsApprovedFalseAndApprovedAtIsNull();
             pendingSellerCount = pendingSellers.size();
         }
-        log.debug("승인 대기 판매자 수: {}", pendingSellerCount);
 
-        List<SalesWithCommissionDTO> salesWithCommissionsMock = new ArrayList<>();
-        for (int i = 0; i < ThreadLocalRandom.current().nextInt(3, 8); i++) {
-            SalesLogDTO salesLogMock = SalesLogDTO.builder().id(i + 1).orderItemId(i + 101).productId(ThreadLocalRandom.current().nextInt(1, 20))
-                    .sellerId(ThreadLocalRandom.current().nextInt(1, 10)).customerId(ThreadLocalRandom.current().nextInt(1, 50))
-                    .quantity(ThreadLocalRandom.current().nextInt(1, 5)).unitPrice(ThreadLocalRandom.current().nextInt(10000, 50000))
-                    .totalPrice(ThreadLocalRandom.current().nextInt(10000, 250000)).soldAt(date.minusDays(ThreadLocalRandom.current().nextInt(0,3)))
-                    .build();
-            CommissionLogDTO commissionLogMock = CommissionLogDTO.builder().id(i + 1).salesLogId(salesLogMock.getId())
-                    .commissionRate(new BigDecimal(String.valueOf(ThreadLocalRandom.current().nextDouble(0.05, 0.15))))
-                    .commissionAmount((int) (salesLogMock.getTotalPrice() * ThreadLocalRandom.current().nextDouble(0.05, 0.15)))
-                    .recordedAt(date.atTime(LocalTime.now().minusHours(i))).build();
-            salesWithCommissionsMock.add(SalesWithCommissionDTO.builder().salesLog(salesLogMock).commissionLog(commissionLogMock).build());
+        // 2. 판매 및 커미션 데이터
+        List<SalesWithCommissionDTO> salesWithCommissions = new ArrayList<>();
+        List<SalesLog> dailySalesLogs = salesLogRepository.findBySoldAt(date);
+        for (SalesLog sale : dailySalesLogs) {
+            SalesLogDTO salesLogDTO = SalesLogDTO.fromEntity(sale);
+            Optional<CommissionLog> commissionOpt = commissionLogRepository.findBySalesLogId(sale.getId());
+            CommissionLogDTO commissionLogDTO = commissionOpt.map(CommissionLogDTO::fromEntity).orElse(null);
+            salesWithCommissions.add(SalesWithCommissionDTO.builder()
+                    .salesLog(salesLogDTO)
+                    .commissionLog(commissionLogDTO)
+                    .build());
         }
-        List<PayoutLogDTO> payoutLogsMock = new ArrayList<>();
-        for (int i = 0; i < ThreadLocalRandom.current().nextInt(1, 4); i++) {
-            payoutLogsMock.add(PayoutLogDTO.builder().id(i + 1).sellerId(ThreadLocalRandom.current().nextInt(1, 10))
-                    .periodStart(date.minusDays(7+i)).periodEnd(date.minusDays(i))
-                    .totalSales(ThreadLocalRandom.current().nextInt(1000000, 5000000))
-                    .totalCommission(ThreadLocalRandom.current().nextInt(100000, 500000))
-                    .payoutAmount(ThreadLocalRandom.current().nextInt(900000, 4500000))
-                    .processedAt(date.atTime(LocalTime.NOON).minusDays(i)).build());
-        }
+
+        // 3. 정산 데이터
+        List<PayoutLogDTO> payoutLogs = new ArrayList<>();
+        LocalDateTime startOfDay = date.atStartOfDay();
+        LocalDateTime endOfDay = date.atTime(LocalTime.MAX);
+        List<PayoutLog> payoutEntities = payoutLogRepository.findByProcessedAtBetween(startOfDay, endOfDay);
+        payoutLogs = payoutEntities.stream()
+                .map(PayoutLogDTO::fromEntity)
+                .collect(Collectors.toList());
+
         ProductLogDTO productLog = ProductLogDTO.builder()
-                .salesWithCommissions(salesWithCommissionsMock)
-                .payoutLogs(payoutLogsMock)
+                .salesWithCommissions(salesWithCommissions)
+                .payoutLogs(payoutLogs)
                 .build();
 
-        List<PenaltyLogDTO> penaltyLogsMock = new ArrayList<>();
-        for (int i = 0; i < ThreadLocalRandom.current().nextInt(0, 3); i++) {
-            penaltyLogsMock.add(PenaltyLogDTO.builder().id(i + 1).customerId(ThreadLocalRandom.current().nextInt(1, 50))
-                    .reason("Mock Penalty Reason " + (i+1)).points(ThreadLocalRandom.current().nextInt(10, 50))
-                    .description("Mock penalty description.").createdAt(date.atTime(LocalTime.now().minusHours(i*2))).build());
-        }
+        // 4. 패널티 데이터
+        List<PenaltyLogDTO> penaltyLogs = new ArrayList<>();
+        List<PenaltyLog> penaltyEntities = penaltyLogRepository.findByCreatedAtBetween(startOfDay, endOfDay);
+        penaltyLogs = penaltyEntities.stream()
+                .map(PenaltyLogDTO::fromEntity)
+                .collect(Collectors.toList());
+
+        // 5. 회원 통계
+        long totalSellers = sellerRepository.count();
+        long totalCustomers = customerRepository.count();
+        long activeSellers = sellerRepository.countByIsActiveTrue();
+        long activeCustomers = customerRepository.countActiveUsers();
 
         MemberSummaryStatsDTO memberSummaryStats = MemberSummaryStatsDTO.builder()
-                .totalMembers(10000L + ThreadLocalRandom.current().nextLong(1000))
-                .newMembersInPeriod(ThreadLocalRandom.current().nextLong(
-                        "DAILY".equalsIgnoreCase(periodType) ? 10 : 200,
-                        "DAILY".equalsIgnoreCase(periodType) ? 30 : 500
-                ))
-                .uniqueVisitorsInPeriod(ThreadLocalRandom.current().nextLong(
-                        "DAILY".equalsIgnoreCase(periodType) ? 500 : 5000,
-                        "DAILY".equalsIgnoreCase(periodType) ? 2000 : 20000
-                ))
-                .engagedUsersInPeriod(ThreadLocalRandom.current().nextLong(
-                        "DAILY".equalsIgnoreCase(periodType) ? 100 : 1000,
-                        "DAILY".equalsIgnoreCase(periodType) ? 500 : 5000
-                ))
-                .activeUsersInPeriod(ThreadLocalRandom.current().nextLong(
-                        "DAILY".equalsIgnoreCase(periodType) ? 80 : 800,
-                        "DAILY".equalsIgnoreCase(periodType) ? 400 : 4000
-                ))
+                .totalMembers(totalSellers + totalCustomers)
+                .newMembersInPeriod(0L)
+                .uniqueVisitorsInPeriod(0L)
+                .engagedUsersInPeriod(0L)
+                .activeUsersInPeriod(activeSellers + activeCustomers)
                 .build();
 
-        SalesSummaryStatsDTO salesSummaryStatsForDashboard = SalesSummaryStatsDTO.builder()
-                .totalOrdersInPeriod(ThreadLocalRandom.current().nextLong("DAILY".equalsIgnoreCase(periodType) ? 20 : 400, "DAILY".equalsIgnoreCase(periodType) ? 80 : 1000))
-                .totalRevenueInPeriod(ThreadLocalRandom.current().nextDouble("DAILY".equalsIgnoreCase(periodType) ? 1000000 : 20000000, "DAILY".equalsIgnoreCase(periodType) ? 5000000 : 80000000))
-                .totalFeesInPeriod(ThreadLocalRandom.current().nextDouble(100000, 1000000)).build();
+        // 6. 판매 통계
+        Integer totalSalesAmount = salesLogRepository.sumTotalPriceBySoldAtBetween(startDate, endDate);
+        Long totalOrders = salesLogRepository.countDistinctOrdersBySoldAtBetween(startDate, endDate);
+        Integer totalFees = commissionLogRepository.sumCommissionAmountBySellerAndDateRange(null, startDate, endDate);
+
+        SalesSummaryStatsDTO salesSummaryStats = SalesSummaryStatsDTO.builder()
+                .totalOrdersInPeriod(totalOrders != null ? totalOrders : 0L)
+                .totalRevenueInPeriod(totalSalesAmount != null ? totalSalesAmount.doubleValue() : 0.0)
+                .totalFeesInPeriod(totalFees != null ? totalFees.doubleValue() : 0.0)
+                .build();
+
+        // 7. 경매 통계 (TODO: 실제 경매 관련 Repository 구현 필요)
         AuctionSummaryStatsDTO auctionSummaryStats = AuctionSummaryStatsDTO.builder()
-                .totalAuctionsInPeriod(ThreadLocalRandom.current().nextLong(5, 20)).totalBidsInPeriod(ThreadLocalRandom.current().nextLong(50, 200))
-                .averageBidsPerAuctionInPeriod(ThreadLocalRandom.current().nextDouble(3, 10)).successRate(ThreadLocalRandom.current().nextDouble(0.5, 0.85))
-                .failureRate(ThreadLocalRandom.current().nextDouble(0.1, 0.3)).build();
+                .totalAuctionsInPeriod(0L)
+                .totalBidsInPeriod(0L)
+                .averageBidsPerAuctionInPeriod(0.0)
+                .successRate(0.0)
+                .failureRate(0.0)
+                .build();
+
+        // 8. 리뷰 통계 (TODO: 실제 리뷰 관련 Repository 구현 필요)
         ReviewSummaryStatsDTO reviewSummaryStats = ReviewSummaryStatsDTO.builder()
-                .totalReviewsInPeriod(ThreadLocalRandom.current().nextLong(20, 100)).newReviewsInPeriod(ThreadLocalRandom.current().nextLong(5, 30))
-                .averageRatingInPeriod(ThreadLocalRandom.current().nextDouble(3.0, 4.9)).deletionRate(ThreadLocalRandom.current().nextDouble(0.0, 0.1)).build();
+                .totalReviewsInPeriod(0L)
+                .newReviewsInPeriod(0L)
+                .averageRatingInPeriod(0.0)
+                .deletionRate(0.0)
+                .build();
 
         return AdminDashboardDTO.builder()
                 .queryDate(date)
                 .periodType(periodType.toUpperCase())
                 .pendingSellerCount(pendingSellerCount)
                 .productLog(productLog)
-                .penaltyLogs(penaltyLogsMock)
+                .penaltyLogs(penaltyLogs)
                 .memberSummaryStats(memberSummaryStats)
-                .salesSummaryStats(salesSummaryStatsForDashboard)
+                .salesSummaryStats(salesSummaryStats)
                 .auctionSummaryStats(auctionSummaryStats)
                 .reviewSummaryStats(reviewSummaryStats)
                 .build();

@@ -74,11 +74,8 @@ public class SellerServiceImpl implements SellerService{
 
     // 판매자 정보 조회
     @Override
-    public SellerResponseDTO getMyInfo(String email){
-        // 이메일로 판매자 찾기
-        Seller seller = sellerRepository.findByEmail(email)
-                .orElseThrow(()-> new IllegalArgumentException("존재하지 않는 판매자입니다."));
-
+    public SellerResponseDTO getMyInfo(Seller seller){
+        
         // 판매자 정보 생성
         return SellerResponseDTO.builder()
                 .email(seller.getEmail())
@@ -115,6 +112,7 @@ public class SellerServiceImpl implements SellerService{
                 .phone(dto.getPhone())
                 .password(encodedPassword)
                 .businessNumber(dto.getBusinessNumber())
+                .isActive(true)
                 .isApproved(false)
                 .build();
         //dto 받은거 저장.
@@ -126,10 +124,10 @@ public class SellerServiceImpl implements SellerService{
     //회원수정
     @Override
     @Transactional
-    public void updateSeller(String email, SellerUpdateDTO dto) {
-        // 이메일로 판매자 찾기
-        Seller seller = sellerRepository.findByEmail(email)
-                .orElseThrow(()-> new IllegalArgumentException("존재하지 않는 판매자입니다."));
+    public void updateSeller(Seller seller, SellerUpdateDTO dto) {
+        // 판매자 정보 조회 
+        seller.setName(dto.getName());
+        seller.setPhone(dto.getPhone());
         //판매자 이름 수정 및 검증
         if (!seller.getName().equals(dto.getName())) {
             if(sellerRepository.existsByName(dto.getName())){

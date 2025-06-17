@@ -35,6 +35,7 @@ public class BidServiceImpl implements BidService {
     private final CustomerRepository customerRepository;
     private final TickSizeCalculator tickSizeCalculator;
 
+    // 동시성 제어
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public BidResponseDTO placeBid(Integer auctionId, Integer customerId, BidRequestDTO requestDTO) {

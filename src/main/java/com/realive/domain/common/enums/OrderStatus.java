@@ -15,6 +15,7 @@ public enum OrderStatus {
     REFUND_COMPLETED("환불완료"),
 
     // 배송 연계 상태 (OrderService 로직에서 참조)
+    INIT("초기상태"),  // ← 추가
     DELIVERY_PREPARING("배송준비중"),
     DELIVERY_IN_PROGRESS("배송중"),
     DELIVERY_COMPLETED("배송완료"),

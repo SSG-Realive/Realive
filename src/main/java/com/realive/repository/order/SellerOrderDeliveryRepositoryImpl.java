@@ -22,76 +22,77 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class SellerOrderDeliveryRepositoryImpl implements SellerOrderDeliveryRepositoryCustom {
-    
+
     private final JPAQueryFactory queryFactory;
 
-   @Override
-public Page<SellerOrderListDTO> getOrderListBySeller(
-        Long sellerId,
-        SellerOrderSearchCondition condition,
-        Pageable pageable) {
+    @Override
+    public Page<SellerOrderListDTO> getOrderListBySeller(
+            Long sellerId,
+            SellerOrderSearchCondition condition,
+            Pageable pageable) {
 
-    QOrderItem orderItem = QOrderItem.orderItem;
-    QOrder order = QOrder.order;
-    QProduct product = QProduct.product;
-    QOrderDelivery delivery = QOrderDelivery.orderDelivery;
-    QCustomer customer = QCustomer.customer;
-    QSeller seller = QSeller.seller;
+        QOrderItem orderItem = QOrderItem.orderItem;
+        QOrder order = QOrder.order;
+        QProduct product = QProduct.product;
+        QOrderDelivery delivery = QOrderDelivery.orderDelivery;
+        QCustomer customer = QCustomer.customer;
+        QSeller seller = QSeller.seller;
 
-    BooleanBuilder builder = new BooleanBuilder();
-    builder.and(seller.id.eq(sellerId));
+        BooleanBuilder builder = new BooleanBuilder();
+        builder.and(seller.id.eq(sellerId));
 
-    if (StringUtils.hasText(condition.getProductName())) {
-        builder.and(product.name.containsIgnoreCase(condition.getProductName()));
+        if (StringUtils.hasText(condition.getProductName())) {
+            builder.and(product.name.containsIgnoreCase(condition.getProductName()));
+        }
+
+        if (condition.getDeliveryStatus() != null) {
+            builder.and(delivery.status.eq(condition.getDeliveryStatus()));
+        }
+
+        if (condition.getFromDate() != null) {
+            builder.and(order.orderedAt.goe(condition.getFromDate()));
+        }
+
+        if (condition.getToDate() != null) {
+            builder.and(order.orderedAt.loe(condition.getToDate()));
+        }
+
+        // 실제 데이터 조회
+        var results = queryFactory
+                .select(Projections.constructor(SellerOrderListDTO.class,
+                        order.id,
+                        product.name,
+                        customer.name,
+                        orderItem.quantity,
+                        delivery.status,
+                        delivery.trackingNumber,
+                        delivery.startDate,
+                        delivery.completeDate,
+                        order.orderedAt
+                        
+                ))
+                .from(orderItem)
+                .join(orderItem.order, order)
+                .join(orderItem.product, product)
+                .join(product.seller, seller)
+                .join(order.customer, customer)
+                .leftJoin(delivery).on(delivery.order.eq(order))
+                .where(builder)
+                .orderBy(order.orderedAt.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        // 카운트 쿼리
+        long total = queryFactory
+                .select(order.count())
+                .from(orderItem)
+                .join(orderItem.order, order)
+                .join(orderItem.product, product)
+                .join(product.seller, seller)
+                .where(builder)
+                .fetchOne();
+
+        return new PageImpl<>(results, pageable, total);
     }
-
-    if (condition.getDeliveryStatus() != null) {
-        builder.and(delivery.status.eq(condition.getDeliveryStatus()));
-    }
-
-    if (condition.getFromDate() != null) {
-        builder.and(order.OrderedAt.goe(condition.getFromDate()));
-    }
-
-    if (condition.getToDate() != null) {
-        builder.and(order.OrderedAt.loe(condition.getToDate()));
-    }
-
-    // 실제 데이터 조회
-    var results = queryFactory
-    .select(Projections.constructor(SellerOrderListDTO.class,
-        order.id,
-        product.name,
-        customer.name,
-        orderItem.quantity,
-        delivery.status,
-        delivery.trackingNumber,
-        delivery.startDate,
-        delivery.completeDate,
-        order.OrderedAt
-    ))
-    .from(orderItem)
-    .join(orderItem.order, order)
-    .join(orderItem.product, product)
-    .join(product.seller, seller)
-    .join(order.customer, customer)
-    .leftJoin(delivery).on(delivery.order.eq(order))
-    .where(builder)
-    .offset(pageable.getOffset())
-    .limit(pageable.getPageSize())
-    .fetch();
-
-    // 카운트 쿼리
-    long total = queryFactory
-        .select(order.count())
-        .from(orderItem)
-        .join(orderItem.order, order)
-        .join(orderItem.product, product)
-        .join(product.seller, seller)
-        .where(builder)
-        .fetchOne();
-
-    return new PageImpl<SellerOrderListDTO>(results, pageable, total);
 }
-    }
-

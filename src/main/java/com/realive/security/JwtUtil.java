@@ -33,6 +33,7 @@ public class JwtUtil {
 
     @PostConstruct
     public void init() {
+        System.out.println("[JWT 초기화] secretKey: " + secretKey); // ✅ 여기에 추가
         this.key = Keys.hmacShaKeyFor(secretKey.getBytes());
     }
 
@@ -46,7 +47,7 @@ public class JwtUtil {
      * @param duration 토큰 만료 기간 (밀리초)
      * @return 생성된 JWT 토큰 문자열
      */
-    private String generateToken(String subject, Long id, String email, String name, long duration) {
+    private String generateToken(String subject, Long id, String email, String name, long duration, String role) {
         JwtBuilder builder = Jwts.builder()
                 .setSubject(subject)
                 .claim("id", id)
@@ -59,6 +60,9 @@ public class JwtUtil {
         if (name != null) {
             builder.claim("name", name);
         }
+         if (role != null) {
+        builder.claim("auth", role);
+    }
 
         return builder
                 .signWith(key, SignatureAlgorithm.HS256)
@@ -67,24 +71,24 @@ public class JwtUtil {
 
     // 판매자 access 토큰 생성
     public String generateAccessToken(Seller seller) {
-        return generateToken(SUBJECT_SELLER, seller.getId(), seller.getEmail(), seller.getName(), expiration);
+        return generateToken(SUBJECT_SELLER, seller.getId(), seller.getEmail(), seller.getName(), expiration, "ROLE_SELLER");
     }
 
     // 판매자 refresh 토큰 생성
     public String generateRefreshToken(Seller seller) {
         long refreshDuration = expiration * 24 * 7;  // 7일간 유효
-        return generateToken(SUBJECT_SELLER_REFRESH, seller.getId(), null, null, refreshDuration);
+        return generateToken(SUBJECT_SELLER_REFRESH, seller.getId(), null, null, refreshDuration,"ROLE_SELLER");
     }
 
     // 관리자 access 토큰 생성
     public String generateAccessToken(Admin admin) {
-        return generateToken(SUBJECT_ADMIN, Long.valueOf(admin.getId()), admin.getEmail(), admin.getName(), expiration);
+        return generateToken(SUBJECT_ADMIN, Long.valueOf(admin.getId()), admin.getEmail(), admin.getName(), expiration, "ROLE_ADMIN");
     }
 
     // 관리자 refresh 토큰 생성
     public String generateRefreshToken(Admin admin) {
         long refreshDuration = expiration * 24 * 7;  // 7일간 유효
-        return generateToken(SUBJECT_ADMIN_REFRESH, Long.valueOf(admin.getId()), null, null, refreshDuration);
+        return generateToken(SUBJECT_ADMIN_REFRESH, Long.valueOf(admin.getId()), null, null, refreshDuration,  "ROLE_ADMIN");
     }
 
     // 토큰 검증

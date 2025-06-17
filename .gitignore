@@ -21,6 +21,7 @@ desktop.ini
 *.class
 *.log
 *.jar
+!gradle/wrapper/gradle-wrapper.jar
 *.war
 *.ear
 *.nar
@@ -119,3 +120,4 @@ dist/
 # -------------------------------------
 # 업로드 파일 / 기타
 uploads/
+.idea/workspace.xml
