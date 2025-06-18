@@ -30,6 +30,4 @@ public class Bid extends BaseTimeEntity {
 
     @Column(name = "bid_time")
     private LocalDateTime bidTime;
-
-
 }

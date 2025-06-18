@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 public class AuctionListResponseDTO {
 
     private final Integer id;
-    private final Integer productId;
     private final Integer startPrice;
     private final Integer currentPrice;
     private final LocalDateTime endTime;
@@ -21,7 +20,6 @@ public class AuctionListResponseDTO {
     public static AuctionListResponseDTO fromEntity(com.realive.domain.auction.Auction entity) {
         return AuctionListResponseDTO.builder()
                 .id(entity.getId())
-                .productId(entity.getProductId())
                 .startPrice(entity.getStartPrice())
                 .currentPrice(entity.getCurrentPrice())
                 .endTime(entity.getEndTime())

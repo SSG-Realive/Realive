@@ -1,5 +1,6 @@
 package com.realive.dto.auction;
 
+import com.realive.domain.auction.Auction;
 import com.realive.domain.common.enums.AuctionStatus;
 import lombok.*;
 import java.time.LocalDateTime;
@@ -13,7 +14,6 @@ import java.time.LocalDateTime;
 public class AuctionResponseDTO {
 
     private Integer id;
-    private Integer productId;
     private Integer startPrice;
     private Integer currentPrice;
     private LocalDateTime startTime;
@@ -24,14 +24,13 @@ public class AuctionResponseDTO {
 
     private AdminProductDTO adminProduct;
 
-    public static AuctionResponseDTO fromEntity(com.realive.domain.auction.Auction auction, AdminProductDTO productDTO) {
+    public static AuctionResponseDTO fromEntity(Auction auction, AdminProductDTO productDTO) {
         if (auction == null) {
             throw new IllegalArgumentException("경매 정보는 null일 수 없습니다.");
         }
 
         return AuctionResponseDTO.builder()
                 .id(auction.getId())
-                .productId(auction.getProductId())
                 .startPrice(auction.getStartPrice())
                 .currentPrice(auction.getCurrentPrice())
                 .startTime(auction.getStartTime())

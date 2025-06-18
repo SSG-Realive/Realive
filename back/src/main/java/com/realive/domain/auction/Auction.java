@@ -20,8 +20,9 @@ public class Auction extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "product_id", nullable = false)
-    private Integer productId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "admin_product_id", nullable = false)
+    private AdminProduct adminProduct;
 
     @Column(name = "start_price", nullable = false)
     private Integer startPrice;
@@ -37,6 +38,7 @@ public class Auction extends BaseTimeEntity {
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
+    @Builder.Default
     private AuctionStatus status = AuctionStatus.PROCEEDING;
 
     @PrePersist

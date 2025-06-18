@@ -10,6 +10,7 @@ import org.springframework.security.access.AccessDeniedException; // 명시적 i
 
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.List;
 
 public interface AuctionService {
 
@@ -61,6 +62,13 @@ public interface AuctionService {
      * @return 진행 중인 경매 정보 Optional 객체. 없을 경우 Optional.empty() 반환.
      */
     Optional<AuctionResponseDTO> getCurrentAuctionForProduct(Integer productId);
+
+    /**
+     * (관리자가) 특정 상품의 모든 경매 이력을 조회합니다.
+     * @param productId 상품 ID
+     * @return 해당 상품의 모든 경매 이력 목록
+     */
+    List<AuctionResponseDTO> getAuctionsByProductId(Integer productId);
 
     /**
      * 경매를 취소/중단합니다.

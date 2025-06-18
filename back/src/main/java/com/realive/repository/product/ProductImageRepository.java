@@ -23,4 +23,7 @@ public interface ProductImageRepository extends JpaRepository<ProductImage, Long
             "AND pi.mediaType = :mediaType")
     List<Object[]> findThumbnailUrlsByProductIds(@Param("productIds") List<Long> productIds,
                                                  @Param("mediaType") MediaType mediaType);
+
+    // ✅ 여러 상품 ID에 대한 썸네일 이미지/영상 목록을 한 번에 조회
+    List<ProductImage> findByProductIdInAndIsThumbnailTrueAndMediaType(List<Long> productIds, MediaType mediaType);
 }
