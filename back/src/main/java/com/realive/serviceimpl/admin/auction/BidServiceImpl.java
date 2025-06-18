@@ -44,6 +44,15 @@ public class BidServiceImpl implements BidService {
         validateAuction(auction);
         validateBidAmount(auction, requestDTO.getBidPrice());
 
+        // 같은 금액으로 연속 입찰 불가
+        bidRepository.findTopByAuctionIdAndCustomerIdOrderByBidTimeDesc(auctionId, customerId)
+                .ifPresent(lastBid -> {
+                    if (lastBid.getBidPrice().equals(requestDTO.getBidPrice())) {
+                        throw new IllegalArgumentException("동일 금액으로 연속 입찰할 수 없습니다.");
+                    }
+                });
+
+
         Bid bid = Bid.builder()
                 .auctionId(auctionId)
                 .customerId(customerId)
@@ -52,7 +61,7 @@ public class BidServiceImpl implements BidService {
                 .build();
 
         Bid savedBid = bidRepository.save(bid);
-        
+
         // 이전 입찰자에게 알림
 //        if (auction.getCurrentPrice() != null && auction.getCurrentPrice() < requestDTO.getBidPrice()) {
 //            // 현재 입찰자 ID를 가져오기 위해 가장 최근 입찰 조회

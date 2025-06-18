@@ -14,6 +14,9 @@ import java.util.Optional;
 @Repository
 public interface BidRepository extends JpaRepository<Bid, Integer> {
 
+    // 최근 입찰 1건만 가져오기 (해당 경매 & 해당 고객 기준)
+    Optional<Bid> findTopByAuctionIdAndCustomerIdOrderByBidTimeDesc(Integer auctionId, Integer customerId);
+
     // JpaRepository에서 기본 제공하지만, 명시적으로 선언하여 가독성을 높일 수 있음
     Optional<Bid> findById(Integer id);
 
@@ -49,6 +52,6 @@ public interface BidRepository extends JpaRepository<Bid, Integer> {
     @Query("SELECT b FROM Bid b WHERE b.auctionId = :auctionId ORDER BY b.bidPrice DESC")
     Page<Bid> findByAuctionIdOrderByBidPriceDesc(@Param("auctionId") Integer auctionId, Pageable pageable);
     
-    @Query("SELECT b FROM Bid b WHERE b.auctionId = :auctionId ORDER BY b.bidPrice DESC")
-    Optional<Bid> findTopByAuctionIdOrderByBidPriceDesc(@Param("auctionId") Integer auctionId);
+    // 최고가 입찰 여러 개 반환(동점 가능성)
+    List<Bid> findTopByAuctionIdOrderByBidPriceDesc(@Param("auctionId") Integer auctionId);
 }

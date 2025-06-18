@@ -31,9 +31,9 @@ public class AdminBidController {
     @GetMapping("/auction/{auctionId}")
     public ResponseEntity<ApiResponse<Page<BidResponseDTO>>> getBidsForAuction(
             @PathVariable Integer auctionId,
-            @PageableDefault(size = 20, sort = "bidTime,desc") Pageable pageable,
+            @PageableDefault(size = 20, sort = "bidTime", direction = Sort.Direction.DESC) Pageable pageable,
             @AuthenticationPrincipal AdminPrincipal adminPrincipal) {
-        log.info("GET /api/admin/bids/auction/{} - 관리자가 특정 경매 입찰 내역 조회. AdminId: {}", 
+        log.info("GET /api/admin/bids/auction/{} - 관리자가 특정 경매 입찰 내역 조회. AdminId: {}",
                 auctionId, adminPrincipal.getAdmin().getId());
         try {
             Page<BidResponseDTO> bids = bidService.getBidsByAuction(auctionId, pageable);
@@ -48,7 +48,7 @@ public class AdminBidController {
     @GetMapping("/customer/{customerId}")
     public ResponseEntity<ApiResponse<Page<BidResponseDTO>>> getCustomerBids(
             @PathVariable Long customerId,
-            @PageableDefault(size = 20, sort = "bidTime,desc") Pageable pageable,
+            @PageableDefault(size = 20, sort = "bidTime", direction = Sort.Direction.DESC) Pageable pageable,
             @AuthenticationPrincipal AdminPrincipal adminPrincipal) {
         log.info("GET /api/admin/bids/customer/{} - 관리자가 고객 입찰 내역 조회. AdminId: {}", 
                 customerId, adminPrincipal.getAdmin().getId());

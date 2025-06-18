@@ -29,13 +29,19 @@ public class AuctionResponseDTO {
             throw new IllegalArgumentException("경매 정보는 null일 수 없습니다.");
         }
 
+        // endTime이 지났고, 아직 PROCEEDING이면 동적으로 COMPLETED로 반환
+        AuctionStatus dynamicStatus = auction.getStatus();
+        if (dynamicStatus == AuctionStatus.PROCEEDING && auction.getEndTime() != null && auction.getEndTime().isBefore(java.time.LocalDateTime.now())) {
+            dynamicStatus = AuctionStatus.COMPLETED;
+        }
+
         return AuctionResponseDTO.builder()
                 .id(auction.getId())
                 .startPrice(auction.getStartPrice())
                 .currentPrice(auction.getCurrentPrice())
                 .startTime(auction.getStartTime())
                 .endTime(auction.getEndTime())
-                .status(auction.getStatus())
+                .status(dynamicStatus)
                 .createdAt(auction.getCreatedAt())
                 .updatedAt(auction.getUpdatedAt())
                 .adminProduct(productDTO)
