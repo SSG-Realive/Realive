@@ -81,10 +81,10 @@ public class AuctionServiceImpl implements AuctionService {
         Product originalProduct = productRepository.findById(adminProduct.getProductId().longValue())
                 .orElseThrow(() -> new NoSuchElementException("경매 대상 원본 상품 정보를 찾을 수 없습니다. Product ID: " + adminProduct.getProductId()));
 
-        if (!originalProduct.isActive()) {
-            log.warn("관리자(ID:{}) 경매 등록 실패 - Product ID {}의 상태가 비활성임.",
-                    adminUserId, originalProduct.getId());
-            throw new IllegalStateException("비활성 상태의 상품은 경매에 등록할 수 없습니다.");
+        if (adminProduct.isAuctioned()) {
+            log.warn("관리자(ID:{}) 경매 등록 실패 - AdminProduct ID {}는 이미 경매에 등록됨.",
+                    adminUserId, adminProduct.getId());
+            throw new IllegalStateException("이미 경매에 등록된 관리자 상품입니다.");
         }
 
         // 4. 경매 엔티티 생성 및 저장

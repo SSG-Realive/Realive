@@ -91,8 +91,11 @@ public class AdminProductServiceImpl implements AdminProductService {
 
         // 7. 판매자의 상품 수량 감소
         product.setStock(product.getStock() - 1);
-        product.setActive(false);
+        if (product.getStock() == 0) {
+            product.setActive(false);
+        }
         productRepository.save(product);
+
 
         // 8. AdminProduct 생성
         AdminProduct adminProduct = AdminProduct.builder()
