@@ -16,7 +16,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.List;
 
-// 관리자용 jwt 인증 필터
+// [Admin] JWT 토큰을 이용한 인증 필터
+
 @Component
 @RequiredArgsConstructor
 @Slf4j

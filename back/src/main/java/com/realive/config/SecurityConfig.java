@@ -94,7 +94,7 @@ public class SecurityConfig {
                 .securityMatcher("/api/admin/**")
                 .authenticationManager(authenticationManager()) // 명시적 연결
                 .csrf(csrf -> csrf.disable())
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))  // ★ 추가!
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/admin/login").permitAll()
