@@ -47,7 +47,6 @@ public class SecurityConfig {
     private final AdminJwtAuthenticationFilter adminJwtAuthenticationFilter;
     private final CustomLoginSuccessHandler customLoginSuccessHandler;
 
-
     @Autowired
     @Qualifier("customUserDetailsService")
     private UserDetailsService customUserDetailsService;
@@ -153,10 +152,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/public/**", "/api/auth/**").permitAll()
                         .requestMatchers("/api/oauth2/**").permitAll()
-                        .requestMatchers("/api/customer/**").hasAuthority("ROLE_CUSTOMER")
+                        .requestMatchers("/api/customer/**").hasAnyAuthority("ROLE_CUSTOMER", "ROLE_USER")
                         .anyRequest().denyAll()
                 )
-                .oauth2Login(config -> config.successHandler(customLoginSuccessHandler))
                 .addFilterBefore(customerJwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
@@ -207,7 +205,6 @@ public class SecurityConfig {
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", corsConfiguration);
-
         return source;
     }
 }

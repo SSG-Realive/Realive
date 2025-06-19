@@ -4,13 +4,16 @@ package com.realive.controller.public_api;
 import com.realive.domain.customer.Customer;
 import com.realive.dto.customer.login.CustomerLoginRequestDTO;
 import com.realive.dto.customer.login.CustomerLoginResponseDTO;
+import com.realive.dto.customer.member.MemberJoinDTO;
 import com.realive.repository.customer.CustomerRepository;
 import com.realive.security.JwtUtil;
 import com.realive.security.customer.CustomerPrincipal;
+import com.realive.service.customer.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +26,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/public/auth")
@@ -38,6 +43,7 @@ public class LoginController {
     private final UserDetailsService customUserDetailsService;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final MemberService memberService;
 
 
     @PostMapping("/login")
@@ -91,7 +97,16 @@ public class LoginController {
         }
     }
 
-
+    // 일반 회원가입
+    @PostMapping("/join")
+    public ResponseEntity<?> registerMember(@RequestBody @Valid MemberJoinDTO dto) {
+        String token = memberService.register(dto);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(Map.of(
+                        "message", "회원가입 성공",
+                        "token", token
+                ));
+    }
 
 
 }
