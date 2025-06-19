@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Builder
 public class PenaltyLogDTO {
     private final Integer id;
-    private final Integer customerId;
+    private final Long customerId;
     private final String reason;
     private final Integer points;
     private final String description;

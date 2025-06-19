@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 @Builder
 public class BidHistoryDTO {
     private final Integer bidId;
-    private final Integer customerId;
+    private final Long customerId;
     private final String customerName;
     private final Integer bidPrice;
     private final LocalDateTime bidTime;

@@ -53,7 +53,7 @@ public class AdminBidController {
         log.info("GET /api/admin/bids/customer/{} - 관리자가 고객 입찰 내역 조회. AdminId: {}", 
                 customerId, adminPrincipal.getAdmin().getId());
         try {
-            Page<BidResponseDTO> bids = bidService.getBidsByCustomer(customerId.intValue(), pageable);
+            Page<BidResponseDTO> bids = bidService.getBidsByCustomer(customerId, pageable);
             return ResponseEntity.ok(ApiResponse.success(bids));
         } catch (Exception e) {
             log.error("관리자가 고객(ID:{}) 입찰 내역 조회 중 알 수 없는 오류 발생", customerId, e);

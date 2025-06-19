@@ -17,7 +17,7 @@ public class BidResponseDTO {
 
     private Integer id;
     private Integer auctionId;
-    private Integer customerId;
+    private Long customerId;
     private Integer bidPrice;
     private LocalDateTime bidTime;
     private String customerName;

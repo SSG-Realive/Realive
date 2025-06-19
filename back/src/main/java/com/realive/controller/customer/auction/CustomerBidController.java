@@ -69,7 +69,7 @@ public class CustomerBidController {
             
             BidResponseDTO placedBid = bidService.placeBid(
                 requestDto.getAuctionId(),
-                customerId.intValue(),
+                customerId,
                 requestDto
             );
             return ResponseEntity.status(HttpStatus.CREATED)
@@ -117,7 +117,7 @@ public class CustomerBidController {
             Long customerId = getAuthenticatedCustomerId();
             
             log.info("GET /api/customer/bids/my-bids - 나의 입찰 내역 조회 요청. CustomerId: {}", customerId);
-            Page<BidResponseDTO> bids = bidService.getBidsByCustomer(customerId.intValue(), pageable);
+            Page<BidResponseDTO> bids = bidService.getBidsByCustomer(customerId, pageable);
             return ResponseEntity.ok(ApiResponse.success(bids));
         } catch (AccessDeniedException e) {
             log.error("입찰 내역 조회 권한 없음 - CustomerId: {}", 

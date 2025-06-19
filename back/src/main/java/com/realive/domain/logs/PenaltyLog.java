@@ -26,7 +26,7 @@ public class PenaltyLog extends BaseTimeEntity{
     private Integer id;
 
     @Column(name = "customer_id")
-    private Integer customerId;
+    private Long customerId;
 
     private String reason;
 
