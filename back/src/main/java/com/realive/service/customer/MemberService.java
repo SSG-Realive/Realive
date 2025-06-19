@@ -82,7 +82,7 @@ public class MemberService {
         customerRepository.save(customer);
 
         // 이메일로 바로 토큰 발급 (Authentication 불필요)
-        return jwtTokenProvider.generateToken(dto.getEmail());
+        return jwtTokenProvider.generateToken(dto.getEmail(), "CUSTOMER");
     }
 
     // 회원정보 조회
