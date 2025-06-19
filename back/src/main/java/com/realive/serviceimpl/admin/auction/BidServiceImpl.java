@@ -35,7 +35,7 @@ public class BidServiceImpl implements BidService {
     // 동시성 제어
     @Override
     public BidResponseDTO placeBid(Integer auctionId, Integer customerId, BidRequestDTO requestDTO) {
-        Auction auction = auctionRepository.findById(auctionId)
+        Auction auction = auctionRepository.findByIdWithLock(auctionId)
                 .orElseThrow(() -> new IllegalArgumentException("경매를 찾을 수 없습니다."));
         
         Customer customer = customerRepository.findById(customerId.longValue())
