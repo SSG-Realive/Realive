@@ -14,7 +14,8 @@ export async function POST(request: Request) {
     return NextResponse.json({
       success: true,
       message: response.data.message,
-      token: response.data.token,
+      accessToken: response.data.accessToken,
+      refreshToken: response.data.refreshToken,
     });
   } catch (error: any) {
     console.error('Signup error:', error);

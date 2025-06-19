@@ -10,14 +10,18 @@ const api = axios.create({
 // 토큰이 필요없는 public API 경로들
 const publicPaths = [
   '/public/auth/login',
-  '/public/auth/join'
+  '/public/auth/join',
+  '/api/public/auth/login',
+  '/api/public/auth/join',
+  '/seller/login',
+  '/admin/login'
 ];
 
 api.interceptors.request.use((config) => {
   // public API 경로인 경우 토큰을 포함하지 않음
   const isPublicPath = publicPaths.some(path => config.url?.includes(path));
   if (!isPublicPath) {
-    const token = useAuthStore.getState().token;
+    const token = useAuthStore.getState().accessToken;
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
