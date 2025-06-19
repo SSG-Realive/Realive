@@ -38,8 +38,8 @@ dependencies {
    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 
    // Redis (경매 낙찰 알림용)
-   implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-   implementation 'io.lettuce:lettuce-core:6.3.1.RELEASE'
+//   implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+//   implementation 'io.lettuce:lettuce-core:6.3.1.RELEASE'
 
    // Jackson (Java 8 Date/Time 지원)
    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
