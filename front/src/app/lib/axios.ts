@@ -10,7 +10,11 @@ const api = axios.create({
 // 토큰이 필요없는 public API 경로들
 const publicPaths = [
   '/public/auth/login',
-  '/public/auth/join'
+  '/public/auth/join',
+  '/api/public/auth/login',
+  '/api/public/auth/join',
+  '/seller/login',
+  '/admin/login'
 ];
 
 api.interceptors.request.use((config) => {
