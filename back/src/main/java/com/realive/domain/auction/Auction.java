@@ -49,4 +49,10 @@ public class Auction extends BaseTimeEntity {
     public boolean isClosed() {
         return status == AuctionStatus.COMPLETED || status == AuctionStatus.CANCELLED;
     }
+
+    @Column(name = "winning_bid_price")
+    private Integer winningBidPrice;
+
+    @Column(name = "winning_customer_id")
+    private Long winningCustomerId;
 }

@@ -16,7 +16,7 @@ public interface BidService {
      * @param requestDTO 입찰 요청 정보
      * @return 입찰 결과
      */
-    BidResponseDTO placeBid(Integer auctionId, Integer customerId, BidRequestDTO requestDTO);
+    BidResponseDTO placeBid(Integer auctionId, Long customerId, BidRequestDTO requestDTO);
 
     /**
      * 특정 경매의 입찰 내역을 조회합니다.
@@ -42,5 +42,5 @@ public interface BidService {
      * @param pageable 페이징 정보
      * @return 입찰 내역 페이지
      */
-    Page<BidResponseDTO> getBidsByCustomer(Integer customerId, Pageable pageable);
+    Page<BidResponseDTO> getBidsByCustomer(Long customerId, Pageable pageable);
 }

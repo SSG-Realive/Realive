@@ -42,13 +42,15 @@ public class AuctionScheduler {
 
         for (Auction auction : endedAuctions) {
             try {
-                // 최고가 입찰 조회 (동점 가능성 있음)
+                // 최고 입찰 조회 (동점 가능성 있음)
                 List<Bid> winningBids = bidRepository.findTopByAuctionIdOrderByBidPriceDesc(auction.getId());
                 Bid winningBid = !winningBids.isEmpty() ? winningBids.get(0) : null;
 
                 if (winningBid != null) {
                     // 낙찰 처리
                     auction.setStatus(AuctionStatus.COMPLETED);
+                    auction.setWinningBidPrice(winningBid.getBidPrice());
+                    auction.setWinningCustomerId(winningBid.getCustomerId());
                     auctionRepository.save(auction);
 
                     // 알림 (옵션)
@@ -57,17 +59,17 @@ public class AuctionScheduler {
                     log.info("✅ 경매 종료 처리 완료 - 경매ID: {}, 낙찰자ID: {}, 낙찰가: {}",
                             auction.getId(), winningBid.getCustomerId(), winningBid.getBidPrice());
                 } else {
-                    // 입찰자 없는 유찰 처리
+                    // 입찰자 없는 경우 유찰 처리
                     auction.setStatus(AuctionStatus.FAILED);
                     auctionRepository.save(auction);
 
                     log.info("⚠️ 경매 유찰 처리 완료 - 경매ID: {}, 사유: 입찰자 없음", auction.getId());
                 }
-
             } catch (Exception e) {
                 log.error("❌ 경매 종료 처리 중 오류 발생 - 경매ID: {}", auction.getId(), e);
             }
         }
+
 
         log.debug("✅ [Scheduler] 경매 스케줄러 실행 완료 at {}", LocalDateTime.now());
     }

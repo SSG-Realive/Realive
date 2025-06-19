@@ -15,7 +15,7 @@ import java.util.Optional;
 public interface BidRepository extends JpaRepository<Bid, Integer> {
 
     // 최근 입찰 1건만 가져오기 (해당 경매 & 해당 고객 기준)
-    Optional<Bid> findTopByAuctionIdAndCustomerIdOrderByBidTimeDesc(Integer auctionId, Integer customerId);
+    Optional<Bid> findTopByAuctionIdAndCustomerIdOrderByBidTimeDesc(Integer auctionId, Long customerId);
 
     // JpaRepository에서 기본 제공하지만, 명시적으로 선언하여 가독성을 높일 수 있음
     Optional<Bid> findById(Integer id);
@@ -38,7 +38,7 @@ public interface BidRepository extends JpaRepository<Bid, Integer> {
      * @param pageable 페이징 정보.
      * @return 입찰 내역 페이지.
      */
-    Page<Bid> findByCustomerIdOrderByBidTimeDesc(Integer customerId, Pageable pageable);
+    Page<Bid> findByCustomerIdOrderByBidTimeDesc(Long customerId, Pageable pageable);
 
     // 만약 Pageable 객체의 Sort 정보를 우선적으로 사용하고 싶다면, 아래와 같이 메소드명에서 OrderBy절을 제거합니다.
     // 이 경우, 서비스 계층에서 PageRequest.of(page, size, Sort.by(Direction.DESC, "bidTime")) 형태로 Sort를 명시해야 합니다.
@@ -47,11 +47,13 @@ public interface BidRepository extends JpaRepository<Bid, Integer> {
 
     List<Bid> findByAuctionId(Integer auctionId);
     Page<Bid> findByAuctionId(Integer auctionId, Pageable pageable);
-    Page<Bid> findByCustomerId(Integer customerId, Pageable pageable);
+    Page<Bid> findByCustomerId(Long customerId, Pageable pageable);
 
     @Query("SELECT b FROM Bid b WHERE b.auctionId = :auctionId ORDER BY b.bidPrice DESC")
     Page<Bid> findByAuctionIdOrderByBidPriceDesc(@Param("auctionId") Integer auctionId, Pageable pageable);
     
     // 최고가 입찰 여러 개 반환(동점 가능성)
     List<Bid> findTopByAuctionIdOrderByBidPriceDesc(@Param("auctionId") Integer auctionId);
+
+    boolean existsByAuctionIdAndBidPrice(Integer auctionId, Integer bidPrice);
 }
