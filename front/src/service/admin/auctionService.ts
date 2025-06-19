@@ -9,7 +9,7 @@ import {
   AuctionSearchParams
 } from '@/types/admin/auction';
 
-const BASE_URL = '/api/admin';
+const BASE_URL = '/admin';
 
 export const adminAuctionService = {
   // 경매 목록 조회
