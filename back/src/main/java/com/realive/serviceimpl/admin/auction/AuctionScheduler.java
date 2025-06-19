@@ -5,7 +5,7 @@ import com.realive.domain.auction.Bid;
 import com.realive.domain.common.enums.AuctionStatus;
 import com.realive.repository.auction.AuctionRepository;
 import com.realive.repository.auction.BidRepository;
-//import com.realive.service.notification.NotificationService;
+// import com.realive.service.notification.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -22,47 +22,53 @@ public class AuctionScheduler {
 
     private final AuctionRepository auctionRepository;
     private final BidRepository bidRepository;
-//    private final NotificationService notificationService;
+    // private final NotificationService notificationService;
 
     @Scheduled(fixedRate = 60000) // 1분마다 실행
     @Transactional
     public void completeEndedAuctions() {
-        log.info("경매 종료 처리 시작");
+        log.debug("🛎️ [Auction Scheduler] 실행_{}", LocalDateTime.now());
+
         LocalDateTime now = LocalDateTime.now();
-        
+
         // 종료 시간이 지난 진행 중인 경매 조회
         List<Auction> endedAuctions = auctionRepository.findByStatusAndEndTimeBefore(
-            AuctionStatus.PROCEEDING, now);
-        
+                AuctionStatus.PROCEEDING, now);
+
+        if (endedAuctions.isEmpty()) {
+            log.debug("🔕 처리할 경매 없음");
+            return;
+        }
+
         for (Auction auction : endedAuctions) {
             try {
-                // 최고가 입찰 조회 (동점 가능성)
+                // 최고가 입찰 조회 (동점 가능성 있음)
                 List<Bid> winningBids = bidRepository.findTopByAuctionIdOrderByBidPriceDesc(auction.getId());
                 Bid winningBid = !winningBids.isEmpty() ? winningBids.get(0) : null;
-                
+
                 if (winningBid != null) {
-                    // 낙찰 처리 (동점이면 첫 번째만 낙찰)
+                    // 낙찰 처리
                     auction.setStatus(AuctionStatus.COMPLETED);
                     auctionRepository.save(auction);
-                    
-                    // 낙찰자에게 알림
-//                    notificationService.sendAuctionWinNotification(
-//                        winningBid.getCustomerId(),
-//                        auction.getId(),
-//                        winningBid.getBidPrice()
-//                    );
-                    
-                    log.info("경매 종료 처리 완료 - 경매ID: {}, 낙찰자ID: {}, 낙찰가: {}", 
-                        auction.getId(), winningBid.getCustomerId(), winningBid.getBidPrice());
+
+                    // 알림 (옵션)
+                    // notificationService.sendAuctionWinNotification(...);
+
+                    log.info("✅ 경매 종료 처리 완료 - 경매ID: {}, 낙찰자ID: {}, 낙찰가: {}",
+                            auction.getId(), winningBid.getCustomerId(), winningBid.getBidPrice());
                 } else {
-                    // 입찰자가 없는 경우
+                    // 입찰자 없는 유찰 처리
                     auction.setStatus(AuctionStatus.FAILED);
                     auctionRepository.save(auction);
-                    log.info("경매 유찰 처리 완료 - 경매ID: {}, 사유: 입찰자 없음", auction.getId());
+
+                    log.info("⚠️ 경매 유찰 처리 완료 - 경매ID: {}, 사유: 입찰자 없음", auction.getId());
                 }
+
             } catch (Exception e) {
-                log.error("경매 종료 처리 중 오류 발생 - 경매ID: {}", auction.getId(), e);
+                log.error("❌ 경매 종료 처리 중 오류 발생 - 경매ID: {}", auction.getId(), e);
             }
         }
+
+        log.debug("✅ [Scheduler] 경매 스케줄러 실행 완료 at {}", LocalDateTime.now());
     }
-} 
+}
