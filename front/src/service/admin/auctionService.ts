@@ -22,7 +22,18 @@ export const adminAuctionService = {
     if (params?.size) searchParams.append('size', params.size.toString());
 
     const response = await adminApi.get(`${BASE_URL}/auctions?${searchParams.toString()}`);
-    return response.data.data;
+    // Postman 응답 구조에 맞게 수정
+    const content = response.data.data?.content || [];
+    return {
+      content: content,
+      totalElements: response.data.data?.totalElements || 0,
+      totalPages: response.data.data?.totalPages || 0,
+      size: response.data.data?.size || 10,
+      number: response.data.data?.number || 0,
+      numberOfElements: response.data.data?.numberOfElements || 0,
+      first: response.data.data?.first || false,
+      last: response.data.data?.last || false
+    };
   },
 
   // 경매 상세 조회
@@ -53,7 +64,17 @@ export const adminAuctionService = {
   // 판매자별 경매 목록 조회
   async getAuctionsBySeller(sellerId: number, page = 0, size = 10): Promise<PageResponse<AuctionResponseDTO>> {
     const response = await adminApi.get(`${BASE_URL}/auctions/seller/${sellerId}?page=${page}&size=${size}`);
-    return response.data.data;
+    const content = response.data.data?.content || [];
+    return {
+      content: content,
+      totalElements: response.data.data?.totalElements || 0,
+      totalPages: response.data.data?.totalPages || 0,
+      size: response.data.data?.size || 10,
+      number: response.data.data?.number || 0,
+      numberOfElements: response.data.data?.numberOfElements || 0,
+      first: response.data.data?.first || false,
+      last: response.data.data?.last || false
+    };
   }
 };
 

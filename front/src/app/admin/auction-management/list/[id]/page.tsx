@@ -34,6 +34,27 @@ export default function AuctionDetailPage() {
     }
   };
 
+  // 이미지 URL 생성 함수
+  const getImageUrl = (imagePath: string): string => {
+    if (!imagePath) return '/images/placeholder.png';
+    if (imagePath.startsWith('http')) return imagePath;
+    return `http://localhost:8080${imagePath}`;
+  };
+
+  // 상태 텍스트 변환 함수
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case 'PROCEEDING':
+        return '진행중';
+      case 'COMPLETED':
+        return '종료';
+      case 'CANCELLED':
+        return '취소됨';
+      default:
+        return status;
+    }
+  };
+
   if (typeof window !== 'undefined' && !localStorage.getItem('adminToken')) {
     window.location.replace('/admin/login');
     return null;
@@ -76,29 +97,30 @@ export default function AuctionDetailPage() {
     <div className="p-8 max-w-lg mx-auto">
       <Card>
         <CardContent className="flex flex-col gap-4 p-6">
-          {auction.productImage ? (
-            <img src={auction.productImage} alt="auction" className="w-full h-48 object-cover rounded" />
+          {auction.adminProduct?.imageThumbnailUrl ? (
+            <img 
+              src={getImageUrl(auction.adminProduct.imageThumbnailUrl)} 
+              alt="auction" 
+              className="w-full h-48 object-cover rounded"
+              onError={(e) => {
+                e.currentTarget.src = '/images/placeholder.png';
+              }}
+            />
           ) : (
             <div className="w-full h-48 bg-gray-200 flex items-center justify-center rounded">
               이미지 없음
             </div>
           )}
-          <div className="font-bold text-xl">{auction.name}</div>
-          <div>상품명: {auction.productName}</div>
-          <div>판매자: {auction.sellerName}</div>
+          <div className="font-bold text-xl">{auction.adminProduct?.productName}</div>
+          <div>상품명: {auction.adminProduct?.productName}</div>
+          <div>상품설명: {auction.adminProduct?.productDescription}</div>
           <div>시작일: {new Date(auction.startTime).toLocaleString()}</div>
           <div>종료일: {new Date(auction.endTime).toLocaleString()}</div>
-          <div>시작가: {auction.startPrice.toLocaleString()}원</div>
+          <div>시작가: {auction.startPrice?.toLocaleString()}원</div>
           <div>현재가: {auction.currentPrice ? `${auction.currentPrice.toLocaleString()}원` : '-'}</div>
-          <div>즉시구매가: {auction.buyNowPrice ? `${auction.buyNowPrice.toLocaleString()}원` : '-'}</div>
-          <div>상태: {auction.status === 'ACTIVE' ? '진행중' : auction.status === 'ENDED' ? '종료' : '취소됨'}</div>
-          <div>카테고리: {auction.category}</div>
-          {auction.status === "ENDED" && (
-            <>
-              <div>낙찰자: {auction.winnerName || "-"}</div>
-              <div>낙찰가: {auction.winningPrice ? `${auction.winningPrice.toLocaleString()}원` : "-"}</div>
-            </>
-          )}
+          <div>상태: {getStatusText(auction.status)}</div>
+          <div>생성일: {new Date(auction.createdAt).toLocaleString()}</div>
+          <div>수정일: {new Date(auction.updatedAt).toLocaleString()}</div>
           <div className="flex gap-2 mt-4">
             <Link href="/admin/auction-management/list" className="text-blue-600 underline">
               목록으로

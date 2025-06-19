@@ -1,5 +1,5 @@
 import { AdminDashboardDTO } from '@/types/admin/admin';
-import { adminApi } from '@/lib/apiClient';
+import { adminApi } from '@/app/lib/axios';
 import { ApiResponse } from '@/types/admin/api';
 
 
@@ -49,7 +49,7 @@ export async function getSalesStatistics(
     });
 
     const response = await adminApi.get(
-        `/api/admin/stats/sales-period?${params.toString()}`
+        `/admin/stats/sales-period?${params.toString()}`
     );
     return response.data;
   } catch (error) {
@@ -61,7 +61,7 @@ export async function getSalesStatistics(
 export async function getAuctionStatistics(startDate: string, endDate: string) {
   try {
     const response = await adminApi.get(
-        `/api/admin/stats/auctions-period?startDate=${startDate}&endDate=${endDate}`
+        `/admin/stats/auctions-period?startDate=${startDate}&endDate=${endDate}`
     );
     return response.data;
   } catch (error) {
@@ -73,7 +73,7 @@ export async function getAuctionStatistics(startDate: string, endDate: string) {
 export async function getMemberStatistics(startDate: string, endDate: string) {
   try {
     const response = await adminApi.get(
-        `/api/admin/stats/members-period?startDate=${startDate}&endDate=${endDate}`
+        `/admin/stats/members-period?startDate=${startDate}&endDate=${endDate}`
     );
     return response.data;
   } catch (error) {
@@ -85,7 +85,7 @@ export async function getMemberStatistics(startDate: string, endDate: string) {
 export async function getReviewStatistics(startDate: string, endDate: string) {
   try {
     const response = await adminApi.get(
-        `/api/admin/stats/reviews-period?startDate=${startDate}&endDate=${endDate}`
+        `/admin/stats/reviews-period?startDate=${startDate}&endDate=${endDate}`
     );
     return response.data;
   } catch (error) {

@@ -1,37 +1,31 @@
 // 경매 관련 타입 정의
 export interface AuctionResponseDTO {
   id: number;
-  name: string;
-  description?: string;
+  startPrice: number;
+  currentPrice: number;
   startTime: string;
   endTime: string;
-  startPrice: number;
-  currentPrice?: number;
-  buyNowPrice?: number;
-  status: 'ACTIVE' | 'ENDED' | 'CANCELLED';
-  category: string;
-  sellerId: number;
-  sellerName: string;
-  productId: number;
-  productName: string;
-  productImage?: string;
-  winnerId?: number;
-  winnerName?: string;
-  winningPrice?: number;
+  status: string;
   createdAt: string;
   updatedAt: string;
+  adminProduct: {
+    id: number;
+    productId: number;
+    productName: string;
+    productDescription: string;
+    purchasePrice: number;
+    purchasedFromSellerId: number | null;
+    purchasedAt: string;
+    auctioned: boolean;
+    imageThumbnailUrl: string;
+  };
 }
 
 export interface AuctionCreateRequestDTO {
-  name: string;
-  description?: string;
+  adminProductId: number;
+  startPrice: number;
   startTime: string;
   endTime: string;
-  startPrice: number;
-  buyNowPrice?: number;
-  category: string;
-  sellerId: number;
-  productId: number;
 }
 
 export interface AuctionUpdateRequestDTO {
