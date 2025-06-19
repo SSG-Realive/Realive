@@ -27,6 +27,7 @@ public class PageRequestDTO {
     private String keyword;         // 검색 키워드 (선택적, null일 수 있음)
     private String type;             
 
+
     /**
      * 0-based 페이지 인덱스를 반환
      * 클라이언트는 보통 1-based로 요청하므로, 내부적으로는 0으로 변환

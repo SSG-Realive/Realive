@@ -42,7 +42,7 @@ replay_pid*
 application.yml
 application-*.yml
 application.properties
-.env*
+.env.properties
 .env.properties
 *.pem
 

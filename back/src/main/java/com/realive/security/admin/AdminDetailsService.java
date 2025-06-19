@@ -1,4 +1,4 @@
-package com.realive.service.admin;
+package com.realive.security.admin;
 
 import com.realive.domain.admin.Admin;
 import com.realive.repository.admin.AdminRepository;

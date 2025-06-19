@@ -56,6 +56,10 @@ public class SecurityConfig {
     @Qualifier("adminDetailsService")
     private UserDetailsService adminDetailsService;
 
+    @Autowired
+    @Qualifier("sellerDetailsService")
+    private UserDetailsService sellerDetailsService;
+
     // Provider를 명시적으로 등록
     // customerAuthProvider, adminAuthProvider를 직접 수동 생성해 ProviderManager에 주입
     // Spring Security가 내부적으로 자동 설정X
@@ -78,10 +82,18 @@ public class SecurityConfig {
         return provider;
     }
 
+    @Bean
+    public DaoAuthenticationProvider sellerAuthProvider() {
+    DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+    provider.setUserDetailsService(sellerDetailsService);
+    provider.setPasswordEncoder(passwordEncoder());
+    return provider;
+}
+
     // AuthenticationManager에 명시적으로 등록
     @Bean
     public AuthenticationManager authenticationManager() {
-        return new ProviderManager(List.of(customerAuthProvider(), adminAuthProvider()));
+        return new ProviderManager(List.of(customerAuthProvider(), adminAuthProvider(),sellerAuthProvider()));
     }
 
     // === Admin Security Chain ===
@@ -133,15 +145,15 @@ public class SecurityConfig {
         log.info("Customer SecurityConfig 적용");
 
         http
-                .securityMatcher("/api/customer/**", "/api/public/**") // 나머지 API
+                .securityMatcher("/api/customer/**", "/api/public/**","/api/auth/**") // 나머지 API
                 .authenticationManager(authenticationManager())
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/public/**").permitAll()
+                        .requestMatchers("/api/public/**", "/api/auth/**").permitAll()
                         .requestMatchers("/api/oauth2/**").permitAll()
-                        .requestMatchers("/api/customer/**").authenticated()
+                        .requestMatchers("/api/customer/**").hasAuthority("ROLE_CUSTOMER")
                         .anyRequest().denyAll()
                 )
                 .oauth2Login(config -> config.successHandler(customLoginSuccessHandler))

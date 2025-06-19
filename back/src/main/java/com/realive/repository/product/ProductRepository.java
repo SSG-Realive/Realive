@@ -47,5 +47,7 @@ public interface ProductRepository extends JpaRepository<Product, Long>, Product
     @Query("SELECT p FROM Product p WHERE p.id = :productId")
     Product findByIdForUpdate(@Param("productId") Long productId);
 
-    
+    // 관련 상품 추천
+    List<Product> findTop6ByCategoryIdAndIdNotAndActiveTrue(Long categoryId, Long excludeProductId);
 }
+

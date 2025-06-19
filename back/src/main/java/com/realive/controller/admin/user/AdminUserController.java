@@ -39,7 +39,7 @@ public class AdminUserController {
     @Operation(summary = "전체 사용자 목록 조회") // (설명 이전과 동일)
     @ApiResponses(value = { /* 이전과 동일 */ })
     @GetMapping("/users")
-//    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<ApiResponse<Page<UserManagementListItemDTO>>> getAllUsers(
             @PageableDefault(size = 10, sort = "createdAt,desc") Pageable pageable,
             @RequestParam(required = false) String userType,
@@ -66,7 +66,7 @@ public class AdminUserController {
     @Operation(summary = "사용자 상태 변경") // (설명 이전과 동일)
     @ApiResponses(value = { /* 이전과 동일 */ })
     @PutMapping("/users/{userTypePath}/{userId}/status")
-//    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<ApiResponse<String>> updateUserStatus(
             @PathVariable String userTypePath,
             @PathVariable Long userId,
@@ -99,7 +99,7 @@ public class AdminUserController {
     @Operation(summary = "사용자 물리적 삭제") // (설명 이전과 동일)
     @ApiResponses(value = { /* 이전과 동일 */ })
     @DeleteMapping("/users/{userTypePath}/{userId}")
-//    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<ApiResponse<Void>> deleteUser(
             @PathVariable String userTypePath,
             @PathVariable Long userId) {
@@ -133,7 +133,7 @@ public class AdminUserController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "500", description = "서버 내부 오류")
     })
     @GetMapping("/users/customers/{customerId}")
-//    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<ApiResponse<CustomerDetailDTO>> getCustomerDetails(
             @Parameter(description = "고객 ID", example = "1", required = true)
             @PathVariable Long customerId) {
@@ -157,7 +157,7 @@ public class AdminUserController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "500", description = "서버 내부 오류")
     })
     @GetMapping("/users/sellers/{sellerId}")
-//    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<ApiResponse<SellerDetailDTO>> getSellerDetails(
             @Parameter(description = "판매자 ID", example = "1", required = true)
             @PathVariable Long sellerId) {

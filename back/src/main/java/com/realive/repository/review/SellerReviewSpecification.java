@@ -3,7 +3,7 @@ package com.realive.repository.review;
 import com.realive.domain.customer.Customer;
 import com.realive.domain.order.Order;
 import com.realive.domain.product.Product;
-import com.realive.domain.seller.SellerReview;
+import com.realive.domain.review.SellerReview;
 import jakarta.persistence.criteria.*; // Criteria API import
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.StringUtils; // StringUtils.hasText 사용

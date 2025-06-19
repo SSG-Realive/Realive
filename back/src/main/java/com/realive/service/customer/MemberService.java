@@ -75,7 +75,7 @@ public class MemberService {
         customer.setGender(dto.getGender());
 
         customer.setSignupMethod(SignupMethod.USER);
-        customer.setIsVerified(false);   // 일반 회원은 이메일 인증 로직이 있을 경우 false
+        customer.setIsVerified(true);   // 일반 회원은 이메일 인증 로직이 있을 경우 false 지금은 true
         customer.setIsActive(true);
         customer.setPenaltyScore(0);
 

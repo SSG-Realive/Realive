@@ -6,7 +6,7 @@ import com.realive.domain.order.Order;
 import com.realive.domain.common.enums.OrderStatus;
 import com.realive.domain.common.enums.ReviewReportStatus;
 import com.realive.domain.review.ReviewReport;
-import com.realive.domain.seller.SellerReview;
+import com.realive.domain.review.SellerReview;
 // import com.realive.domain.product.Product; // 판매자 상품 처리 로직 추가 시 필요 (현재 사용 안 함)
 
 import com.realive.repository.customer.CustomerRepository;
@@ -246,7 +246,7 @@ public class AdminUserServiceImpl implements AdminUserService { // AdminUserServ
             if (customerReviews != null && !customerReviews.isEmpty()) {
                 log.info("Hiding {} seller reviews written by customer ID: {}", customerReviews.size(), customer.getId());
                 for (SellerReview review : customerReviews) {
-                    review.setIsHidden(true);
+                    review.setHidden(true);
                 }
                 sellerReviewRepository.saveAll(customerReviews);
             }
@@ -284,7 +284,7 @@ public class AdminUserServiceImpl implements AdminUserService { // AdminUserServ
             if (sellerReceivedReviews != null && !sellerReceivedReviews.isEmpty()) {
                 log.info("Hiding {} seller reviews received by seller ID: {}", sellerReceivedReviews.size(), seller.getId());
                 for (SellerReview review : sellerReceivedReviews) {
-                    review.setIsHidden(true);
+                    review.setHidden(true);
                 }
                 sellerReviewRepository.saveAll(sellerReceivedReviews);
             }

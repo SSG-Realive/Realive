@@ -1,6 +1,6 @@
 package com.realive.repository.review;
 
-import com.realive.domain.seller.SellerReview;
+import com.realive.domain.review.SellerReview;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

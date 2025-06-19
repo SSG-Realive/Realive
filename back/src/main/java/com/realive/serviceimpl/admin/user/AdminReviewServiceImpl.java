@@ -6,7 +6,7 @@ import com.realive.domain.order.Order;
 import com.realive.domain.order.OrderItem; // OrderItem 엔티티 import
 import com.realive.domain.product.Product; // Product 엔티티 import
 import com.realive.domain.review.ReviewReport;
-import com.realive.domain.seller.SellerReview;
+import com.realive.domain.review.SellerReview;
 import com.realive.dto.admin.review.*;
 import com.realive.repository.customer.CustomerRepository;
 import com.realive.repository.order.OrderItemRepository; // OrderItemRepository import
@@ -130,7 +130,7 @@ public class AdminReviewServiceImpl implements AdminReviewService {
                 .content(review.getContent())
                 .createdAt(review.getCreatedAt())
                 .updatedAt(review.getUpdatedAt())
-                .isHidden(review.getIsHidden())
+                .isHidden(review.isHidden())
                 .build();
     }
 
@@ -276,7 +276,7 @@ public class AdminReviewServiceImpl implements AdminReviewService {
                 .contentSummary(contentSummary)
                 .createdAt(review.getCreatedAt())
                 .updatedAt(review.getUpdatedAt())
-                .isHidden(review.getIsHidden())
+                .isHidden(review.isHidden())
                 .build();
     }
 
@@ -292,7 +292,7 @@ public class AdminReviewServiceImpl implements AdminReviewService {
                     log.warn("SellerReview not found for visibility update with ID: {}", reviewId);
                     return new EntityNotFoundException("SellerReview not found with id: " + reviewId);
                 });
-        review.setIsHidden(isHidden);
+        review.setHidden(isHidden);
         sellerReviewRepository.save(review);
         log.info("Successfully updated visibility for seller review ID: {} to isHidden: {}", reviewId, isHidden);
     }

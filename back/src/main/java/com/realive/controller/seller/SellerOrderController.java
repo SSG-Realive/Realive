@@ -3,6 +3,7 @@ package com.realive.controller.seller;
 import com.realive.domain.seller.Seller;
 import com.realive.dto.order.SellerOrderListDTO;
 import com.realive.dto.order.SellerOrderSearchCondition;
+import com.realive.security.seller.SellerPrincipal;
 import com.realive.service.order.SellerOrderService;
 
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,7 @@ public class SellerOrderController {
 
     @GetMapping("/orders")
     public ResponseEntity<Page<SellerOrderListDTO>> getSellerOrders(
-            @AuthenticationPrincipal Seller seller,
+            @AuthenticationPrincipal SellerPrincipal seller,
             SellerOrderSearchCondition condition,
             @PageableDefault(size = 10, sort = "orderedAt", direction = Sort.Direction.DESC)
             Pageable pageable

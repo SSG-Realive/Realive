@@ -13,5 +13,7 @@ public class SellerQnaRequestDTO {
 
     private String title;
     private String content;
+    private Long productId;
+    private Long customerId;
 
 }

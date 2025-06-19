@@ -22,7 +22,7 @@ public class ProductListDTO {
     private int price;                 // 가격
     private String status;             // 상태 (상, 중, 하)
     private boolean isActive;          // 판매 여부
-    private String imageThumbnailUrl;  // 대표 이미지 썸네일
+    private String imageThumbnailUrl;  // 대표 이미지 썸네일A
     private String parentCategoryName;
     private String categoryName;
     private String sellerName;

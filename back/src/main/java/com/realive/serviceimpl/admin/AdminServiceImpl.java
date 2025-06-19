@@ -77,8 +77,8 @@ public class AdminServiceImpl implements AdminService {
         return AdminLoginResponseDTO.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
+                .email(admin.getEmail())
                 .name(admin.getName())
-                .message("로그인 성공")
                 .build();
     }
 
@@ -95,7 +95,7 @@ public class AdminServiceImpl implements AdminService {
                 .accessToken(null) // 마이페이지 조회 시 토큰 재발급 필요 없으면 null
                 .refreshToken(null)
                 .name(admin.getName())
-                .message("관리자 정보 조회 성공")
+                .email(admin.getEmail())
                 .build();
     }
 

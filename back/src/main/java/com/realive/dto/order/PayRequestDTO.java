@@ -47,4 +47,14 @@ public class PayRequestDTO {
 
     @NotNull(message = "결제 방법은 필수입니다.")
     private PaymentType paymentMethod;
+
+    // --- Toss Payment API 연동을 위해 추가된 필드 ---
+    @NotBlank(message = "결제 키(paymentKey)는 필수입니다.")
+    private String paymentKey;
+    // Toss Payments Widget에서 전달하는 orderId는 String이므로, 기존 Long type orderId와 혼동 방지를 위해 새로운 필드를 사용하는 것이 좋습니다.
+    // 여기서는 PayRequestDTO의 orderId(주문 식별자)가 아닌 Toss Payments 측의 orderId를 의미합니다.
+    // 만약 PayRequestDTO의 orderId가 우리 시스템의 Order ID를 의미한다면, 이 필드명은 tossOrderId와 같이 명확히 구분해야 합니다.
+    // 현재는 PayRequestDTO에 productId만 있고 orderId는 없으므로, 이 orderId는 토스 위젯에서 생성한 임시 orderId로 간주하고 DTO에 추가합니다.
+    @NotBlank(message = "토스페이먼츠 주문 ID(tossOrderId)는 필수입니다.")
+    private String tossOrderId; // 토스페이먼츠 위젯에서 생성된 orderId
 }

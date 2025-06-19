@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -12,6 +13,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.realive.domain.seller.Seller;
 import com.realive.repository.seller.SellerRepository;
+import com.realive.security.seller.SellerPrincipal;
 
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
@@ -21,54 +23,54 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-// [Seller] JWT 토큰을 이용한 인증 필터
-
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class SellerJwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
-    private final SellerRepository sellerRepository;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain)
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        log.info("[SellerJwtAuthenticationFilter] doFilterInternal 호출, URI: {}", request.getRequestURI());
         String authHeader = request.getHeader("Authorization");
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
 
             if (jwtUtil.validateToken(token)) {
-                // 토큰에서 클레임 추출 및 이메일 확인
                 Claims claims = jwtUtil.getClaims(token);
-                String email = claims.get("email", String.class);
+                String subject = claims.getSubject();
 
-                // 이메일로 DB에서 판매자 조회
-                Seller seller = sellerRepository.findByEmail(email)
-                        .orElseThrow(() -> new IllegalArgumentException("판매자 정보를 찾을 수 없습니다."));
+                // Seller 토큰인지 확인
+                if (JwtUtil.SUBJECT_SELLER.equals(subject)) {
+                    String email = claims.get("email", String.class);
+                    Long sellerId = claims.get("id", Long.class);
+                    String role = claims.get("auth", String.class);
 
-                // 권한 부여 및 SecurityContext 설정
-                List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_SELLER"));
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                        seller, null, authorities);
-
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-            } else {
-                log.warn("JWT token 검증 실패");
+                    if (email != null && sellerId != null && role != null) {
+                        Seller sellerForPrincipal  = Seller.builder().id(sellerId).email(email).build();
+                        SellerPrincipal sellerPrincipal = new SellerPrincipal(sellerForPrincipal);
+                        List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(role));
+                        Authentication authentication = new UsernamePasswordAuthenticationToken(sellerPrincipal, null, authorities);
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                    }
+                }
             }
         }
-
-        // 필터 체인 계속 진행
         filterChain.doFilter(request, response);
-    }
 
-    @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) {
-        return !request.getRequestURI().startsWith("/api/seller");
+    }
+    
+   @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String uri = request.getRequestURI();
+        
+        log.info("[SellerJwtFilter] shouldNotFilter 검사. URI: {}", uri);
+        boolean shouldNotFilter = !uri.startsWith("/api/seller/");
+        log.info("필터 실행 여부 (false여야 실행됨): {}", !shouldNotFilter);
+        
+        return shouldNotFilter;
     }
 }

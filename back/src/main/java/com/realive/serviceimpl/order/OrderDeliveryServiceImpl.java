@@ -1,7 +1,6 @@
 package com.realive.serviceimpl.order;
 
 import com.realive.domain.common.enums.DeliveryStatus;
-import com.realive.domain.order.Order;
 import com.realive.domain.order.OrderDelivery;
 import com.realive.domain.order.OrderItem;
 import com.realive.domain.product.Product;

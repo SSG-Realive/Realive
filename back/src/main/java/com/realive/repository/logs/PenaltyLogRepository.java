@@ -29,4 +29,12 @@ public interface PenaltyLogRepository extends JpaRepository<PenaltyLog, Integer>
 
     List<PenaltyLog> findByCreatedAtBetween(LocalDateTime startDateTime, LocalDateTime endDateTime);
 
+    // 사유로 검색 + 페이징 (변경 없음)
+    Page<PenaltyLog> findByReasonContaining(String reason, Pageable pageable);
+
+    // 고객ID로 검색 + 페이징: Integer → Long 변경
+    Page<PenaltyLog> findByCustomerId(Long customerId, Pageable pageable);
+
+    // 사유+고객ID 동시 검색 + 페이징: Integer → Long 변경
+    Page<PenaltyLog> findByReasonContainingAndCustomerId(String reason, Long customerId, Pageable pageable);
 }

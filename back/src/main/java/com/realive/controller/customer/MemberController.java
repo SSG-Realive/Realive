@@ -15,6 +15,7 @@ import com.realive.dto.customer.member.MemberLoginDTO;
 import com.realive.dto.customer.member.MemberModifyDTO;
 import com.realive.dto.customer.member.MemberReadDTO;
 import com.realive.exception.UnauthorizedException;
+import com.realive.security.customer.CustomerPrincipal;
 import com.realive.service.customer.MemberService;
 
 import jakarta.validation.Valid;
@@ -25,7 +26,7 @@ import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 @RestController
-@RequestMapping("/api/customer/member")
+@RequestMapping("/api/customer")
 @RequiredArgsConstructor
 public class MemberController {
 
@@ -43,41 +44,39 @@ public class MemberController {
         // 로그인 사용자 이메일 가져오기
         String currentEmail = authentication.getName();
 
-         // 권한 검증: 본인만 수정 가능
+        // 권한 검증: 본인만 수정 가능
         if (!currentEmail.equals(request.getEmail())) {
             throw new UnauthorizedException("본인의 정보만 수정할 수 있습니다.");
         }
-        
+
         memberService.updateTemporaryUserInfo(request, currentEmail);
         return ResponseEntity.ok("회원정보가 정상적으로 수정되었습니다.");
     }
 
     // 회원정보조회
-    @GetMapping("/me")
-    public ResponseEntity<MemberReadDTO> getMyProfile(Authentication authentication) {
-        MemberLoginDTO loginDTO = (MemberLoginDTO) authentication.getPrincipal();
-        log.info("현재 로그인한 사용자: {}", loginDTO);
-        log.info("로그인 사용자 ID: {}", loginDTO.getEmail());
-        String email = authentication.getName();
+    @GetMapping("/mypage")
+    public ResponseEntity<MemberReadDTO> getMyProfile(@AuthenticationPrincipal CustomerPrincipal principal) {
+
+        String email = principal.getEmail();
         MemberReadDTO profile = memberService.getMyProfile(email);
         return ResponseEntity.ok(profile);
     }
 
-    // 회원정보수정
-    @PutMapping("/me")
-    public ResponseEntity<?> updateMyInfo(@AuthenticationPrincipal MemberLoginDTO loginDTO,
-                                          @RequestBody @Valid MemberModifyDTO updateDTO) {
-        memberService.updateMember(loginDTO.getEmail(), updateDTO);
+    @PutMapping("/mypage")
+    public ResponseEntity<Void> updateMyInfo(
+            @AuthenticationPrincipal CustomerPrincipal principal, // ✅
+            @RequestBody @Valid MemberModifyDTO updateDTO) {
+
+        memberService.updateMember(principal.getEmail(), updateDTO); // principal에서 바로 이메일
         return ResponseEntity.ok().build();
     }
 
     // 회원탈퇴
-    @DeleteMapping("/me")
-    public ResponseEntity<String> delectMember(Authentication authentication){
-        String email = authentication.getName();
-        memberService.deactivateByEmail(email);
+    @DeleteMapping("/mypage")
+    public ResponseEntity<String> deleteMember( // ✅ 메서드명 수정
+            @AuthenticationPrincipal CustomerPrincipal principal) { // ✅
+
+        memberService.deactivateByEmail(principal.getEmail());
         return ResponseEntity.ok("회원 탈퇴가 정상 처리되었습니다.");
     }
-
 }
-

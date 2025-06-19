@@ -13,26 +13,28 @@ import com.realive.domain.seller.QSeller;
 import com.realive.dto.page.PageRequestDTO;
 import com.realive.dto.page.PageResponseDTO;
 import com.realive.dto.product.ProductListDTO;
+import com.realive.repository.product.CategoryRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-
-// [Customer] 상품 검색 Repository 구현체
+import org.springframework.stereotype.Repository;
 
 @Log4j2
 @RequiredArgsConstructor
+@Repository
 public class ProductSearchImpl implements ProductSearch {
 
     private final JPAQueryFactory queryFactory;
+    private final CategoryRepository categoryRepository; // ✅ 추가
 
     @Override
     public PageResponseDTO<ProductListDTO> search(PageRequestDTO requestDTO, Long categoryId) {
-       
+
         QProduct product = QProduct.product;
         QCategory category = QCategory.category;
         QProductImage productImage = QProductImage.productImage;
         QSeller seller = QSeller.seller;
-        
+
         BooleanBuilder builder = new BooleanBuilder();
 
         String keyword = requestDTO.getKeyword();
@@ -50,9 +52,10 @@ public class ProductSearchImpl implements ProductSearch {
             builder.and(keywordBuilder);
         }
 
-        //하위 카테고리 포함한 필터링
+        // ✅ 하위 카테고리까지 포함
         if (categoryId != null) {
-            List<Long> categoryIds = findAllCategoryIdsIncludingChildren(categoryId);
+            List<Long> categoryIds = categoryRepository.findSubCategoryIdsIncludingSelf(categoryId);
+            log.info("📂 포함된 카테고리 ID 목록: {}", categoryIds);
             builder.and(product.category.id.in(categoryIds));
         }
 
@@ -60,31 +63,29 @@ public class ProductSearchImpl implements ProductSearch {
         int limit = requestDTO.getLimit();
 
         JPQLQuery<ProductListDTO> query = queryFactory
-            .select(Projections.bean(ProductListDTO.class,
-                product.id.as("id"),
-                product.name.as("name"),
-                product.price.as("price"),
-                product.status.stringValue().as("status"), // enum일 경우 stringValue() 사용
-                product.active.as("isActive"),
-                productImage.url.as("thumbnailUrl"),
-                seller.name.as("sellerName"),
-                category.name.as("categoryName")
-            ))
-            .from(product)
-            .leftJoin(productImage)
-            .on(productImage.product.eq(product)
-                .and(productImage.isThumbnail.isTrue()))
-            .leftJoin(product.seller, seller)
-            .leftJoin(product.category, category)
-            .where(builder)
-            .offset(offset)
-            .limit(limit)
-            .orderBy(product.id.desc());
+                .select(Projections.bean(ProductListDTO.class,
+                        product.id.as("id"),
+                        product.name.as("name"),
+                        product.price.as("price"),
+                        product.status.stringValue().as("status"),
+                        product.active.as("isActive"),
+                        productImage.url.as("imageThumbnailUrl"),
+                        seller.name.as("sellerName"),
+                        category.name.as("categoryName")
+                ))
+                .from(product)
+                .leftJoin(productImage)
+                .on(productImage.product.eq(product)
+                        .and(productImage.isThumbnail.isTrue()))
+                .leftJoin(product.seller, seller)
+                .leftJoin(product.category, category)
+                .where(builder)
+                .offset(offset)
+                .limit(limit)
+                .orderBy(product.id.desc());
 
-        // 리스트 조회
         List<ProductListDTO> dtoList = query.fetch();
 
-        // 전체 개수
         Long total = queryFactory
                 .select(product.count())
                 .from(product)
@@ -98,11 +99,5 @@ public class ProductSearchImpl implements ProductSearch {
                 .build();
     }
 
-    // 예시: 카테고리 재귀 조회
-    private List<Long> findAllCategoryIdsIncludingChildren(Long parentId) {
-        // 실제로는 CategoryService 또는 Repository 통해 하위 ID 재귀적으로 조회
-        // 예시에서는 간단하게 1개만
-        return List.of(parentId);
-    }
-
+    // ✅ 기존 함수 삭제 (불필요)
 }

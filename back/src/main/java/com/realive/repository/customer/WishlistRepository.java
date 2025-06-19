@@ -3,6 +3,7 @@ package com.realive.repository.customer;
 import java.util.List;
 import java.util.Optional;
 
+import com.realive.domain.product.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -20,5 +21,14 @@ public interface WishlistRepository extends JpaRepository<Wishlist, Long>  {
     // 고객ID로 찜 목록 조회용 상품ID 뽑기
     @Query("SELECT w.product.id FROM Wishlist w WHERE w.customer.id = :customerId ORDER BY w.created DESC")
     List<Long> findProductIdsByCustomerId(@Param("customerId") Long customerId);
-    
+
+    // 인기 상품 (찜 많은 순) 상위 6개
+    @Query("""
+    SELECT w.product 
+    FROM Wishlist w
+    WHERE w.product.active = true
+    GROUP BY w.product
+    ORDER BY COUNT(w.id) DESC
+""")
+    List<Product> findTop6PopularProducts();
 }

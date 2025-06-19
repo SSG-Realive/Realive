@@ -1,6 +1,6 @@
 package com.realive.repository.review.crud;
 
-import com.realive.domain.seller.SellerReview;
+import com.realive.domain.review.SellerReview;
 import org.springframework.data.jpa.repository.JpaRepository; // CrudRepository 대신 JpaRepository 사용 권장
 import org.springframework.stereotype.Repository;
 

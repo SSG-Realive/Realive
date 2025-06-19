@@ -17,7 +17,7 @@ import java.util.Optional;
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
     // 고객 ID와 주문 ID로 단건 조회
-    Optional<Order> findByCustomer_IdAndId(Long customerId, Long id);
+    Optional<Order> findByCustomerIdAndId(Long customerId, Long id);
 
     // 관리자 전체 주문 목록 조회 (Customer 정보 포함)
     @Query(value = """
@@ -37,12 +37,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     AND oi.order.status IN :statuses
 """)
 long countInProgressOrders(@Param("sellerId") Long sellerId, @Param("statuses") Collection<OrderStatus> statuses);
-
-    /**
-     * 특정 고객의 모든 주문 목록을 조회합니다.
-     * Order 엔티티의 'customer' 필드의 'id'를 기준으로 검색합니다.
-     * @param customerId 고객 ID
-     * @return 해당 고객의 주문 리스트
-     */
+    // 특정 Customer ID에 해당하는 모든 주문을 조회합니다.
     List<Order> findAllByCustomerId(Long customerId);
 }

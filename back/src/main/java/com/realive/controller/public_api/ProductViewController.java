@@ -60,5 +60,18 @@ public class ProductViewController {
         return ResponseEntity.ok(qnaLists); 
 
     }
-    
+
+    // 관련 상품 추천
+    @GetMapping("/{id}/related")
+    public ResponseEntity<List<ProductListDTO>> getRelatedProducts(@PathVariable Long id) {
+        List<ProductListDTO> related = productViewService.getRelatedProducts(id);
+        return ResponseEntity.ok(related);
+    }
+
+    // 찜 많은 인기 상품
+    @GetMapping("/popular")
+    public ResponseEntity<List<ProductListDTO>> getPopularProducts() {
+        List<ProductListDTO> popular = productViewService.getPopularProducts();
+        return ResponseEntity.ok(popular);
+    }
 }

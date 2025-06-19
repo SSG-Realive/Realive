@@ -2,9 +2,11 @@ package com.realive.controller.seller;
 
 import com.realive.domain.seller.Seller;
 import com.realive.dto.logs.PayoutLogDTO;
+import com.realive.security.seller.SellerPrincipal;
 import com.realive.service.seller.SellerPayoutService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,17 +22,18 @@ public class SellerPayoutController {
 
     // ✅ 전체 정산 내역 조회
     @GetMapping
-    public List<PayoutLogDTO> getMyPayoutLogs() {
-        Seller seller = (Seller) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return sellerPayoutService.getPayoutLogsBySellerId(seller.getId());
+    public List<PayoutLogDTO> getMyPayoutLogs( @AuthenticationPrincipal SellerPrincipal principal) {
+        
+        return sellerPayoutService.getPayoutLogsBySellerId(principal.getId());
     }
 
     // ✅ 특정 날짜 기준 정산 내역 필터링
     @GetMapping("/by-date")
     public List<PayoutLogDTO> getLogsByDate(
-            @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
+            @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+            @AuthenticationPrincipal SellerPrincipal principal
     ) {
-        Seller seller = (Seller) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return sellerPayoutService.getPayoutLogsByDate(seller.getId(), date);
+        
+        return sellerPayoutService.getPayoutLogsByDate(principal.getId(), date);
     }
 }

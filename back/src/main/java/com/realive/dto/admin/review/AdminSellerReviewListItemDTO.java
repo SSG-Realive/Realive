@@ -14,7 +14,7 @@ public class AdminSellerReviewListItemDTO { //리뷰 목록 조회용
     private Long sellerId;          // SellerReview에 연결된 Seller의 ID
     private String customerName;    // SellerReview를 작성한 Customer의 이름
     private Long customerId;        // SellerReview를 작성한 Customer의 ID
-    private int rating;             // 평점
+    private double rating;             // 평점
     private String contentSummary;  // 리뷰 내용 요약 (예: 앞 100자)
     private LocalDateTime createdAt;  // 리뷰 작성일
     private LocalDateTime updatedAt;

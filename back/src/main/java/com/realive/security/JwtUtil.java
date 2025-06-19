@@ -7,7 +7,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.realive.domain.seller.Seller;
+import com.realive.security.customer.CustomerPrincipal;
+import com.realive.security.seller.SellerPrincipal;
 import com.realive.domain.admin.Admin;
+import com.realive.domain.customer.Customer;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
@@ -17,11 +20,13 @@ import jakarta.servlet.http.HttpServletRequest;
 @Component
 public class JwtUtil {
 
-    public static final String BEARER_PREFIX = "Bearer ";             // 인증 헤더 접두사
-    public static final String SUBJECT_SELLER = "seller";             // 판매자 액세스 토큰 subject
+    public static final String BEARER_PREFIX = "Bearer "; // 인증 헤더 접두사
+    public static final String SUBJECT_SELLER = "seller"; // 판매자 액세스 토큰 subject
     public static final String SUBJECT_SELLER_REFRESH = "seller_refresh"; // 판매자 리프레시 토큰 subject
-    public static final String SUBJECT_ADMIN = "admin";               // 관리자 액세스 토큰 subject
-    public static final String SUBJECT_ADMIN_REFRESH = "admin_refresh";   // 관리자 리프레시 토큰 subject
+    public static final String SUBJECT_ADMIN = "admin"; // 관리자 액세스 토큰 subject
+    public static final String SUBJECT_ADMIN_REFRESH = "admin_refresh"; // 관리자 리프레시 토큰 subject
+    public static final String SUBJECT_CUSTOMER = "customer";
+    public static final String SUBJECT_CUSTOMER_REFRESH = "customer_refresh";
 
     @Value("${jwt.secret}")
     private String secretKey;
@@ -60,35 +65,50 @@ public class JwtUtil {
         if (name != null) {
             builder.claim("name", name);
         }
-         if (role != null) {
-        builder.claim("auth", role);
-    }
+        if (role != null) {
+            builder.claim("auth", role);
+        }
 
         return builder
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
 
+    // Customer access 토큰 생성
+    public String generateAccessToken(CustomerPrincipal customer) {
+        return generateToken(SUBJECT_CUSTOMER, customer.getId(), customer.getEmail(), customer.getName(), expiration,
+                "ROLE_CUSTOMER");
+    }
+
+    // Customer refresh 토큰 생성
+    public String generateRefreshToken(CustomerPrincipal customer) {
+        long refreshDuration = expiration * 24 * 7; // 7일간 유효
+        return generateToken(SUBJECT_CUSTOMER_REFRESH, customer.getId(), null, null, refreshDuration, "ROLE_CUSTOMER");
+    }
+
     // 판매자 access 토큰 생성
-    public String generateAccessToken(Seller seller) {
-        return generateToken(SUBJECT_SELLER, seller.getId(), seller.getEmail(), seller.getName(), expiration, "ROLE_SELLER");
+    public String generateAccessToken(SellerPrincipal seller) {
+        return generateToken(SUBJECT_SELLER, seller.getId(), seller.getEmail(), seller.getName(), expiration,
+                "ROLE_SELLER");
     }
 
     // 판매자 refresh 토큰 생성
-    public String generateRefreshToken(Seller seller) {
-        long refreshDuration = expiration * 24 * 7;  // 7일간 유효
-        return generateToken(SUBJECT_SELLER_REFRESH, seller.getId(), null, null, refreshDuration,"ROLE_SELLER");
+    public String generateRefreshToken(SellerPrincipal seller) {
+        long refreshDuration = expiration * 24 * 7; // 7일간 유효
+        return generateToken(SUBJECT_SELLER_REFRESH, seller.getId(), null, null, refreshDuration, "ROLE_SELLER");
     }
 
     // 관리자 access 토큰 생성
     public String generateAccessToken(Admin admin) {
-        return generateToken(SUBJECT_ADMIN, Long.valueOf(admin.getId()), admin.getEmail(), admin.getName(), expiration, "ROLE_ADMIN");
+        return generateToken(SUBJECT_ADMIN, Long.valueOf(admin.getId()), admin.getEmail(), admin.getName(), expiration,
+                "ROLE_ADMIN");
     }
 
     // 관리자 refresh 토큰 생성
     public String generateRefreshToken(Admin admin) {
-        long refreshDuration = expiration * 24 * 7;  // 7일간 유효
-        return generateToken(SUBJECT_ADMIN_REFRESH, Long.valueOf(admin.getId()), null, null, refreshDuration,  "ROLE_ADMIN");
+        long refreshDuration = expiration * 24 * 7; // 7일간 유효
+        return generateToken(SUBJECT_ADMIN_REFRESH, Long.valueOf(admin.getId()), null, null, refreshDuration,
+                "ROLE_ADMIN");
     }
 
     // 토큰 검증

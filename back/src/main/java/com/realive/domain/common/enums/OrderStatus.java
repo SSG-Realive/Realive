@@ -38,6 +38,4 @@ public enum OrderStatus {
         this.description = description;
     }
 
-
-
 }

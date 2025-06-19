@@ -128,12 +128,19 @@ public class StatServiceImpl implements StatService {
 
         // 5. 회원 통계
         long totalSellers = sellerRepository.count();
-        long totalCustomers = customerRepository.count();
         long activeSellers = sellerRepository.countByIsActiveTrue();
+        long inactiveSellers = sellerRepository.countByIsActiveFalse();
+        long totalCustomers = customerRepository.count();
         long activeCustomers = customerRepository.countActiveUsers();
+        long inactiveCustomers = customerRepository.countInactiveUsers();
+
+        long activeMembers = activeSellers + activeCustomers;
+        long inactiveMembers = inactiveSellers + inactiveCustomers;
 
         MemberSummaryStatsDTO memberSummaryStats = MemberSummaryStatsDTO.builder()
                 .totalMembers(totalSellers + totalCustomers)
+                .activeMembers(activeMembers)
+                .inactiveMembers(inactiveMembers)
                 .newMembersInPeriod(0L)
                 .uniqueVisitorsInPeriod(0L)
                 .engagedUsersInPeriod(0L)
