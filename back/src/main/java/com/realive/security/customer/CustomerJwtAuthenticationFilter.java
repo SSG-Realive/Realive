@@ -129,7 +129,7 @@ public class CustomerJwtAuthenticationFilter extends OncePerRequestFilter {
         boolean shouldNotFilter = !uri.startsWith("/api/customer/");
 
         log.info("shouldNotFilter 반환값: {} (true=필터건너뛰기, false=필터실행)", shouldNotFilter);
-        log.info("결과: 이 요청은 JWT 필터를 {}합니다", shouldNotFilter ? "건너뛰" : "실행");
+        log.info("결과: 이 요청은 JWT 필터를 {}합니다", shouldNotFilter ? "건너뛰기" : "실행");
 
         return shouldNotFilter;
     }
