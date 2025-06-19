@@ -2,13 +2,14 @@
 import { create } from 'zustand';
 
 interface AdminAuthState {
-    accessToken?: string;
-    refreshToken?: string;
+    accessToken: string | null;
+    refreshToken: string | null;
     logout: () => void;
 }
 
 export const useAdminAuthStore = create<AdminAuthState>((set) => ({
-    accessToken: undefined,
-    refreshToken: undefined,
-    logout: () => set({ accessToken: undefined, refreshToken: undefined }),
+    accessToken: null,
+    refreshToken: null,
+    logout: () => set({ accessToken: null, refreshToken: null }),
 }));
+
