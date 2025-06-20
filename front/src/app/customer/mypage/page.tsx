@@ -41,6 +41,12 @@ export default function MyPage() {
                         🛒 장바구니
                     </button>
 
+                    <button
+                        className="bg-gray-100 p-4 rounded hover:bg-gray-200"
+                        onClick={() => router.push('/customer/member/auctions/won')}
+                    >
+                        🏆 낙찰한 경매
+                    </button>
 
                     <button
                         className="bg-gray-100 p-4 rounded hover:bg-gray-200"
