@@ -23,6 +23,7 @@ export interface ProductDetail {
     categoryId?: number;
     parentCategoryId?: number;
     seller?: string;
+    sellerId: number;
 }
 
 export interface ProductListDTO {

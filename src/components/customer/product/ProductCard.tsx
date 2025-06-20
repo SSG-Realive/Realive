@@ -11,17 +11,36 @@ export default function ProductCard({
                                         price,
                                         imageThumbnailUrl,
                                         isActive,
-                                    }: ProductListDTO) {
-    const [isWished, setIsWished] = useState<boolean>(false);
+                                        isWished: initialWished = false,
+                                    }: ProductListDTO & { isWished?: boolean }) {
+    const [isWished, setIsWished] = useState<boolean>(initialWished);
+    const [loading, setLoading] = useState<boolean>(false);
 
     const handleToggle = async (e: React.MouseEvent) => {
-        e.preventDefault(); // ✅ 링크 이동 방지
-        const res = await toggleWishlist({ productId: id });
-        setIsWished(res);
+        e.preventDefault();
+        if (loading) return;
+
+        setLoading(true);
+        try {
+            const result = await toggleWishlist({ productId: id });
+            setIsWished(result);
+
+
+            if (result) {
+                alert('찜 목록에 추가되었습니다.');
+            } else {
+                alert('찜 목록에서 제거되었습니다.');
+            }
+        } catch (err) {
+            console.error('찜 토글 실패:', err);
+            alert('찜 처리 중 오류가 발생했습니다.');
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
-        <Link href={`/main/products/${id}`}> {/* ✅ 수정된 경로 */}
+        <Link href={`/main/products/${id}`}>
             <div className="bg-white shadow rounded overflow-hidden border p-3 hover:shadow-md transition">
                 {imageThumbnailUrl ? (
                     <img
@@ -43,6 +62,7 @@ export default function ProductCard({
                         onClick={handleToggle}
                         className="mt-2 text-xl"
                         aria-label="찜하기 버튼"
+                        disabled={loading}
                     >
                         {isWished ? '❤️' : '🤍'}
                     </button>

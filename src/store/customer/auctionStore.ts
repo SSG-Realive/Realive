@@ -97,10 +97,10 @@ export const useAuctionStore = create<AuctionState>()(
         set({ loading: true });
 
         try {
-          // API URL 구성 - 카테고리 파라미터 이름 확인 필요
+          // API URL 구성 - 공개 API 사용
           const url = category
-            ? `/api/customer/auctions?page=${requestPage}&category=${encodeURIComponent(category)}`
-            : `/api/customer/auctions?page=${requestPage}`;
+            ? `/api/public/auctions?page=${requestPage}&category=${encodeURIComponent(category)}`
+            : `/api/public/auctions?page=${requestPage}`;
 
           console.log('Store: API URL', url);
 

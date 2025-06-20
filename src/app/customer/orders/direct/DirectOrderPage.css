@@ -1,0 +1,147 @@
+/* src/app/order/direct/DirectOrderPage.css */
+
+.order-page-container {
+    max-width: 768px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+.page-title {
+    font-size: 1.75rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.order-section {
+    margin-bottom: 2.5rem;
+}
+
+.order-section h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #333;
+}
+
+/* 상품 정보 카드 */
+.product-summary-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border: 1px solid #eee;
+    border-radius: 8px;
+}
+
+.product-summary-card img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.product-details {
+    flex-grow: 1;
+}
+
+.product-price {
+    font-weight: bold;
+}
+
+/* 정보 박스 (주문자 정보) */
+.info-box {
+    padding: 1rem;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+}
+
+/* 배송지 폼 */
+.shipping-form label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.shipping-form input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+}
+
+/* 결제 수단 선택 */
+.payment-selector {
+    display: flex;
+    gap: 1rem;
+}
+
+.payment-selector label {
+    padding: 1rem;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    cursor: pointer;
+    flex-grow: 1;
+    text-align: center;
+}
+
+.payment-selector label.active {
+    border-color: #3b82f6;
+    color: #3b82f6;
+    font-weight: bold;
+}
+
+/* 결제 금액 요약 */
+.order-summary {
+    padding: 1.5rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-top: 2rem;
+}
+
+.order-summary h3 {
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+}
+
+.summary-row.total {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+/* 결제 버튼 */
+.payment-button {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: white;
+    background-color: #3b82f6;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 2rem;
+}
+
+.payment-button:hover {
+    background-color: #2563eb;
+}
+
+.loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}

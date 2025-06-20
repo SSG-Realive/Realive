@@ -1,0 +1,177 @@
+/* src/app/customer/orders/OrderListPage.css */
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+.order-list-page h1 {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 24px;
+}
+
+/* 카드 레이아웃 */
+.order-list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.order-card {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background-color: #ffffff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.order-card-header,
+.order-card-content,
+.order-card-footer {
+    padding: 16px;
+}
+
+.order-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.order-date {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.order-status {
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.order-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #f3f4f6;
+}
+.order-item:last-child {
+    border-bottom: none;
+}
+
+.item-name {
+    font-weight: 600;
+}
+
+.item-details {
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.order-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f9fafb;
+    border-top: 1px solid #e5e7eb;
+}
+
+.total-price {
+    font-weight: bold;
+}
+
+/* 버튼 */
+.button-outline {
+    padding: 8px 16px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background-color: white;
+    cursor: pointer;
+    font-size: 14px;
+}
+.button-outline:hover {
+    background-color: #f9fafb;
+}
+
+.button-primary {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    background-color: #3b82f6;
+    color: white;
+    cursor: pointer;
+}
+.button-primary:hover {
+    background-color: #2563eb;
+}
+
+/* 페이지네이션 */
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 32px;
+}
+
+.page-button {
+    padding: 8px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background-color: white;
+    cursor: pointer;
+}
+
+.page-button.active {
+    background-color: #3b82f6;
+    color: white;
+    border-color: #3b82f6;
+}
+
+.page-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* 기타 UI */
+.notice-section {
+    text-align: center;
+    padding: 32px;
+}
+.error-alert {
+    border: 1px solid #f87171;
+    background-color: #fef2f2;
+    color: #991b1b;
+    padding: 16px;
+    border-radius: 8px;
+}
+.error-alert strong {
+    font-weight: bold;
+}
+
+/* 스켈레톤 UI */
+.skeleton-card {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 16px;
+    background-color: #ffffff;
+}
+.skeleton-line {
+    background-color: #e5e7eb;
+    border-radius: 4px;
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+.skeleton-header, .skeleton-content, .skeleton-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 8px 0;
+}
+.skeleton-footer {
+    align-items: flex-end;
+}
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: .5; }
+}

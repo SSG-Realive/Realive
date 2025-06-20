@@ -2,18 +2,23 @@
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import Navbar from '@/components/customer/Navbar';
+import Navbar from '@/components/customer/common/Navbar';
 import { fetchProductDetail, fetchRelatedProducts } from '@/service/customer/productService';
 import { toggleWishlist } from '@/service/customer/wishlistService';
 import { addToCart } from '@/service/customer/cartService';
+import { fetchReviewsBySeller } from '@/service/customer/reviewService';
+import ReviewList from '@/components/customer/review/ReviewList';
 import { ProductDetail, ProductListDTO } from '@/types/seller/product/product';
+import { ReviewResponseDTO } from '@/types/customer/review/review';
 
 export default function ProductDetailPage() {
     const { id } = useParams();
     const [product, setProduct] = useState<ProductDetail | null>(null);
     const [related, setRelated] = useState<ProductListDTO[]>([]);
+    const [reviews, setReviews] = useState<ReviewResponseDTO[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [isWished, setIsWished] = useState<boolean>(false);
+    const [wishlistLoading, setWishlistLoading] = useState<boolean>(false);
 
     useEffect(() => {
         if (!id) return;
@@ -26,10 +31,29 @@ export default function ProductDetailPage() {
         fetchRelatedProducts(productId).then(setRelated);
     }, [id]);
 
+    // ✅ 리뷰 API 호출
+    useEffect(() => {
+        if (product && typeof product.sellerId === 'number') {
+            fetchReviewsBySeller(product.sellerId).then((res) => {
+                console.log('✅ 리뷰 응답:', res);
+                setReviews(res); // ✅ .reviews 아님
+            });
+        }
+    }, [product]);
+
     const handleToggleWishlist = async () => {
-        if (!product) return;
-        const result = await toggleWishlist({ productId: product.id });
-        setIsWished(result);
+        if (!product || wishlistLoading) return;
+        setWishlistLoading(true);
+        try {
+            const result = await toggleWishlist({ productId: product.id });
+            setIsWished(result);
+            alert(result ? '찜 목록에 추가되었습니다.' : '찜 목록에서 제거되었습니다.');
+        } catch (err) {
+            console.error('찜 처리 실패:', err);
+            alert('찜 처리 중 오류가 발생했습니다.');
+        } finally {
+            setWishlistLoading(false);
+        }
     };
 
     const handleAddToCart = async () => {
@@ -60,6 +84,7 @@ export default function ProductDetailPage() {
                     onClick={handleToggleWishlist}
                     className="text-2xl mb-4"
                     aria-label="찜하기 버튼"
+                    disabled={wishlistLoading}
                 >
                     {isWished ? '❤️' : '🤍'}
                 </button>
@@ -91,7 +116,13 @@ export default function ProductDetailPage() {
                     {product.seller && <p>판매자: {product.seller}</p>}
                 </div>
 
-                {/* ✅ 관련 상품 추천 영역 */}
+                {/* ✅ 리뷰 리스트 */}
+                <div className="mt-10 border-t pt-6">
+                    <h2 className="text-lg font-semibold mb-4">판매자 리뷰</h2>
+                    <ReviewList reviews={reviews} />
+                </div>
+
+                {/* ✅ 관련 상품 */}
                 {related.length > 0 && (
                     <div className="mt-10 border-t pt-6">
                         <h2 className="text-lg font-semibold mb-4">이런 상품은 어떠세요?</h2>
@@ -100,7 +131,7 @@ export default function ProductDetailPage() {
                                 <div
                                     key={item.id}
                                     className="border rounded p-2 hover:shadow cursor-pointer"
-                                    onClick={() => location.href = `/main/products/${item.id}`}
+                                    onClick={() => (location.href = `/main/products/${item.id}`)}
                                 >
                                     <img
                                         src={item.imageThumbnailUrl || '/default-thumbnail.png'}
@@ -108,7 +139,9 @@ export default function ProductDetailPage() {
                                         className="w-full h-32 object-cover rounded"
                                     />
                                     <p className="mt-2 font-medium text-sm truncate">{item.name}</p>
-                                    <p className="text-green-600 font-semibold text-sm">{item.price.toLocaleString()}원</p>
+                                    <p className="text-green-600 font-semibold text-sm">
+                                        {item.price.toLocaleString()}원
+                                    </p>
                                 </div>
                             ))}
                         </div>

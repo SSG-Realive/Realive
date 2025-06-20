@@ -13,7 +13,7 @@ export async function POST(request: Request) {
        - URL 앞에 슬래시 포함 주의
        - <LoginResponse> 제네릭으로 타입 지정 */
     const { data } = await api.post<LoginResponse>(
-      '/api/public/auth/login',
+      '/public/auth/login',
       { email, password }
     );
 
