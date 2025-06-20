@@ -44,7 +44,8 @@ export default function AuctionListPage() {
                     <th className="border border-gray-300 p-2">마감일</th>
                     <th className="border border-gray-300 p-2">판매자 ID</th>
                 </tr>
-                </thead<tbody>
+                </thead>
+                <tbody>
                 {filteredAuctions.map(a => (
                     <tr key={a.id} className="hover:bg-gray-50">
                         <td className="border border-gray-300 p-2">
