@@ -2,9 +2,9 @@ package com.realive.domain.common.enums;
 
 public enum PaymentType {
 
-    CARD("신용/체크카드"),
+    CARD("카드"),
     CELL_PHONE("휴대폰"),
-    ACCOUNT("계좌입금/무통장입금");
+    ACCOUNT("가상계좌");
 
     private final String description;
 
