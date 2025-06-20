@@ -7,6 +7,8 @@ import { useRouter } from 'next/navigation';
 import { adminAuctionService } from '@/service/admin/auctionService';
 import { AuctionResponseDTO } from '@/types/admin/auction';
 
+type StatusFilter = 'ALL' | 'PROCEEDING' | 'SCHEDULED' | 'COMPLETED';
+
 function AuctionListPage() {
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState<AuctionResponseDTO | null>(null);
@@ -16,19 +18,32 @@ function AuctionListPage() {
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [totalElements, setTotalElements] = useState(0);
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('ALL');
   const router = useRouter();
 
   useEffect(() => {
     fetchAuctions();
-  }, [currentPage]);
+  }, [currentPage, statusFilter]);
 
   const fetchAuctions = async () => {
     try {
       setLoading(true);
       setError(null);
+      
+      // 상태 필터에 따른 API 파라미터 설정
+      let statusParam = undefined;
+      if (statusFilter === 'PROCEEDING') {
+        statusParam = 'PROCEEDING';
+      } else if (statusFilter === 'SCHEDULED') {
+        statusParam = 'SCHEDULED';
+      } else if (statusFilter === 'COMPLETED') {
+        statusParam = 'COMPLETED';
+      }
+      
       const response = await adminAuctionService.getAuctions({
         page: currentPage,
-        size: 10
+        size: 10,
+        status: statusParam
       });
       setAuctions(response.content || []);
       setTotalPages(response.totalPages);
@@ -55,11 +70,27 @@ function AuctionListPage() {
     return null;
   }
 
-  // 안전한 필터링 - Postman 응답 구조에 맞게 수정
-  const filtered = auctions.filter(a => 
-    a && a.adminProduct && a.adminProduct.productName && a.adminProduct.productName.includes(search) || 
-    a && a.status && a.status.includes(search)
-  );
+  // 검색어와 상태 필터를 모두 적용한 필터링
+  const filtered = auctions.filter(a => {
+    if (!a) return false;
+    
+    // 검색어 필터링
+    const matchesSearch = !search || 
+      (a.adminProduct?.productName && a.adminProduct.productName.includes(search)) ||
+      (a.statusText && a.statusText.includes(search));
+    
+    // 상태 필터링
+    let matchesStatus = true;
+    if (statusFilter === 'PROCEEDING') {
+      matchesStatus = a.statusText === '진행중';
+    } else if (statusFilter === 'SCHEDULED') {
+      matchesStatus = a.statusText === '예정';
+    } else if (statusFilter === 'COMPLETED') {
+      matchesStatus = a.statusText === '종료';
+    }
+    
+    return matchesSearch && matchesStatus;
+  });
 
   // 이미지 URL 생성 함수
   const getImageUrl = (imagePath: string): string => {
@@ -70,6 +101,11 @@ function AuctionListPage() {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
+  };
+
+  const handleStatusFilterChange = (filter: StatusFilter) => {
+    setStatusFilter(filter);
+    setCurrentPage(0); // 필터 변경 시 첫 페이지로 이동
   };
 
   if (loading) {
@@ -96,23 +132,72 @@ function AuctionListPage() {
 
   return (
     <div className="p-8">
-      <div className="mb-4 flex justify-between items-center">
-        <input
-          type="text"
-          placeholder="상품명/상태 검색"
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-          className="border rounded px-3 py-2 w-64"
-        />
-        <div className="text-sm text-gray-600">
-          총 {totalElements}개 중 {currentPage * 10 + 1}-{Math.min((currentPage + 1) * 10, totalElements)}개
+      <div className="mb-6">
+        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+            <input
+              type="text"
+              placeholder="상품명/상태 검색"
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              className="border rounded px-3 py-2 w-64"
+            />
+            
+            {/* 상태 필터 버튼들 */}
+            <div className="flex gap-2">
+              <button
+                onClick={() => handleStatusFilterChange('ALL')}
+                className={`px-4 py-2 rounded text-sm font-medium transition-colors ${
+                  statusFilter === 'ALL'
+                    ? 'bg-blue-500 text-white'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                }`}
+              >
+                전체
+              </button>
+              <button
+                onClick={() => handleStatusFilterChange('PROCEEDING')}
+                className={`px-4 py-2 rounded text-sm font-medium transition-colors ${
+                  statusFilter === 'PROCEEDING'
+                    ? 'bg-blue-500 text-white'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                }`}
+              >
+                진행중
+              </button>
+              <button
+                onClick={() => handleStatusFilterChange('SCHEDULED')}
+                className={`px-4 py-2 rounded text-sm font-medium transition-colors ${
+                  statusFilter === 'SCHEDULED'
+                    ? 'bg-blue-500 text-white'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                }`}
+              >
+                예정
+              </button>
+              <button
+                onClick={() => handleStatusFilterChange('COMPLETED')}
+                className={`px-4 py-2 rounded text-sm font-medium transition-colors ${
+                  statusFilter === 'COMPLETED'
+                    ? 'bg-blue-500 text-white'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                }`}
+              >
+                종료
+              </button>
+            </div>
+          </div>
+          
+          <div className="text-sm text-gray-600">
+            총 {totalElements}개 중 {currentPage * 10 + 1}-{Math.min((currentPage + 1) * 10, totalElements)}개
+          </div>
         </div>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {filtered.length === 0 ? (
           <div className="col-span-full text-center py-8">
-            {search ? '검색 결과가 없습니다.' : '등록된 경매가 없습니다.'}
+            {search || statusFilter !== 'ALL' ? '검색 결과가 없습니다.' : '등록된 경매가 없습니다.'}
           </div>
         ) : (
           filtered.map(a => (
@@ -141,7 +226,9 @@ function AuctionListPage() {
                     <div>현재가: {a.currentPrice?.toLocaleString()}원</div>
                     <div>시작시간: {new Date(a.startTime).toLocaleString()}</div>
                     <div>종료시간: {new Date(a.endTime).toLocaleString()}</div>
-                    <div>상태: {a.status}</div>
+                    <div className="font-medium">
+                      상태: {a.statusText || a.status}
+                    </div>
                     <div>상품설명: {a.adminProduct?.productDescription}</div>
                   </div>
                   <div className="mt-3">
@@ -226,6 +313,6 @@ function AuctionListPage() {
       )}
     </div>
   );
-} 
+}
 
-export default Object.assign(AuctionListPage, { pageTitle: '경매 목록' }); 
+export default AuctionListPage; 

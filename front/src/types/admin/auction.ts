@@ -1,11 +1,13 @@
 // 경매 관련 타입 정의
 export interface AuctionResponseDTO {
+    name: any;
   id: number;
   startPrice: number;
   currentPrice: number;
   startTime: string;
   endTime: string;
   status: string;
+  statusText?: string;
   createdAt: string;
   updatedAt: string;
   adminProduct: {
