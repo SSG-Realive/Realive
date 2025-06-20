@@ -5,5 +5,5 @@ export interface MemberJoinDTO {
   phone: string;
   address: string;
   birth: string;      // 예: "1999-01-01"
-  gender: 'MALE' | 'FEMALE';     // 예: "MALE" | "FEMALE"
+  gender: 'M' | 'F';     // 예: "MALE" | "FEMALE"
 }

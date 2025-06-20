@@ -1,4 +1,4 @@
-import LoginForm from '@/components/customer/auth/LoginComponent';
+import LoginForm from '@/components/customer/login/LoginComponent';
 import { Suspense } from 'react';
 
 
@@ -12,7 +12,7 @@ export default function LoginPage() {
           <LoginForm />
         </Suspense>
         <div className="mt-4 flex justify-between text-sm">
-          <a href="/customer/member/register" className="text-blue-600 hover:underline">
+          <a href="/customer/signup" className="text-blue-600 hover:underline">
             회원가입
           </a>
           <a href="/customer/member/find-password" className="text-blue-600 hover:underline">

@@ -1,86 +1,311 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { getAdminReviewQnaList, answerAdminReviewQna } from "@/service/admin/reviewService";
+import { AdminReviewQna, AdminReviewQnaListRequest } from "@/types/admin/review";
 
-interface Qna {
-  id: number;
-  user: string;
-  title: string;
-  created: string;
-  answered: boolean;
-}
-
-const dummyQna: Qna[] = [
-  { id: 1, user: "user4", title: "배송은 언제 오나요?", created: "2024-06-01", answered: true },
-  { id: 2, user: "user5", title: "환불 문의", created: "2024-06-02", answered: false },
-  { id: 3, user: "user6", title: "제품 사용법 문의", created: "2024-06-03", answered: true },
-  { id: 4, user: "user7", title: "A/S 신청 방법?", created: "2024-06-04", answered: false },
-  { id: 5, user: "user8", title: "재입고 일정", created: "2024-06-05", answered: true },
-  { id: 6, user: "user9", title: "쿠폰 적용 문의", created: "2024-06-06", answered: false },
-  { id: 7, user: "user10", title: "제품 호환성 문의", created: "2024-06-07", answered: true },
-  { id: 8, user: "user11", title: "배송지 변경", created: "2024-06-08", answered: false },
-  { id: 9, user: "user12", title: "결제 오류", created: "2024-06-09", answered: true },
-  { id: 10, user: "user13", title: "포인트 적립 문의", created: "2024-06-10", answered: false },
-];
-
-function QnaManagementPage() {
+export default function ReviewQnaPage() {
   const router = useRouter();
   const [search, setSearch] = useState("");
-  const filtered = dummyQna.filter(q => 
-    q.title.includes(search) || 
-    q.user.includes(search)
-  );
+  const [qnas, setQnas] = useState<AdminReviewQna[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [statusFilter, setStatusFilter] = useState<string>("");
+  const [answeredFilter, setAnsweredFilter] = useState<string>("");
+  const [selectedQna, setSelectedQna] = useState<AdminReviewQna | null>(null);
+  const [answerText, setAnswerText] = useState("");
+
+  // Q&A 목록 조회
+  const fetchQnas = async (page: number = 1) => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const params: AdminReviewQnaListRequest = {
+        page: page - 1, // 백엔드는 0-based pagination
+        size: 10,
+        search: search || undefined,
+        status: statusFilter || undefined,
+        isAnswered: answeredFilter === "true" ? true : answeredFilter === "false" ? false : undefined
+      };
+
+      const response = await getAdminReviewQnaList(params);
+      setQnas(response.content);
+      setTotalPages(response.totalPages);
+      setCurrentPage(page);
+    } catch (err: any) {
+      console.error('Q&A 목록 조회 실패:', err);
+      setError(err.message || 'Q&A 목록을 불러오는데 실패했습니다.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 초기 로드
+  useEffect(() => {
+    fetchQnas();
+  }, []);
+
+  // 검색 및 필터 적용
+  const handleSearch = () => {
+    fetchQnas(1);
+  };
+
+  // 답변 등록
+  const handleSubmitAnswer = async () => {
+    if (!selectedQna || !answerText.trim()) {
+      alert('답변을 입력해주세요.');
+      return;
+    }
+
+    try {
+      await answerAdminReviewQna(selectedQna.id, { answer: answerText });
+      alert('답변이 등록되었습니다.');
+      setSelectedQna(null);
+      setAnswerText("");
+      fetchQnas(currentPage); // 목록 새로고침
+    } catch (err: any) {
+      console.error('답변 등록 실패:', err);
+      alert(err.message || '답변 등록에 실패했습니다.');
+    }
+  };
+
+  // 상태 텍스트 변환
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case 'PENDING': return '대기중';
+      case 'ANSWERED': return '답변완료';
+      case 'HIDDEN': return '숨김';
+      default: return status;
+    }
+  };
+
+  // 상태별 스타일
+  const getStatusStyle = (status: string) => {
+    switch (status) {
+      case 'PENDING': return 'text-yellow-600';
+      case 'ANSWERED': return 'text-green-600';
+      case 'HIDDEN': return 'text-gray-600';
+      default: return '';
+    }
+  };
 
   if (typeof window !== 'undefined' && !localStorage.getItem('adminToken')) {
     window.location.replace('/admin/login');
     return null;
   }
 
+  if (loading) {
+    return (
+      <div className="p-8">
+        <div className="text-center">로딩 중...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="p-8">
+        <div className="text-red-600 text-center mb-4">{error}</div>
+        <button 
+          onClick={() => fetchQnas()} 
+          className="bg-blue-500 text-white px-4 py-2 rounded"
+        >
+          다시 시도
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="p-8">
-      <h2 className="text-lg font-bold mb-4">Q&A 관리</h2>
-      <div className="mb-4">
+      <h1 className="text-2xl font-bold mb-6">Q&A 관리</h1>
+      
+      {/* 검색 및 필터 */}
+      <div className="mb-6 flex gap-4 items-center">
         <input
           type="text"
-          placeholder="제목/작성자 검색"
+          placeholder="제목/내용/작성자 검색"
           value={search}
           onChange={e => setSearch(e.target.value)}
-          className="border rounded px-3 py-2"
+          onKeyPress={e => e.key === 'Enter' && handleSearch()}
+          className="border rounded px-3 py-2 flex-1"
         />
+        <select
+          value={statusFilter}
+          onChange={e => setStatusFilter(e.target.value)}
+          className="border rounded px-3 py-2"
+        >
+          <option value="">전체 상태</option>
+          <option value="PENDING">대기중</option>
+          <option value="ANSWERED">답변완료</option>
+          <option value="HIDDEN">숨김</option>
+        </select>
+        <select
+          value={answeredFilter}
+          onChange={e => setAnsweredFilter(e.target.value)}
+          className="border rounded px-3 py-2"
+        >
+          <option value="">전체</option>
+          <option value="false">미답변</option>
+          <option value="true">답변완료</option>
+        </select>
+        <button 
+          onClick={handleSearch}
+          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+        >
+          검색
+        </button>
       </div>
+
+      {/* Q&A 테이블 */}
+      <div className="overflow-x-auto">
       <table className="min-w-full border text-sm">
         <thead>
           <tr className="bg-gray-100">
-            <th className="px-2 py-1">번호</th>
-            <th className="px-2 py-1">작성자</th>
-            <th className="px-2 py-1">제목</th>
-            <th className="px-2 py-1">작성일</th>
-            <th className="px-2 py-1">답변여부</th>
-            <th className="px-2 py-1">상세</th>
+              <th className="px-4 py-2 border">상품명</th>
+              <th className="px-4 py-2 border">제목</th>
+              <th className="px-4 py-2 border">작성자</th>
+              <th className="px-4 py-2 border">작성일</th>
+              <th className="px-4 py-2 border">상태</th>
+              <th className="px-4 py-2 border">답변상태</th>
+              <th className="px-4 py-2 border">상세</th>
           </tr>
         </thead>
         <tbody>
-          {filtered.map(q => (
-            <tr key={q.id}>
-              <td className="px-2 py-1">{q.id}</td>
-              <td className="px-2 py-1">{q.user}</td>
-              <td className="px-2 py-1">{q.title}</td>
-              <td className="px-2 py-1">{q.created}</td>
-              <td className="px-2 py-1">{q.answered ? "답변완료" : "미답변"}</td>
-              <td className="px-2 py-1">
+            {qnas?.map(qna => (
+              <tr key={qna.id} className="hover:bg-gray-50">
+                <td className="px-4 py-2 border">{qna.productName}</td>
+                <td className="px-4 py-2 border max-w-xs truncate" title={qna.title}>
+                  {qna.title}
+                </td>
+                <td className="px-4 py-2 border">{qna.userName}</td>
+                <td className="px-4 py-2 border">
+                  {new Date(qna.createdAt).toLocaleDateString()}
+                </td>
+                <td className={`px-4 py-2 border text-center ${getStatusStyle(qna.status)}`}>
+                  {getStatusText(qna.status)}
+                </td>
+                <td className="px-4 py-2 border text-center">
+                  <span className={qna.isAnswered ? 'text-green-600' : 'text-red-600'}>
+                    {qna.isAnswered ? '답변완료' : '미답변'}
+                  </span>
+                </td>
+                <td className="px-4 py-2 border text-center">
                 <button 
-                  className="text-blue-600 underline" 
-                  onClick={() => router.push(`/admin/review-management/qna/${q.id}`)}
+                    className="text-blue-600 underline hover:text-blue-800" 
+                    onClick={() => {
+                      console.log('Q&A 상세 버튼 클릭:', qna.id);
+                      try {
+                        router.push(`/admin/review-management/qna/${qna.id}`);
+                      } catch (error) {
+                        console.error('라우터 에러:', error);
+                        window.location.href = `/admin/review-management/qna/${qna.id}`;
+                      }
+                    }}
                 >
-                  View
+                    상세
                 </button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+      </div>
+
+      {/* 페이지네이션 */}
+      {totalPages > 1 && (
+        <div className="mt-6 flex justify-center gap-2">
+          <button
+            onClick={() => fetchQnas(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="px-3 py-1 border rounded disabled:opacity-50"
+          >
+            이전
+          </button>
+          <span className="px-3 py-1">
+            {currentPage} / {totalPages}
+          </span>
+          <button
+            onClick={() => fetchQnas(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className="px-3 py-1 border rounded disabled:opacity-50"
+          >
+            다음
+          </button>
+        </div>
+      )}
+
+      {(!qnas || qnas.length === 0) && !loading && (
+        <div className="text-center text-gray-500 mt-8">
+          조회된 Q&A가 없습니다.
+        </div>
+      )}
+
+      {/* 답변 모달 */}
+      {selectedQna && (
+        <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-8 min-w-[500px] max-w-[800px] max-h-[80vh] overflow-y-auto">
+            <h2 className="text-xl font-bold mb-4">Q&A 답변</h2>
+            <div className="space-y-4 mb-6">
+              <div>
+                <p className="font-semibold">상품명</p>
+                <p>{selectedQna.productName}</p>
+              </div>
+              <div>
+                <p className="font-semibold">제목</p>
+                <p>{selectedQna.title}</p>
+              </div>
+              <div>
+                <p className="font-semibold">작성자</p>
+                <p>{selectedQna.userName}</p>
+              </div>
+              <div>
+                <p className="font-semibold">내용</p>
+                <p className="whitespace-pre-wrap">{selectedQna.content}</p>
+              </div>
+              {selectedQna.answer && (
+                <div>
+                  <p className="font-semibold">기존 답변</p>
+                  <p className="whitespace-pre-wrap text-gray-600">{selectedQna.answer}</p>
+                </div>
+              )}
+            </div>
+            {!selectedQna.isAnswered && (
+              <div className="mb-6">
+                <p className="font-semibold mb-2">답변</p>
+                <textarea
+                  value={answerText}
+                  onChange={e => setAnswerText(e.target.value)}
+                  placeholder="답변을 입력하세요..."
+                  className="w-full h-32 border rounded p-2 resize-none"
+                />
+              </div>
+            )}
+            <div className="flex gap-2">
+              {!selectedQna.isAnswered && (
+                <button 
+                  className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                  onClick={handleSubmitAnswer}
+                >
+                  답변 등록
+                </button>
+              )}
+              <button 
+                className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+                onClick={() => {
+                  setSelectedQna(null);
+                  setAnswerText("");
+                }}
+              >
+                닫기
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
-
-export default QnaManagementPage; 

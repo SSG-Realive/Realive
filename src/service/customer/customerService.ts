@@ -1,5 +1,3 @@
-
-
 import customerApi from '@/lib/apiClient';
 import { MemberModifyDTO, MemberReadDTO } from '@/types/customer/member/member';
 
@@ -19,3 +17,4 @@ export const deleteMyAccount = async (): Promise<string> => {
   const res = await customerApi.delete('/customer/mypage');
   return res.data; // "회원 탈퇴가 정상 처리되었습니다."
 };
+

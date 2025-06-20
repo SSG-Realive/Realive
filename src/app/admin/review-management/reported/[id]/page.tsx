@@ -1,53 +1,150 @@
 "use client";
 import { useParams, useRouter } from "next/navigation";
-
-// 더미 데이터
-const dummyReported = [
-  { id: "1", product: "노트북", user: "user1", reason: "부적절한 내용", status: "신고됨", userImage: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=facearea&w=256&q=80" },
-  { id: "2", product: "키보드", user: "user2", reason: "광고성", status: "신고처리됨", userImage: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=facearea&w=256&q=80" },
-  { id: "3", product: "마우스", user: "user3", reason: "비방", status: "신고됨", userImage: "https://images.unsplash.com/photo-1599566150163-29194dcaad36?auto=format&fit=facearea&w=256&q=80" },
-];
+import { useState, useEffect } from "react";
+import { getAdminReviewReport, processAdminReviewReport } from "@/service/admin/reviewService";
+import { AdminReviewReport, ReviewReportStatus } from "@/types/admin/review";
+import { useAdminAuthStore } from "@/store/admin/useAdminAuthStore";
 
 export default function ReportedReviewDetailPage() {
   const params = useParams();
   const router = useRouter();
+  const { accessToken } = useAdminAuthStore();
   const { id } = params;
+  
+  const [report, setReport] = useState<AdminReviewReport | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const reported = dummyReported.find(r => r.id === id);
+  const reportId = Number(id);
 
-  if (!reported) {
+  const fetchReportDetail = async () => {
+    if (!accessToken || isNaN(reportId)) return;
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await getAdminReviewReport(reportId);
+      setReport(data);
+    } catch (err: any) {
+      console.error("신고 상세 조회 실패:", err);
+      setError(err.message || "신고 정보를 불러오는데 실패했습니다.");
+      if (err.response?.status === 403) {
+        router.replace('/admin/login');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  useEffect(() => {
+    fetchReportDetail();
+  }, [accessToken, id]);
+
+  const handleProcessReport = async (newStatus: ReviewReportStatus) => {
+    if (!report) return;
+    try {
+      await processAdminReviewReport(report.reportId, { newStatus });
+      fetchReportDetail(); // Refresh data
+    } catch (err: any) {
+      if (err.response?.status === 403) {
+        router.replace('/admin/login');
+        return;
+      }
+      alert(err.message || "신고 처리에 실패했습니다.");
+    }
+  };
+
+  const getStatusText = (status: ReviewReportStatus) => {
+    switch (status) {
+      case 'PENDING': return '접수됨';
+      case 'UNDER_REVIEW': return '검토 중';
+      case 'RESOLVED_KEPT': return '리뷰 유지';
+      case 'RESOLVED_HIDDEN': return '리뷰 숨김';
+      case 'RESOLVED_REJECTED': return '신고 기각';
+      case 'REPORTER_ACCOUNT_INACTIVE': return '신고자 계정 비활성';
+      default: return status;
+    }
+  };
+
+  if (loading) return <div className="p-8 text-center">로딩 중...</div>;
+  if (error) return <div className="p-8 text-center text-red-500">{error}</div>;
+  if (!report) {
     return <div className="p-8">신고된 리뷰 정보를 찾을 수 없습니다.</div>;
   }
 
+  const { review } = report;
+
+  if (!review) {
+    return <div className="p-8 text-center text-red-500">연관된 리뷰 정보를 찾을 수 없습니다.</div>
+  }
+
   return (
-    <div className="p-8 max-w-2xl mx-auto">
+    <div className="p-8 max-w-4xl mx-auto">
       <h2 className="text-2xl font-bold mb-6">신고된 리뷰 상세</h2>
-      <div className="bg-white rounded-lg p-6 shadow">
-        <div className="flex items-center gap-4 mb-6">
-          <img src={reported.userImage} alt={reported.user} className="w-16 h-16 rounded-full border" />
+      <div className="bg-white rounded-lg p-6 shadow-md space-y-8">
+        {/* Reviewer and Reporter Info */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* Reviewer */}
           <div>
-            <p className="text-lg font-semibold">{reported.user}</p>
-            <p className="text-gray-500">작성자</p>
+            <h3 className="text-lg font-semibold border-b pb-2 mb-4">리뷰 작성자 정보</h3>
+            <div className="flex items-center gap-4">
+              <img src={review.customerImage || '/images/placeholder.png'} alt={review.customerName} className="w-16 h-16 rounded-full border" />
+              <div>
+                <p className="text-xl font-bold">{review.customerName}</p>
+                <p className="text-sm text-gray-500">고객 ID: {review.customerId}</p>
+              </div>
+            </div>
+          </div>
+          {/* Reporter */}
+          <div>
+            <h3 className="text-lg font-semibold border-b pb-2 mb-4">신고자 정보</h3>
+            <div className="flex items-center gap-4">
+               {/* Reporter image not available in API */}
+              <div>
+                <p className="text-xl font-bold">{report.reporterName}</p>
+                <p className="text-sm text-gray-500">신고자 ID: {report.reporterId}</p>
+              </div>
+            </div>
           </div>
         </div>
-        <div className="space-y-4">
-          <div>
-            <p className="font-semibold">상품명</p>
-            <p>{reported.product}</p>
-          </div>
-          <div>
-            <p className="font-semibold">신고 사유</p>
-            <p>{reported.reason}</p>
-          </div>
-          <div>
-            <p className="font-semibold">상태</p>
-            <p>{reported.status}</p>
+
+        {/* Report Details */}
+        <div>
+          <h3 className="text-lg font-semibold border-b pb-2 mb-4">신고 내용</h3>
+          <div className="space-y-4">
+            <p><span className="font-semibold">상품명:</span> {review.productName}</p>
+            <p><span className="font-semibold">신고 사유:</span> {report.reason}</p>
+            <p><span className="font-semibold">리뷰 원문:</span></p>
+            <blockquote className="border-l-4 pl-4 text-gray-700 italic">{review.content}</blockquote>
+            <p><span className="font-semibold">평점:</span> {'★'.repeat(review.rating)}</p>
           </div>
         </div>
-        <div className="mt-6 flex gap-2">
+        
+        {/* Status and Actions */}
+        <div className="border-t pt-6">
+          <div className="flex justify-between items-center">
+            <div>
+              <p className="font-semibold">현재 상태</p>
+              <p className="text-lg">{getStatusText(report.status)}</p>
+            </div>
+            <div className="flex gap-2">
+              {report.status === 'UNDER_REVIEW' && (
+                <>
+                  <button onClick={() => handleProcessReport('RESOLVED_KEPT')} className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">리뷰 유지</button>
+                  <button onClick={() => handleProcessReport('RESOLVED_HIDDEN')} className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded">리뷰 숨김</button>
+                  <button onClick={() => handleProcessReport('RESOLVED_REJECTED')} className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded">신고 기각</button>
+                </>
+              )}
+               {report.status === 'PENDING' && (
+                 <button onClick={() => handleProcessReport('UNDER_REVIEW')} className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">검토 시작</button>
+               )}
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-6 flex justify-end gap-2">
           <button 
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-            onClick={() => router.push('/admin/review-management/reported')}
+            className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+            onClick={() => router.back()}
           >
             목록으로
           </button>

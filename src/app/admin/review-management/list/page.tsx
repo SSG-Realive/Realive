@@ -1,64 +1,239 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { getAdminReviewList, updateAdminReview } from "@/service/admin/reviewService";
+import { AdminReview, AdminReviewListRequest } from "@/types/admin/review";
+import { useAdminAuthStore } from "@/store/admin/useAdminAuthStore";
 
-interface Review {
-  id: number;
-  product: string;
-  user: string;
-  content: string;
-  date: string;
-  status: "정상" | "신고됨";
-  productImage: string; // 실제 상품 이미지
-}
-
-const dummyReviews: Review[] = [
-  { id: 1, product: "노트북", user: "user1", content: "좋아요!", date: "2024-06-01", status: "정상", productImage: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=facearea&w=256&q=80" },
-  { id: 2, product: "키보드", user: "user2", content: "별로예요", date: "2024-06-02", status: "신고됨", productImage: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=facearea&w=256&q=80" },
-  { id: 3, product: "마우스", user: "user3", content: "만족", date: "2024-06-03", status: "정상", productImage: "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=facearea&w=256&q=80" },
-  { id: 4, product: "모니터", user: "user4", content: "화질 좋아요", date: "2024-06-04", status: "정상", productImage: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=facearea&w=256&q=80" },
-  { id: 5, product: "의자", user: "user5", content: "편해요", date: "2024-06-05", status: "정상", productImage: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=facearea&w=256&q=80" },
-  { id: 6, product: "책상", user: "user6", content: "튼튼합니다", date: "2024-06-06", status: "신고됨", productImage: "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=facearea&w=256&q=80" },
-  { id: 7, product: "스피커", user: "user7", content: "음질 좋아요", date: "2024-06-07", status: "정상", productImage: "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=facearea&w=256&q=80" },
-  { id: 8, product: "프린터", user: "user8", content: "빠릅니다", date: "2024-06-08", status: "정상", productImage: "https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=facearea&w=256&q=80" },
-  { id: 9, product: "마우스패드", user: "user9", content: "부드러워요", date: "2024-06-09", status: "정상", productImage: "https://images.unsplash.com/photo-1518717758536-85ae29035b6d?auto=format&fit=facearea&w=256&q=80" },
-  { id: 10, product: "램프", user: "user10", content: "밝아요", date: "2024-06-10", status: "신고됨", productImage: "https://images.unsplash.com/photo-1465101178521-c1a9136a3b99?auto=format&fit=facearea&w=256&q=80" },
-];
-
-function ReviewListPage() {
-  const [search, setSearch] = useState("");
+export default function ReviewListPage() {
   const router = useRouter();
-  const filtered = dummyReviews.filter(r => r.product.includes(search) || r.user.includes(search));
+  const { accessToken } = useAdminAuthStore();
+  const [reviews, setReviews] = useState<AdminReview[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [sortOption, setSortOption] = useState('createdAt,desc');
+  const [filters, setFilters] = useState({
+    productFilter: '',
+    sellerFilter: '',
+  });
+
+  const handleFilterChange = (key: string, value: string) => {
+    setFilters(prev => ({ ...prev, [key]: value }));
+  };
+
+  const applyFilters = () => {
+    fetchReviews(1); // Reset to first page
+  };
+
+  const fetchReviews = async (page: number = 1) => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const params: AdminReviewListRequest = {
+        page: page - 1,
+        size: 10,
+        sort: sortOption,
+        productFilter: filters.productFilter || undefined,
+        sellerFilter: filters.sellerFilter || undefined,
+      };
+
+      console.log('리뷰 목록 조회 요청:', params);
+      const response = await getAdminReviewList(params);
+      console.log('리뷰 목록 조회 응답:', response);
+      setReviews(response.content);
+      setTotalPages(response.totalPages);
+      setCurrentPage(page);
+    } catch (err: any) {
+      console.error('리뷰 목록 조회 실패:', err);
+      console.error('에러 상세 정보:', {
+        message: err.message,
+        status: err.response?.status,
+        statusText: err.response?.statusText,
+        data: err.response?.data,
+        headers: err.response?.headers
+      });
+      setError(err.message || '리뷰 목록을 불러오는데 실패했습니다.');
+      if (err.response?.status === 403) {
+        router.replace('/admin/login');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (accessToken) {
+      console.log('리뷰 목록 페이지 - accessToken 확인:', accessToken ? '있음' : '없음');
+      fetchReviews(currentPage);
+    } else {
+      console.log('리뷰 목록 페이지 - accessToken 없음, 로그인 페이지로 이동');
+    }
+  }, [accessToken, currentPage, sortOption]);
+
+  useEffect(() => {
+    if (!accessToken) {
+      router.replace('/admin/login');
+    }
+  }, [accessToken, router]);
+
+  const handleToggleVisibility = async (reviewId: number, isHidden: boolean) => {
+    try {
+      await updateAdminReview(reviewId, !isHidden);
+      // Refresh list
+      setReviews(reviews.map(r => r.id === reviewId ? { ...r, isHidden: !isHidden } : r));
+    } catch (err: any) {
+      console.error('리뷰 상태 변경 실패:', err);
+      alert(err.message || '리뷰 상태 변경에 실패했습니다.');
+    }
+  };
+
+  if (loading && !reviews.length) {
+    return <div className="p-8 text-center">로딩 중...</div>;
+  }
+
+  if (error) {
+    return (
+      <div className="p-8 text-center text-red-500">
+        <p>{error}</p>
+        <button onClick={() => fetchReviews(1)} className="mt-4 bg-blue-500 text-white px-4 py-2 rounded">
+          다시 시도
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="p-8">
-      <div className="mb-4">
+      <h1 className="text-2xl font-bold mb-6">리뷰 목록</h1>
+      
+      <div className="mb-6 flex gap-4 items-end">
         <input
           type="text"
-          placeholder="상품명/작성자 검색"
-          value={search}
-          onChange={e => setSearch(e.target.value)}
+          placeholder="상품명 검색"
+          value={filters.productFilter}
+          onChange={(e) => handleFilterChange('productFilter', e.target.value)}
           className="border rounded px-3 py-2"
         />
+        <input
+          type="text"
+          placeholder="판매자명 검색"
+          value={filters.sellerFilter}
+          onChange={(e) => handleFilterChange('sellerFilter', e.target.value)}
+          className="border rounded px-3 py-2"
+        />
+        <button
+          onClick={applyFilters}
+          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+        >
+          검색
+        </button>
       </div>
-      <div style={{ background: '#eee', padding: 16 }}>
-        {filtered.map(r => (
-          <div key={r.id} style={{
-            display: 'flex', alignItems: 'center', background: '#fff', borderRadius: 8, marginBottom: 16, padding: 16, boxShadow: '0 1px 4px rgba(0,0,0,0.04)'
-          }}>
-            <div style={{ width: 80, height: 80, background: '#ccc', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: 24 }}>
-              {r.productImage ? <img src={r.productImage} alt="이미지" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 4 }} /> : '이미지'}
-            </div>
-            <div style={{ flex: 1 }}>
-              <div style={{ fontWeight: 'bold', marginBottom: 4 }}>{r.content}</div>
-              <div style={{ color: '#888', fontSize: 14 }}>{r.user} | {r.date}</div>
-            </div>
-            <button style={{ marginLeft: 16 }} onClick={() => router.push(`/admin/reviews/${r.id}`)}>View</button>
-          </div>
-        ))}
+
+      <div className="mb-4 flex justify-end">
+        <select
+          value={sortOption}
+          onChange={e => setSortOption(e.target.value)}
+          className="border rounded px-3 py-2"
+        >
+          <option value="createdAt,desc">최신순</option>
+          <option value="rating,desc">평점 높은 순</option>
+          <option value="rating,asc">평점 낮은 순</option>
+        </select>
       </div>
+
+      <div className="overflow-x-auto">
+        <table className="min-w-full border text-sm">
+          <thead>
+            <tr className="bg-gray-100">
+              <th className="px-4 py-2 border">상품명</th>
+              <th className="px-4 py-2 border">고객명</th>
+              <th className="px-4 py-2 border">판매자명</th>
+              <th className="px-4 py-2 border">내용</th>
+              <th className="px-4 py-2 border">평점</th>
+              <th className="px-4 py-2 border">작성일</th>
+              <th className="px-4 py-2 border">상태</th>
+              <th className="px-4 py-2 border">신고수</th>
+              <th className="px-4 py-2 border">상세/처리</th>
+            </tr>
+          </thead>
+          <tbody>
+            {reviews?.map(review => (
+              <tr key={review.id} className="hover:bg-gray-50">
+                <td className="px-4 py-2 border">{review.productName}</td>
+                <td className="px-4 py-2 border">{review.customerName}</td>
+                <td className="px-4 py-2 border">{review.sellerName}</td>
+                <td className="px-4 py-2 border max-w-xs truncate" title={review.content}>
+                  {review.content}
+                </td>
+                <td className="px-4 py-2 border text-center">
+                  {'★'.repeat(review.rating)}
+                </td>
+                <td className="px-4 py-2 border">
+                  {new Date(review.createdAt).toLocaleDateString()}
+                </td>
+                <td className="px-4 py-2 border text-center">
+                  <button
+                    onClick={() => handleToggleVisibility(review.id, review.isHidden)}
+                    className={`px-2 py-1 rounded text-xs text-white ${review.isHidden ? 'bg-gray-500' : 'bg-green-500'}`}
+                  >
+                    {review.isHidden ? '숨김' : '공개'}
+                  </button>
+                </td>
+                <td className="px-4 py-2 border text-center">
+                  {review.reportCount || 0}
+                </td>
+                <td className="px-4 py-2 border text-center">
+                  <button 
+                    className="text-blue-600 underline"
+                    onClick={() => {
+                      console.log('리뷰 상세 버튼 클릭:', review.id);
+                      try {
+                        router.push(`/admin/review-management/${review.id}`);
+                      } catch (error) {
+                        console.error('라우터 에러:', error);
+                        window.location.href = `/admin/review-management/${review.id}`;
+                      }
+                    }}
+                  >
+                    상세
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {totalPages > 1 && (
+        <div className="mt-6 flex justify-center gap-2">
+          <button
+            onClick={() => fetchReviews(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="px-3 py-1 border rounded disabled:opacity-50"
+          >
+            이전
+          </button>
+          <span className="px-3 py-1">
+            {currentPage} / {totalPages}
+          </span>
+          <button
+            onClick={() => fetchReviews(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className="px-3 py-1 border rounded disabled:opacity-50"
+          >
+            다음
+          </button>
+        </div>
+      )}
+
+      {(!reviews || reviews.length === 0) && !loading && (
+        <div className="text-center text-gray-500 mt-8">
+          조회된 리뷰가 없습니다.
+        </div>
+      )}
     </div>
   );
 }
-
-export default Object.assign(ReviewListPage, { pageTitle: '리뷰 목록' }); 
