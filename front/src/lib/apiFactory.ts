@@ -5,7 +5,7 @@ import axios, { type AxiosInstance } from 'axios';
 // 인자로 받을 스토어의 최소 타입을 정의합니다.
 // token을 가져오고 logout을 실행할 수 있는 스토어여야 합니다.
 interface AuthStore {
-   getState: () => {
+  getState: () => {
     accessToken: string | null;   // ✅ 필드명 변경
     refreshToken: string | null;  //   (리프레시 토큰은 인터셉터 안 쓸 수도 있지만 함께 둡니다)
     logout: () => void;
@@ -38,8 +38,10 @@ export function createApiClient(store: AuthStore): AxiosInstance {
       if (error.response?.status === 401) {
         // 토큰이 만료되었거나 유효하지 않으므로 스토어에서 로그아웃 처리합니다.
         store.getState().logout();
-        // 필요 시 로그인 페이지로 리디렉션 할 수 있습니다.
-        // window.location.href = '/login';
+        if (window.location.pathname !== '/login') {
+          window.location.href = '/login';
+
+        }
       }
       return Promise.reject(error);
     }

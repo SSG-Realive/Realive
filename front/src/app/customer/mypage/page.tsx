@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/customer/authStore';
-import Navbar from '@/components/customer/Navbar';
+import Navbar from '@/components/customer/common/Navbar';
 
 export default function MyPage() {
     const router = useRouter();
@@ -33,7 +33,6 @@ export default function MyPage() {
                         ❤️ 찜 목록
                     </button>
 
-                    {/* ✅ 장바구니 이동 버튼 */}
                     <button
                         className="bg-gray-100 p-4 rounded hover:bg-gray-200"
                         onClick={() => router.push('/customer/cart')}
@@ -52,7 +51,14 @@ export default function MyPage() {
                         className="bg-gray-100 p-4 rounded hover:bg-gray-200"
                         onClick={() => router.push('/customer/mypage/edit')}
                     >
-                        ✏️&nbsp;개인정보 관리
+                        👤&nbsp;개인정보 관리
+                    </button>
+
+                    <button
+                        className="bg-gray-100 p-4 rounded hover:bg-gray-200"
+                        onClick={() => router.push('/customer/mypage/reviews')}
+                    >
+                        ✏️&nbsp;리뷰
                     </button>
                 </div>
             </main>

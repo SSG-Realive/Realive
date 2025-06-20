@@ -8,8 +8,7 @@ import type { LoginResponse } from '@/types/customer/login/loginResponse';
 export default function LoginForm() {
   const router       = useRouter();
   const searchParams = useSearchParams();
-  const setTokens    = useAuthStore((s) => s.setTokens);
-
+  const setAuth = useAuthStore((s) => s.setAuth);
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [error,    setError]    = useState('');
 
@@ -50,9 +49,16 @@ export default function LoginForm() {
         return;
       }
 
-      /* ✅ access + refresh 토큰 저장 */
-      if (data.accessToken && data.refreshToken) {
-        setTokens(data.accessToken, data.refreshToken);
+      // ✨ 2. setAuth를 사용하여 id를 포함한 모든 정보를 스토어에 저장합니다.
+            if (data.accessToken && data.refreshToken && data.id) {
+                setAuth({
+                    id: data.id,
+                    accessToken: data.accessToken,
+                    refreshToken: data.refreshToken,
+                    email: data.email,
+                    userName: data.name,
+                    temporaryUser: false, // 이 값은 백엔드 응답에 따라 조절
+                });
 
         const redirectTo = searchParams?.get('redirectTo') || '/main';
         router.push(redirectTo);

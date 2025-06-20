@@ -3,20 +3,37 @@
 import { useEffect, useState } from 'react';
 import { fetchWishlist, toggleWishlist } from '@/service/customer/wishlistService';
 import { ProductListDTO } from '@/types/seller/product/product';
-import Navbar from '@/components/customer/Navbar';
+import Navbar from '@/components/customer/common/Navbar';
 
 export default function WishlistPage() {
     const [products, setProducts] = useState<ProductListDTO[]>([]);
+    const [loadingId, setLoadingId] = useState<number | null>(null);
 
     useEffect(() => {
         fetchWishlist().then(setProducts);
     }, []);
 
     const handleToggle = async (productId: number) => {
-        const result = await toggleWishlist({ productId });
-        if (!result) return;
+        if (loadingId === productId) return;
+        setLoadingId(productId);
 
-        setProducts((prev) => prev.filter((p) => p.id !== productId));
+        try {
+            const isWished = await toggleWishlist({ productId });
+
+            if (!isWished) {
+                // 찜 해제: 목록에서 제거
+                setProducts((prev) => prev.filter((p) => p.id !== productId));
+                alert('찜 목록에서 제거되었습니다.');
+            } else {
+                // 다시 찜 추가된 경우 → 실제로는 목록 유지
+                alert('이미 찜한 상품입니다.');
+            }
+        } catch (err) {
+            console.error('찜 토글 실패:', err);
+            alert('찜 처리 중 오류가 발생했습니다.');
+        } finally {
+            setLoadingId(null);
+        }
     };
 
     return (
@@ -40,6 +57,7 @@ export default function WishlistPage() {
                                 <button
                                     className="text-red-500 text-sm mt-1"
                                     onClick={() => handleToggle(p.id)}
+                                    disabled={loadingId === p.id}
                                 >
                                     ❤️ 찜 해제
                                 </button>

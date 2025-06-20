@@ -11,8 +11,8 @@ const api = axios.create({
 const publicPaths = [
   '/public/auth/login',
   '/public/auth/join',
-  '/api/public/auth/login',
-  '/api/public/auth/join',
+  '/public/auth/login',
+  '/public/auth/join',
   '/seller/login',
   '/admin/login'
 ];

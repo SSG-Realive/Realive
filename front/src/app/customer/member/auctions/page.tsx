@@ -1,6 +1,6 @@
 'use client';
 
-import Navbar from '@/components/customer/Navbar';
+import Navbar from '@/components/customer/common/Navbar';
 import AuctionCard from '@/components/customer/auctions/AuctionCard';
 import CategoryFilter from '@/components/customer/auctions/CategoryFilter';
 import DebugPanel from '@/components/customer/auctions/DebugPanel';

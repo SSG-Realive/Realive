@@ -8,16 +8,27 @@ import MypageCard from '../MypageCard';
 
 export default function Wishlist() {
     const [products, setProducts] = useState<ProductListDTO[]>([]);
+    const [loadingId, setLoadingId] = useState<number | null>(null);
 
     useEffect(() => {
         fetchWishlist().then(setProducts);
     }, []);
 
     const handleToggle = async (productId: number) => {
-        const result = await toggleWishlist({ productId });
-        if (!result) return;
+        if (loadingId === productId) return;
+        setLoadingId(productId);
 
-        setProducts((prev) => prev.filter((p) => p.id !== productId));
+        try {
+            const isWished = await toggleWishlist({ productId });
+
+            if (!isWished) {
+                // 찜 해제된 경우에만 목록에서 제거
+                setProducts((prev) => prev.filter((p) => p.id !== productId));
+            }
+            // 찜 추가된 경우는 UI 그대로 유지
+        } finally {
+            setLoadingId(null);
+        }
     };
 
     return (
@@ -38,6 +49,7 @@ export default function Wishlist() {
                                 <button
                                     className="text-red-500 text-sm mt-1"
                                     onClick={() => handleToggle(p.id)}
+                                    disabled={loadingId === p.id}
                                 >
                                     ❤️ 찜 해제
                                 </button>

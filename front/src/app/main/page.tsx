@@ -5,9 +5,9 @@ import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { fetchPublicProducts, fetchPopularProducts } from '@/service/customer/productService';
 import { ProductListDTO } from '@/types/seller/product/product';
-import Navbar from '@/components/customer/Navbar';
-import ChatbotFloatingButton from '@/components/customer/ChatbotFloatingButton';
-import ProductCard from '@/components/customer/ProductCard';
+import Navbar from '@/components/customer/common/Navbar';
+import ChatbotFloatingButton from '@/components/customer/common/ChatbotFloatingButton';
+import ProductCard from '@/components/customer/product/ProductCard';
 
 const categories = [
     { id: null, name: '전체' },

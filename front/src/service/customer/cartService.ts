@@ -7,23 +7,23 @@ import {
 
 // ✅ 장바구니 전체 조회
 export async function fetchCartList(): Promise<CartItem[]> {
-    const res = await apiClient.get<CartListResponse>('/cart');
+    const res = await apiClient.get<CartListResponse>('/customer/cart');
     return res.data.items;
 }
 
 // ✅ 수량 변경
 export async function updateCartItemQuantity(cartItemId: number, quantity: number): Promise<void> {
-    await apiClient.put(`/cart/${cartItemId}`, {
+    await apiClient.patch(`/customer/cart/${cartItemId}`, {
         quantity,
     });
 }
 
 // ✅ 장바구니 항목 삭제
 export async function deleteCartItem(cartItemId: number): Promise<void> {
-    await apiClient.delete(`/cart/${cartItemId}`);
+    await apiClient.delete(`/customer/cart/${cartItemId}`);
 }
 
 // ✅ 장바구니에 상품 추가
 export async function addToCart(data: CartItemAddRequest): Promise<void> {
-    await apiClient.post('/cart', data);
+    await apiClient.post('/customer/cart', data);
 }
