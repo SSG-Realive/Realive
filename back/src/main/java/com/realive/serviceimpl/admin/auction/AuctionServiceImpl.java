@@ -153,36 +153,50 @@ public class AuctionServiceImpl implements AuctionService {
             if (StringUtils.hasText(statusFilter)) {
                 log.debug("Applying status filter: {}", statusFilter.toUpperCase());
                 switch (statusFilter.toUpperCase()) {
-                    case "ON_AUCTION": // 진행 중: 시작했고, 종료되지 않았고, 마감 시간 전
+                    case "PROCEEDING": // 진행중: 시작했고, 종료되지 않았고, 마감 시간 전
                         predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("startTime"), now));
-                        predicates.add(criteriaBuilder.notEqual(root.get("status"), AuctionStatus.COMPLETED));
+                        predicates.add(criteriaBuilder.equal(root.get("status"), AuctionStatus.PROCEEDING));
                         predicates.add(criteriaBuilder.greaterThan(root.get("endTime"), now));
                         break;
-                    case "UPCOMING": // 시작 전: 시작 시간이 미래이고, 종료되지 않음
+                    case "SCHEDULED": // 예정: 시작 시간이 미래이고, PROCEEDING 상태
                         predicates.add(criteriaBuilder.greaterThan(root.get("startTime"), now));
-                        predicates.add(criteriaBuilder.notEqual(root.get("status"), AuctionStatus.COMPLETED));
+                        predicates.add(criteriaBuilder.equal(root.get("status"), AuctionStatus.PROCEEDING));
                         break;
-                    case "ENDED": // 종료됨: COMPLETED 상태이거나, 마감 시간이 이미 지남
-                        predicates.add(criteriaBuilder.or(
-                                criteriaBuilder.equal(root.get("status"), AuctionStatus.COMPLETED),
-                                criteriaBuilder.lessThanOrEqualTo(root.get("endTime"), now)
-                        ));
+                    case "COMPLETED": // 종료됨: COMPLETED 상태
+                        predicates.add(criteriaBuilder.equal(root.get("status"), AuctionStatus.COMPLETED));
+                        break;
+                    case "CANCELLED": // 취소됨: CANCELLED 상태
+                        predicates.add(criteriaBuilder.equal(root.get("status"), AuctionStatus.CANCELLED));
+                        break;
+                    case "FAILED": // 실패: FAILED 상태
+                        predicates.add(criteriaBuilder.equal(root.get("status"), AuctionStatus.FAILED));
                         break;
                     default:
                         log.warn("지원하지 않는 경매 상태 필터입니다: {}", statusFilter);
                         break;
                 }
-            } else {
-                // statusFilter가 없으면 기본적으로 "진행 중"인 경매만 조회
-                predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("startTime"), now));
-                predicates.add(criteriaBuilder.notEqual(root.get("status"), AuctionStatus.COMPLETED));
-                predicates.add(criteriaBuilder.greaterThan(root.get("endTime"), now));
             }
+            // statusFilter가 없으면 모든 경매 조회 (필터링 없음)
+            
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
 
         Page<Auction> auctionPage = auctionRepository.findAll(spec, pageable);
         List<AuctionResponseDTO> auctionResponseDTOs = convertToAuctionResponseDTOs(auctionPage.getContent());
+        
+        // 상태별 우선순위로 정렬 (진행중 > 예정 > 종료 > 취소 > 실패)
+        auctionResponseDTOs.sort((a, b) -> {
+            int priorityA = getStatusPriority(a.getStatus(), a.getStartTime());
+            int priorityB = getStatusPriority(b.getStatus(), b.getStartTime());
+            
+            if (priorityA != priorityB) {
+                return Integer.compare(priorityA, priorityB);
+            }
+            
+            // 같은 상태 내에서는 시작시간 순으로 정렬
+            return a.getStartTime().compareTo(b.getStartTime());
+        });
+        
         return new PageImpl<>(auctionResponseDTOs, pageable, auctionPage.getTotalElements());
     }
 
@@ -591,6 +605,24 @@ public class AuctionServiceImpl implements AuctionService {
         } catch (Exception e) {
             log.error("경매 결제 처리 실패 - AuctionId: {}", auction.getId(), e);
             throw new RuntimeException("결제 처리 중 오류가 발생했습니다: " + e.getMessage(), e);
+        }
+    }
+
+    private int getStatusPriority(AuctionStatus status, LocalDateTime startTime) {
+        LocalDateTime now = LocalDateTime.now();
+        
+        switch (status) {
+            case PROCEEDING:
+                // 시작시간이 미래면 "예정", 과거면 "진행중"
+                return startTime.isAfter(now) ? 2 : 1; // 예정: 2, 진행중: 1
+            case COMPLETED:
+                return 3; // 종료
+            case CANCELLED:
+                return 4; // 취소
+            case FAILED:
+                return 5; // 실패
+            default:
+                return 6; // 기타
         }
     }
 }
