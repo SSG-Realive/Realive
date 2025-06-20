@@ -33,10 +33,7 @@ const AdminLoginPage = () => {
         // 1. localStorage 저장
         localStorage.setItem('adminToken', data.accessToken);
         // 2. zustand 스토어에도 저장
-        useAdminAuthStore.setState({
-          accessToken: data.accessToken,
-          refreshToken: data.refreshToken,
-        });
+        useAdminAuthStore.getState().setTokens(data.accessToken, data.refreshToken);
 
         setModalType('success');
         setModalTitle('로그인 성공');
@@ -44,7 +41,7 @@ const AdminLoginPage = () => {
         setShowModal(true);
         setTimeout(() => {
           setShowModal(false);
-          router.push('/admin/dashboard');
+          router.push('/admin/dashboard?loginSuccess=true');
         }, 1200);
       } else {
         setModalType('error');

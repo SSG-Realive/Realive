@@ -38,7 +38,7 @@ export default function Navbar({ onSearch }: NavbarProps) {
         .then((data) => setUserName(data.name))
         .catch((e) => console.error('회원 이름 조회 실패:', e));
     }
-  }, [mounted, isAuthenticated, userName, setUserName]);
+  }, [mounted, isAuthenticated, name, setUserName]);
 
   /* 로그아웃 */
   const handleLogout = async  () => {

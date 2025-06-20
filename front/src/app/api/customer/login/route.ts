@@ -1,8 +1,10 @@
 // src/app/api/customer/login/route.ts
 import { NextResponse } from 'next/server';
-import type { LoginRequest, LoginResponse } from '@/app/types/customer/login';
 import api from '@/app/lib/axios';
 import axios from 'axios';
+import { LoginRequest, LoginResponse } from '@/types/customer/login/login';
+
+// 서버사이드 로그인 요청 핸들러
 
 export async function POST(request: Request) {
   try {

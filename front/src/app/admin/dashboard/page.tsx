@@ -6,6 +6,7 @@ import { AdminDashboardDTO } from '@/types/admin/admin';
 import { getAdminDashboard } from '@/service/admin/adminService';
 import { useRouter } from 'next/navigation';
 import Modal from '@/components/Modal';
+import { useAdminAuthStore } from '@/store/admin/useAdminAuthStore';
 
 const DashboardChart = dynamic(() => import('@/components/DashboardChart'), { ssr: false });
 
@@ -31,9 +32,18 @@ const AdminDashboardPage = () => {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const adminToken = localStorage.getItem('adminToken');
-      if (!adminToken) {
-      router.replace('/admin/login');
+      const storeToken = useAdminAuthStore.getState().accessToken;
+      
+      // localStorage나 Zustand 스토어에 토큰이 없으면 로그인 페이지로 이동
+      if (!adminToken && !storeToken) {
+        router.replace('/admin/login');
         return;
+      }
+      
+      // localStorage에 토큰이 있지만 Zustand 스토어에 없으면 동기화
+      if (adminToken && !storeToken) {
+        const refreshToken = localStorage.getItem('adminRefreshToken');
+        useAdminAuthStore.getState().setTokens(adminToken, refreshToken || '');
       }
     }
   }, [router]);
@@ -198,4 +208,4 @@ const AdminDashboardPage = () => {
   );
 };
 
-export default AdminDashboardPage; 
+export default AdminDashboardPage;
