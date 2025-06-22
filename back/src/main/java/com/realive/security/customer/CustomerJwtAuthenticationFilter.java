@@ -16,6 +16,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -71,7 +72,7 @@ public class CustomerJwtAuthenticationFilter extends OncePerRequestFilter {
                             List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(role));
 
                             // ✅ CustomerPrincipal 사용을 위한 Customer 조회
-                            Customer customer = customerService.getByEmail(userEmail);
+                            Customer customer = customerService.getByEmailIncludingSocial(userEmail);
                             CustomerPrincipal principal = new CustomerPrincipal(customer);
                             Authentication authentication = new UsernamePasswordAuthenticationToken(principal, null, authorities);
                             SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -104,7 +105,7 @@ public class CustomerJwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String uri = request.getRequestURI();
-        boolean shouldNotFilter = !uri.startsWith("/api/customer/");
+        boolean shouldNotFilter = !(uri.startsWith("/api/customer/") || uri.startsWith("/api/reviews/"));
         log.info("[CustomerJwtFilter] shouldNotFilter 검사. URI: {}, 결과: {}", uri, shouldNotFilter ? "건너뜀" : "실행");
         return shouldNotFilter;
     }

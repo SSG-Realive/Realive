@@ -23,6 +23,7 @@ import com.realive.event.FileUploadEvnetPublisher;
 import com.realive.repository.seller.SellerRepository;
 import com.realive.security.JwtUtil;
 import com.realive.security.seller.SellerPrincipal;
+import com.realive.service.auth.LogoutService;
 import com.realive.service.seller.SellerService;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -45,6 +46,8 @@ public class SellerController {
     private final JwtUtil jwtUtil;
     private final FileUploadEvnetPublisher fileUploadEvnetPublisher;
     private final SellerRepository sellerRepository;
+    private final LogoutService logoutService;
+
 
     // 🔐 로그인 (토큰 발급)
     @PostMapping("/login")
@@ -56,18 +59,12 @@ public class SellerController {
 
     // 로그아웃 (토큰 덮어쓰기)
     @PostMapping("/logout")
-    public ResponseEntity<Void> logout(HttpServletResponse response) {
-        ResponseCookie deleteCookie = ResponseCookie.from("refreshToken", "")
-                .httpOnly(true)
-                .secure(true)
-                .sameSite("None")
-                .path("/")
-                .maxAge(0)
-                .build();
-
-        response.setHeader("Set-Cookie", deleteCookie.toString());
-
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<Void> sellerLogout(@AuthenticationPrincipal SellerPrincipal principal) {
+        if (principal != null) {
+            log.info("판매자 로그아웃 요청: ID {}", principal.getId());
+            logoutService.sellerLogout(principal.getId());
+        }
+        return ResponseEntity.ok().build();
     }
 
     // 📝 회원가입

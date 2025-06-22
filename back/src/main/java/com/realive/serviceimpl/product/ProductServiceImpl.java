@@ -285,9 +285,10 @@ public class ProductServiceImpl implements ProductService {
                                 .imageThumbnailUrl(getThumbnailUrlByType(productId, MediaType.IMAGE))
                                 .videoThumbnailUrl(getThumbnailUrlByType(productId, MediaType.VIDEO))
                                 .categoryName(Category.getCategoryFullPath(product.getCategory()))
-                                .categoryId(category.getId()) // ✅ 추가
+                                .categoryId(category.getId())
                                 .parentCategoryId(category.getParent() != null ? category.getParent().getId() : null) // ✅ 추가
                                 .sellerName(product.getSeller().getName())
+                                .sellerId(product.getSeller().getId())
                                 .build();
         }
 

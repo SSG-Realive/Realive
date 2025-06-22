@@ -27,9 +27,10 @@ public class ProductResponseDTO {
     private String imageThumbnailUrl; // 대표 이미지 썸네일 (필수)
     private String videoThumbnailUrl; // 대표 영상 썸네일 (선택)
     private String categoryName;      // 카테고리 이름 (선택)
-    private Long categoryId; // ✅ 추가
-    private Long parentCategoryId; // ✅ 추가
+    private Long categoryId;
+    private Long parentCategoryId;
     private String sellerName;        // 판매자 이름 (선택)
+    private Long sellerId;
 
     private DeliveryPolicyDTO deliveryPolicy;  // 배송정책
 }

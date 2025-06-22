@@ -2,6 +2,8 @@ package com.realive.repository.customer.productview;
 
 import java.util.Optional;
 
+import com.realive.domain.product.QDeliveryPolicy;
+import com.realive.dto.product.DeliveryPolicyDTO;
 import org.springframework.stereotype.Repository;
 
 import com.querydsl.core.types.Projections;
@@ -25,12 +27,14 @@ public class ProductDetailImpl implements ProductDetail {
     public Optional<ProductResponseDTO> findProductDetailById(Long id) {
 
         QProduct product = QProduct.product;
-        QProductImage thumbnailImage = new QProductImage("thumbnailImage"); // 대표 이미지
-        QProductImage thumbnailVideo = new QProductImage("thumbnailVideo"); // 대표 영상
+        QProductImage thumbnailImage = new QProductImage("thumbnailImage");
+        QProductImage thumbnailVideo = new QProductImage("thumbnailVideo");
         QCategory category = QCategory.category;
         QSeller seller = QSeller.seller;
+        QDeliveryPolicy deliveryPolicy = QDeliveryPolicy.deliveryPolicy;
 
-        ProductResponseDTO dto = queryFactory
+        // DTO 직접 매핑용 임시 프로젝션 (배송 정책 필드를 분리해서 가져오기 위해)
+        var result = queryFactory
                 .select(Projections.fields(ProductResponseDTO.class,
                         product.id.as("id"),
                         product.name.as("name"),
@@ -47,7 +51,8 @@ public class ProductDetailImpl implements ProductDetail {
                         category.name.as("categoryName"),
                         category.id.as("categoryId"),
                         category.parent.id.as("parentCategoryId"),
-                        seller.name.as("sellerName")
+                        seller.name.as("sellerName"),
+                        seller.id.as("sellerId")
                 ))
                 .from(product)
                 .leftJoin(thumbnailImage).on(
@@ -60,11 +65,28 @@ public class ProductDetailImpl implements ProductDetail {
                                 .and(thumbnailVideo.isThumbnail.isTrue())
                                 .and(thumbnailVideo.mediaType.eq(MediaType.VIDEO))
                 )
-                .leftJoin(category).on(product.category.eq(category))
-                .leftJoin(seller).on(product.seller.eq(seller))
+                .leftJoin(product.category, category)
+                .leftJoin(product.seller, seller)
                 .where(product.id.eq(id))
                 .fetchOne();
 
-        return Optional.ofNullable(dto);
+        if (result == null) {
+            return Optional.empty();
+        }
+
+        var deliveryPolicyResult = queryFactory
+                .select(Projections.fields(DeliveryPolicyDTO.class,
+                        deliveryPolicy.type,
+                        deliveryPolicy.cost,
+                        deliveryPolicy.regionLimit
+                ))
+                .from(deliveryPolicy)
+                .where(deliveryPolicy.product.id.eq(id))
+                .fetchOne();
+
+        result.setDeliveryPolicy(deliveryPolicyResult);
+
+        return Optional.of(result);
+
     }
 }

@@ -130,8 +130,8 @@ public class OrderServiceImpl implements OrderService {
 
     // 구매 내역 리스트 조회
     @Override
-    public Page<OrderResponseDTO> getOrderList(Pageable pageable) {
-        Page<Order> orderPage = orderRepository.findAllOrders(pageable);
+    public Page<OrderResponseDTO> getOrderList(Pageable pageable, Long customerId) {
+        Page<Order> orderPage = orderRepository.findByCustomerId(customerId, pageable);
         List<OrderResponseDTO> responseList = new ArrayList<>();
 
         List<Long> orderIds = orderPage.getContent().stream().map(Order::getId).collect(Collectors.toList());

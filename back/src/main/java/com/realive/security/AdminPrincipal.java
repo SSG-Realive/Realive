@@ -44,4 +44,8 @@ public class AdminPrincipal implements UserDetails {
     public Admin getAdmin() {
         return this.admin;
     }
+
+    public Integer getId() {
+        return this.getId();
+    }
 }

@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ReviewViewRepository extends JpaRepository<SellerReview, Long> {
+public interface    ReviewViewRepository extends JpaRepository<SellerReview, Long> {
 
     // 특정 리뷰 상세 정보 조회
     // productName 필드를 DTO 생성자에서 제거하고, 서비스 계층에서 처리하도록 변경

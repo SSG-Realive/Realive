@@ -11,5 +11,6 @@ public class CustomerLoginResponseDTO {
     private String refreshToken;
     private String email;
     private String name;
+    private Long id;
     
 }
