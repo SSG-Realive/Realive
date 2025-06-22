@@ -596,7 +596,6 @@ public class AuctionServiceImpl implements AuctionService {
             // 10. AuctionPayment 상태 업데이트
             auctionPayment.setStatus(PaymentStatus.COMPLETED);
             auctionPayment.setPaidAt(LocalDateTime.now());
-            auctionPayment.setOrderId(savedOrder.getId());
             auctionPaymentRepository.save(auctionPayment);
             
             log.info("경매 결제 처리 완료 - OrderId: {}, AuctionId: {}", savedOrder.getId(), auction.getId());
