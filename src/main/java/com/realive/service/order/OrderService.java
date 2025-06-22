@@ -9,7 +9,7 @@ public interface OrderService {
     OrderResponseDTO getOrder(Long orderId, Long customerId);
 
     // 주문 목록 조회 (페이징 포함)
-    Page<OrderResponseDTO> getOrderList(Pageable pageable);
+    Page<OrderResponseDTO> getOrderList(Pageable pageable, Long customerId);
 
     // 구매내역 삭제
     void deleteOrder(OrderDeleteRequestDTO orderDeleteRequestDTO);

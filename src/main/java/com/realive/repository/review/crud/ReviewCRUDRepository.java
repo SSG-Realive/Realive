@@ -15,5 +15,7 @@ public interface ReviewCRUDRepository extends JpaRepository<SellerReview, Long> 
     // ⭐ 수정: customerId, orderId 뿐만 아니라 sellerId까지 함께 조회하여 중복 리뷰 여부 확인
     Optional<SellerReview> findByOrderIdAndCustomerIdAndSellerId(Long orderId, Long customerId, Long sellerId);
 
+    Optional<Object> findByOrderIdAndCustomerId(Long orderId, Long customerId);
+
     // Optional<SellerReview> findByCustomerIdAndOrderId(Long customerId, Long orderId); // 기존 메서드는 필요하면 유지
 }

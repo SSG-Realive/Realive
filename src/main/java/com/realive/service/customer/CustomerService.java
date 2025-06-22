@@ -18,6 +18,7 @@ public class CustomerService {
 
     private final CustomerRepository customerRepository;
 
+
     // 고객 ID로 활성화된 회원 정보 조회
     public Customer getActiveCustomerById(Long id) {
         return customerRepository.findActiveUserById(id)
@@ -29,6 +30,16 @@ public class CustomerService {
         return customerRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("회원 없음"))
                 .getId();
+    }
+
+    public Customer getByEmail(String email) {
+        return customerRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("해당 이메일의 회원을 찾을 수 없습니다."));
+    }
+
+    public Customer getByEmailIncludingSocial(String email) {
+        return customerRepository.findByEmailIncludingSocial(email)
+                .orElseThrow(() -> new EntityNotFoundException("해당 이메일의 회원을 찾을 수 없습니다."));
     }
 
 }

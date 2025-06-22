@@ -6,6 +6,7 @@ import com.realive.dto.cart.CartItemUpdateRequestDTO;
 import com.realive.dto.cart.CartListResponseDTO;
 import com.realive.dto.customer.member.MemberLoginDTO;
 import com.realive.dto.order.PayRequestDTO; // PayRequestDTO 임포트
+import com.realive.security.customer.CustomerPrincipal;
 import com.realive.service.cart.crud.CartService;
 import com.realive.service.cart.view.CartViewService;
 import jakarta.validation.Valid;
@@ -28,7 +29,7 @@ public class CartController {
     // 장바구니 추가
     @PostMapping
     public ResponseEntity<CartItemResponseDTO> addCartItem(
-            @AuthenticationPrincipal MemberLoginDTO userDetails,
+            @AuthenticationPrincipal CustomerPrincipal userDetails,
             @Valid @RequestBody CartItemAddRequestDTO requestDTO) {
         log.info("장바구니 항목 추가 요청: {}", requestDTO);
         CartItemResponseDTO response = cartService.addCartItem(userDetails.getId(), requestDTO);
@@ -38,7 +39,7 @@ public class CartController {
     // 장바구니 리스트 조회
     @GetMapping
     public ResponseEntity<CartListResponseDTO> getCart(
-            @AuthenticationPrincipal MemberLoginDTO userDetails) {
+            @AuthenticationPrincipal CustomerPrincipal userDetails) {
         log.info("장바구니 목록 조회 요청.");
         CartListResponseDTO response = cartViewService.getCart(userDetails.getId());
         return ResponseEntity.ok(response);
@@ -47,7 +48,7 @@ public class CartController {
     // 장바구니 수량 변경
     @PatchMapping("/{cartItemId}")
     public ResponseEntity<CartItemResponseDTO> updateCartItem(
-            @AuthenticationPrincipal MemberLoginDTO userDetails,
+            @AuthenticationPrincipal CustomerPrincipal userDetails,
             @PathVariable Long cartItemId,
             @Valid @RequestBody CartItemUpdateRequestDTO requestDTO) {
         log.info("장바구니 항목 {} 수량 업데이트 요청: {}", cartItemId, requestDTO);
@@ -63,7 +64,7 @@ public class CartController {
     // 장바구니 물품 삭제
     @DeleteMapping("/{cartItemId}")
     public ResponseEntity<Void> removeCartItem(
-            @AuthenticationPrincipal MemberLoginDTO userDetails,
+            @AuthenticationPrincipal CustomerPrincipal userDetails,
             @PathVariable Long cartItemId) {
         log.info("장바구니 항목 제거 요청: {}", cartItemId);
         cartService.removeCartItem(userDetails.getId(), cartItemId);
@@ -73,7 +74,7 @@ public class CartController {
     // 장바구니 물품 모두 삭제
     @DeleteMapping
     public ResponseEntity<Void> clearCart(
-            @AuthenticationPrincipal MemberLoginDTO userDetails) {
+            @AuthenticationPrincipal CustomerPrincipal userDetails) {
         log.info("장바구니 전체 비우기 요청.");
         cartService.clearCart(userDetails.getId());
         return ResponseEntity.noContent().build();
@@ -89,7 +90,7 @@ public class CartController {
     @PostMapping("/payment") // 경로를 /api/customer/cart/payment 로 변경했습니다.
     public ResponseEntity<Long> processCartPayment(
             @RequestBody PayRequestDTO payRequestDTO,
-            @AuthenticationPrincipal MemberLoginDTO userDetails) {
+            @AuthenticationPrincipal CustomerPrincipal userDetails) {
         log.info("장바구니 다수 상품 결제 요청 수신: {}", payRequestDTO);
         // 인증된 사용자 ID를 PayRequestDTO에 설정
         payRequestDTO.setCustomerId(userDetails.getId());

@@ -68,4 +68,9 @@ public interface AuctionRepository extends JpaRepository<Auction, Integer>, JpaS
      * 특정 상태면서 종료시간이 지난 경매 전체 조회
      */
     List<Auction> findByStatusAndEndTimeBefore(AuctionStatus status, LocalDateTime endTime);
+
+    /**
+     * 특정 낙찰자가 낙찰한 경매 목록을 페이징하여 조회
+     */
+    Page<Auction> findByWinningCustomerIdAndStatus(Long winningCustomerId, AuctionStatus status, Pageable pageable);
 }

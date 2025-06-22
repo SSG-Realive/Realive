@@ -8,6 +8,7 @@ import com.realive.dto.customer.member.MemberJoinDTO;
 import com.realive.repository.customer.CustomerRepository;
 import com.realive.security.JwtUtil;
 import com.realive.security.customer.CustomerPrincipal;
+import com.realive.service.auth.LogoutService;
 import com.realive.service.customer.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -44,6 +47,17 @@ public class LoginController {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final MemberService memberService;
+    private final CustomerRepository customerRepository;
+    private final LogoutService logoutService;
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> customerLogout(@AuthenticationPrincipal CustomerPrincipal principal) {
+        if (principal != null) {
+            log.info("고객 로그아웃 요청: ID {}", principal.getId());
+            logoutService.customerLogout(principal.getId());
+        }
+        return ResponseEntity.ok().build();
+    }
 
 
     @PostMapping("/login")
@@ -74,11 +88,19 @@ public class LoginController {
             }
             log.info("✅ 2-1. 비밀번호 일치!");
 
+            Long customerId = principal.getId();
+            Customer customer = customerRepository.findById(customerId)
+                    .orElseThrow(() -> new UsernameNotFoundException("인증은 성공했으나 DB에서 사용자를 찾을 수 없습니다. ID: " + customerId));
+
             // 3. 토큰을 생성합니다.
             log.info("3. JWT 토큰 생성 시도...");
             String accessToken = jwtUtil.generateAccessToken(principal);
             String refreshToken = jwtUtil.generateRefreshToken(principal);
             log.info("✅ 3-1. 토큰 생성 성공!");
+
+            customer.setRefreshToken(refreshToken);
+            customerRepository.save(customer);
+            log.info("✅ 4-1. Refresh Token 저장 성공!");
 
             // 4. 성공 응답을 반환합니다.
             CustomerLoginResponseDTO responseDto = CustomerLoginResponseDTO.builder()
@@ -86,6 +108,7 @@ public class LoginController {
                     .refreshToken(refreshToken)
                     .email(principal.getUsername())
                     .name(principal.getName())
+                    .id(principal.getId())
                     .build();
 
             log.info("--- [테스트] 고객 로그인 성공 ---");

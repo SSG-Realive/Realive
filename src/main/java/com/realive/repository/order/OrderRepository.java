@@ -19,6 +19,8 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     // 고객 ID와 주문 ID로 단건 조회
     Optional<Order> findByCustomerIdAndId(Long customerId, Long id);
 
+    //주문 페이징처리된것
+    Page<Order> findByCustomerId(Long customerId, Pageable pageable);
     // 관리자 전체 주문 목록 조회 (Customer 정보 포함)
     @Query(value = """
             SELECT o FROM Order o

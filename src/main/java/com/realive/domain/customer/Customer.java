@@ -86,5 +86,8 @@ public class Customer {
     @Column(name ="updated_at" )
     protected LocalDateTime updated;
 
+    @Column(name = "refresh_token", length = 512) // ✨ 필드 추가
+    private String refreshToken;
+
     
 }

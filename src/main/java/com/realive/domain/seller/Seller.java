@@ -57,4 +57,7 @@ public class Seller extends BaseTimeEntity {
     // 활동 여부
     @Column(name = "is_active")
     private boolean isActive = true;
+
+    @Column(name = "refresh_token", length = 512) // ✨ 필드 추가
+    private String refreshToken;
 }

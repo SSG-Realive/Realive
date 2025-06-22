@@ -19,6 +19,7 @@ public class AuctionResponseDTO {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private AuctionStatus status;
+    private String statusText;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -35,6 +36,9 @@ public class AuctionResponseDTO {
             dynamicStatus = AuctionStatus.COMPLETED;
         }
 
+        // 상태에 따른 한글 텍스트 설정
+        String statusText = getStatusText(dynamicStatus, auction.getStartTime());
+
         return AuctionResponseDTO.builder()
                 .id(auction.getId())
                 .startPrice(auction.getStartPrice())
@@ -42,9 +46,28 @@ public class AuctionResponseDTO {
                 .startTime(auction.getStartTime())
                 .endTime(auction.getEndTime())
                 .status(dynamicStatus)
+                .statusText(statusText)
                 .createdAt(auction.getCreatedAt())
                 .updatedAt(auction.getUpdatedAt())
                 .adminProduct(productDTO)
                 .build();
+    }
+
+    private static String getStatusText(AuctionStatus status, LocalDateTime startTime) {
+        LocalDateTime now = LocalDateTime.now();
+        
+        switch (status) {
+            case PROCEEDING:
+                // 시작 시간이 미래면 "예정", 현재 진행 중이면 "진행중"
+                return startTime.isAfter(now) ? "예정" : "진행중";
+            case COMPLETED:
+                return "종료";
+            case CANCELLED:
+                return "취소";
+            case FAILED:
+                return "실패";
+            default:
+                return "알 수 없음";
+        }
     }
 }

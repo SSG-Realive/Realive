@@ -4,6 +4,8 @@ import com.realive.dto.auction.AuctionCreateRequestDTO;
 import com.realive.dto.auction.AuctionResponseDTO;
 import com.realive.dto.auction.AuctionCancelResponseDTO;
 import com.realive.dto.auction.AuctionUpdateRequestDTO;
+import com.realive.dto.auction.AuctionWinResponseDTO;
+import com.realive.dto.auction.AuctionPaymentRequestDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException; // 명시적 import
@@ -95,4 +97,34 @@ public interface AuctionService {
      * @throws AccessDeniedException 관리자 권한이 없을 경우
      */
     AuctionResponseDTO updateAuction(AuctionUpdateRequestDTO requestDto, Long adminUserId);
+
+    /**
+     * 고객이 자신의 낙찰 정보를 조회합니다.
+     *
+     * @param auctionId 경매 ID
+     * @param customerId 고객 ID
+     * @return 낙찰 정보 DTO
+     * @throws NoSuchElementException 해당 경매를 찾을 수 없거나 낙찰자가 아닌 경우
+     */
+    AuctionWinResponseDTO getAuctionWinInfo(Integer auctionId, Long customerId);
+
+    /**
+     * 고객이 낙찰한 경매 목록을 조회합니다.
+     *
+     * @param customerId 고객 ID
+     * @param pageable 페이징 정보
+     * @return 낙찰한 경매 목록
+     */
+    Page<AuctionWinResponseDTO> getWonAuctions(Long customerId, Pageable pageable);
+
+    /**
+     * 낙찰자가 경매 상품에 대한 결제를 진행합니다.
+     *
+     * @param requestDto 결제 요청 정보
+     * @param customerId 고객 ID
+     * @return 생성된 주문 ID
+     * @throws NoSuchElementException 해당 경매를 찾을 수 없거나 낙찰자가 아닌 경우
+     * @throws IllegalStateException 이미 결제가 완료된 경매인 경우
+     */
+    Long processAuctionPayment(AuctionPaymentRequestDTO requestDto, Long customerId);
 }

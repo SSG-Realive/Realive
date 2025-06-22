@@ -5,6 +5,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,11 +17,14 @@ import com.realive.dto.customer.member.MemberModifyDTO;
 import com.realive.dto.customer.member.MemberReadDTO;
 import com.realive.exception.UnauthorizedException;
 import com.realive.security.customer.CustomerPrincipal;
+import com.realive.service.auth.LogoutService;
 import com.realive.service.customer.MemberService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+
+import java.util.Map;
 
 // [Customer] 회원 관련 컨트롤러
 
@@ -31,6 +35,16 @@ import lombok.extern.log4j.Log4j2;
 public class MemberController {
 
     private final MemberService memberService;
+    private final LogoutService logoutService;
+
+     @PostMapping("/logout")
+    public ResponseEntity<Void> customerLogout(@AuthenticationPrincipal CustomerPrincipal principal) {
+        if (principal != null) {
+            log.info("고객 로그아웃 요청: ID {}", principal.getId());
+            logoutService.customerLogout(principal.getId());
+        }
+        return ResponseEntity.ok().build();
+    }
 
     // 임시회원: 소셜 로그인 후 임시회원으로 전회원을 회원으로 전환
     @PutMapping("/update-info")
@@ -50,7 +64,8 @@ public class MemberController {
         }
 
         memberService.updateTemporaryUserInfo(request, currentEmail);
-        return ResponseEntity.ok("회원정보가 정상적으로 수정되었습니다.");
+        return ResponseEntity.ok(Map.of("message", "회원정보가 정상적으로 수정되었습니다."));
+
     }
 
     // 회원정보조회

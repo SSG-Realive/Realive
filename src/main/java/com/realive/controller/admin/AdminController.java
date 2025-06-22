@@ -9,11 +9,14 @@ import com.realive.dto.admin.AdminRegisterRequestDTO;
 import com.realive.security.AdminPrincipal;
 import com.realive.security.JwtUtil;
 import com.realive.service.admin.AdminService;
+import com.realive.service.auth.LogoutService;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,13 +31,23 @@ public class AdminController {
 
     private final AdminService adminService;
     private final JwtUtil jwtUtil;
-
+    private final LogoutService logoutService;
     // 관리자 회원가입
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody AdminRegisterRequestDTO dto) {
         adminService.register(dto);
         return ResponseEntity.ok("관리자 회원가입 완료");
     }
+    
+    @PostMapping("logout")
+    public ResponseEntity<Void> adminLogout(@AuthenticationPrincipal AdminPrincipal principal) {
+        if (principal != null) {
+            log.info("관리자 로그아웃 요청: ID {}", principal.getId());
+            logoutService.adminLogout(principal.getId());
+        }
+        return ResponseEntity.ok().build();
+    }
+
 
     //  관리자 로그인
     @PostMapping("/login")

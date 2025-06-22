@@ -1,6 +1,7 @@
 package com.realive.controller.order;
 
 import com.realive.dto.order.*;
+import com.realive.security.customer.CustomerPrincipal;
 import com.realive.service.order.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -34,7 +35,7 @@ public class OrderController {
     public ResponseEntity<DirectPaymentInfoDTO> getDirectPaymentInfo(
             @RequestParam Long productId,
             @RequestParam Integer quantity,
-            @AuthenticationPrincipal MemberLoginDTO userDetails) {
+            @AuthenticationPrincipal CustomerPrincipal userDetails) {
         log.info("단일 상품 바로 구매 정보 조회 요청: productId={}, quantity={}", productId, quantity);
         // 인증된 사용자 ID를 여기서 직접 사용하거나, PayRequestDTO에 포함시켜 서비스 계층으로 전달 가능
         // 현재 getDirectPaymentInfo는 customerId를 받지 않으므로, 이 정보는 결제 요청 시에 사용될 것입니다.
@@ -52,7 +53,7 @@ public class OrderController {
     @PostMapping("/direct-payment")
     public ResponseEntity<Long> processDirectPayment(
             @RequestBody PayRequestDTO payRequestDTO,
-            @AuthenticationPrincipal MemberLoginDTO userDetails) {
+            @AuthenticationPrincipal CustomerPrincipal userDetails) {
         log.info("단일 상품 바로 구매 요청 수신: {}", payRequestDTO);
         // 인증된 사용자 ID를 PayRequestDTO에 설정
         payRequestDTO.setCustomerId(userDetails.getId());
@@ -73,7 +74,7 @@ public class OrderController {
     @GetMapping("/{orderId}")
     public ResponseEntity<OrderResponseDTO> getOrder(
             @PathVariable Long orderId,
-            @AuthenticationPrincipal MemberLoginDTO userDetails) { // @RequestParam customerId 대신 @AuthenticationPrincipal 사용
+            @AuthenticationPrincipal CustomerPrincipal userDetails) { // @RequestParam customerId 대신 @AuthenticationPrincipal 사용
         log.info("주문 상세 조회 요청 수신: 주문 ID {}, 고객 ID {}", orderId, userDetails.getId());
         OrderResponseDTO order = orderService.getOrder(orderId, userDetails.getId()); // userDetails에서 customerId 가져옴
         return new ResponseEntity<>(order, HttpStatus.OK); // 200 OK
@@ -88,12 +89,18 @@ public class OrderController {
     @GetMapping
     public ResponseEntity<Page<OrderResponseDTO>> getOrderList(
             @PageableDefault(sort = "orderedAt", direction = Sort.Direction.DESC) Pageable pageable,
-            @AuthenticationPrincipal MemberLoginDTO userDetails) { // 고객 ID를 받기 위해 추가
+            @AuthenticationPrincipal CustomerPrincipal userDetails) { // 고객 ID를 받기 위해 추가
+        
+        
+        if (userDetails == null) {
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        
+        
         log.info("주문 목록 조회 요청 수신: 페이지 {}, 크기 {}, 정렬 {}, 고객 ID {}", pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort(), userDetails.getId());
-        // TODO: OrderService.getOrderList가 현재 customerId를 받지 않으므로, 이를 수정해야 할 수 있습니다.
-        // 현재는 전체 주문 목록을 반환하지만, 일반적으로는 특정 고객의 주문 목록을 반환해야 합니다.
-        // 예를 들어: Page<OrderResponseDTO> orderList = orderService.getOrderListByCustomer(pageable, userDetails.getId());
-        Page<OrderResponseDTO> orderList = orderService.getOrderList(pageable); // 필요에 따라 customerId를 추가하도록 서비스 계층 수정 고려
+        Long customerId = userDetails.getId();
+       
+        Page<OrderResponseDTO> orderList = orderService.getOrderList(pageable, customerId); // 필요에 따라 customerId를 추가하도록 서비스 계층 수정 고려
         return new ResponseEntity<>(orderList, HttpStatus.OK); // 200 OK
     }
 
@@ -107,7 +114,7 @@ public class OrderController {
     @PostMapping("/cancel")
     public ResponseEntity<Void> cancelOrder(
             @RequestBody OrderCancelRequestDTO orderCancelRequestDTO,
-            @AuthenticationPrincipal MemberLoginDTO userDetails) {
+            @AuthenticationPrincipal CustomerPrincipal userDetails) {
         log.info("주문 취소 요청 수신: {}", orderCancelRequestDTO);
         orderCancelRequestDTO.setCustomerId(userDetails.getId()); // 고객 ID 설정
         orderService.cancelOrder(orderCancelRequestDTO);
@@ -125,7 +132,7 @@ public class OrderController {
     @PostMapping("/confirm")
     public ResponseEntity<Void> confirmOrder(
             @RequestBody OrderConfirmRequestDTO orderConfirmRequestDTO,
-            @AuthenticationPrincipal MemberLoginDTO userDetails) {
+            @AuthenticationPrincipal CustomerPrincipal userDetails) {
         log.info("구매 확정 요청 수신: {}", orderConfirmRequestDTO);
         orderConfirmRequestDTO.setCustomerId(userDetails.getId()); // 고객 ID 설정
         orderService.confirmOrder(orderConfirmRequestDTO);
@@ -143,7 +150,7 @@ public class OrderController {
     @DeleteMapping
     public ResponseEntity<Void> deleteOrder(
             @RequestBody OrderDeleteRequestDTO orderDeleteRequestDTO,
-            @AuthenticationPrincipal MemberLoginDTO userDetails) {
+            @AuthenticationPrincipal CustomerPrincipal userDetails) {
         log.info("주문 삭제 요청 수신: {}", orderDeleteRequestDTO);
         orderDeleteRequestDTO.setCustomerId(userDetails.getId()); // 고객 ID 설정
         orderService.deleteOrder(orderDeleteRequestDTO);

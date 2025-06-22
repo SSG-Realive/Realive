@@ -51,7 +51,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public AdminLoginResponseDTO login(AdminLoginRequestDTO loginRequestDto) {
         if (loginRequestDto.getEmail() == null || loginRequestDto.getEmail().trim().isEmpty() ||
                 loginRequestDto.getPassword() == null || loginRequestDto.getPassword().isEmpty()) {
@@ -70,6 +70,10 @@ public class AdminServiceImpl implements AdminService {
         // Admin 객체를 위한 토큰 생성 메소드 호출
         String accessToken = jwtUtil.generateAccessToken(admin);
         String refreshToken = jwtUtil.generateRefreshToken(admin);
+
+        //db에 토큰 저장
+        admin.setRefreshToken(refreshToken);
+        adminRepository.save(admin);
 
         log.info("생성된 Access Token: {}", accessToken);
         log.info("생성된 Refresh Token: {}", refreshToken);
