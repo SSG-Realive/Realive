@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useRouter } from 'next/navigation';
-import apiClient from '@/lib/apiClient';
+import { adminApi } from '@/lib/apiClient';
 
 interface Customer {
   id: number;
@@ -33,13 +33,7 @@ function CustomerListPage() {
     if (search) params.append('searchTerm', search);
     if (status) params.append('isActive', status === 'Active' ? 'true' : 'false');
 
-    const token = typeof window !== 'undefined' ? localStorage.getItem('adminToken') : '';
-    apiClient.get(`/admin/users?${params.toString()}`, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      }
-    })
+    adminApi.get(`/admin/users?${params.toString()}`)
       .then(res => {
         const customersWithBoolean = (res.data.data.content || []).map(c => ({
           ...c,
@@ -53,15 +47,9 @@ function CustomerListPage() {
 
   // 고객 활성/비활성 토글
   const handleToggleActive = async (customer: Customer) => {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('adminToken') : '';
     try {
-      await apiClient.put(`/admin/users/customers/${customer.id}/status`, {
+      await adminApi.put(`/admin/users/customers/${customer.id}/status`, {
         isActive: !customer.is_active
-      }, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        }
       });
       alert(`고객 ${customer.name}의 상태가 변경되었습니다.`);
       setCustomers(prev =>

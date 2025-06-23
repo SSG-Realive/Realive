@@ -1,7 +1,7 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import apiClient from '@/lib/apiClient';
+import { adminApi } from '@/lib/apiClient';
 import Link from 'next/link';
 
 interface Seller {
@@ -35,7 +35,7 @@ export default function AdminSellersPage() {
       size: '100',
     });
     const token = typeof window !== 'undefined' ? localStorage.getItem('adminToken') : '';
-    apiClient.get(`/admin/users?${params.toString()}`, {
+    adminApi.get(`/admin/users?${params.toString()}`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
@@ -63,7 +63,7 @@ export default function AdminSellersPage() {
   const handleToggleActive = async (seller: Seller) => {
     const token = typeof window !== 'undefined' ? localStorage.getItem('adminToken') : '';
     try {
-      await apiClient.put(`/admin/users/sellers/${seller.id}/status`, {
+      await adminApi.put(`/admin/users/sellers/${seller.id}/status`, {
         isActive: !seller.is_active
       }, {
         headers: {
