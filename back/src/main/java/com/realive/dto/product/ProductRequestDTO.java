@@ -42,6 +42,8 @@ public class ProductRequestDTO {
 
     private Long categoryId;
 
+    private Long parentCategoryId;
+
     private Boolean active;
 
     @NotNull

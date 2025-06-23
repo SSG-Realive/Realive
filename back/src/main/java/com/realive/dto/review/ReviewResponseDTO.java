@@ -21,4 +21,18 @@ public class ReviewResponseDTO {
     private LocalDateTime createdAt;
     private boolean isHidden;
 
+    public ReviewResponseDTO(Long reviewId, Long orderId, Long customerId, Long sellerId,
+                             double rating, String content,
+                             LocalDateTime createdAt, boolean isHidden) { // productName 인자 제거
+        this.reviewId = reviewId;
+        this.orderId = orderId;
+        this.customerId = customerId;
+        this.sellerId = sellerId;
+        // this.productName = productName; // 여기서 productName 설정 제거
+        this.rating = rating;
+        this.content = content;
+        this.createdAt = createdAt;
+        this.isHidden = isHidden;
+    }
+
 }

@@ -33,4 +33,9 @@ public interface PayoutLogRepository extends JpaRepository<PayoutLog, Integer> {
 
     // 특정 기간 동안 처리된(processedAt 기준) 정산 내역 조회
     List<PayoutLog> findByProcessedAtBetween(LocalDateTime startDateTime, LocalDateTime endDateTime);
+
+    /**
+     * 중복 로그 방지를 위한 체크 → 이건 payoutLogRepository 에 추가
+     */
+     boolean existsBySellerIdAndPeriodStartAndPeriodEnd(Integer sellerId, LocalDate periodStart, LocalDate periodEnd);
 }

@@ -35,7 +35,7 @@ public class SalesLog {
     private Integer sellerId;
 
     @Column(name = "customer_id")
-    private Integer customerId;
+    private Long customerId;
 
     private Integer quantity;
 

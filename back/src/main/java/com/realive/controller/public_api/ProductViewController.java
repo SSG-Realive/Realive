@@ -42,12 +42,12 @@ public class ProductViewController {
 
         PageResponseDTO<ProductListDTO> result = productViewService.search(pageRequestDTO, categoryId);
         return ResponseEntity.ok(result);
-    }
+    }   
 
     // 상품 상세 조회
     @GetMapping("/{id}")
     public ResponseEntity<ProductResponseDTO> getProductDetail(@PathVariable("id") Long id) {
-
+        
         ProductResponseDTO productDetail = productViewService.getProductDetail(id);
         return ResponseEntity.ok(productDetail);
     }
@@ -57,8 +57,21 @@ public class ProductViewController {
     public ResponseEntity<List<CustomerQnaListDTO>> getProductQnaList(@PathVariable("productId") Long productId){
 
         List<CustomerQnaListDTO> qnaLists = customerQnaService.listProductQnaWith(productId);
-        return ResponseEntity.ok(qnaLists);
+        return ResponseEntity.ok(qnaLists); 
 
     }
 
+    // 관련 상품 추천
+    @GetMapping("/{id}/related")
+    public ResponseEntity<List<ProductListDTO>> getRelatedProducts(@PathVariable Long id) {
+        List<ProductListDTO> related = productViewService.getRelatedProducts(id);
+        return ResponseEntity.ok(related);
+    }
+
+    // 찜 많은 인기 상품
+    @GetMapping("/popular")
+    public ResponseEntity<List<ProductListDTO>> getPopularProducts() {
+        List<ProductListDTO> popular = productViewService.getPopularProducts();
+        return ResponseEntity.ok(popular);
+    }
 }

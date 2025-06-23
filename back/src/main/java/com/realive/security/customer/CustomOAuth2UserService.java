@@ -3,6 +3,7 @@ package com.realive.security.customer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
+import java.util.HashMap;
 import java.util.Optional;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -53,11 +54,16 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         Map<String, Object> paramMap = oAuth2User.getAttributes();
 
         String email = null;
+        String nickname = null;
 
-        switch(clientName){
+
+        switch (clientName) {
             case "Kakao":
-                email = getKakaoEmail(paramMap); //이메일 얻어오기
+                Map<String, String> kakaoInfo = getKakaoInfo(paramMap);
+                email = kakaoInfo.get("email");
+                nickname = kakaoInfo.get("nickname");
                 break;
+            // 필요시 Google 등 다른 소셜 로그인도 추가
         }
 
         log.info("email: " + email);
@@ -80,6 +86,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
             // 고객이 없다면 신규 생성
             customer = new Customer(email, passwordEncoder.encode("1111")); // 임시 비밀번호
+            customer.setName(nickname);
 
             // 소셜 로그인 제공자에 따라 signupMethod 설정
             SignupMethod signupMethod;
@@ -115,22 +122,23 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         );
 
     }
-    
-    private String getKakaoEmail(Map<String, Object> paramMap){
 
-        log.info("KAKAO-----------------------------------------");
+    private Map<String, String> getKakaoInfo(Map<String, Object> paramMap) {
+        log.info("KAKAO 정보 추출 ----------------------------------");
 
-        Object value = paramMap.get("kakao_account");
+        Map<String, Object> accountMap = (Map<String, Object>) paramMap.get("kakao_account");
+        Map<String, Object> profileMap = (Map<String, Object>) accountMap.get("profile");
 
-        log.info(value);
+        String email = (String) accountMap.get("email");
+        String nickname = (String) profileMap.get("nickname");
 
-        LinkedHashMap accountMap = (LinkedHashMap) value;
+        log.info("email: " + email);
+        log.info("nickname: " + nickname);
 
-        String email = (String)accountMap.get("email");
-
-        log.info("email..." + email);
-
-        return email;
+        Map<String, String> result = new HashMap<>();
+        result.put("email", email);
+        result.put("nickname", nickname);
+        return result;
     }
 
 }

@@ -4,7 +4,9 @@ import com.realive.domain.admin.Admin;
 import com.realive.domain.auction.AdminProduct;
 import com.realive.domain.common.enums.MediaType;
 import com.realive.domain.product.Product;
+import com.realive.domain.product.ProductImage;
 import com.realive.domain.seller.Seller;
+import com.realive.dto.admin.ProductDetailDTO;
 import com.realive.dto.auction.AdminPurchaseRequestDTO;
 import com.realive.dto.auction.AdminProductDTO;
 import com.realive.dto.page.PageResponseDTO;
@@ -15,6 +17,7 @@ import com.realive.repository.auction.AdminProductRepository;
 import com.realive.repository.product.ProductImageRepository;
 import com.realive.repository.product.ProductRepository;
 import com.realive.service.admin.product.AdminProductService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
@@ -65,45 +68,59 @@ public class AdminProductServiceImpl implements AdminProductService {
         Product product = productRepository.findById(requestDTO.getProductId().longValue())
             .orElseThrow(() -> new NoSuchElementException("상품을 찾을 수 없습니다."));
 
-        // 3. 상품 상태 확인
+        // 3. 매입 가격 검증 (상품 가격 이상이어야 함)
+        if (requestDTO.getPurchasePrice() < product.getPrice()) {
+            throw new IllegalStateException(
+                String.format("매입 가격(%d원)이 상품 가격(%d원)보다 낮습니다. 상품 가격 이상으로 매입해주세요.", 
+                    requestDTO.getPurchasePrice(), product.getPrice())
+            );
+        }
+
+        // 4. 상품 상태 확인
         if (!product.isActive()) {
             throw new IllegalStateException("비활성화된 상품은 매입할 수 없습니다.");
         }
 
-        // 4. 상품 수량 확인
+        // 5. 상품 수량 확인
         if (product.getStock() <= 0) {
             throw new IllegalStateException("재고가 없는 상품은 매입할 수 없습니다.");
         }
 
-        // 5. 판매자 확인
+        // 6. 판매자 확인
         Seller seller = product.getSeller();
         if (seller == null) {
             throw new IllegalStateException("판매자 정보가 없는 상품입니다.");
         }
 
-        // 6. 이미 매입된 상품인지 확인
+        // 7. 이미 매입된 상품인지 확인
         if (adminProductRepository.findByProductId(requestDTO.getProductId()).isPresent()) {
             throw new IllegalStateException("이미 매입된 상품입니다.");
         }
 
-        // 7. 판매자의 상품 수량 감소
+        // 8. 판매자의 상품 수량 감소
         product.setStock(product.getStock() - 1);
+        if (product.getStock() == 0) {
+            product.setActive(false);
+        }
         productRepository.save(product);
 
-        // 8. AdminProduct 생성
+
+        // 9. AdminProduct 생성
         AdminProduct adminProduct = AdminProduct.builder()
             .productId(requestDTO.getProductId())
             .purchasePrice(requestDTO.getPurchasePrice())
-            .purchasedFromSellerId(seller.getId().intValue())
             .purchasedAt(LocalDateTime.now())
             .isAuctioned(false)
             .build();
 
-        // 9. AdminProduct 저장
+        // 10. AdminProduct 저장
         AdminProduct savedAdminProduct = adminProductRepository.save(adminProduct);
         log.info("관리자 상품 매입 완료: adminProductId={}", savedAdminProduct.getId());
 
-        return AdminProductDTO.fromEntity(savedAdminProduct, product);
+        return AdminProductDTO.fromEntity(savedAdminProduct, product,
+            productImageRepository.findFirstByProductIdAndIsThumbnailTrueAndMediaType(product.getId(), MediaType.IMAGE)
+                .map(ProductImage::getUrl)
+                .orElse(null));
     }
 
     @Override
@@ -114,7 +131,10 @@ public class AdminProductServiceImpl implements AdminProductService {
         Product product = productRepository.findById(productId.longValue())
                 .orElse(null);
 
-        return AdminProductDTO.fromEntity(adminProduct, product);
+        return AdminProductDTO.fromEntity(adminProduct, product,
+            productImageRepository.findFirstByProductIdAndIsThumbnailTrueAndMediaType(product.getId(), MediaType.IMAGE)
+                .map(ProductImage::getUrl)
+                .orElse(null));
     }
 
     @Override
@@ -153,11 +173,15 @@ public class AdminProductServiceImpl implements AdminProductService {
     @Override
     public Optional<AdminProductDTO> getAdminProductDetails(Integer adminProductId) {
         log.info("관리자 물품 상세 정보 조회 요청 - AdminProductId: {}", adminProductId);
-        
+    
         return adminProductRepository.findById(adminProductId)
                 .map(adminProduct -> {
                     Product product = productRepository.findById(adminProduct.getProductId().longValue()).orElse(null);
-                    return AdminProductDTO.fromEntity(adminProduct, product);
+                    String thumbnailUrl = product != null ?
+                            productImageRepository.findFirstByProductIdAndIsThumbnailTrueAndMediaType(product.getId(), MediaType.IMAGE)
+                                    .map(ProductImage::getUrl)
+                                    .orElse(null) : null;
+                    return AdminProductDTO.fromEntity(adminProduct, product, thumbnailUrl);
                 });
     }
 
@@ -264,12 +288,38 @@ public class AdminProductServiceImpl implements AdminProductService {
         Map<Long, Product> productMap = productRepository.findAllByIdIn(productIds).stream()
                 .collect(Collectors.toMap(Product::getId, p -> p, (p1, p2) -> p1));
 
-        // 3. DTO 변환
+        // 3. 썸네일 URL 일괄 조회
+        Map<Long, String> thumbnailUrlMap = productImageRepository.findThumbnailUrlsByProductIds(productIds, MediaType.IMAGE)
+                .stream()
+                .collect(Collectors.toMap(
+                    row -> (Long) row[0],
+                    row -> (String) row[1]
+                ));
+
+        // 4. DTO 변환
         return adminProducts.stream()
                 .map(adminProduct -> {
                     Product product = productMap.get(adminProduct.getProductId().longValue());
-                    return AdminProductDTO.fromEntity(adminProduct, product);
+                    String thumbnailUrl = product != null ? 
+                        thumbnailUrlMap.get(product.getId()) : null;
+                    return AdminProductDTO.fromEntity(adminProduct, product, thumbnailUrl);
                 })
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public ProductDetailDTO getProductDetails(Long productId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new EntityNotFoundException("Product not found"));
+        return ProductDetailDTO.from(product, null);
+    }
+
+    @Override
+    @Transactional
+    public void deactivateProduct(Long productId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new EntityNotFoundException("Product not found"));
+        product.setActive(false);
+        productRepository.save(product);
     }
 } 

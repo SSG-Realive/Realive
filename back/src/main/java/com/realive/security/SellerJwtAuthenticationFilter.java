@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -12,6 +13,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.realive.domain.seller.Seller;
 import com.realive.repository.seller.SellerRepository;
+import com.realive.security.seller.SellerPrincipal;
 
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
@@ -19,63 +21,56 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
-/**
- * JwtAuthenticationFilter
- * - 매 요청마다 실행되는 JWT 인증 필터
- * - 요청 헤더에서 JWT 토큰을 추출하고 유효성을 검증
- * - 유효한 경우, 인증 정보를 Spring Security Context에 등록
- */
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class SellerJwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final JwtUtil jwtUtil; // JWT 유틸리티 클래스
-    private final SellerRepository sellerRepository; // 판매자 정보 조회용 리포지토리
+    private final JwtUtil jwtUtil;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain)
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        // 1. 요청 헤더에서 Authorization 정보 추출
         String authHeader = request.getHeader("Authorization");
 
-        // 2. "Bearer "로 시작하는 경우에만 처리
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            String token = authHeader.substring(7); // "Bearer " 제거한 JWT 토큰
+            String token = authHeader.substring(7);
 
-            // 3. JWT 유효성 검증
             if (jwtUtil.validateToken(token)) {
-                Claims claims = jwtUtil.getClaims(token); // 토큰에서 클레임 추출
-                Long sellerId = claims.get("id", Long.class); // seller ID 추출
+                Claims claims = jwtUtil.getClaims(token);
+                String subject = claims.getSubject();
 
-                // 4. 데이터베이스에서 판매자 조회
-                Seller seller = sellerRepository.findById(sellerId)
-                        .orElse(null);
+                // Seller 토큰인지 확인
+                if (JwtUtil.SUBJECT_SELLER.equals(subject)) {
+                    String email = claims.get("email", String.class);
+                    Long sellerId = claims.get("id", Long.class);
+                    String role = claims.get("auth", String.class);
 
-                // 5. 판매자가 존재하면 인증 객체 생성 및 등록
-                if (seller != null) {
-                    List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_SELLER"));
-                    UsernamePasswordAuthenticationToken authentication =
-                            new UsernamePasswordAuthenticationToken(seller, null, authorities);
-
-                    SecurityContextHolder.getContext()
-                            .setAuthentication(authentication);
+                    if (email != null && sellerId != null && role != null) {
+                        Seller sellerForPrincipal  = Seller.builder().id(sellerId).email(email).build();
+                        SellerPrincipal sellerPrincipal = new SellerPrincipal(sellerForPrincipal);
+                        List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(role));
+                        Authentication authentication = new UsernamePasswordAuthenticationToken(sellerPrincipal, null, authorities);
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                    }
                 }
-
             }
         }
-
-        // 6. 다음 필터 체인으로 전달
         filterChain.doFilter(request, response);
-    }
 
-    @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) {
-        String path = request.getRequestURI();
-        return !path.startsWith("/api/seller");
+    }
+    
+   @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String uri = request.getRequestURI();
+        
+        log.info("[SellerJwtFilter] shouldNotFilter 검사. URI: {}", uri);
+        boolean shouldNotFilter = !uri.startsWith("/api/seller/");
+        log.info("필터 실행 여부 (false여야 실행됨): {}", !shouldNotFilter);
+        
+        return shouldNotFilter;
     }
 }

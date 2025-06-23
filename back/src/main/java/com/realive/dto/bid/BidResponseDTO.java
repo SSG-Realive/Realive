@@ -1,32 +1,35 @@
 package com.realive.dto.bid;
 
+import com.realive.domain.auction.Bid;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 // 입찰 응답
-@Getter
+@Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class BidResponseDTO {
 
-    private final Integer id;
-    private final Integer auctionId;
-    private final Integer customerId;
-    private final Integer bidPrice;
-    private final LocalDateTime bidTime;
+    private Integer id;
+    private Integer auctionId;
+    private Long customerId;
+    private Integer bidPrice;
+    private LocalDateTime bidTime;
+    private String customerName;
 
-    public static BidResponseDTO fromEntity(com.realive.domain.auction.Bid entity) {
-        if (entity == null) {
-            throw new IllegalArgumentException("Bid 엔티티는 null일 수 없습니다.");
-        }
-
+    public static BidResponseDTO fromEntity(Bid bid, String customerName) {
         return BidResponseDTO.builder()
-                .id(entity.getId())
-                .auctionId(entity.getAuctionId())
-                .customerId(entity.getCustomerId())
-                .bidPrice(entity.getBidPrice())
-                .bidTime(entity.getBidTime())
+                .id(bid.getId())
+                .auctionId(bid.getAuctionId())
+                .customerId(bid.getCustomerId())
+                .bidPrice(bid.getBidPrice())
+                .bidTime(bid.getBidTime())
+                .customerName(customerName)
                 .build();
     }
 }

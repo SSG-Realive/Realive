@@ -13,7 +13,7 @@ public class SalesLogDTO {
     private final Integer orderItemId;
     private final Integer productId;
     private final Integer sellerId;
-    private final Integer customerId;
+    private final Long customerId;
     private final Integer quantity;
     private final Integer unitPrice;
     private final Integer totalPrice;

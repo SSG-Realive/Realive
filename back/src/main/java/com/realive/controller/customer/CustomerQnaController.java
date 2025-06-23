@@ -35,7 +35,7 @@ public class CustomerQnaController{
     // 고객 상품 문의하기 (상품 요약 정보 포함)
     @PostMapping
     public ResponseEntity<?> customerQna(Authentication authentication,
-                                         @RequestBody @Valid CustomerQnaRequestDTO requestDTO) {
+                                            @RequestBody @Valid CustomerQnaRequestDTO requestDTO) {
         String email = authentication.getName();
         Long customerId = customerService.findIdByEmail(email);
         requestDTO.setCustomerId(customerId);
@@ -47,25 +47,25 @@ public class CustomerQnaController{
     // 고객 내 Q&A 목록 조회 (상품 요약 정보 포함)
     @GetMapping("/my")
     public ResponseEntity<List<Map<String, Object>>> getMyQnaList(Authentication authentication) {
-
-        String email = authentication.getName();
+        
+        String email = authentication.getName(); 
         Long customerId = customerService.findIdByEmail(email);
-
+        
         List<Map<String, Object>> qnaListWithProduct = customerQnaService.listQnaWithProductSummary(customerId);
-
+        
         return ResponseEntity.ok(qnaListWithProduct);
     }
 
     // 고객 내 Q&A 상세 조회 (상품 요약 정보 포함)
     @GetMapping("my/{qnaId}")
     public ResponseEntity<Map<String, Object>> getQnaDetail(@PathVariable("qnaId") Long qnaId, Authentication authentication) {
-
+        
         String email = authentication.getName();
         Long customerId = customerService.findIdByEmail(email);
-
+        
         Map<String, Object> detail = customerQnaService.detailQnaWithProductSummary(qnaId, customerId);
-
+        
         return ResponseEntity.ok(detail);
     }
-
+ 
 }

@@ -1,79 +1,112 @@
 package com.realive.security.customer;
 
-import java.io.IOException;
-
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
-import org.springframework.web.filter.OncePerRequestFilter;
-
-import com.realive.dto.customer.member.MemberLoginDTO;
-
+import com.realive.domain.customer.Customer;
+import com.realive.security.JwtUtil;
+import com.realive.service.customer.CustomerService;
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
+import org.springframework.web.filter.OncePerRequestFilter;
 
-// [Customer] JWT 토큰을 이용한 인증 필터
+import java.io.IOException;
+import java.util.List;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
-@Log4j2
 public class CustomerJwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final JwtTokenProvider jwtTokenProvider;
-    private final CustomUserDetailsService customUserDetailsService;
+    private final JwtUtil jwtUtil;
+    private final CustomerService customerService; // ✅ 이메일로 Customer 조회를 위해 필요
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
 
-        log.info("[CustomerJwtAuthenticationFilter] doFilterInternal 호출, URI: {}", request.getRequestURI());
-        String token = resolveToken(request);
-        log.info("JWT 토큰 추출: {}", token);
+        log.info("=== CustomerJwtFilter doFilterInternal 시작 ===");
+        log.info("URI: {}", request.getRequestURI());
 
-        if (token != null && jwtTokenProvider.validateToken(token)) {
-            String email = jwtTokenProvider.getUsername(token);
-            log.info("토큰에서 추출한 사용자명(email): {}", email);
+        try {
+            String authHeader = request.getHeader("Authorization");
+            log.info("Authorization 헤더: {}", authHeader != null ? "있음" : "없음");
 
-            // DB에서 유저 정보 로드 (MemberLoginDTO는 UserDetails를 구현해야 함)
-            MemberLoginDTO memberDTO = (MemberLoginDTO) customUserDetailsService.loadUserByUsername(email);
+            if (authHeader != null && authHeader.startsWith("Bearer ")) {
+                String token = authHeader.substring(7);
+                log.info("토큰 추출 성공 - 토큰 길이: {}", token.length());
+                log.info("토큰 앞 20자: {}", token.substring(0, Math.min(token.length(), 20)));
 
-            // 인증 객체 생성 및 SecurityContext에 등록
-            UsernamePasswordAuthenticationToken auth =
-                    new UsernamePasswordAuthenticationToken(memberDTO, null, memberDTO.getAuthorities());
-            //log.info("로드한 MemberLoginDTO: {}", memberDTO);
+                boolean isTokenValid = jwtUtil.validateToken(token);
+                log.info("토큰 검증 결과: {}", isTokenValid);
 
-            SecurityContextHolder.getContext().setAuthentication(auth);
-            log.info("SecurityContextHolder에 인증 객체 등록 완료");
-        }else {
-            log.info("토큰이 없거나 유효하지 않음");
+                if (isTokenValid) {
+                    Claims claims = jwtUtil.getClaims(token);
+
+                    String subject = claims.getSubject();
+                    String userType = claims.get("userType", String.class);
+                    String email = claims.get("email", String.class);
+                    String role = claims.get("auth", String.class);
+
+                    log.info("토큰 Subject: {}", subject);
+                    log.info("사용자 타입: {}", userType);
+                    log.info("추출된 이메일: {}", email);
+                    log.info("추출된 권한: {}", role);
+
+                    boolean isCustomerToken = "customer".equals(userType)
+                            || (userType == null && ("customer".equals(subject) || isEmailFormat(subject)));
+
+                    if (isCustomerToken) {
+                        String userEmail = email != null ? email : subject;
+
+                        if (userEmail != null && role != null) {
+                            List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(role));
+
+                            // ✅ CustomerPrincipal 사용을 위한 Customer 조회
+                            Customer customer = customerService.getByEmailIncludingSocial(userEmail);
+                            CustomerPrincipal principal = new CustomerPrincipal(customer);
+                            Authentication authentication = new UsernamePasswordAuthenticationToken(principal, null, authorities);
+                            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+                            log.info("SecurityContext 설정 완료 - 사용자: {}, 권한: {}", userEmail, role);
+                        } else {
+                            log.warn("이메일 또는 권한 정보 누락 - email: {}, subject: {}, role: {}", email, subject, role);
+                        }
+                    } else {
+                        log.warn("Customer 토큰이 아님 - Subject: {}, userType: {}", subject, userType);
+                    }
+                } else {
+                    log.warn("토큰 검증 실패");
+                }
+            } else {
+                log.warn("Authorization 헤더 없음 또는 형식 오류: {}", authHeader);
+            }
+        } catch (Exception e) {
+            log.error("JWT 필터 처리 중 예외 발생: {}", e.getMessage(), e);
         }
 
         filterChain.doFilter(request, response);
+        log.info("=== CustomerJwtFilter doFilterInternal 완료 ===");
     }
 
-    private String resolveToken(HttpServletRequest request) {
-        String bearerToken = request.getHeader("Authorization");
-        log.info("Authorization 헤더: {}", bearerToken);
-        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-            String token = bearerToken.substring(7); // "Bearer " 이후 토큰만 추출
-            log.info("추출된 토큰: {}", token);
-            return token;
-        }
-        return null;
+    private boolean isEmailFormat(String text) {
+        return text != null && text.contains("@") && text.contains(".");
     }
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String uri = request.getRequestURI();
-        log.info("shouldNotFilter 호출 - URI: {}", uri);
-        boolean result = uri.startsWith("/api/admin") || uri.startsWith("/api/seller") || uri.startsWith("/api/public");
-        log.info("필터 제외 여부: {}", result);
-        return result;
+        boolean shouldNotFilter = !(uri.startsWith("/api/customer/") || uri.startsWith("/api/reviews/"));
+        log.info("[CustomerJwtFilter] shouldNotFilter 검사. URI: {}, 결과: {}", uri, shouldNotFilter ? "건너뜀" : "실행");
+        return shouldNotFilter;
     }
-
 }

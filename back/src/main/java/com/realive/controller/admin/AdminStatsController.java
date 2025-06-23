@@ -61,7 +61,7 @@ public class AdminStatsController {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiResponse.class)))
     })
     @GetMapping("/main-dashboard")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<ApiResponse<AdminDashboardDTO>> getAdminDashboard(
             @Parameter(description = "조회 기준 날짜 (YYYY-MM-DD)", example = "2025-05-27", required = true)
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
@@ -90,7 +90,7 @@ public class AdminStatsController {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiResponse.class)))
     })
     @GetMapping("/sales-period")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<ApiResponse<SalesPeriodStatsDTO>> getSalesStatistics(
             @Parameter(description = "조회 시작일 (YYYY-MM-DD)", required = true) @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @Parameter(description = "조회 종료일 (YYYY-MM-DD)", required = true) @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
@@ -115,7 +115,7 @@ public class AdminStatsController {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiResponse.class)))
     })
     @GetMapping("/auctions-period")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<ApiResponse<AuctionPeriodStatsDTO>> getAuctionPeriodStatistics(
             @Parameter(description = "조회 시작일 (YYYY-MM-DD)", required = true) @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @Parameter(description = "조회 종료일 (YYYY-MM-DD)", required = true) @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
@@ -146,7 +146,7 @@ public class AdminStatsController {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiResponse.class)))
     })
     @GetMapping("/members-period")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<ApiResponse<MemberPeriodStatsDTO>> getMemberPeriodStatistics(
             @Parameter(description = "조회 시작일 (YYYY-MM-DD)", required = true) @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @Parameter(description = "조회 종료일 (YYYY-MM-DD)", required = true) @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
@@ -169,7 +169,7 @@ public class AdminStatsController {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiResponse.class)))
     })
     @GetMapping("/reviews-period")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<ApiResponse<ReviewPeriodStatsDTO>> getReviewPeriodStatistics(
             @Parameter(description = "조회 시작일 (YYYY-MM-DD)", required = true) @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @Parameter(description = "조회 종료일 (YYYY-MM-DD)", required = true) @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
@@ -193,7 +193,7 @@ public class AdminStatsController {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiResponse.class)))
     })
     @GetMapping("/dashboard")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<ApiResponse<Map<String, Object>>> getDashboardStats(
             @Parameter(description = "조회할 날짜 (YYYY-MM-DD)", example = "2025-05-27", required = true)
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
@@ -219,7 +219,7 @@ public class AdminStatsController {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiResponse.class)))
     })
     @GetMapping("/daily-summary")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<ApiResponse<DailySalesSummaryDTO>> getDailySalesSummary(
             @Parameter(description = "조회할 날짜 (YYYY-MM-DD)", example = "2025-05-27", required = true)
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
@@ -242,7 +242,7 @@ public class AdminStatsController {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiResponse.class)))
     })
     @GetMapping("/daily-details")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<ApiResponse<SalesLogDetailListDTO>> getDailySalesLogDetails(
             @Parameter(description = "조회할 날짜 (YYYY-MM-DD)", example = "2025-05-27", required = true)
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
@@ -268,7 +268,7 @@ public class AdminStatsController {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiResponse.class)))
     })
     @GetMapping("/monthly-summary")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<ApiResponse<MonthlySalesSummaryDTO>> getMonthlySalesSummary(
             @Parameter(description = "조회할 연월 (YYYY-MM)", example = "2025-05", required = true)
             @RequestParam @DateTimeFormat(pattern = "yyyy-MM") YearMonth yearMonth) {
@@ -291,7 +291,7 @@ public class AdminStatsController {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiResponse.class)))
     })
     @GetMapping("/monthly-details")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<ApiResponse<MonthlySalesLogDetailListDTO>> getMonthlySalesLogDetails(
             @Parameter(description = "조회할 연월 (YYYY-MM)", example = "2025-05", required = true)
             @RequestParam @DateTimeFormat(pattern = "yyyy-MM") YearMonth yearMonth) {
@@ -317,7 +317,7 @@ public class AdminStatsController {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiResponse.class)))
     })
     @GetMapping("/category-summary")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<ApiResponse<List<CategorySalesSummaryDTO>>> getPlatformCategorySalesSummary(
             @Parameter(description = "조회 시작일 (YYYY-MM-DD)", example = "2025-05-01", required = true)
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
@@ -345,7 +345,7 @@ public class AdminStatsController {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiResponse.class)))
     })
     @GetMapping("/daily-summaries-in-month")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<ApiResponse<List<DailySalesSummaryDTO>>> getDailySummariesInMonth(
             @Parameter(description = "조회할 연월 (YYYY-MM)", example = "2025-05", required = true)
             @RequestParam @DateTimeFormat(pattern = "yyyy-MM") YearMonth yearMonth) {
@@ -371,7 +371,7 @@ public class AdminStatsController {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiResponse.class)))
     })
     @GetMapping("/seller/{sellerId}/daily-summary")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<ApiResponse<DailySalesSummaryDTO>> getSellerDailySalesSummary(
             @Parameter(description = "조회할 판매자의 ID", example = "1", required = true) @PathVariable Integer sellerId,
             @Parameter(description = "조회할 날짜 (YYYY-MM-DD)", example = "2025-05-27", required = true)
@@ -395,7 +395,7 @@ public class AdminStatsController {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiResponse.class)))
     })
     @GetMapping("/seller/{sellerId}/monthly-summary")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<ApiResponse<MonthlySalesSummaryDTO>> getSellerMonthlySalesSummary(
             @Parameter(description = "조회할 판매자의 ID", example = "1", required = true) @PathVariable Integer sellerId,
             @Parameter(description = "조회할 연월 (YYYY-MM)", example = "2025-05", required = true)
@@ -419,7 +419,7 @@ public class AdminStatsController {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiResponse.class)))
     })
     @GetMapping("/product/{productId}/daily-summary")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<ApiResponse<DailySalesSummaryDTO>> getProductDailySalesSummary(
             @Parameter(description = "조회할 상품의 ID", example = "101", required = true) @PathVariable Integer productId,
             @Parameter(description = "조회할 날짜 (YYYY-MM-DD)", example = "2025-05-27", required = true)
@@ -443,7 +443,7 @@ public class AdminStatsController {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiResponse.class)))
     })
     @GetMapping("/product/{productId}/monthly-summary")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<ApiResponse<MonthlySalesSummaryDTO>> getProductMonthlySalesSummary(
             @Parameter(description = "조회할 상품의 ID", example = "101", required = true) @PathVariable Integer productId,
             @Parameter(description = "조회할 연월 (YYYY-MM)", example = "2025-05", required = true)

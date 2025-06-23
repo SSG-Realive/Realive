@@ -5,18 +5,23 @@ import com.realive.domain.admin.Admin;
 import com.realive.dto.admin.AdminInfoResponseDTO;
 import com.realive.dto.admin.AdminLoginRequestDTO;
 import com.realive.dto.admin.AdminLoginResponseDTO;
+import com.realive.dto.admin.AdminRegisterRequestDTO;
 import com.realive.security.AdminPrincipal;
 import com.realive.security.JwtUtil;
 import com.realive.service.admin.AdminService;
+import com.realive.service.auth.LogoutService;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -26,30 +31,36 @@ public class AdminController {
 
     private final AdminService adminService;
     private final JwtUtil jwtUtil;
+    private final LogoutService logoutService;
+    // 관리자 회원가입
+    @PostMapping("/register")
+    public ResponseEntity<String> register(@RequestBody AdminRegisterRequestDTO dto) {
+        adminService.register(dto);
+        return ResponseEntity.ok("관리자 회원가입 완료");
+    }
+    
+    @PostMapping("logout")
+    public ResponseEntity<Void> adminLogout(@AuthenticationPrincipal AdminPrincipal principal) {
+        if (principal != null) {
+            log.info("관리자 로그아웃 요청: ID {}", principal.getId());
+            logoutService.adminLogout(principal.getId());
+        }
+        return ResponseEntity.ok().build();
+    }
+
 
     //  관리자 로그인
     @PostMapping("/login")
-    public ResponseEntity<AdminLoginResponseDTO> login(
-            @RequestBody AdminLoginRequestDTO reqDTO,
-            HttpServletResponse response) {
+public ResponseEntity<AdminLoginResponseDTO> login(
+        @RequestBody @Valid AdminLoginRequestDTO reqDTO) {
 
-        // 1. 로그인 및 토큰 발급 (서비스에서 처리)
-        AdminLoginResponseDTO resDTO = adminService.login(reqDTO);
+    // 1) 로그인 + 토큰 쌍 발급
+    AdminLoginResponseDTO resDTO = adminService.login(reqDTO);
+    // └ resDTO : { accessToken, refreshToken, email, name }
 
-        // 2. Refresh Token을 HttpOnly 쿠키로 설정 (서비스에서 내려준 refreshToken 활용)
-        ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", resDTO.getRefreshToken())
-                .httpOnly(true)
-                .secure(true)
-                .sameSite("none")
-                .path("/")
-                .maxAge(Duration.ofDays(7))
-                .build();
-
-        response.setHeader("Set-Cookie", refreshCookie.toString());
-
-        // 3. accessToken은 필요한 경우 body로 전달
-        return ResponseEntity.ok(resDTO);
-    }
+    // 2) 별도 쿠키 설정 없음  ❌  (프런트에서 localStorage 에 저장하도록 통일)
+    return ResponseEntity.ok(resDTO);
+}
 
     // 관리자 정보 조회
     @GetMapping("/me")

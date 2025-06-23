@@ -1,15 +1,14 @@
 package com.realive.util;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import org.springframework.stereotype.Component;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@Component
 public class TickSizeCalculator {
     // 가구 가격대별 입찰 단위 상수
     private static final int LOW_PRICE_THRESHOLD = 10_000;      // 1만원
     private static final int MID_PRICE_THRESHOLD = 100_000;     // 10만원
     private static final int HIGH_PRICE_THRESHOLD = 1_000_000;  // 100만원
-    
+
     private static final int LOW_PRICE_TICK = 100;      // 100원
     private static final int MID_PRICE_TICK = 1_000;    // 1,000원
     private static final int HIGH_PRICE_TICK = 10_000;  // 1만원
@@ -20,7 +19,7 @@ public class TickSizeCalculator {
      * @param startPrice 경매 시작가
      * @return 입찰 단위
      */
-    public static int calculateTickSize(int startPrice) {
+    public int calculateTickSize(int startPrice) {
         if (startPrice < LOW_PRICE_THRESHOLD) {
             return LOW_PRICE_TICK;
         } else if (startPrice < MID_PRICE_THRESHOLD) {
@@ -38,8 +37,8 @@ public class TickSizeCalculator {
      * @param startPrice 시작가
      * @return 최소 입찰가
      */
-    public static int calculateMinBidPrice(int currentPrice, int startPrice) {
+    public int calculateMinBidPrice(int currentPrice, int startPrice) {
         int tickSize = calculateTickSize(startPrice);
         return currentPrice + tickSize;
     }
-} 
+}

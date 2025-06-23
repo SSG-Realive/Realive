@@ -1,10 +1,7 @@
 package com.realive.repository.customer.productview;
 
-import java.util.List;
-
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.Projections;
-import com.querydsl.jpa.JPQLQuery;
+import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.realive.domain.product.QCategory;
 import com.realive.domain.product.QProduct;
@@ -13,26 +10,48 @@ import com.realive.domain.seller.QSeller;
 import com.realive.dto.page.PageRequestDTO;
 import com.realive.dto.page.PageResponseDTO;
 import com.realive.dto.product.ProductListDTO;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.stereotype.Repository;
 
-// [Customer] 상품 검색 Repository 구현체
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Log4j2
 @RequiredArgsConstructor
+@Repository
 public class ProductSearchImpl implements ProductSearch {
 
     private final JPAQueryFactory queryFactory;
 
+    public List<Long> findSubCategoryIdsIncludingSelf(Long categoryId) {
+        if (categoryId == null) {
+            return Collections.emptyList();
+        }
+
+        QCategory category = QCategory.category;
+
+        List<Long> categoryIds = queryFactory
+                .select(category.id)
+                .from(category)
+                .where(category.id.eq(categoryId)
+                        .or(category.parent.id.eq(categoryId)))
+                .fetch();
+
+        if (!categoryIds.contains(categoryId)) {
+            categoryIds.add(categoryId);
+        }
+
+        return categoryIds;
+    }
+
     @Override
     public PageResponseDTO<ProductListDTO> search(PageRequestDTO requestDTO, Long categoryId) {
-       
         QProduct product = QProduct.product;
         QCategory category = QCategory.category;
         QProductImage productImage = QProductImage.productImage;
         QSeller seller = QSeller.seller;
-        
+
         BooleanBuilder builder = new BooleanBuilder();
 
         String keyword = requestDTO.getKeyword();
@@ -50,41 +69,78 @@ public class ProductSearchImpl implements ProductSearch {
             builder.and(keywordBuilder);
         }
 
-        //하위 카테고리 포함한 필터링
         if (categoryId != null) {
-            List<Long> categoryIds = findAllCategoryIdsIncludingChildren(categoryId);
+            List<Long> categoryIds = findSubCategoryIdsIncludingSelf(categoryId);
+            log.info("📂 포함된 카테고리 ID 목록: {}", categoryIds);
             builder.and(product.category.id.in(categoryIds));
+        } else {
+            log.info("📂 전체 카테고리 대상 조회");
         }
 
         int offset = requestDTO.getOffset();
         int limit = requestDTO.getLimit();
 
-        JPQLQuery<ProductListDTO> query = queryFactory
-            .select(Projections.bean(ProductListDTO.class,
-                product.id.as("id"),
-                product.name.as("name"),
-                product.price.as("price"),
-                product.status.stringValue().as("status"), // enum일 경우 stringValue() 사용
-                product.active.as("isActive"),
-                productImage.url.as("thumbnailUrl"),
-                seller.name.as("sellerName"),
-                category.name.as("categoryName")
-            ))
-            .from(product)
-            .leftJoin(productImage)
-            .on(productImage.product.eq(product)
-                .and(productImage.isThumbnail.isTrue()))
-            .leftJoin(product.seller, seller)
-            .leftJoin(product.category, category)
-            .where(builder)
-            .offset(offset)
-            .limit(limit)
-            .orderBy(product.id.desc());
+        // 1. 상품 목록 조회
+        List<Tuple> productTuples = queryFactory
+                .select(
+                        product.id,
+                        product.name,
+                        product.price,
+                        product.status,
+                        product.active,
+                        product.stock,
+                        seller.id,
+                        seller.name,
+                        category.name,
+                        category.parent.name
+                )
+                .from(product)
+                .leftJoin(product.seller, seller)
+                .leftJoin(product.category, category)
+                .where(builder)
+                .offset(offset)
+                .limit(limit)
+                .orderBy(product.id.desc())
+                .fetch();
 
-        // 리스트 조회
-        List<ProductListDTO> dtoList = query.fetch();
+        // 2. 상품 ID 목록 추출
+        List<Long> productIds = productTuples.stream()
+                .map(t -> t.get(product.id))
+                .toList();
 
-        // 전체 개수
+        // 3. 썸네일 이미지 URL 조회
+        Map<Long, String> imageMap = productIds.isEmpty() ? new HashMap<>() :
+                queryFactory
+                        .select(productImage.product.id, productImage.url)
+                        .from(productImage)
+                        .where(productImage.product.id.in(productIds)
+                                .and(productImage.isThumbnail.isTrue()))
+                        .fetch()
+                        .stream()
+                        .collect(Collectors.toMap(
+                                row -> row.get(productImage.product.id),
+                                row -> row.get(productImage.url),
+                                (existing, replacement) -> existing
+                        ));
+
+        // 4. DTO 변환
+        List<ProductListDTO> dtoList = productTuples.stream()
+                .map(row -> ProductListDTO.builder()
+                        .id(row.get(product.id))
+                        .name(row.get(product.name))
+                        .price(row.get(product.price))
+                        .status(row.get(product.status).name())
+                        .isActive(row.get(product.active))
+                        .stock(row.get(product.stock))
+                        .sellerId(row.get(seller.id))
+                        .sellerName(row.get(seller.name))
+                        .categoryName(row.get(category.name))
+                        .parentCategoryName(row.get(category.parent.name))
+                        .imageThumbnailUrl(imageMap.get(row.get(product.id)))
+                        .build())
+                .toList();
+
+        // 5. 전체 개수 조회
         Long total = queryFactory
                 .select(product.count())
                 .from(product)
@@ -94,15 +150,7 @@ public class ProductSearchImpl implements ProductSearch {
         return PageResponseDTO.<ProductListDTO>withAll()
                 .pageRequestDTO(requestDTO)
                 .dtoList(dtoList)
-                .total(total.intValue())
+                .total(total != null ? total.intValue() : 0)
                 .build();
     }
-
-    // 예시: 카테고리 재귀 조회
-    private List<Long> findAllCategoryIdsIncludingChildren(Long parentId) {
-        // 실제로는 CategoryService 또는 Repository 통해 하위 ID 재귀적으로 조회
-        // 예시에서는 간단하게 1개만
-        return List.of(parentId);
-    }
-
 }

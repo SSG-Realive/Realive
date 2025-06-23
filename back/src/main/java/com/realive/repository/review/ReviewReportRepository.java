@@ -1,213 +1,78 @@
-//package com.realive.service.admin.management.serviceimpl;
-//
-//import com.realive.domain.common.enums.ProductStatus;
-//import com.realive.domain.customer.Customer;
-//import com.realive.domain.order.Order;
-//import com.realive.domain.product.Product;
-//import com.realive.domain.seller.Seller;
-//import com.realive.dto.admin.management.CustomerDTO;
-//import com.realive.dto.admin.management.OrderDTO;
-//import com.realive.dto.admin.management.ProductDTO;
-//import com.realive.dto.admin.management.SellerDTO;
-//import com.realive.dto.logs.salessum.DailySalesSummaryDTO;
-//import com.realive.dto.logs.salessum.MonthlySalesSummaryDTO;
-//import com.realive.repository.customer.CustomerRepository;
-//import com.realive.repository.order.OrderRepository;
-//import com.realive.repository.product.ProductRepository;
-//import com.realive.repository.seller.SellerRepository; // 첨부된 SellerRepository 사용
-//import com.realive.service.admin.logs.StatService;
-//import com.realive.service.admin.management.service.AdminDashboardService;
-//import lombok.RequiredArgsConstructor;
-//import lombok.extern.slf4j.Slf4j;
-//import org.springframework.data.domain.Page; // SellerRepository.findByIsApproved 반환 타입
-//import org.springframework.data.domain.PageRequest;
-//import org.springframework.data.domain.Pageable;
-//import org.springframework.data.domain.Sort;
-//import org.springframework.stereotype.Service;
-//import org.springframework.transaction.annotation.Transactional;
-//
-//import java.math.BigDecimal;
-//import java.time.LocalDate;
-//import java.time.YearMonth;
-//import java.util.ArrayList;
-//// import java.util.Collection; // 이전 버전 SellerRepository.findByIsApprovedFalse() 반환 타입
-//import java.util.Collections;
-//import java.util.HashMap;
-//import java.util.List;
-//import java.util.Map;
-//import java.util.stream.Collectors;
-//
-//@Slf4j
-//@Service
-//@RequiredArgsConstructor
-//@Transactional(readOnly = true)
-//public class AdminDashboardServiceImpl implements AdminDashboardService {
-//
-//    private final CustomerRepository customerRepository;
-//    private final OrderRepository orderRepository;
-//    private final ProductRepository productRepository;
-//    private final SellerRepository sellerRepository;
-//    private final StatService statService;
-//
-//    @Override
-//    public Map<String, Object> getDashboardSummary() {
-//        Map<String, Object> summary = new HashMap<>();
-//        summary.put("totalCustomers", customerRepository.count());
-//        summary.put("totalSellers", sellerRepository.count());
-//        summary.put("totalProducts", productRepository.count());
-//        summary.put("totalOrderRecords", orderRepository.count());
-//
-//        Map<String, Object> dashboardStats = statService.getDashboardStats(LocalDate.now());
-//        if (dashboardStats != null && dashboardStats.get("dailySalesSummary") instanceof DailySalesSummaryDTO) {
-//            DailySalesSummaryDTO dailySummary = (DailySalesSummaryDTO) dashboardStats.get("dailySalesSummary");
-//            summary.put("todaySalesCount", dailySummary.getTotalSalesCount() != null ? dailySummary.getTotalSalesCount().longValue() : 0L);
-//            summary.put("todayTotalSalesAmount", dailySummary.getTotalSalesAmount() != null ? BigDecimal.valueOf(dailySummary.getTotalSalesAmount()) : BigDecimal.ZERO);
-//        } else {
-//            summary.put("todaySalesCount", 0L);
-//            summary.put("todayTotalSalesAmount", BigDecimal.ZERO);
-//        }
-//        summary.putIfAbsent("currentWeekSales", "N/A");
-//        summary.putIfAbsent("currentMonthSales", "N/A");
-//        return summary;
-//    }
-//
-//    @Override
-//    public Map<String, Object> getSalesStatistics(String period, LocalDate startDate, LocalDate endDate) {
-//        Map<String, Object> statistics = new HashMap<>();
-//        statistics.put("period", period);
-//        statistics.put("startDate", startDate.toString());
-//        statistics.put("endDate", endDate.toString());
-//
-//        BigDecimal totalSalesForPeriod = BigDecimal.ZERO;
-//        long totalOrdersForPeriod = 0L;
-//        List<?> periodDetailsData = new ArrayList<>();
-//
-//        try {
-//            if ("daily".equalsIgnoreCase(period)) {
-//                List<DailySalesSummaryDTO> dailySummaries = statService.getDailySummariesInMonth(YearMonth.from(startDate));
-//                List<DailySalesSummaryDTO> filteredDailySummaries = dailySummaries.stream()
-//                        .filter(ds -> ds.getDate() != null && !ds.getDate().isBefore(startDate) && !ds.getDate().isAfter(endDate))
-//                        .collect(Collectors.toList());
-//                periodDetailsData = filteredDailySummaries;
-//                totalSalesForPeriod = filteredDailySummaries.stream().map(s -> s.getTotalSalesAmount() != null ? BigDecimal.valueOf(s.getTotalSalesAmount()) : BigDecimal.ZERO).reduce(BigDecimal.ZERO, BigDecimal::add);
-//                totalOrdersForPeriod = filteredDailySummaries.stream().mapToLong(s -> s.getTotalSalesCount() != null ? s.getTotalSalesCount().longValue() : 0L).sum();
-//            } else if ("monthly".equalsIgnoreCase(period)) {
-//                List<MonthlySalesSummaryDTO> monthlySummaries = new ArrayList<>();
-//                YearMonth startYM = YearMonth.from(startDate);
-//                YearMonth endYM = YearMonth.from(endDate);
-//                for (YearMonth ym = startYM; !ym.isAfter(endYM); ym = ym.plusMonths(1)) {
-//                    monthlySummaries.add(statService.getMonthlySalesSummary(ym));
-//                }
-//                periodDetailsData = monthlySummaries;
-//                totalSalesForPeriod = monthlySummaries.stream().map(s -> s.getTotalSalesAmount() != null ? BigDecimal.valueOf(s.getTotalSalesAmount()) : BigDecimal.ZERO).reduce(BigDecimal.ZERO, BigDecimal::add);
-//                totalOrdersForPeriod = monthlySummaries.stream().mapToLong(s -> s.getTotalSalesCount() != null ? s.getTotalSalesCount().longValue() : 0L).sum();
-//            }
-//        } catch (Exception e) {
-//            log.error("StatService 호출 중 오류 발생 (getSalesStatistics): {}", e.getMessage(), e);
-//            statistics.put("error", "통계 조회 중 오류 발생");
-//        }
-//
-//        statistics.put("periodSalesDetails", periodDetailsData);
-//        statistics.put("totalSales", totalSalesForPeriod);
-//        statistics.put("totalOrders", totalOrdersForPeriod);
-//        statistics.put("averageOrderAmount", totalOrdersForPeriod > 0 ? totalSalesForPeriod.divide(BigDecimal.valueOf(totalOrdersForPeriod), 2, BigDecimal.ROUND_HALF_UP) : BigDecimal.ZERO);
-//        return statistics;
-//    }
-//
-//    @Override
-//    public List<CustomerDTO> getNewCustomers(int limit) {
-//        Pageable pageable = PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "createdAt"));
-//        return customerRepository.findAll(pageable).stream()
-//                .map(this::convertToCustomerDTO)
-//                .collect(Collectors.toList());
-//    }
-//
-//    @Override
-//    public List<ProductDTO> getTopSellingProducts(int limit) {
-//        Pageable pageable = PageRequest.of(0, limit);
-//        List<Product> topProducts = orderRepository.findTopOrderedProducts(pageable);
-//        return topProducts.stream()
-//                .map(this::convertToProductDTO)
-//                .collect(Collectors.toList());
-//    }
-//
-//    @Override
-//    public List<SellerDTO> getTopSellers(int limit) {
-//        return Collections.emptyList();
-//    }
-//
-//    @Override
-//    public List<OrderDTO> getRecentOrders(int limit) {
-//        Pageable pageable = PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "id"));
-//        return orderRepository.findAll(pageable).stream()
-//                .map(this::convertToOrderDTO)
-//                .collect(Collectors.toList());
-//    }
-//
-//    @Override
-//    @SuppressWarnings("unchecked") // SellerRepository의 findByIsApproved가 raw Page를 반환하므로 경고를 무시합니다. Repository 수정 필요.
-//    public List<SellerDTO> getPendingSellers() {
-//        Pageable pageable = PageRequest.of(0, 100, Sort.by(Sort.Direction.DESC, "createdAt"));
-//        Page<Seller> pendingSellersPage = sellerRepository.findByIsApproved(false, pageable);
-//        if (pendingSellersPage != null) {
-//            return pendingSellersPage.getContent().stream()
-//                    .map(this::convertToSellerDTO)
-//                    .collect(Collectors.toList());
-//        }
-//        return Collections.emptyList();
-//    }
-//
-//    @Override
-//    public List<ProductDTO> getPendingProducts() {
-//        // ProductStatus Enum에 PENDING_APPROVAL과 같은 상태가 정의되어 있어야 함.
-//        // Pageable pageable = PageRequest.of(0, 100);
-//        // return productRepository.findByStatus(ProductStatus.PENDING_APPROVAL, pageable).getContent().stream()
-//        // .map(this::convertToProductDTO)
-//        // .collect(Collectors.toList());
-//        return Collections.emptyList();
-//    }
-//
-//    private CustomerDTO convertToCustomerDTO(Customer e) {
-//        if (e == null) return null;
-//        return CustomerDTO.builder()
-//                .id(e.getId() != null ? e.getId().intValue() : null)
-//                .name(e.getName())
-//                .email(e.getEmail())
-//                .status(e.isActive() ? "ACTIVE" : "INACTIVE")
-//                .registeredAt(e.getCreatedAt())
-//                .orderCount(0)
-//                .totalSpent(0)
-//                .build();
-//    }
-//    private ProductDTO convertToProductDTO(Product e) {
-//        if (e == null) return null;
-//        return ProductDTO.builder()
-//                .id(e.getId() != null ? e.getId().intValue() : null)
-//                .name(e.getName())
-//                .price(BigDecimal.valueOf(e.getPrice()))
-//                .inventory(e.getStock())
-//                .status(e.getStatus() != null ? e.getStatus().name() : null)
-//                .sellerId(e.getSeller() != null && e.getSeller().getId() != null ? e.getSeller().getId().intValue() : null)
-//                .sellerName(e.getSeller() != null ? e.getSeller().getName() : null)
-//                .registeredAt(e.getCreatedAt())
-//                .build();
-//    }
-//    private SellerDTO convertToSellerDTO(Seller e) {
-//        if (e == null) return null;
-//        return SellerDTO.builder()
-//                .id(e.getId() != null ? e.getId().intValue() : null)
-//                .name(e.getName())
-//                .status(e.isApproved() ? "APPROVED" : "PENDING")
-//                .registeredAt(e.getCreatedAt())
-//                .productCount(0)
-//                .totalSales(0)
-//                .commission(e.getCommissionRate() != null ? e.getCommissionRate() : BigDecimal.ZERO)
-//                .build();
-//    }
-//    private OrderDTO convertToOrderDTO(Order e) {
-//        if (e == null) return null;
-//        OrderDTO.Builder builder = OrderDTO.builder()
-//                .id(e.getId() != null ? e.getId().intValue() : null);
-//        return builder.build();
-//    }
-//}
+package com.realive.repository.review;
+
+import com.realive.domain.review.ReviewReport;
+import com.realive.domain.common.enums.ReviewReportStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+@Repository
+public interface ReviewReportRepository extends JpaRepository<ReviewReport, Integer> {
+
+    /**
+     * 특정 신고자 ID(고객 ID)에 해당하는 모든 리뷰 신고 내역을 물리적으로 삭제합니다.
+     * <strong>주의:</strong> AdminUserServiceImpl의 사용자 비활성화 로직에서는 이 메소드를 사용하지 않고,
+     * 대신 findAllByReporterId로 조회 후 상태를 변경하는 방식을 사용합니다.
+     * 이 메소드는 다른 특정 상황에서 물리적 삭제가 필요할 경우를 위해 유지될 수 있습니다.
+     *
+     * @param reporterId 신고자(고객) ID. ReviewReport 엔티티의 reporterId 필드가 Integer 타입이라고 가정합니다.
+     * @return 삭제된 신고 내역의 수
+     */
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM ReviewReport rr WHERE rr.reporterId = :reporterId")
+    int deleteByReporterId(@Param("reporterId") Integer reporterId);
+
+    /**
+     * 특정 판매자 리뷰 ID들에 해당하는 모든 리뷰 신고 내역을 물리적으로 삭제합니다.
+     * <strong>주의:</strong> 이 메소드 역시 일반적인 사용자 비활성화 로직과는 직접적인 관련이 없을 수 있습니다.
+     *
+     * @param sellerReviewIds 판매자 리뷰 ID 목록. ReviewReport 엔티티의 sellerReviewId 필드가 Integer 타입이라고 가정합니다.
+     * @return 삭제된 신고 내역의 수
+     */
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM ReviewReport rr WHERE rr.sellerReviewId IN :sellerReviewIds")
+    int deleteAllBySellerReviewIdIn(@Param("sellerReviewIds") List<Integer> sellerReviewIds);
+
+    /**
+     * 특정 판매자 리뷰 ID에 대한 모든 신고 내역을 조회합니다.
+     * ReviewReport 엔티티의 sellerReviewId 필드가 Integer 타입이라고 가정합니다.
+     *
+     * @param sellerReviewId 조회할 판매자 리뷰의 ID
+     * @return 해당 판매자 리뷰에 대한 모든 신고 리스트
+     */
+    List<ReviewReport> findAllBySellerReviewId(Integer sellerReviewId);
+
+    /**
+     * 특정 처리 상태(status)를 가진 모든 리뷰 신고 내역을 페이징하여 조회합니다.
+     *
+     * @param status 조회할 신고 처리 상태
+     * @param pageable 페이징 정보 (페이지 번호, 페이지 크기, 정렬 등)
+     * @return 해당 상태의 신고 목록 페이지
+     */
+    Page<ReviewReport> findAllByStatus(ReviewReportStatus status, Pageable pageable);
+
+    // === 사용자 비활성화 시 신고 내역 상태 변경을 위해 추가된 조회 메소드 ===
+    /**
+     * 특정 신고자 ID(고객 ID)에 해당하는 모든 리뷰 신고 내역을 조회합니다.
+     * AdminUserServiceImpl의 사용자 비활성화 로직에서, 해당 사용자가 한 신고들의 상태를
+     * 'REPORTER_ACCOUNT_INACTIVE'로 변경하기 위해 사용됩니다.
+     * ReviewReport 엔티티의 'reporterId' 필드가 Integer 타입이라고 가정합니다.
+     *
+     * @param reporterId 조회할 신고자의 ID (Integer 타입)
+     * @return 해당 신고자의 모든 리뷰 신고 리스트 (신고가 없으면 빈 리스트 반환)
+     */
+    List<ReviewReport> findAllByReporterId(Integer reporterId);
+    // 만약 ReviewReport 엔티티가 Customer 엔티티를 직접 참조하고 (예: private Customer reporter;),
+    // Customer의 ID가 Long 타입이라면, 다음과 같이 선언할 수 있습니다:
+    // List<ReviewReport> findAllByReporter_Id(Long reporterCustomerId);
+    // 현재는 ReviewReport 엔티티에 reporterId라는 Integer 타입 필드가 있다고 가정합니다.
+}

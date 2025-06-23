@@ -4,27 +4,30 @@ import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.oauth2.jwt.JwtException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.JwtException;
 
-// [Customer] JWT Token 생성 및 검증, 사용자 정보 추출 Util 클래스
+import java.util.stream.Collectors;
 
 @Component
 public class JwtTokenProvider {
 
-    @Value("${JWT_SECRET}")
+    @Value("${jwt.secret}")
     private String secretKey;
 
-    private final long expirationMs = 3600000L; // Token만료: 1시간
+    private final long expirationMs = 3600000L; // Token 만료시간: 1시간
 
-    // Token생성
-    public String generateToken(String username) {
+    // 권한 포함하여 Token 생성
+    public String generateToken(String username, String role) {
         Claims claims = Jwts.claims().setSubject(username);
+        claims.put("auth", "ROLE_" + role);  // 권한 정보 추가
+
         Date now = new Date();
         Date validity = new Date(now.getTime() + expirationMs);
 
@@ -36,7 +39,21 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    // Token 검증
+    // Authentication 객체로부터 Token 생성
+    public String createToken(Authentication authentication) {
+        String username = authentication.getName();
+
+        // 여러 권한 중 첫 번째 권한만 추출 (보통 하나만 있음)
+        String role = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .map(auth -> auth.replace("ROLE_", ""))
+                .findFirst()
+                .orElse("CUSTOMER"); // 기본값
+
+        return generateToken(username, role);
+    }
+
+    // Token 유효성 검증
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder()
@@ -49,7 +66,7 @@ public class JwtTokenProvider {
         }
     }
 
-    // Token으로 사용자 email 추출
+    // Token에서 사용자 email 추출
     public String getUsername(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes()))
@@ -59,13 +76,13 @@ public class JwtTokenProvider {
                 .getSubject();
     }
 
-    // Spring Security의 Authentication 객체에서 email 추출해 generateToken으로 Toekn생성
-    // 소셜 로그인/폼 로그인 후 Authentication 객체로부터 바로 토큰 생성할 때 사용
-    public String createToken(Authentication authentication) {
-
-        String username = authentication.getName();
-        return generateToken(username);
+    // Token에서 권한(ROLE_...) 추출 (필요시)
+    public String getRole(String token) {
+        return (String) Jwts.parserBuilder()
+                .setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes()))
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .get("auth");
     }
-
 }
-

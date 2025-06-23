@@ -40,6 +40,7 @@ public class SellerDocument extends BaseTimeEntity {
     private SellerFileType fileType;
 
     // 승인 여부 (0: 미승인, 1: 승인됨)
+    @Builder.Default
     @Column(name = "is_verified", nullable = false)
     private boolean isVerified = false;
 

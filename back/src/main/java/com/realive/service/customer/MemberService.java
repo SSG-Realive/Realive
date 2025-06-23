@@ -75,14 +75,14 @@ public class MemberService {
         customer.setGender(dto.getGender());
 
         customer.setSignupMethod(SignupMethod.USER);
-        customer.setIsVerified(false);   // 일반 회원은 이메일 인증 로직이 있을 경우 false
+        customer.setIsVerified(true);   // 일반 회원은 이메일 인증 로직이 있을 경우 false 지금은 true
         customer.setIsActive(true);
         customer.setPenaltyScore(0);
 
         customerRepository.save(customer);
 
         // 이메일로 바로 토큰 발급 (Authentication 불필요)
-        return jwtTokenProvider.generateToken(dto.getEmail());
+        return jwtTokenProvider.generateToken(dto.getEmail(), "CUSTOMER");
     }
 
     // 회원정보 조회

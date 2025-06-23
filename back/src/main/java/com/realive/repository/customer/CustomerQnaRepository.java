@@ -3,6 +3,8 @@ package com.realive.repository.customer;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -22,5 +24,11 @@ public interface CustomerQnaRepository extends JpaRepository<CustomerQna, Long> 
     
     // 상품ID로 상품 문의 리스트 가져오기
     List<CustomerQna> findByProductIdOrderByIdDesc(Long productId);
+
+    // [추가] 모든 고객 Q&A를 페이징하여 가져오기 (관리자용)
+    Page<CustomerQna> findAll(Pageable pageable);
+
+    // [추가] 답변되지 않은 고객 Q&A를 페이징하여 가져오기 (관리자용)
+    Page<CustomerQna> findByIsAnsweredFalse(Pageable pageable);
 
 }

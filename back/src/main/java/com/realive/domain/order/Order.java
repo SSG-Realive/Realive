@@ -1,7 +1,6 @@
 package com.realive.domain.order;
 
 import com.realive.domain.customer.Customer;
-import com.realive.domain.common.enums.DeliveryStatus;
 import com.realive.domain.common.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -10,6 +9,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Entity
@@ -34,13 +35,20 @@ public class Order {
     private String deliveryAddress;
 
     @Column(name = "ordered_at", nullable =  false, updatable = false)
-    private LocalDateTime OrderedAt;
+    private LocalDateTime orderedAt;
 
     @Column(name = "updated_at", nullable =  false)
-    private LocalDateTime UpdatedAt;
+    private LocalDateTime updatedAt;
+
+    // 새로운 필드: 결제 방식
+    @Column(name = "payment_method", nullable = false, length = 50)
+    private String paymentMethod; // 예를 들어 "CARD", "CASH", "BANK_TRANSFER" 등
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "customers_id", nullable = false)
+    @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
 
+    @Builder.Default
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrderItem> orderItems = new ArrayList<>();
 }

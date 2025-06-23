@@ -43,7 +43,7 @@ public class CartItem {
     @JoinColumn(name = "product_id")
     private Product product;
 
-    //디폴트 1
+    @Builder.Default
     private Integer quantity = 1;
 
     @CreatedDate

@@ -3,6 +3,7 @@ package com.realive.config;
 import com.realive.security.AdminJwtAuthenticationFilter;
 import com.realive.security.SellerJwtAuthenticationFilter;
 import com.realive.security.customer.CustomerJwtAuthenticationFilter;
+import com.realive.security.customer.CustomAuthorizationRequestResolver;
 import com.realive.security.customer.CustomLoginSuccessHandler;
 
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.Arrays;
 import java.util.List;
 
 @EnableWebSecurity
@@ -45,7 +47,6 @@ public class SecurityConfig {
     private final AdminJwtAuthenticationFilter adminJwtAuthenticationFilter;
     private final CustomLoginSuccessHandler customLoginSuccessHandler;
 
-
     @Autowired
     @Qualifier("customUserDetailsService")
     private UserDetailsService customUserDetailsService;
@@ -53,6 +54,10 @@ public class SecurityConfig {
     @Autowired
     @Qualifier("adminDetailsService")
     private UserDetailsService adminDetailsService;
+
+    @Autowired
+    @Qualifier("sellerDetailsService")
+    private UserDetailsService sellerDetailsService;
 
     // Provider를 명시적으로 등록
     // customerAuthProvider, adminAuthProvider를 직접 수동 생성해 ProviderManager에 주입
@@ -76,10 +81,18 @@ public class SecurityConfig {
         return provider;
     }
 
+    @Bean
+    public DaoAuthenticationProvider sellerAuthProvider() {
+    DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+    provider.setUserDetailsService(sellerDetailsService);
+    provider.setPasswordEncoder(passwordEncoder());
+    return provider;
+}
+
     // AuthenticationManager에 명시적으로 등록
     @Bean
     public AuthenticationManager authenticationManager() {
-        return new ProviderManager(List.of(customerAuthProvider(), adminAuthProvider()));
+        return new ProviderManager(List.of(customerAuthProvider(), adminAuthProvider(),sellerAuthProvider()));
     }
 
     // === Admin Security Chain ===
@@ -92,10 +105,11 @@ public class SecurityConfig {
                 .securityMatcher("/api/admin/**")
                 .authenticationManager(authenticationManager()) // 명시적 연결
                 .csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/admin/login").permitAll()
-                        .anyRequest().authenticated()
+                        .requestMatchers("/api/admin/login","/api/admin/register").permitAll()
+                        .anyRequest().hasAuthority("ROLE_ADMIN")
                 )
                 .addFilterBefore(adminJwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
@@ -112,10 +126,11 @@ public class SecurityConfig {
                 .securityMatcher("/api/seller/**")
                 .authenticationManager(authenticationManager())
                 .csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))  // ★ 추가!
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/seller/login", "/api/seller/signup").permitAll()
-                        .anyRequest().authenticated()
+                        .requestMatchers("/api/seller/login", "/api/seller/signup", "/api/seller/categories").permitAll()
+                        .anyRequest().hasAuthority("ROLE_SELLER")
                 )
                 .addFilterBefore(sellerJwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
@@ -129,21 +144,45 @@ public class SecurityConfig {
         log.info("Customer SecurityConfig 적용");
 
         http
-                .securityMatcher("/api/**") // 나머지 API
+                .securityMatcher("/api/customer/**", "/api/public/**","/api/auth/**") // 나머지 API
                 .authenticationManager(authenticationManager())
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/public/**").permitAll()
-                        .requestMatchers("/api/customer/**").authenticated()
+                        .requestMatchers("/api/public/**", "/api/auth/**","/api/customer/auctions/**").permitAll()
+                        .requestMatchers("/api/oauth2/**").permitAll()
+                        .requestMatchers("/api/customer/update-info").hasAnyAuthority("ROLE_CUSTOMER", "ROLE_USER")
+                        .requestMatchers("/api/customer/**").hasAnyAuthority("ROLE_CUSTOMER", "ROLE_USER")
                         .anyRequest().denyAll()
                 )
-                .oauth2Login(config -> config.successHandler(customLoginSuccessHandler))
                 .addFilterBefore(customerJwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
+
+    // === Customer oauth2 Security Chain ===
+    @Bean
+    @Order(4)
+    public SecurityFilterChain oauth2SecurityFilterChain(HttpSecurity http, CustomAuthorizationRequestResolver customResolver) throws Exception {
+        http
+            .securityMatcher("/oauth2/**", "/login/oauth2/**")
+            .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+            .csrf(csrf -> csrf.disable())
+            .oauth2Login(config -> config
+                .authorizationEndpoint(endpoint -> endpoint
+                    .authorizationRequestResolver(customResolver)
+                )
+                .successHandler(customLoginSuccessHandler)
+                .failureHandler((request, response, exception) -> {
+                    log.error("OAuth2 로그인 실패: {}", exception.getMessage(), exception);
+                    response.sendRedirect("/login?error=kakao_login_failed");
+                })
+            );
+
+        return http.build();
+    }
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -161,13 +200,12 @@ public class SecurityConfig {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
 
         corsConfiguration.setAllowedOriginPatterns(List.of("*"));
-        corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS"));
+        corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS", "PATCH"));
         corsConfiguration.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
         corsConfiguration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", corsConfiguration);
-
         return source;
     }
 }

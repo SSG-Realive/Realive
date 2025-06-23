@@ -7,10 +7,7 @@ import com.realive.dto.logs.salessum.DailySalesSummaryDTO;
 import com.realive.dto.logs.salessum.MonthlySalesLogDetailListDTO;
 import com.realive.dto.logs.salessum.MonthlySalesSummaryDTO;
 import com.realive.dto.logs.salessum.SalesLogDetailListDTO;
-import com.realive.dto.logs.stats.AuctionPeriodStatsDTO;
-import com.realive.dto.logs.stats.MemberPeriodStatsDTO;
-import com.realive.dto.logs.stats.ReviewPeriodStatsDTO;
-import com.realive.dto.logs.stats.SalesPeriodStatsDTO;
+import com.realive.dto.logs.stats.*;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
@@ -179,4 +176,8 @@ public interface StatService {
      */
     @Deprecated
     Map<String, Object> getDashboardStats(LocalDate date);
+
+    // 기존 메소드들은 그대로 두고 아래 메소드들만 추가
+    List<DailySalesSummaryDTO> getDailySummariesForPeriod(LocalDate startDate, LocalDate endDate);
+    List<SellerSalesDetailDTO> getSellerSalesDetailsForPeriod(LocalDate startDate, LocalDate endDate);
 }

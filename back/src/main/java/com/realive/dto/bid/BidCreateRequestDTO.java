@@ -16,7 +16,7 @@ public class BidCreateRequestDTO {
     private Integer auctionId;
 
     @NotNull(message = "고객 ID는 필수입니다.")
-    private Integer customerId;
+    private Long customerId;
 
     @NotNull(message = "입찰 가격은 필수입니다.")
     @Positive(message = "입찰 가격은 0보다 커야 합니다.")

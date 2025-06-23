@@ -1,26 +1,18 @@
 package com.realive.dto.admin;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 @Getter
+@NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class AdminLoginRequestDTO {
-    
-    @NotNull
-    private Integer id;
-    
-    @NotBlank
+
+    @Email @NotBlank
     private String email;
 
     @NotBlank
-    private String name;
-
-    @NotBlank
     private String password;
-
 }

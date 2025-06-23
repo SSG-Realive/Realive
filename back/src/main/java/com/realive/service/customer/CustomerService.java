@@ -10,7 +10,6 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 // [Customer] 회원 정보 조회 Service
-
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -31,5 +30,15 @@ public class CustomerService {
                 .getId();
     }
 
-}
+    // 일반 이메일 조회 (소셜 제외)
+    public Customer getByEmail(String email) {
+        return customerRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("해당 이메일의 회원을 찾을 수 없습니다."));
+    }
 
+    // 소셜 포함 이메일 조회
+    public Customer getByEmailIncludingSocial(String email) {
+        return customerRepository.findByEmailIncludingSocial(email)
+                .orElseThrow(() -> new EntityNotFoundException("해당 이메일의 회원을 찾을 수 없습니다."));
+    }
+}
