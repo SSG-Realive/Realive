@@ -1,35 +1,32 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useEffect, useState, useRef, useMemo } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/customer/authStore';
-import { fetchMyProfile } from '@/service/customer/customerService'; // 내 정보 조회 API
-import { getDirectPaymentInfo } from '@/service/order/orderService'; // 상품 정보 조회 API
-import './DirectOrderPage.css'; // 이 페이지를 위한 CSS 파일
+import { fetchMyProfile } from '@/service/customer/customerService';
+import { getDirectPaymentInfo } from '@/service/order/orderService';
+import { loadPaymentWidget, PaymentWidgetInstance } from '@tosspayments/payment-widget-sdk';
+import type { DirectPaymentInfoDTO } from '@/types/customer/order/order';
+import type { MemberReadDTO } from '@/types/customer/member/member';
+import './DirectOrderPage.css';
 
-// 주문 정보 타입 (실제 타입 정의 파일에 맞게 수정)
-interface OrderProductInfo {
-    productName: string;
-    quantity: number;
-    price: number;
-    imageUrl: string;
-}
-
-interface UserProfile {
-    name: string;
-    email: string;
-    phone: string;
-    address: string;
-}
+// 토스페이먼츠 클라이언트 키
+const TOSS_CLIENT_KEY = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY as string;
 
 export default function DirectOrderPage() {
     const searchParams = useSearchParams();
+    const router = useRouter();
+    const { id: customerId, userName: initialName } = useAuthStore();
+    
     const productId = searchParams.get('productId');
     const quantity = Number(searchParams.get('quantity'));
 
     // --- 상태 관리 ---
-    const [productInfo, setProductInfo] = useState<OrderProductInfo | null>(null);
-    const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+    const [productInfo, setProductInfo] = useState<DirectPaymentInfoDTO | null>(null);
+    const [userProfile, setUserProfile] = useState<MemberReadDTO | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const paymentWidgetRef = useRef<PaymentWidgetInstance | null>(null);
 
     // 배송지 폼 상태
     const [shippingInfo, setShippingInfo] = useState({
@@ -37,32 +34,74 @@ export default function DirectOrderPage() {
         phone: '',
         address: '',
     });
-    
-    // 결제 수단 상태
-    const [paymentMethod, setPaymentMethod] = useState('CARD'); // 기본값 '카드'
+
+    // --- 최종 결제 금액 계산 ---
+    const { totalProductPrice, deliveryFee, finalAmount } = useMemo(() => {
+        if (!productInfo) {
+            return { totalProductPrice: 0, deliveryFee: 0, finalAmount: 0 };
+        }
+        const totalProductPrice = productInfo.price * productInfo.quantity;
+        const deliveryFee = 3000; // TODO: 실제 배송비 정책 적용
+        const finalAmount = totalProductPrice + deliveryFee;
+        return { totalProductPrice, deliveryFee, finalAmount };
+    }, [productInfo]);
 
     // --- 데이터 로딩 ---
     useEffect(() => {
-        // 1. 상품 정보 불러오기
-        if (productId && quantity) {
-            getDirectPaymentInfo(Number(productId), quantity)
-                .then(setProductInfo)
-                .catch(err => console.error("상품 정보 조회 실패:", err));
-        }
+        const loadData = async () => {
+            try {
+                setLoading(true);
+                setError(null);
 
-        // 2. 내 정보 불러오기 (배송지 기본값으로 사용)
-        fetchMyProfile()
-            .then(profile => {
-                setUserProfile(profile);
-                // 불러온 내 정보로 배송지 폼 초기값 설정
+                // 1. 상품 정보 불러오기
+                if (productId && quantity) {
+                    const productData = await getDirectPaymentInfo(Number(productId), quantity);
+                    setProductInfo(productData);
+                } else {
+                    throw new Error('상품 정보가 올바르지 않습니다.');
+                }
+
+                // 2. 내 정보 불러오기
+                const profileData = await fetchMyProfile();
+                setUserProfile(profileData);
+                
+                // 배송지 폼 초기값 설정
                 setShippingInfo({
-                    receiverName: profile.name,
-                    phone: profile.phone,
-                    address: profile.address,
+                    receiverName: profileData.name || '',
+                    phone: profileData.phone || '',
+                    address: profileData.address || '',
                 });
-            })
-            .catch(err => console.error("내 정보 조회 실패:", err));
+            } catch (err) {
+                console.error('데이터 로딩 실패:', err);
+                setError(err instanceof Error ? err.message : '데이터를 불러오는데 실패했습니다.');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadData();
     }, [productId, quantity]);
+
+    // --- 토스페이먼츠 위젯 렌더링 ---
+    useEffect(() => {
+        if (!userProfile || !customerId || finalAmount === 0) return;
+
+        const initializeWidget = async () => {
+            try {
+                const tossPayments = await loadPaymentWidget(TOSS_CLIENT_KEY, customerId.toString());
+                
+                tossPayments.renderPaymentMethods('#payment-widget', { value: finalAmount }, { variantKey: 'DEFAULT' });
+                tossPayments.renderAgreement('#agreement', { variantKey: 'DEFAULT' });
+
+                paymentWidgetRef.current = tossPayments;
+            } catch (error) {
+                console.error("토스페이먼츠 위젯 렌더링 실패:", error);
+                setError('결제 위젯을 불러오는데 실패했습니다.');
+            }
+        };
+
+        initializeWidget();
+    }, [userProfile, customerId, finalAmount]);
 
     // --- 이벤트 핸들러 ---
     const handleShippingInfoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -71,22 +110,63 @@ export default function DirectOrderPage() {
     };
 
     const handlePayment = async () => {
-        // TODO: 이전 답변에서 설명한 토스페이먼츠 `requestPayment` 호출 로직 구현
-        alert(`
-            결제 요청!
-            받는 사람: ${shippingInfo.receiverName}
-            연락처: ${shippingInfo.phone}
-            주소: ${shippingInfo.address}
-            결제수단: ${paymentMethod}
-            상품: ${productInfo?.productName}
-        `);
+        const paymentWidget = paymentWidgetRef.current;
+        if (!paymentWidget || !userProfile || !productInfo) {
+            alert("결제 위젯이 준비되지 않았습니다. 잠시 후 다시 시도해주세요.");
+            return;
+        }
+
+        // 배송 정보 유효성 검사
+        if (!shippingInfo.receiverName || !shippingInfo.phone || !shippingInfo.address) {
+            alert('배송 정보를 모두 입력해주세요.');
+            return;
+        }
+
+        try {
+            // 결제 요청
+            await paymentWidget.requestPayment({
+                orderId: `direct_${Date.now()}`,
+                orderName: productInfo.productName,
+                customerName: userProfile.name || initialName || '고객',
+                successUrl: `${window.location.origin}/customer/orders/success`,
+                failUrl: `${window.location.origin}/customer/orders/fail`,
+            });
+        } catch (error) {
+            console.error("결제 요청 실패:", error);
+            alert("결제에 실패했습니다. 다시 시도해주세요.");
+        }
     };
 
-    if (!productInfo || !userProfile) {
+    // 로딩 상태
+    if (loading) {
         return <div className="loading-container">주문 정보를 불러오는 중입니다...</div>;
     }
 
-    // --- UI 렌더링 ---
+    // 에러 상태
+    if (error) {
+        return (
+            <div className="order-page-container">
+                <div className="error-container">
+                    <h2>오류가 발생했습니다</h2>
+                    <p>{error}</p>
+                    <button onClick={() => router.back()}>이전 페이지로 돌아가기</button>
+                </div>
+            </div>
+        );
+    }
+
+    // 데이터 없음
+    if (!productInfo || !userProfile) {
+        return (
+            <div className="order-page-container">
+                <div className="error-container">
+                    <h2>주문 정보를 찾을 수 없습니다</h2>
+                    <button onClick={() => router.back()}>이전 페이지로 돌아가기</button>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="order-page-container">
             <h1 className="page-title">주문/결제</h1>
@@ -95,10 +175,10 @@ export default function DirectOrderPage() {
             <section className="order-section">
                 <h2>주문 상품</h2>
                 <div className="product-summary-card">
-                    <img src={productInfo.imageUrl || '/default-image.png'} alt={productInfo.productName} />
+                    <img src={productInfo.imageUrl || '/images/placeholder.png'} alt={productInfo.productName} />
                     <div className="product-details">
-                        <p>{productInfo.productName}</p>
-                        <p>수량: {productInfo.quantity}개</p>
+                        <p className="product-name">{productInfo.productName}</p>
+                        <p className="product-quantity">수량: {productInfo.quantity}개</p>
                     </div>
                     <p className="product-price">{(productInfo.price * productInfo.quantity).toLocaleString()}원</p>
                 </div>
@@ -117,50 +197,66 @@ export default function DirectOrderPage() {
             <section className="order-section">
                 <h2>배송지 정보</h2>
                 <div className="shipping-form">
-                    <label>받는 사람</label>
-                    <input name="receiverName" value={shippingInfo.receiverName} onChange={handleShippingInfoChange} />
+                    <label>받는 사람 *</label>
+                    <input 
+                        name="receiverName" 
+                        value={shippingInfo.receiverName} 
+                        onChange={handleShippingInfoChange}
+                        placeholder="받는 사람 이름을 입력하세요"
+                        required
+                    />
 
-                    <label>연락처</label>
-                    <input name="phone" type="tel" value={shippingInfo.phone} onChange={handleShippingInfoChange} />
+                    <label>연락처 *</label>
+                    <input 
+                        name="phone" 
+                        type="tel" 
+                        value={shippingInfo.phone} 
+                        onChange={handleShippingInfoChange}
+                        placeholder="010-0000-0000"
+                        required
+                    />
                     
-                    <label>주소</label>
-                    <input name="address" value={shippingInfo.address} onChange={handleShippingInfoChange} />
-                    {/* TODO: 주소 검색 버튼 및 기능 추가 */}
+                    <label>주소 *</label>
+                    <input 
+                        name="address" 
+                        value={shippingInfo.address} 
+                        onChange={handleShippingInfoChange}
+                        placeholder="상세 주소를 입력하세요"
+                        required
+                    />
                 </div>
             </section>
 
-            {/* 4. 결제 수단 선택 */}
+            {/* 4. 결제 수단 */}
             <section className="order-section">
                 <h2>결제 수단</h2>
-                <div className="payment-selector">
-                    <label className={paymentMethod === 'CARD' ? 'active' : ''}>
-                        <input type="radio" name="paymentMethod" value="CARD" checked={paymentMethod === 'CARD'} onChange={(e) => setPaymentMethod(e.target.value)} />
-                        신용/체크카드
-                    </label>
-                    {/* 다른 결제 수단 추가 */}
-                </div>
+                <div id="payment-widget" style={{ width: '100%' }} />
             </section>
 
-            {/* 5. 최종 결제 금액 요약 */}
-            <section className="order-summary">
+            {/* 5. 결제 동의 및 금액 요약 */}
+            <aside className="order-summary">
+                <div id="agreement" />
                 <h3>결제 금액</h3>
                 <div className="summary-row">
                     <span>총 상품금액</span>
-                    <span>{(productInfo.price * productInfo.quantity).toLocaleString()}원</span>
+                    <span>{totalProductPrice.toLocaleString()}원</span>
                 </div>
                 <div className="summary-row">
                     <span>배송비</span>
-                    <span>+ 3,000원</span> {/* TODO: 배송비 정책에 따라 동적 계산 */}
+                    <span>+ {deliveryFee.toLocaleString()}원</span>
                 </div>
                 <div className="summary-row total">
                     <span>최종 결제 금액</span>
-                    <span>{(productInfo.price * productInfo.quantity + 3000).toLocaleString()}원</span>
+                    <span>{finalAmount.toLocaleString()}원</span>
                 </div>
-            </section>
-            
-            <button className="payment-button" onClick={handlePayment}>
-                결제하기
-            </button>
+                <button 
+                    className="payment-button" 
+                    onClick={handlePayment}
+                    disabled={!paymentWidgetRef.current}
+                >
+                    {finalAmount.toLocaleString()}원 결제하기
+                </button>
+            </aside>
         </div>
     );
 }
