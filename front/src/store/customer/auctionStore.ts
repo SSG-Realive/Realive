@@ -95,9 +95,10 @@ export const useAuctionStore = create<AuctionState>()(
         set({ loading: true });
 
         try {
+          // API URL 구성 - 공개 API 사용
           const url = category
-            ? `/customer/auctions?page=${requestPage}&category=${encodeURIComponent(category)}`
-            : `/customer/auctions?page=${requestPage}`;
+            ? `/api/public/auctions?page=${requestPage}&category=${encodeURIComponent(category)}`
+            : `/api/public/auctions?page=${requestPage}`;
 
           console.log('Store: API URL', url);
 

@@ -89,4 +89,12 @@ export interface ReviewSummaryStatsDTO {
   newReviewsInPeriod: number;
   averageRatingInPeriod: number;
   deletionRate: number;
+}
+
+export interface AdminReview {
+    id: number;
+    reviewId: number;
+    productName: string | null;
+    productId: number | null;
+    sellerName: string;
 } 

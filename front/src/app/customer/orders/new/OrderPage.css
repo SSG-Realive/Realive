@@ -65,24 +65,7 @@
     border-radius: 4px;
 }
 
-/* 결제 수단 */
-.payment-selector { display: flex; }
-.payment-selector label {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 1rem;
-    border: 2px solid #d1d5db;
-    border-radius: 8px;
-    cursor: pointer;
-    flex-grow: 1;
-    justify-content: center;
-}
-.payment-selector label.active {
-    border-color: #1d4ed8;
-    color: #1d4ed8;
-    font-weight: 600;
-}
+
 
 /* 최종 결제 요약 박스 */
 .order-summary-box {
@@ -139,4 +122,33 @@
     min-height: 80vh;
     font-size: 1.2rem;
     color: #6b7280;
+}
+
+.payment-method-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+
+.payment-method-button {
+    padding: 1.5rem 1rem;
+    border: 2px solid #e5e7eb; /* 기본 테두리 */
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: center;
+    font-weight: 500;
+    background-color: #ffffff;
+    transition: all 0.2s ease-in-out;
+}
+
+.payment-method-button:hover {
+    border-color: #9ca3af;
+}
+
+.payment-method-button.active {
+    border-color: #2563eb; /* 선택 시 테두리 */
+    color: #2563eb;
+    font-weight: 700;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.4); /* 선택 시 그림자 효과 */
+    transform: translateY(-2px); /* 살짝 올라오는 효과 */
 }
