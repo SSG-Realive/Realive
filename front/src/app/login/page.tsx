@@ -3,14 +3,15 @@ import Link from 'next/link';
 
 // ✅ 페이지 컴포넌트가 searchParams를 props로 받도록 구조를 변경합니다.
 interface LoginPageProps {
-  searchParams: {
+  searchParams: Promise<{
     redirectTo?: string;
-  };
+  }>;
 }
 
-export default function IntegratedLoginPage({ searchParams }: LoginPageProps) {
+export default async function IntegratedLoginPage({ searchParams }: LoginPageProps) {
   // ✅ URL에서 redirectTo 값을 추출합니다.
-  const redirectTo = searchParams.redirectTo || '';
+  const params = await searchParams;
+  const redirectTo = params.redirectTo || '';
 
   // ✅ 각 로그인 링크에 redirectTo 파라미터를 추가할 URL을 생성합니다.
   const customerLoginUrl = `/customer/member/login${redirectTo ? `?redirectTo=${redirectTo}` : ''}`;
