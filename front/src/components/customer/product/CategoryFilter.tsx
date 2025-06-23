@@ -3,9 +3,8 @@
 
 import { useState } from 'react';
 
-// ✅ 카테고리 이름 + ID 구조 (null = 전체)
 const categories = [
-    { id: null, name: '전체' },
+    { id: null, name: 'ALL' },
     { id: 1, name: '가구' },
     { id: 2, name: '수납/정리' },
     { id: 3, name: '인테리어 소품' },
@@ -20,23 +19,26 @@ export default function CategoryFilter({
     const [selectedId, setSelectedId] = useState<number | null>(null);
 
     return (
-        <div className="flex gap-3 overflow-x-auto px-4 py-2">
-            {categories.map(({ id, name }) => (
-                <button
-                    key={id ?? 'all'}
-                    onClick={() => {
-                        setSelectedId(id);
-                        onSelect(id); // ✅ 숫자 ID 전달 (null 포함)
-                    }}
-                    className={`px-4 py-1 rounded-full border text-sm whitespace-nowrap ${
-                        selectedId === id
-                            ? 'bg-green-600 text-white border-green-600'
-                            : 'bg-white text-gray-700 border-gray-300'
-                    }`}
-                >
-                    {name}
-                </button>
-            ))}
+        <div className="w-full bg-white sticky top-[64px] z-40 overflow-x-auto">
+            <div className="flex gap-4 px-4 py-3 min-w-max">
+                {categories.map(({ id, name }) => (
+                    <button
+                        key={id ?? 'all'}
+                        onClick={() => {
+                            setSelectedId(id);
+                            onSelect(id);
+                        }}
+                        className={`text-sm font-semibold px-2 py-1 rounded-full whitespace-nowrap transition-all
+                            ${
+                            selectedId === id
+                                ? 'bg-black text-white'
+                                : 'text-gray-700 hover:bg-gray-100'
+                        }`}
+                    >
+                        {name}
+                    </button>
+                ))}
+            </div>
         </div>
     );
 }
