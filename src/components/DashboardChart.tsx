@@ -8,19 +8,45 @@ const ReactApexChart = dynamic(() => import('react-apexcharts'), { ssr: false })
 
 interface DashboardChartProps {
   data: AdminDashboardDTO;
+  type: 'member' | 'sales' | 'auction' | 'review';
 }
 
-const DashboardChart: React.FC<DashboardChartProps> = ({ data }) => {
+const DashboardChart: React.FC<DashboardChartProps> = ({ data, type }) => {
   if (!data) {
     return <div className="text-gray-500 text-center py-4">데이터가 없습니다.</div>;
   }
+  
+  const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#AF19FF", "#FF4560"];
+
+  const baseOptions: ApexOptions = {
+    chart: {
+      height: '100%',
+      width: '100%',
+      toolbar: {
+        show: false,
+      },
+      animations: {
+        enabled: true,
+        speed: 800,
+      }
+    },
+    legend: {
+      position: 'bottom',
+      offsetY: 10,
+      itemMargin: {
+        horizontal: 10,
+        vertical: 5
+      }
+    },
+    grid: {
+      borderColor: '#f1f1f1',
+    }
+  };
 
   // 회원 통계 차트
   const memberOptions: ApexOptions = {
-    chart: {
-      type: 'donut',
-      height: 350,
-    },
+    ...baseOptions,
+    chart: { ...baseOptions.chart, type: 'donut' },
     labels: [
       '전체 회원',
       '활성 회원',
@@ -29,11 +55,18 @@ const DashboardChart: React.FC<DashboardChartProps> = ({ data }) => {
       '활성 판매자',
       '비활성 판매자'
     ],
-    title: {
-      text: '회원 통계',
-      align: 'left',
+    colors: COLORS,
+    dataLabels: {
+      enabled: true,
+      formatter: function (val: number) {
+        return val.toFixed(1) + "%"
+      },
     },
-    colors: ['#4CAF50', '#2196F3', '#FFC107', '#9C27B0', '#00BCD4', '#FF5722'],
+    tooltip: {
+      y: {
+        formatter: (val) => `${val} 명`
+      }
+    }
   };
 
   const memberSeries = [
@@ -47,23 +80,34 @@ const DashboardChart: React.FC<DashboardChartProps> = ({ data }) => {
 
   // 판매 통계 차트
   const salesOptions: ApexOptions = {
-    chart: {
-      type: 'line',
-      height: 350,
-    },
+    ...baseOptions,
+    chart: { ...baseOptions.chart, type: 'area' },
+    colors: [COLORS[1]],
     xaxis: {
       categories: data.productLog?.salesWithCommissions?.map(sale => 
         new Date(sale.salesLog.soldAt).toLocaleDateString()
       ) || [],
     },
-    title: {
-      text: '판매 추이',
-      align: 'left',
-    },
     yaxis: {
       title: {
-        text: '판매액',
+        text: '판매액 (원)',
+        style: {
+            color: '#aaa'
+        }
       },
+    },
+    stroke: {
+      curve: 'smooth',
+      width: 3
+    },
+    fill: {
+      type: 'gradient',
+      gradient: {
+        shadeIntensity: 1,
+        opacityFrom: 0.7,
+        opacityTo: 0.3,
+        stops: [0, 90, 100]
+      }
     },
   };
 
@@ -74,23 +118,22 @@ const DashboardChart: React.FC<DashboardChartProps> = ({ data }) => {
 
   // 경매 통계 차트
   const auctionOptions: ApexOptions = {
-    chart: {
-      type: 'bar',
-      height: 350,
-    },
+    ...baseOptions,
+    chart: { ...baseOptions.chart, type: 'bar' },
     plotOptions: {
       bar: {
         horizontal: false,
         columnWidth: '55%',
+        borderRadius: 5,
       },
-    },
-    title: {
-      text: '경매 통계',
-      align: 'left',
     },
     xaxis: {
       categories: ['총 경매', '총 입찰', '평균 입찰'],
     },
+    colors: [COLORS[0], COLORS[2], COLORS[3]],
+    dataLabels: {
+        enabled: false,
+    }
   };
 
   const auctionSeries = [{
@@ -104,16 +147,10 @@ const DashboardChart: React.FC<DashboardChartProps> = ({ data }) => {
 
   // 리뷰 통계 차트
   const reviewOptions: ApexOptions = {
-    chart: {
-      type: 'donut',
-      height: 350,
-    },
-    labels: ['전체 리뷰', '신규 리뷰', '평균 평점', '삭제율'],
-    title: {
-      text: '리뷰 통계',
-      align: 'left',
-    },
-    colors: ['#4CAF50', '#2196F3', '#FFC107', '#F44336'],
+    ...baseOptions,
+    chart: { ...baseOptions.chart, type: 'donut' },
+    labels: ['전체 리뷰', '신규 리뷰', '평균 평점 (x20)', '삭제율 (%)'],
+    colors: COLORS,
   };
 
   const reviewSeries = [
@@ -123,21 +160,23 @@ const DashboardChart: React.FC<DashboardChartProps> = ({ data }) => {
     (data.reviewSummaryStats?.deletionRate || 0) * 100,
   ];
 
+  const chartMap = {
+    member: { options: memberOptions, series: memberSeries, type: 'donut' },
+    sales: { options: salesOptions, series: salesSeries, type: 'area' },
+    auction: { options: auctionOptions, series: auctionSeries, type: 'bar' },
+    review: { options: reviewOptions, series: reviewSeries, type: 'donut' },
+  };
+
+  const selectedChart = chartMap[type];
+
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '24px', padding: '24px' }}>
-      <div style={{ background: '#fff', borderRadius: '12px', boxShadow: '0 2px 8px #eee', padding: '24px' }}>
-        <ReactApexChart options={memberOptions} series={memberSeries} type="donut" height={350} />
-      </div>
-      <div style={{ background: '#fff', borderRadius: '12px', boxShadow: '0 2px 8px #eee', padding: '24px' }}>
-        <ReactApexChart options={salesOptions} series={salesSeries} type="line" height={350} />
-      </div>
-      <div style={{ background: '#fff', borderRadius: '12px', boxShadow: '0 2px 8px #eee', padding: '24px' }}>
-        <ReactApexChart options={auctionOptions} series={auctionSeries} type="bar" height={350} />
-      </div>
-      <div style={{ background: '#fff', borderRadius: '12px', boxShadow: '0 2px 8px #eee', padding: '24px' }}>
-        <ReactApexChart options={reviewOptions} series={reviewSeries} type="donut" height={350} />
-      </div>
-    </div>
+    <ReactApexChart 
+      options={selectedChart.options} 
+      series={selectedChart.series} 
+      type={selectedChart.type as any} 
+      height="100%" 
+      width="100%" 
+    />
   );
 };
 
