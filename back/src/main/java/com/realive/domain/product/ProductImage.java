@@ -33,6 +33,7 @@ public class ProductImage {
 
     // 대표 이미지 여부 (썸네일)
     @Column(name = "is_thumbnail", nullable = false)
+    @Builder.Default
     private boolean isThumbnail = false;
 
     // IMAGE / VIDEO

@@ -18,6 +18,7 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 @Table(name = "sellers")
+@EqualsAndHashCode(callSuper = true)
 public class Seller extends BaseTimeEntity {
 
     // 판매자 고유 ID (PK)
@@ -48,6 +49,7 @@ public class Seller extends BaseTimeEntity {
 
     // 승인 여부
     @Column(name = "is_approved", nullable = false)
+    @Builder.Default
     private boolean isApproved = false;
 
     // 승인 시각
@@ -56,6 +58,7 @@ public class Seller extends BaseTimeEntity {
 
     // 활동 여부
     @Column(name = "is_active")
+    @Builder.Default
     private boolean isActive = true;
 
     @Column(name = "refresh_token", length = 512) // ✨ 필드 추가

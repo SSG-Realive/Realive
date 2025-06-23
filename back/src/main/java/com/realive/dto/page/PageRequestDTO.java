@@ -20,9 +20,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class PageRequestDTO {
 
+    @Builder.Default
     private int page = 1;               // 요청한 페이지 번호 (1부터 시작, 내부 로직에서는 0-based로 변환됨)
+    @Builder.Default
     private int size = 10;              // 페이지당 데이터 개수 (기본값: 10)
+    @Builder.Default
     private String sort = "createdAt";  // 정렬 기준 필드명 (기본값: createdAt)
+    @Builder.Default
     private String direction = "DESC";  // 정렬 방향 (ASC 또는 DESC, 기본값: DESC)
     private String keyword;         // 검색 키워드 (선택적, null일 수 있음)
     private String type;             

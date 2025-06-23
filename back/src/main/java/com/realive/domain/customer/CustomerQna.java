@@ -55,6 +55,7 @@ public class CustomerQna extends BaseTimeEntity {
     private String answer;
 
     // 답변 여부 (true: 답변 완료)
+    @Builder.Default
     private boolean isAnswered = false;
 
     // 답변 작성 시간 (있을 경우)
