@@ -68,28 +68,36 @@ public class AdminProductServiceImpl implements AdminProductService {
         Product product = productRepository.findById(requestDTO.getProductId().longValue())
             .orElseThrow(() -> new NoSuchElementException("상품을 찾을 수 없습니다."));
 
-        // 3. 상품 상태 확인
+        // 3. 매입 가격 검증 (상품 가격 이상이어야 함)
+        if (requestDTO.getPurchasePrice() < product.getPrice()) {
+            throw new IllegalStateException(
+                String.format("매입 가격(%d원)이 상품 가격(%d원)보다 낮습니다. 상품 가격 이상으로 매입해주세요.", 
+                    requestDTO.getPurchasePrice(), product.getPrice())
+            );
+        }
+
+        // 4. 상품 상태 확인
         if (!product.isActive()) {
             throw new IllegalStateException("비활성화된 상품은 매입할 수 없습니다.");
         }
 
-        // 4. 상품 수량 확인
+        // 5. 상품 수량 확인
         if (product.getStock() <= 0) {
             throw new IllegalStateException("재고가 없는 상품은 매입할 수 없습니다.");
         }
 
-        // 5. 판매자 확인
+        // 6. 판매자 확인
         Seller seller = product.getSeller();
         if (seller == null) {
             throw new IllegalStateException("판매자 정보가 없는 상품입니다.");
         }
 
-        // 6. 이미 매입된 상품인지 확인
+        // 7. 이미 매입된 상품인지 확인
         if (adminProductRepository.findByProductId(requestDTO.getProductId()).isPresent()) {
             throw new IllegalStateException("이미 매입된 상품입니다.");
         }
 
-        // 7. 판매자의 상품 수량 감소
+        // 8. 판매자의 상품 수량 감소
         product.setStock(product.getStock() - 1);
         if (product.getStock() == 0) {
             product.setActive(false);
@@ -97,7 +105,7 @@ public class AdminProductServiceImpl implements AdminProductService {
         productRepository.save(product);
 
 
-        // 8. AdminProduct 생성
+        // 9. AdminProduct 생성
         AdminProduct adminProduct = AdminProduct.builder()
             .productId(requestDTO.getProductId())
             .purchasePrice(requestDTO.getPurchasePrice())
@@ -105,7 +113,7 @@ public class AdminProductServiceImpl implements AdminProductService {
             .isAuctioned(false)
             .build();
 
-        // 9. AdminProduct 저장
+        // 10. AdminProduct 저장
         AdminProduct savedAdminProduct = adminProductRepository.save(adminProduct);
         log.info("관리자 상품 매입 완료: adminProductId={}", savedAdminProduct.getId());
 
