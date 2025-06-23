@@ -1,5 +1,9 @@
+@import "tailwindcss/preflight";   /* 이전 @tailwind base */
+@import "tailwindcss/utilities";   /* 이전 @tailwind utilities */
+@import "tw-animate-css";          /* 애니메이션 라이브러리 */
 @import "tailwindcss";
 @import "tw-animate-css";
+
 
 @custom-variant dark (&:is(.dark *));
 

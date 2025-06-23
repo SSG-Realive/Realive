@@ -42,7 +42,14 @@ export default function LoginForm() {
     };
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_ROOT_URL}/api/public/auth/login`, {
+      // 환경변수가 없으면 기본값 사용
+      const apiBaseUrl = process.env.NEXT_PUBLIC_API_ROOT_URL || 'http://localhost:8080/api';
+      const apiUrl = `${apiBaseUrl}/public/auth/login`;
+      
+      console.log('로그인 API URL:', apiUrl);
+      console.log('환경변수 NEXT_PUBLIC_API_ROOT_URL:', process.env.NEXT_PUBLIC_API_ROOT_URL);
+
+      const res = await fetch(apiUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -61,12 +68,12 @@ export default function LoginForm() {
         setAuth({
           id: data.id,
           accessToken: data.accessToken,
-          refreshToken: null,
+          refreshToken: data.refreshToken || null,
           email: data.email,
           userName: data.name,
           temporaryUser: false,
         });
-        const redirectTo = searchParams?.get('redirectTo') || '/';
+        const redirectTo = searchParams?.get('redirectTo') || '/main';
         router.push(redirectTo);
       } else {
         setError('로그인 응답이 올바르지 않습니다.');

@@ -8,8 +8,7 @@ import { fetchMyProfile } from '@/service/customer/customerService';
 import { loadPaymentWidget, PaymentWidgetInstance } from '@tosspayments/payment-widget-sdk';
 import type { CartItem } from '@/types/customer/cart/cart';
 import type { MemberReadDTO } from '@/types/customer/member/member';
-
-import './OrderPage.css';
+import Navbar from '@/components/customer/common/Navbar';
 
 // 클라이언트 키는 .env.local 파일에 NEXT_PUBLIC_TOSS_CLIENT_KEY=... 와 같이 저장되어 있어야 합니다.
 const TOSS_CLIENT_KEY = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY as string;
@@ -23,11 +22,26 @@ export default function NewOrderPage() {
     const [shippingInfo, setShippingInfo] = useState({ receiverName: '', phone: '', address: '' });
     const paymentWidgetRef = useRef<PaymentWidgetInstance | null>(null);
 
+    // 화면 크기를 감지하여 상태로 관리
+    const [isLgScreen, setIsLgScreen] = useState(false);
+
+    // 컴포넌트 마운트 시 화면 크기를 확인하고, 리사이즈 이벤트를 감지하는 useEffect
+    useEffect(() => {
+        const checkScreenSize = () => {
+            setIsLgScreen(window.innerWidth >= 1024); // Tailwind CSS의 'lg' breakpoint는 1024px
+        };
+        checkScreenSize(); // 초기 로드 시 확인
+        window.addEventListener('resize', checkScreenSize); // 화면 크기가 변경될 때마다 재확인
+        
+        // 컴포넌트 언마운트 시 이벤트 리스너 제거 (메모리 누수 방지)
+        return () => window.removeEventListener('resize', checkScreenSize);
+    }, []);
+
     // 사용자 정보 로딩 및 장바구니 유효성 검사
     useEffect(() => {
         if (cartItems.length === 0) {
             alert("결제할 상품 정보가 없습니다. 장바구니 페이지로 돌아갑니다.");
-            router.replace('/customer/cart'); // 장바구니 페이지 경로로 수정
+            router.replace('/customer/cart');
             return;
         }
 
@@ -60,8 +74,16 @@ export default function NewOrderPage() {
             try {
                 const tossPayments = await loadPaymentWidget(TOSS_CLIENT_KEY, customerId.toString());
                 
-                tossPayments.renderPaymentMethods('#payment-widget', { value: finalAmount }, { variantKey: 'DEFAULT' });
-                tossPayments.renderAgreement('#agreement', { variantKey: 'DEFAULT' });
+                const paymentWidgetSelector = isLgScreen ? '#payment-widget' : '#payment-widget-mobile';
+                const agreementSelector = isLgScreen ? '#agreement' : '#agreement-mobile';
+                
+                // 해당 ID를 가진 요소가 DOM에 존재하는지 확인 후 렌더링
+                if (document.getElementById(paymentWidgetSelector.slice(1))) {
+                    tossPayments.renderPaymentMethods(paymentWidgetSelector, { value: finalAmount }, { variantKey: 'DEFAULT' });
+                }
+                if (document.getElementById(agreementSelector.slice(1))) {
+                    tossPayments.renderAgreement(agreementSelector, { variantKey: 'DEFAULT' });
+                }
 
                 paymentWidgetRef.current = tossPayments;
             } catch (error) {
@@ -69,7 +91,7 @@ export default function NewOrderPage() {
             }
         };
         initializeWidget();
-    }, [userProfile, customerId, finalAmount]);
+    }, [userProfile, customerId, finalAmount, isLgScreen]);
 
     // 배송지 정보 변경 핸들러
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -110,54 +132,87 @@ export default function NewOrderPage() {
     };
 
     if (!userProfile) {
-        return <div className="loading-container">주문 정보를 준비 중입니다...</div>;
+        return <div className="flex justify-center items-center h-screen">주문 정보를 준비 중입니다...</div>;
     }
 
     return (
-        <main className="order-page-container">
-            <h1 className="page-title">주문 / 결제</h1>
+        <div className="bg-gray-50 min-h-screen pb-24 lg:pb-0">
+            <Navbar />
+            <main className="max-w-7xl mx-auto px-4 lg:px-8 py-8">
+                <h1 className="text-2xl lg:text-3xl font-bold mb-6">주문 / 결제</h1>
 
-            <section className="order-section">
-                <h2>주문 상품</h2>
-                {cartItems.map(item => (
-                    <div key={item.cartItemId} className="product-summary-card">
-                        <img src={item.imageThumbnailUrl || '/default-image.png'} alt={item.productName} />
-                        <div className="product-details">
-                            <p>{item.productName}</p>
-                            <p>수량: {item.quantity}개</p>
-                        </div>
-                        <p className="product-price">{(item.productPrice * item.quantity).toLocaleString()}원</p>
+                <div className="grid grid-cols-1 lg:grid-cols-3 lg:gap-8">
+                    <div className="lg:col-span-2 space-y-6">
+
+                        <section className="bg-white p-6 rounded-lg shadow-sm">
+                            <h2 className="text-lg font-semibold mb-4">배송지</h2>
+                            <div className="space-y-3">
+                                <div><label className="text-sm font-medium text-gray-700">받는 분</label><input type="text" name="receiverName" value={shippingInfo.receiverName} onChange={handleChange} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" /></div>
+                                <div><label className="text-sm font-medium text-gray-700">연락처</label><input type="text" name="phone" value={shippingInfo.phone} onChange={handleChange} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" /></div>
+                                <div><label className="text-sm font-medium text-gray-700">주소</label><input type="text" name="address" value={shippingInfo.address} onChange={handleChange} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" /></div>
+                            </div>
+                        </section>
+                        
+                        <section className="bg-white p-6 rounded-lg shadow-sm">
+                            <h2 className="text-lg font-semibold mb-4">주문 상품</h2>
+                            <div className="space-y-4">
+                                {cartItems.map(item => (
+                                    <div key={item.cartItemId} className="flex items-start space-x-4">
+                                        <img src={item.imageThumbnailUrl || '/default-image.png'} alt={item.productName} className="w-20 h-20 object-cover rounded-md flex-shrink-0" />
+                                        <div className="flex-grow"><p className="font-medium">{item.productName}</p><p className="text-sm text-gray-500">수량: {item.quantity}개</p></div>
+                                        <p className="font-semibold whitespace-nowrap">{(item.productPrice * item.quantity).toLocaleString()}원</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+                        
+                        {!isLgScreen && (
+                            <div className="space-y-6">
+                                <section className="bg-white p-6 rounded-lg shadow-sm"><h2 className="text-lg font-semibold mb-4">결제 수단</h2><div id="payment-widget-mobile" style={{ width: '100%' }} /></section>
+                                <section className="bg-white p-6 rounded-lg shadow-sm">
+                                    <h3 className="text-lg font-semibold mb-4">결제 상세</h3>
+                                    <div className="space-y-2 text-sm">
+                                        <div className="flex justify-between"><span>총 상품금액</span><span>{totalProductPrice.toLocaleString()}원</span></div>
+                                        <div className="flex justify-between"><span>배송비</span><span>+ {deliveryFee.toLocaleString()}원</span></div>
+                                        <div className="border-t my-2"></div>
+                                        <div className="flex justify-between font-bold text-base"><span>최종 결제 금액</span><span>{finalAmount.toLocaleString()}원</span></div>
+                                    </div>
+                                    <div id="agreement-mobile" className="mt-4" />
+                                </section>
+                            </div>
+                        )}
                     </div>
-                ))}
-            </section>
+                    
+                    {isLgScreen && (
+                        <aside className="lg:col-span-1">
+                            <div className="lg:sticky lg:top-8 space-y-6">
+                                <section className="bg-white p-6 rounded-lg shadow-sm"><h2 className="text-lg font-semibold mb-4">결제 수단</h2><div id="payment-widget" style={{ width: '100%' }} /></section>
+                                <section className="bg-white p-6 rounded-lg shadow-sm">
+                                    <h3 className="text-lg font-semibold mb-4">결제 금액</h3>
+                                    <div className="space-y-2">
+                                        <div className="flex justify-between text-sm"><span>총 상품금액</span><span>{totalProductPrice.toLocaleString()}원</span></div>
+                                        <div className="flex justify-between text-sm"><span>배송비</span><span>+ {deliveryFee.toLocaleString()}원</span></div>
+                                        <div className="border-t my-2"></div>
+                                        <div className="flex justify-between font-bold text-base"><span>최종 결제 금액</span><span>{finalAmount.toLocaleString()}원</span></div>
+                                    </div>
+                                    <div id="agreement" className="mt-4" />
+                                    <button className="w-full bg-green-500 text-white font-bold py-3 mt-4 rounded-md hover:bg-green-600 transition-colors" onClick={handlePayment} disabled={cartItems.length === 0}>
+                                        {finalAmount.toLocaleString()}원 결제하기
+                                    </button>
+                                </section>
+                            </div>
+                        </aside>
+                    )}
+                </div>
+            </main>
             
-            <section className="order-section"><h2>주문자 정보</h2>{/* ... */} </section>
-            <section className="order-section"><h2>배송지 정보</h2>{/*... */}</section>
-
-            <section className="order-section">
-                <h2>결제 수단</h2>
-                <div id="payment-widget" style={{ width: '100%' }} />
-            </section>
-            
-            <aside className="order-summary-box">
-                <div id="agreement" />
-                <h3>결제 금액</h3>
-                <div className="summary-row">
-                    <span>총 상품금액</span>
-                    <span>{totalProductPrice.toLocaleString()}원</span>
-                </div>
-                <div className="summary-row">
-                    <span>배송비</span>
-                    <span>+ {deliveryFee.toLocaleString()}원</span>
-                </div>
-                <div className="summary-row total">
-                    <span>최종 결제 금액</span>
-                    <span>{finalAmount.toLocaleString()}원</span>
-                </div>
-                <button className="payment-button" onClick={handlePayment} disabled={cartItems.length === 0}>
-                    {finalAmount.toLocaleString()}원 결제하기
-                </button>
-            </aside>
-        </main>
+            {!isLgScreen && (
+                <footer className="fixed bottom-0 left-0 right-0 bg-white border-t p-4 shadow-lg-top">
+                    <button className="w-full bg-green-500 text-white font-bold py-3 rounded-md hover:bg-green-600 transition-colors" onClick={handlePayment} disabled={cartItems.length === 0}>
+                        {finalAmount.toLocaleString()}원 결제하기
+                    </button>
+                </footer>
+            )}
+        </div>
     );
 }
