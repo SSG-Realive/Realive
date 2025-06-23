@@ -76,9 +76,14 @@ public class StatServiceImpl implements StatService {
 
         LocalDate startDate = date;
         LocalDate endDate = date;
+        LocalDateTime startDateTime = date.atStartOfDay();
+        LocalDateTime endDateTime = date.atTime(LocalTime.MAX);
+
         if ("MONTHLY".equalsIgnoreCase(periodType)) {
             startDate = date.withDayOfMonth(1);
             endDate = date.withDayOfMonth(date.lengthOfMonth());
+            startDateTime = startDate.atStartOfDay();
+            endDateTime = endDate.atTime(LocalTime.MAX);
         } else if (!"DAILY".equalsIgnoreCase(periodType)) {
             log.warn("지원하지 않는 periodType: {}. DAILY로 처리합니다.", periodType);
             periodType = "DAILY";
@@ -92,24 +97,34 @@ public class StatServiceImpl implements StatService {
             pendingSellerCount = pendingSellers.size();
         }
 
-        // 2. 판매 및 커미션 데이터
+        // 2. 판매 및 커미션 데이터 (기간 조회로 수정)
         List<SalesWithCommissionDTO> salesWithCommissions = new ArrayList<>();
-        List<SalesLog> dailySalesLogs = salesLogRepository.findBySoldAt(date);
-        for (SalesLog sale : dailySalesLogs) {
+        List<SalesLog> periodSalesLogs = salesLogRepository.findBySoldAtBetween(startDate, endDate);
+
+        // N+1 문제 해결: CommissionLog를 한 번에 조회
+        List<Integer> salesLogIds = periodSalesLogs.stream()
+                .map(SalesLog::getId)
+                .collect(Collectors.toList());
+
+        Map<Integer, CommissionLogDTO> commissionMap = new HashMap<>();
+        if (!salesLogIds.isEmpty()) {
+            commissionLogRepository.findBySalesLogIdIn(salesLogIds).stream()
+                    .map(CommissionLogDTO::fromEntity)
+                    .forEach(dto -> commissionMap.put(dto.getSalesLogId(), dto));
+        }
+
+        for (SalesLog sale : periodSalesLogs) {
             SalesLogDTO salesLogDTO = SalesLogDTO.fromEntity(sale);
-            Optional<CommissionLog> commissionOpt = commissionLogRepository.findBySalesLogId(sale.getId());
-            CommissionLogDTO commissionLogDTO = commissionOpt.map(CommissionLogDTO::fromEntity).orElse(null);
+            CommissionLogDTO commissionLogDTO = commissionMap.get(sale.getId()); // DB 접근 없음
             salesWithCommissions.add(SalesWithCommissionDTO.builder()
                     .salesLog(salesLogDTO)
                     .commissionLog(commissionLogDTO)
                     .build());
         }
 
-        // 3. 정산 데이터
+        // 3. 정산 데이터 (기간 조회로 수정)
         List<PayoutLogDTO> payoutLogs = new ArrayList<>();
-        LocalDateTime startOfDay = date.atStartOfDay();
-        LocalDateTime endOfDay = date.atTime(LocalTime.MAX);
-        List<PayoutLog> payoutEntities = payoutLogRepository.findByProcessedAtBetween(startOfDay, endOfDay);
+        List<PayoutLog> payoutEntities = payoutLogRepository.findByProcessedAtBetween(startDateTime, endDateTime);
         payoutLogs = payoutEntities.stream()
                 .map(PayoutLogDTO::fromEntity)
                 .collect(Collectors.toList());
@@ -119,9 +134,9 @@ public class StatServiceImpl implements StatService {
                 .payoutLogs(payoutLogs)
                 .build();
 
-        // 4. 패널티 데이터
+        // 4. 패널티 데이터 (기간 조회로 수정)
         List<PenaltyLogDTO> penaltyLogs = new ArrayList<>();
-        List<PenaltyLog> penaltyEntities = penaltyLogRepository.findByCreatedAtBetween(startOfDay, endOfDay);
+        List<PenaltyLog> penaltyEntities = penaltyLogRepository.findByCreatedAtBetween(startDateTime, endDateTime);
         penaltyLogs = penaltyEntities.stream()
                 .map(PenaltyLogDTO::fromEntity)
                 .collect(Collectors.toList());
@@ -372,17 +387,16 @@ public class StatServiceImpl implements StatService {
         List<SalesLogDTO> salesLogDTOs = salesLogEntities.stream().map(SalesLogDTO::fromEntity).collect(Collectors.toList());
         return MonthlySalesLogDetailListDTO.builder().month(yearMonth).salesLogs(salesLogDTOs).build();
     }
+
+    // 성능 개선된 메소드
     @Override
-    public List<DailySalesSummaryDTO> getDailySummariesInMonth(YearMonth yearMonth) { /* 이전과 동일 */
-        log.info("getDailySummariesInMonth 호출됨 (for 루프 사용) - 연월: {}", yearMonth);
-        List<DailySalesSummaryDTO> dailySummaries = new ArrayList<>();
-        int daysInMonth = yearMonth.lengthOfMonth();
-        for (int day = 1; day <= daysInMonth; day++) {
-            LocalDate currentDate = yearMonth.atDay(day);
-            dailySummaries.add(getDailySalesSummary(currentDate));
-        }
-        return dailySummaries;
+    public List<DailySalesSummaryDTO> getDailySummariesInMonth(YearMonth yearMonth) {
+        log.info("getDailySummariesInMonth 호출됨 (GROUP BY 사용) - 연월: {}", yearMonth);
+        LocalDate startDate = yearMonth.atDay(1);
+        LocalDate endDate = yearMonth.atEndOfMonth();
+        return salesLogRepository.getDailySummariesForPeriod(startDate, endDate); // 1번의 DB 조회
     }
+
     @Override
     public DailySalesSummaryDTO getSellerDailySalesSummary(Integer sellerId, LocalDate date) { /* 이전과 동일 */
         log.info("getSellerDailySalesSummary 호출됨 - 판매자ID: {}, 날짜: {}", sellerId, date);
@@ -510,6 +524,18 @@ public class StatServiceImpl implements StatService {
         }
     }
 
+    // 새로 추가된 메소드들
+    @Override
+    public List<DailySalesSummaryDTO> getDailySummariesForPeriod(LocalDate startDate, LocalDate endDate) {
+        log.info("getDailySummariesForPeriod 호출됨 - 기간: {} ~ {}", startDate, endDate);
+        return salesLogRepository.getDailySummariesForPeriod(startDate, endDate);
+    }
+
+    @Override
+    public List<SellerSalesDetailDTO> getSellerSalesDetailsForPeriod(LocalDate startDate, LocalDate endDate) {
+        log.info("getSellerSalesDetailsForPeriod 호출됨 - 기간: {} ~ {}", startDate, endDate);
+        return salesLogRepository.getSellerSalesDetailsForPeriod(startDate, endDate);
+    }
 
     // --- Helper methods for generating trend data (Mock 데이터 생성용) ---
     private <T> List<DateBasedValueDTO<T>> generateDateBasedTrend(LocalDate startDate, LocalDate endDate, java.util.function.Supplier<T> valueSupplier) {
