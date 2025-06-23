@@ -8,6 +8,9 @@ import { ProductListDTO } from '@/types/seller/product/product';
 import Navbar from '@/components/customer/common/Navbar';
 import ChatbotFloatingButton from '@/components/customer/common/ChatbotFloatingButton';
 import ProductCard from '@/components/customer/product/ProductCard';
+import BannerCarousel from '@/components/main/BannerCarousel';
+import WeeklyAuctionSlider from '@/components/main/WeeklyAuctionSlider';
+
 
 const categories = [
     { id: null, name: '전체' },
@@ -82,6 +85,14 @@ export default function CustomerHomePage() {
     return (
         <div>
             <Navbar />
+
+            {/* 배너 */}
+            <div className="mt-10 mb-8"> {/* 여백 추가 */}
+                <BannerCarousel />
+            </div>
+
+            {/* 옥션-슬라이드 */}
+            <WeeklyAuctionSlider />
 
             {/* 🔥 인기 상품 */}
             {popularProducts.length > 0 && (

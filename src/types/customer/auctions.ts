@@ -6,6 +6,7 @@ interface Auction {
   startTime: string;
   endTime: string;
   status: string;
+  createdAt?: string;
   adminProduct: {
     productName: string | null;
     imageUrl?: string | null;
