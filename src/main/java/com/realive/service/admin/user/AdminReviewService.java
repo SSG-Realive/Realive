@@ -26,7 +26,7 @@ public interface AdminReviewService {
      * @return 조건에 맞는 신고된 리뷰 목록을 {@link AdminReviewReportListItemDTO} 리스트 형태로 포함하는 {@link Page} 객체를 반환합니다.
      *         Page 객체는 총 항목 수, 총 페이지 수 등의 추가적인 페이징 정보도 제공합니다.
      */
-    Page<AdminReviewReportListItemDTO> getReportedReviewsByStatus(ReviewReportStatus status, Pageable pageable);
+    Page<AdminReviewReportListItemDTO> getReportedReviewsByStatus(Optional<ReviewReportStatus> status, Pageable pageable);
 
     /**
      * 특정 리뷰 신고의 상세 정보를 조회합니다.

@@ -43,14 +43,18 @@ public class AdminReviewServiceImpl implements AdminReviewService {
     private final CustomerRepository customerRepository;
     private final OrderItemRepository orderItemRepository; // OrderItemRepository 주입
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public Page<AdminReviewReportListItemDTO> getReportedReviewsByStatus(ReviewReportStatus status, Pageable pageable) {
-        // ... (이전 최종본과 동일)
-        log.info("Fetching reported reviews with status: {} and pageable: {}", status, pageable);
-        Page<ReviewReport> reportPage = reviewReportRepository.findAllByStatus(status, pageable);
+    public Page<AdminReviewReportListItemDTO> getReportedReviewsByStatus(Optional<ReviewReportStatus> status, Pageable pageable) { // 1. Optional 추가
+        log.info("Fetching reported reviews with status: {} and pageable: {}", status.map(Enum::name).orElse("ALL"), pageable);
+
+        Page<ReviewReport> reportPage;
+
+        if (status.isPresent()) { // 2. if문 추가: status 값이 있으면
+            reportPage = reviewReportRepository.findAllByStatus(status.get(), pageable); // 기존 로직
+        } else { // 3. else문 추가: status 값이 없으면
+            reportPage = reviewReportRepository.findAll(pageable); // 전체 조회
+        }
+
         List<AdminReviewReportListItemDTO> dtoList = reportPage.getContent().stream()
                 .map(this::convertToAdminReviewReportListItemDTO)
                 .collect(Collectors.toList());

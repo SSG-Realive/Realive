@@ -1,7 +1,9 @@
 package com.realive.domain.payment;
 
+import com.realive.domain.auction.Auction;
 import com.realive.domain.common.BaseTimeEntity;
 import com.realive.domain.common.enums.PaymentStatus;
+import com.realive.domain.customer.Customer;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -52,6 +54,11 @@ public class AuctionPayment extends BaseTimeEntity {
     @Column(name = "paid_at")
     private LocalDateTime paidAt;
 
-    @Column(name = "order_id")
-    private Long orderId; // 결제 완료 후 생성된 주문 ID
-} 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "auction_id", insertable = false, updatable = false)
+    private Auction auction;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "customer_id", insertable = false, updatable = false)
+    private Customer customer;
+}
