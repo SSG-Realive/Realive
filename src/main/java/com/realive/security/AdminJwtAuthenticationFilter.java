@@ -64,12 +64,14 @@ public class AdminJwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String uri = request.getRequestURI();
+        String method = request.getMethod();
 
-        // 요청 경로가 "/api/customer/"로 시작하는 경우에만 이 필터가 동작하도록 합니다.
-        // 그 외의 경우(예: /api/public, /api/auth)에는 이 필터를 건너뜁니다.
-        log.info("[AdminJwtFilter] shouldNotFilter 검사. URI: {}", uri);
+        // 요청 경로가 "/api/admin/"로 시작하는 경우에만 동작
+        log.info("[AdminJwtFilter] shouldNotFilter 검사. URI: {}, Method: {}", uri, method);
+        
         boolean shouldNotFilter = !uri.startsWith("/api/admin/");
-        log.info("필터 실행 여부 (false여야 실행됨): {}", !shouldNotFilter);
+        log.info("필터 실행 여부 (false여야 실행됨): {}", shouldNotFilter);
+        log.info("uri.startsWith('/api/admin/'): {}", uri.startsWith("/api/admin/"));
 
         return shouldNotFilter;
     }
