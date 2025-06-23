@@ -141,32 +141,30 @@ export default function ReviewManagementPage() {
   }
 
   return (
-    <div>
-      <div className="p-8 flex flex-row gap-8 overflow-x-auto">
-        {/* 리뷰 목록 요약 - 테이블형 */}
-        <div className="block bg-white rounded shadow p-6 min-w-[400px] cursor-pointer hover:bg-gray-50 transition">
+    <div className="space-y-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
+        {/* 리뷰 목록 요약 */}
+        <div className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg font-bold">리뷰</h2>
-            <Link href="/admin/review-management/list" className="text-blue-600 hover:text-blue-800">
+            <h2 className="text-lg font-bold text-gray-800">최신 리뷰</h2>
+            <Link href="/admin/review-management/list" className="text-sm font-semibold text-blue-600 hover:text-blue-800">
               전체보기 →
             </Link>
           </div>
-          <table className="min-w-full border text-sm">
-            <thead>
-              <tr className="bg-gray-100">
-                <th className="px-2 py-1">상품</th>
-                <th className="px-2 py-1">작성자</th>
-                <th className="px-2 py-1">날짜</th>
-                <th className="px-2 py-1">상태</th>
+          <table className="w-full text-sm text-left">
+            <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+              <tr>
+                <th scope="col" className="px-4 py-2">상품</th>
+                <th scope="col" className="px-4 py-2">작성자</th>
+                <th scope="col" className="px-4 py-2">상태</th>
               </tr>
             </thead>
             <tbody>
               {reviews?.slice(0, 5).map(review => (
-                <tr key={review.id} onClick={() => router.push(`/admin/review-management/list/${review.id}`)} className="cursor-pointer">
-                  <td className="px-2 py-1">{review.productName}</td>
-                  <td className="px-2 py-1">{review.customerName}</td>
-                  <td className="px-2 py-1">{new Date(review.createdAt).toLocaleDateString()}</td>
-                  <td className={`px-2 py-1 ${getReviewStatusStyle(review.isHidden)}`}>
+                <tr key={review.reviewId} onClick={() => router.push(`/admin/review-management/list/${review.reviewId}`)} className="bg-white border-b hover:bg-gray-50 cursor-pointer">
+                  <td className="px-4 py-2 font-medium text-gray-900 truncate">{review.productName || '상품 정보 없음'}</td>
+                  <td className="px-4 py-2">{review.customerName}</td>
+                  <td className={`px-4 py-2 font-semibold ${getReviewStatusStyle(review.isHidden)}`}>
                     {getReviewStatusText(review.isHidden)}
                   </td>
                 </tr>
@@ -175,32 +173,28 @@ export default function ReviewManagementPage() {
           </table>
         </div>
 
-        {/* 리뷰 신고 관리 요약 - 테이블형 */}
-        <div className="block bg-white rounded shadow p-6 min-w-[400px] cursor-pointer hover:bg-gray-50 transition">
+        {/* 리뷰 신고 관리 요약 */}
+        <div className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg font-bold">리뷰 신고 관리</h2>
-            <Link href="/admin/review-management/reported" className="text-blue-600 hover:text-blue-800">
+            <h2 className="text-lg font-bold text-gray-800">리뷰 신고 관리</h2>
+            <Link href="/admin/review-management/reported" className="text-sm font-semibold text-blue-600 hover:text-blue-800">
               전체보기 →
             </Link>
           </div>
-          <table className="min-w-full border text-sm">
-            <thead>
-              <tr className="bg-gray-100">
-                <th className="px-2 py-1">상품</th>
-                <th className="px-2 py-1">작성자</th>
-                <th className="px-2 py-1">사유</th>
-                <th className="px-2 py-1">상태</th>
+          <table className="w-full text-sm text-left">
+            <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+              <tr>
+                <th scope="col" className="px-4 py-2">작성자</th>
+                <th scope="col" className="px-4 py-2">사유</th>
+                <th scope="col" className="px-4 py-2">상태</th>
               </tr>
             </thead>
             <tbody>
               {reports?.slice(0, 5).map(report => (
-                <tr key={report.reportId} onClick={() => router.push(`/admin/review-management/reported/${report.reportId}`)} className="cursor-pointer">
-                  <td className="px-2 py-1">{report.review?.productName}</td>
-                  <td className="px-2 py-1">{report.review?.customerName}</td>
-                  <td className="px-2 py-1 max-w-xs truncate" title={report.reason}>
-                    {report.reason}
-                  </td>
-                  <td className={`px-2 py-1 ${getReportStatusStyle(report.status)}`}>
+                <tr key={report.reportId} onClick={() => router.push(`/admin/review-management/reported/${report.reportId}`)} className="bg-white border-b hover:bg-gray-50 cursor-pointer">
+                  <td className="px-4 py-2">{report.reporterName}</td>
+                  <td className="px-4 py-2 truncate" title={report.reason}>{report.reason}</td>
+                  <td className={`px-4 py-2 font-semibold ${getReportStatusStyle(report.status)}`}>
                     {getReportStatusText(report.status)}
                   </td>
                 </tr>
@@ -209,30 +203,26 @@ export default function ReviewManagementPage() {
           </table>
         </div>
 
-        {/* Q&A 관리 요약 - 테이블형 */}
-        <div className="block bg-white rounded shadow p-6 min-w-[400px] cursor-pointer hover:bg-gray-50 transition">
+        {/* Q&A 관리 요약 */}
+        <div className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg font-bold">Q&A 관리</h2>
-            <Link href="/admin/review-management/qna" className="text-blue-600 hover:text-blue-800">
+            <h2 className="text-lg font-bold text-gray-800">Q&A 관리</h2>
+            <Link href="/admin/review-management/qna" className="text-sm font-semibold text-blue-600 hover:text-blue-800">
               전체보기 →
             </Link>
           </div>
-          <table className="min-w-full border text-sm">
-            <thead>
-              <tr className="bg-gray-100">
-                <th className="px-2 py-1">제목</th>
-                <th className="px-2 py-1">날짜</th>
-                <th className="px-2 py-1">답변상태</th>
+          <table className="w-full text-sm text-left">
+            <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+              <tr>
+                <th scope="col" className="px-4 py-2">제목</th>
+                <th scope="col" className="px-4 py-2">상태</th>
               </tr>
             </thead>
             <tbody>
               {qnas?.slice(0, 5).map(qna => (
-                <tr key={qna.id} onClick={() => router.push(`/admin/review-management/qna/${qna.id}`)} className="cursor-pointer">
-                  <td className="px-2 py-1 max-w-xs truncate" title={qna.title}>
-                    {qna.title}
-                  </td>
-                  <td className="px-2 py-1">{new Date(qna.createdAt).toLocaleDateString()}</td>
-                  <td className={`px-2 py-1 ${getQnaStatusStyle(qna.isAnswered)}`}>
+                <tr key={qna.id} onClick={() => router.push(`/admin/review-management/qna/${qna.id}`)} className="bg-white border-b hover:bg-gray-50 cursor-pointer">
+                  <td className="px-4 py-2 font-medium text-gray-900 truncate" title={qna.title}>{qna.title}</td>
+                  <td className={`px-4 py-2 font-semibold ${getQnaStatusStyle(qna.isAnswered)}`}>
                     {getQnaStatusText(qna.isAnswered)}
                   </td>
                 </tr>
@@ -243,45 +233,39 @@ export default function ReviewManagementPage() {
       </div>
 
       {/* 통계 정보 */}
-      <div className="p-8">
-        <h2 className="text-xl font-bold mb-4">리뷰 관리 통계</h2>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-sm">전체 리뷰</CardTitle>
+      <div className="pt-4">
+        <h2 className="text-xl font-bold mb-4 text-gray-800">리뷰 관리 통계</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+          <Card className="rounded-2xl shadow-lg hover:shadow-xl transition-shadow">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">전체 리뷰</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold">{reviews?.length || 0}</p>
+              <div className="text-2xl font-bold">{reviews.length}</div>
             </CardContent>
           </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-sm">신고된 리뷰</CardTitle>
+          <Card className="rounded-2xl shadow-lg hover:shadow-xl transition-shadow">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">신고된 리뷰</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold text-red-600">
-                {reports?.filter(r => r.status === 'PENDING').length || 0}
-              </p>
+              <div className="text-2xl font-bold">{reports.length}</div>
             </CardContent>
           </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-sm">미답변 Q&A</CardTitle>
+          <Card className="rounded-2xl shadow-lg hover:shadow-xl transition-shadow">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">미답변 Q&A</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold text-yellow-600">
-                {qnas?.filter(q => !q.isAnswered).length || 0}
-              </p>
+              <div className="text-2xl font-bold text-yellow-600">{qnas.filter(q => !q.isAnswered).length}</div>
             </CardContent>
           </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-sm">숨겨진 리뷰</CardTitle>
+          <Card className="rounded-2xl shadow-lg hover:shadow-xl transition-shadow">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">숨겨진 리뷰</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold text-gray-600">
-                {reviews?.filter(r => r.isHidden).length || 0}
-              </p>
+              <div className="text-2xl font-bold">{reviews.filter(r => r.isHidden).length}</div>
             </CardContent>
           </Card>
         </div>

@@ -1,14 +1,36 @@
 "use client";
 import React, { useEffect, useState } from 'react';
-import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { AdminDashboardDTO } from '@/types/admin/admin';
 import { getAdminDashboard } from '@/service/admin/adminService';
 import { useRouter } from 'next/navigation';
 import Modal from '@/components/Modal';
 import { useAdminAuthStore } from '@/store/admin/useAdminAuthStore';
+import { Users, UserCheck, UserX, UserPlus } from 'lucide-react';
 
 const DashboardChart = dynamic(() => import('@/components/DashboardChart'), { ssr: false });
+
+const StatCard = ({ title, value, unit }: { title: string; value: string | number; unit?: string }) => (
+  <div className="bg-white/50 p-6 rounded-xl">
+    <h4 className="text-base font-semibold text-stone-700 mb-2">{title}</h4>
+    <p className="text-4xl font-bold text-stone-800">
+      {value}
+      {unit && <span className="text-2xl ml-1">{unit}</span>}
+    </p>
+  </div>
+);
+
+const MemberStatusItem = ({ icon, label, value, iconBgColor }: { icon: React.ReactNode; label: string; value: string | number; iconBgColor: string }) => (
+  <div className="flex items-center justify-between py-3">
+    <div className="flex items-center gap-4">
+      <div className={`w-10 h-10 rounded-lg flex items-center justify-center text-white ${iconBgColor}`}>
+        {icon}
+      </div>
+      <span className="font-semibold text-gray-700">{label}</span>
+    </div>
+    <span className="font-bold text-lg text-gray-800">{value}</span>
+  </div>
+);
 
 const AdminDashboardPage = () => {
   const [dashboardData, setDashboardData] = useState<AdminDashboardDTO | null>(null);
@@ -84,38 +106,24 @@ const AdminDashboardPage = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 p-6">
         <div className="flex items-center justify-center h-full">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
-        </div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-800"></div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 p-6">
-        <div className="text-red-500">Error: {error}</div>
-        <button 
-          onClick={fetchDashboardData}
-          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-        >
-          Retry
-        </button>
-      </div>
+      <div className="text-red-500 bg-red-100 p-4 rounded-lg">Error: {error}</div>
     );
   }
 
   if (!dashboardData) {
-    return (
-      <div className="min-h-screen bg-gray-50 p-6">
-        <div className="text-gray-500">데이터가 없습니다.</div>
-      </div>
-    );
+    return <div className="text-gray-500">데이터가 없습니다.</div>;
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div>
       <Modal
         isOpen={showModal}
         onClose={() => setShowModal(false)}
@@ -123,26 +131,28 @@ const AdminDashboardPage = () => {
         message="관리자 페이지에 오신 것을 환영합니다!"
         type="success"
       />
-      <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">관리자 대시보드</h1>
-          <div className="flex gap-4">
+      <div className="flex justify-between items-start mb-6">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-800">대시보드</h1>
+          <p className="text-sm text-gray-500">오늘의 현황을 요약합니다.</p>
+        </div>
+        <div className="flex gap-2 bg-white p-1 rounded-lg shadow-sm">
             <button
               onClick={() => setPeriodType('DAILY')}
-              className={`px-4 py-2 rounded ${
+            className={`px-3 py-1.5 rounded-md text-sm font-semibold transition-colors ${
                 periodType === 'DAILY'
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-white text-gray-700'
+                ? 'bg-gray-800 text-white'
+                : 'text-gray-600 hover:bg-gray-100'
               }`}
             >
               일간
             </button>
             <button
               onClick={() => setPeriodType('MONTHLY')}
-              className={`px-4 py-2 rounded ${
+            className={`px-3 py-1.5 rounded-md text-sm font-semibold transition-colors ${
                 periodType === 'MONTHLY'
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-white text-gray-700'
+                ? 'bg-gray-800 text-white'
+                : 'text-gray-600 hover:bg-gray-100'
               }`}
             >
               월간
@@ -150,57 +160,80 @@ const AdminDashboardPage = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">총 주문</h3>
-            <p className="text-3xl font-bold text-blue-600">
-              {dashboardData.salesSummaryStats?.totalOrdersInPeriod || 0}
-            </p>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2 p-6 rounded-2xl shadow-lg flex flex-col justify-between" style={{ backgroundColor: '#EDE7E3' }}>
+          <div>
+            <h3 className="text-xl font-bold text-stone-800 mb-1">주요 현황 요약</h3>
+            <p className="text-sm text-stone-600 mb-6">{periodType === 'DAILY' ? '오늘' : '이번 달'}의 주문 및 매출 현황입니다.</p>
           </div>
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">총 매출</h3>
-            <p className="text-3xl font-bold text-green-600">
-              {dashboardData.salesSummaryStats?.totalRevenueInPeriod?.toLocaleString() || 0}원
-            </p>
-          </div>
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">전체 회원</h3>
-            <p className="text-3xl font-bold text-purple-600">
-              {dashboardData.memberSummaryStats?.totalMembers || 0}
-            </p>
-          </div>
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">활성 회원</h3>
-            <p className="text-3xl font-bold text-green-600">
-              {dashboardData.memberSummaryStats?.activeMembers || 0}
-            </p>
-          </div>
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">비활성 회원</h3>
-            <p className="text-3xl font-bold text-red-600">
-              {dashboardData.memberSummaryStats?.inactiveMembers || 0}
-            </p>
-          </div>
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">대기 판매자</h3>
-            <p className="text-3xl font-bold text-orange-600">
-              {dashboardData.pendingSellerCount || 0}
-            </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <StatCard 
+              title="총 주문" 
+              value={dashboardData.salesSummaryStats?.totalOrdersInPeriod || 0}
+              unit="건"
+            />
+            <StatCard 
+              title="총 매출"
+              value={dashboardData.salesSummaryStats?.totalRevenueInPeriod?.toLocaleString() || 0}
+              unit="원"
+            />
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">매출 추이</h3>
-            <DashboardChart
-              data={dashboardData}
+        <div className="bg-white p-6 rounded-2xl shadow-lg">
+          <h3 className="text-xl font-bold text-gray-800 mb-2">회원 현황</h3>
+          <div className="divide-y divide-gray-100">
+            <MemberStatusItem 
+              icon={<Users size={20} />}
+              label="전체 회원"
+              value={dashboardData.memberSummaryStats?.totalMembers || 0}
+              iconBgColor="bg-purple-500"
+            />
+            <MemberStatusItem 
+              icon={<UserCheck size={20} />}
+              label="활성 회원"
+              value={dashboardData.memberSummaryStats?.activeMembers || 0}
+              iconBgColor="bg-green-500"
+            />
+            <MemberStatusItem 
+              icon={<UserX size={20} />}
+              label="비활성 회원"
+              value={dashboardData.memberSummaryStats?.inactiveMembers || 0}
+              iconBgColor="bg-red-500"
+            />
+            <MemberStatusItem 
+              icon={<UserPlus size={20} />}
+              label="대기 판매자"
+              value={dashboardData.pendingSellerCount || 0}
+              iconBgColor="bg-orange-500"
             />
           </div>
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">회원 통계</h3>
-            <DashboardChart
-              data={dashboardData}
-            />
+        </div>
+        
+        <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-white p-6 rounded-2xl shadow-lg">
+            <h3 className="text-xl font-bold text-gray-800 mb-4">매출 추이</h3>
+            <div style={{ height: '350px' }}>
+              <DashboardChart data={dashboardData} type="sales" />
+            </div>
+          </div>
+          <div className="bg-white p-6 rounded-2xl shadow-lg">
+            <h3 className="text-xl font-bold text-gray-800 mb-4">회원 통계</h3>
+            <div style={{ height: '350px' }}>
+              <DashboardChart data={dashboardData} type="member" />
+          </div>
+          </div>
+          <div className="bg-white p-6 rounded-2xl shadow-lg">
+            <h3 className="text-xl font-bold text-gray-800 mb-4">경매 통계</h3>
+            <div style={{ height: '350px' }}>
+              <DashboardChart data={dashboardData} type="auction" />
+        </div>
+          </div>
+          <div className="bg-white p-6 rounded-2xl shadow-lg">
+            <h3 className="text-xl font-bold text-gray-800 mb-4">리뷰 통계</h3>
+            <div style={{ height: '350px' }}>
+              <DashboardChart data={dashboardData} type="review" />
+            </div>
           </div>
         </div>
       </div>
