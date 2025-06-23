@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { getAdminReview, updateAdminReview } from "@/service/admin/reviewService";
 import { AdminReview } from "@/types/admin/review";
+import { getTrafficLightEmoji, getTrafficLightText, getTrafficLightBgClass } from "@/types/admin/review";
 
 export default function ReviewDetailPage() {
   const router = useRouter();
@@ -153,7 +154,7 @@ export default function ReviewDetailPage() {
             <div className="space-y-3">
               <div>
                 <span className="font-medium">리뷰 ID:</span>
-                <span className="ml-2">{review.id}</span>
+                <span className="ml-2">{review.reviewId}</span>
               </div>
               <div>
                 <span className="font-medium">상품명:</span>
@@ -165,7 +166,12 @@ export default function ReviewDetailPage() {
               </div>
               <div>
                 <span className="font-medium">평점:</span>
-                <span className="ml-2">{'★'.repeat(review.rating)}</span>
+                <span className="ml-2">
+                  <div className={`inline-flex items-center space-x-2 px-3 py-1 rounded-full border ${getTrafficLightBgClass(review.rating)}`}>
+                    <span className="text-xl">{getTrafficLightEmoji(review.rating)}</span>
+                    <span className="text-sm font-medium">{getTrafficLightText(review.rating)}</span>
+                  </div>
+                </span>
               </div>
               <div>
                 <span className="font-medium">작성일:</span>

@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { getAdminReviewList, updateAdminReview } from "@/service/admin/reviewService";
-import { AdminReview, AdminReviewListRequest } from "@/types/admin/review";
+import { AdminReview, AdminReviewListRequest, AdminReviewListResponse, getTrafficLightEmoji, getTrafficLightText, getTrafficLightBgClass } from "@/types/admin/review";
 import { useAdminAuthStore } from "@/store/admin/useAdminAuthStore";
 
 export default function ReviewListPage() {
@@ -83,7 +83,7 @@ export default function ReviewListPage() {
     try {
       await updateAdminReview(reviewId, !isHidden);
       // Refresh list
-      setReviews(reviews.map(r => r.id === reviewId ? { ...r, isHidden: !isHidden } : r));
+      setReviews(reviews.map(r => r.reviewId === reviewId ? { ...r, isHidden: !isHidden } : r));
     } catch (err: any) {
       console.error('리뷰 상태 변경 실패:', err);
       alert(err.message || '리뷰 상태 변경에 실패했습니다.');
@@ -161,23 +161,30 @@ export default function ReviewListPage() {
           </thead>
           <tbody>
             {reviews?.map(review => (
-              <tr key={review.id} className="hover:bg-gray-50">
-                <td className="px-4 py-2 border">{review.productName}</td>
+              <tr key={review.reviewId} className="hover:bg-gray-50">
+                <td className="px-4 py-2 border">{review.productName || 'N/A'}</td>
                 <td className="px-4 py-2 border">{review.customerName}</td>
                 <td className="px-4 py-2 border">{review.sellerName}</td>
-                <td className="px-4 py-2 border max-w-xs truncate" title={review.content}>
-                  {review.content}
+                <td className="px-4 py-2 border max-w-xs truncate" title={review.content || review.contentSummary}>
+                  {review.contentSummary || review.content}
                 </td>
                 <td className="px-4 py-2 border text-center">
-                  {'★'.repeat(review.rating)}
+                  <div className={`flex items-center justify-center space-x-2 px-3 py-1 rounded-full border ${getTrafficLightBgClass(review.rating)}`}>
+                    <span className="text-lg">{getTrafficLightEmoji(review.rating)}</span>
+                    <span className="text-xs font-medium">{getTrafficLightText(review.rating)}</span>
+                  </div>
                 </td>
                 <td className="px-4 py-2 border">
                   {new Date(review.createdAt).toLocaleDateString()}
                 </td>
                 <td className="px-4 py-2 border text-center">
                   <button
-                    onClick={() => handleToggleVisibility(review.id, review.isHidden)}
-                    className={`px-2 py-1 rounded text-xs text-white ${review.isHidden ? 'bg-gray-500' : 'bg-green-500'}`}
+                    onClick={() => handleToggleVisibility(review.reviewId, review.isHidden)}
+                    className={`px-2 py-1 rounded text-xs text-white transition-colors ${
+                      review.isHidden 
+                        ? 'bg-gray-500 hover:bg-gray-600' 
+                        : 'bg-green-500 hover:bg-green-600'
+                    }`}
                   >
                     {review.isHidden ? '숨김' : '공개'}
                   </button>
@@ -189,12 +196,12 @@ export default function ReviewListPage() {
                   <button 
                     className="text-blue-600 underline"
                     onClick={() => {
-                      console.log('리뷰 상세 버튼 클릭:', review.id);
+                      console.log('리뷰 상세 버튼 클릭:', review.reviewId);
                       try {
-                        router.push(`/admin/review-management/${review.id}`);
+                        router.push(`/admin/review-management/list/${review.reviewId}`);
                       } catch (error) {
                         console.error('라우터 에러:', error);
-                        window.location.href = `/admin/review-management/${review.id}`;
+                        window.location.href = `/admin/review-management/list/${review.reviewId}`;
                       }
                     }}
                   >

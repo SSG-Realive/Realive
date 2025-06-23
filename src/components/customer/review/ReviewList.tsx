@@ -1,6 +1,7 @@
     'use client';
 
     import { ReviewResponseDTO } from '@/types/customer/review/review';
+    import { getTrafficLightEmoji, getTrafficLightText, getTrafficLightBgClass } from '@/types/admin/review';
 
     interface ReviewListProps {
         reviews: ReviewResponseDTO[];
@@ -17,7 +18,10 @@
                     <div key={review.reviewId} className="border p-4 rounded shadow-sm">
                         <div className="flex justify-between items-center">
                             <p className="font-semibold text-sm">{review.productName}</p>
-                            <span className="text-yellow-500 text-sm">⭐ {review.rating}</span>
+                            <div className={`flex items-center space-x-2 px-2 py-1 rounded-full border ${getTrafficLightBgClass(review.rating)}`}>
+                                <span className="text-lg">{getTrafficLightEmoji(review.rating)}</span>
+                                <span className="text-xs font-medium">{getTrafficLightText(review.rating)}</span>
+                            </div>
                         </div>
                         <p className="text-sm mt-2 whitespace-pre-line">{review.content}</p>
                         {review.imageUrls.length > 0 && (

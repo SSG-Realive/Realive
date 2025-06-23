@@ -3,8 +3,8 @@
 import { useEffect, useState } from 'react';
 import { fetchMyReviews } from '@/service/customer/reviewService';
 import { ReviewResponseDTO } from '@/types/customer/review/review';
-import ReviewList from '@/components/customer/review/ReviewList';
 import Navbar from '@/components/customer/common/Navbar';
+import Link from 'next/link';
 
 export default function MyReviewPage() {
     const [reviews, setReviews] = useState<ReviewResponseDTO[]>([]);
@@ -34,7 +34,20 @@ export default function MyReviewPage() {
                 ) : reviews.length === 0 ? (
                     <p className="text-gray-500">아직 작성한 리뷰가 없습니다.</p>
                 ) : (
-                    <ReviewList reviews={reviews} />
+                    <div className="space-y-4">
+                        {reviews.map((review) => (
+                            <Link
+                                key={review.reviewId}
+                                href={`/customer/mypage/reviews/${review.reviewId}`}
+                                className="block border rounded p-4 hover:shadow transition"
+                            >
+                                <p className="font-semibold">{review.productName}</p>
+                                <p className="text-yellow-500">⭐ {review.rating}</p>
+                                <p className="text-gray-700 text-sm mt-1 line-clamp-2">{review.content}</p>
+                                <p className="text-xs text-gray-400 mt-1">{review.createdAt}</p>
+                            </Link>
+                        ))}
+                    </div>
                 )}
             </div>
         </div>
