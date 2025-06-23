@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 public interface CommissionLogRepository extends JpaRepository<CommissionLog, Integer> {
@@ -28,4 +29,11 @@ public interface CommissionLogRepository extends JpaRepository<CommissionLog, In
     // 특정 판매자의 특정 기간 커미션 금액
     @Query("SELECT SUM(cl.commissionAmount) FROM CommissionLog cl JOIN SalesLog sl ON cl.salesLogId = sl.id WHERE sl.sellerId = :sellerId AND sl.soldAt BETWEEN :startDate AND :endDate")
     Integer sumCommissionAmountBySellerAndDateRange(Integer sellerId, LocalDate startDate, LocalDate endDate);
+
+    /**
+     * 여러 SalesLog ID에 해당하는 CommissionLog를 한 번에 조회
+     */
+    List<CommissionLog> findBySalesLogIdIn(List<Integer> salesLogIds);
+
+
 }
