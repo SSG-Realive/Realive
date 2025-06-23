@@ -1,6 +1,6 @@
 "use client";
 import { useRouter, useParams } from "next/navigation";
-import React from "react";
+import { useEffect } from "react";
 
 const dummyProducts = [
   { id: 1, name: "무선 마우스", category: "전자기기", price: 25000, stock: 12, createdAt: "2024-03-01", status: "판매중", productImage: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=facearea&w=80&h=80" },
@@ -19,26 +19,19 @@ export default function ProductDetailPage() {
   const router = useRouter();
   const params = useParams();
   const id = Number(params.id);
-  const product = dummyProducts.find(p => p.id === id);
 
-  if (!product) return <div className="p-8">상품을 찾을 수 없습니다.</div>;
+  useEffect(() => {
+    // 관리자는 상품 상세 페이지 대신 상품 리스트 페이지에서 모달로 상세 보기를 하므로
+    // 이 페이지에 접근하면 상품 리스트 페이지로 리다이렉트
+    router.replace('/admin/products');
+  }, [router]);
 
   return (
-    <div className="p-8 max-w-lg mx-auto">
-      <h2 className="text-2xl font-bold mb-4">상품 상세</h2>
-      <img src={product.productImage} alt="product" className="w-24 h-24 rounded object-cover mb-4" />
-      <p><b>상품명:</b> {product.name}</p>
-      <p><b>카테고리:</b> {product.category}</p>
-      <p><b>가격:</b> {product.price.toLocaleString()}원</p>
-      <p><b>재고:</b> {product.stock}</p>
-      <p><b>등록일:</b> {product.createdAt}</p>
-      <p><b>상태:</b> {product.status}</p>
-      <div className="flex gap-2 mt-6">
-        <button className="px-4 py-2 bg-blue-500 text-white rounded" onClick={() => router.push(`/admin/products/edit/${product.id}`)}>수정</button>
+    <div className="p-8 flex items-center justify-center">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+        <p className="text-gray-600">상품 리스트로 이동 중...</p>
       </div>
-      <button className="mt-4 px-4 py-2 bg-blue-500 text-white rounded" onClick={() => router.push('/admin/products')}>
-        목록으로
-      </button>
     </div>
   );
 } 
