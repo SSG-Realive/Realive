@@ -41,6 +41,7 @@ export default function AdminSidebar() {
   const [auctionOpen, setAuctionOpen] = useState(false);
   const [reviewOpen, setReviewOpen] = useState(false);
   const [customerOpen, setCustomerOpen] = useState(false);
+  const [productOpen, setProductOpen] = useState(false);
   const pathname = usePathname();
 
   const getLinkStyle = (path: string) => {
@@ -102,10 +103,25 @@ export default function AdminSidebar() {
             </ul>
           </Accordion>
           <li style={{ margin: '8px 0' }}>
-            <Link href="/admin/products" style={{ ...getLinkStyle('/admin/products'), display: 'block' }}>
-              상품관리
+            <div style={{ display: 'flex', alignItems: 'center', ...getLinkStyle('/admin/products') }}>
+            <Link href="/admin/products" style={{ flex: 1, textDecoration: 'none', color: 'inherit' }}>
+              상품
             </Link>
+            <button
+                aria-label="상품 하위 메뉴 열기"
+                onClick={(e) => { e.stopPropagation(); e.preventDefault(); setProductOpen(v => !v); }}
+                style={{ background: 'none', border: 'none', color: 'inherit', cursor: 'pointer', fontSize: 16 }}
+            >
+              {productOpen ? '▴' : '▾'}
+            </button>
+            </div>
           </li>
+          <Accordion open={productOpen}>
+            <ul style={{ listStyle: 'none', padding: 0, margin: 0, marginLeft: 28, borderLeft: '1px solid #4b5563' }}>
+              <li style={{ padding: '4px 0 4px 12px' }}><Link href="/admin/products/list" style={getSubLinkStyle('/admin/products/list')}>전체 상품 조회</Link></li>
+              <li style={{ padding: '4px 0 4px 12px' }}><Link href="/admin/owned-products" style={getSubLinkStyle('/admin/owned-products')}>관리자 상품 조회</Link></li>
+            </ul>
+          </Accordion>
           <li style={{ margin: '8px 0' }}>
             <div style={{ display: 'flex', alignItems: 'center', ...getLinkStyle('/admin/auction-management') }}>
               <Link href="/admin/auction-management" style={{ flex: 1, textDecoration: 'none', color: 'inherit' }}>

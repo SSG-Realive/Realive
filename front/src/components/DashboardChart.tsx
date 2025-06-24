@@ -6,9 +6,17 @@ import { ApexOptions } from 'apexcharts';
 
 const ReactApexChart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
+interface ProductStats {
+  totalProducts: number;
+  highQualityProducts: number;
+  mediumQualityProducts: number;
+  lowQualityProducts: number;
+  categoryStats: { [key: string]: number };
+}
+
 interface DashboardChartProps {
-  data: AdminDashboardDTO;
-  type: 'member' | 'sales' | 'auction' | 'review';
+  data: AdminDashboardDTO | ProductStats;
+  type: 'member' | 'sales' | 'auction' | 'review' | 'product' | 'category';
 }
 
 const DashboardChart: React.FC<DashboardChartProps> = ({ data, type }) => {
@@ -17,6 +25,11 @@ const DashboardChart: React.FC<DashboardChartProps> = ({ data, type }) => {
   }
   
   const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#AF19FF", "#FF4560"];
+
+  // 타입 가드 함수
+  const isAdminDashboard = (data: AdminDashboardDTO | ProductStats): data is AdminDashboardDTO => {
+    return 'memberSummaryStats' in data;
+  };
 
   const baseOptions: ApexOptions = {
     chart: {
@@ -69,14 +82,14 @@ const DashboardChart: React.FC<DashboardChartProps> = ({ data, type }) => {
     }
   };
 
-  const memberSeries = [
+  const memberSeries = isAdminDashboard(data) ? [
     data.memberSummaryStats?.totalMembers || 0,
     data.memberSummaryStats?.activeMembers || 0,
     data.memberSummaryStats?.inactiveMembers || 0,
     data.memberSummaryStats?.totalSellers || 0,
     data.memberSummaryStats?.activeSellers || 0,
     data.memberSummaryStats?.inactiveSellers || 0,
-  ];
+  ] : [];
 
   // 판매 통계 차트
   const salesOptions: ApexOptions = {
@@ -84,9 +97,9 @@ const DashboardChart: React.FC<DashboardChartProps> = ({ data, type }) => {
     chart: { ...baseOptions.chart, type: 'area' },
     colors: [COLORS[1]],
     xaxis: {
-      categories: data.productLog?.salesWithCommissions?.map(sale => 
+      categories: isAdminDashboard(data) ? data.productLog?.salesWithCommissions?.map((sale: any) => 
         new Date(sale.salesLog.soldAt).toLocaleDateString()
-      ) || [],
+      ) || [] : [],
     },
     yaxis: {
       title: {
@@ -111,10 +124,10 @@ const DashboardChart: React.FC<DashboardChartProps> = ({ data, type }) => {
     },
   };
 
-  const salesSeries = [{
+  const salesSeries = isAdminDashboard(data) ? [{
     name: '판매액',
-    data: data.productLog?.salesWithCommissions?.map(sale => sale.salesLog.totalPrice) || [],
-  }];
+    data: data.productLog?.salesWithCommissions?.map((sale: any) => sale.salesLog.totalPrice) || [],
+  }] : [];
 
   // 경매 통계 차트
   const auctionOptions: ApexOptions = {
@@ -136,14 +149,14 @@ const DashboardChart: React.FC<DashboardChartProps> = ({ data, type }) => {
     }
   };
 
-  const auctionSeries = [{
+  const auctionSeries = isAdminDashboard(data) ? [{
     name: '경매 통계',
     data: [
       data.auctionSummaryStats?.totalAuctionsInPeriod || 0,
       data.auctionSummaryStats?.totalBidsInPeriod || 0,
       data.auctionSummaryStats?.averageBidsPerAuctionInPeriod || 0,
     ],
-  }];
+  }] : [];
 
   // 리뷰 통계 차트
   const reviewOptions: ApexOptions = {
@@ -153,18 +166,154 @@ const DashboardChart: React.FC<DashboardChartProps> = ({ data, type }) => {
     colors: COLORS,
   };
 
-  const reviewSeries = [
+  const reviewSeries = isAdminDashboard(data) ? [
     data.reviewSummaryStats?.totalReviewsInPeriod || 0,
     data.reviewSummaryStats?.newReviewsInPeriod || 0,
     (data.reviewSummaryStats?.averageRatingInPeriod || 0) * 20, // 5점 만점을 100점으로 변환
     (data.reviewSummaryStats?.deletionRate || 0) * 100,
-  ];
+  ] : [];
+
+  // 상품 품질 분포 차트
+  const productOptions: ApexOptions = {
+    ...baseOptions,
+    chart: { ...baseOptions.chart, type: 'donut' },
+    labels: ['상', '중', '하'],
+    colors: ['#10B981', '#F59E0B', '#EF4444'],
+    plotOptions: {
+      pie: {
+        donut: {
+          size: '60%',
+          labels: {
+            show: true,
+            name: {
+              show: true,
+              fontSize: '14px',
+              fontWeight: 600,
+              color: '#374151'
+            },
+            value: {
+              show: true,
+              fontSize: '16px',
+              fontWeight: 'bold',
+              color: '#111827',
+              formatter: function (val: any) {
+                return `${val}개`;
+              }
+            },
+            total: {
+              show: true,
+              label: '총 상품',
+              fontSize: '14px',
+              fontWeight: 600,
+              color: '#374151',
+              formatter: function (w: any) {
+                const total = w.globals.seriesTotals.reduce((a: number, b: number) => a + b, 0);
+                return `${total}개`;
+              }
+            }
+          }
+        }
+      }
+    },
+    dataLabels: {
+      enabled: false
+    },
+    tooltip: {
+      y: {
+        formatter: (val) => `${val || 0} 개`
+      }
+    },
+    legend: {
+      position: 'bottom',
+      offsetY: 0,
+      itemMargin: {
+        horizontal: 15,
+        vertical: 8
+      }
+    }
+  };
+
+  const productSeries = !isAdminDashboard(data) ? [
+    data.highQualityProducts,
+    data.mediumQualityProducts,
+    data.lowQualityProducts,
+  ] : [];
+
+  console.log('상품 시리즈 데이터:', productSeries);
+
+  const categoryLabels = !isAdminDashboard(data) ? Object.keys(data.categoryStats) : [];
+
+  // 카테고리별 분포 차트
+  const categoryOptions: ApexOptions = {
+    ...baseOptions,
+    chart: { ...baseOptions.chart, type: 'bar' },
+    plotOptions: {
+      bar: {
+        horizontal: true,
+        borderRadius: 8,
+        distributed: true,
+        dataLabels: {
+          position: 'center',
+        },
+      },
+    },
+    xaxis: {
+      categories: categoryLabels,
+      labels: {
+        style: {
+          fontSize: '12px',
+          fontWeight: '500'
+        }
+      }
+    },
+    yaxis: {
+      labels: {
+        style: {
+          fontSize: '11px',
+          fontWeight: '600'
+        }
+      }
+    },
+    colors: ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#06B6D4', '#F97316', '#84CC16'],
+    dataLabels: {
+      enabled: true,
+      formatter: function (val: number) {
+        return `${val}개`;
+      },
+      style: {
+        fontSize: '11px',
+        fontWeight: 'bold',
+        colors: ['#fff']
+      },
+      offsetX: 10
+    },
+    tooltip: {
+      y: {
+        formatter: (val) => `${val} 개`
+      }
+    },
+    grid: {
+      borderColor: '#f1f1f1',
+      xaxis: {
+        lines: {
+          show: false
+        }
+      }
+    }
+  };
+
+  const categorySeries = !isAdminDashboard(data) ? [{
+    name: '상품 수',
+    data: Object.values(data.categoryStats)
+  }] : [];
 
   const chartMap = {
     member: { options: memberOptions, series: memberSeries, type: 'donut' },
     sales: { options: salesOptions, series: salesSeries, type: 'area' },
     auction: { options: auctionOptions, series: auctionSeries, type: 'bar' },
     review: { options: reviewOptions, series: reviewSeries, type: 'donut' },
+    product: { options: productOptions, series: productSeries, type: 'donut' },
+    category: { options: categoryOptions, series: categorySeries, type: 'bar' },
   };
 
   const selectedChart = chartMap[type];
