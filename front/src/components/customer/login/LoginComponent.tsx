@@ -43,7 +43,7 @@ export default function LoginForm() {
 
     try {
       // 환경변수가 없으면 기본값 사용
-      const apiBaseUrl = process.env.NEXT_PUBLIC_API_ROOT_URL || 'http://localhost:8080/api';
+      const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_UR || 'http://localhost:8080/api';
       const apiUrl = `${apiBaseUrl}/public/auth/login`;
       
       console.log('로그인 API URL:', apiUrl);

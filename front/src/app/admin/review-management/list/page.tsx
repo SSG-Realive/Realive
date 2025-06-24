@@ -106,7 +106,7 @@ export default function ReviewListPage() {
   }
 
   return (
-    <div className="p-8">
+    <div className="w-full max-w-full min-h-screen bg-gray-50 p-2 sm:p-8 overflow-x-auto">
       <h1 className="text-2xl font-bold mb-6">리뷰 목록</h1>
       
       <div className="mb-6 flex gap-4 items-end">
@@ -144,103 +144,137 @@ export default function ReviewListPage() {
         </select>
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="min-w-full border text-sm">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="px-4 py-2 border">상품명</th>
-              <th className="px-4 py-2 border">고객명</th>
-              <th className="px-4 py-2 border">판매자명</th>
-              <th className="px-4 py-2 border">내용</th>
-              <th className="px-4 py-2 border">평점</th>
-              <th className="px-4 py-2 border">작성일</th>
-              <th className="px-4 py-2 border">상태</th>
-              <th className="px-4 py-2 border">신고수</th>
-              <th className="px-4 py-2 border">상세/처리</th>
-            </tr>
-          </thead>
-          <tbody>
-            {reviews?.map(review => (
-              <tr key={review.reviewId} className="hover:bg-gray-50">
-                <td className="px-4 py-2 border">{review.productName || 'N/A'}</td>
-                <td className="px-4 py-2 border">{review.customerName}</td>
-                <td className="px-4 py-2 border">{review.sellerName}</td>
-                <td className="px-4 py-2 border max-w-xs truncate" title={review.content || review.contentSummary}>
-                  {review.contentSummary || review.content}
-                </td>
-                <td className="px-4 py-2 border text-center">
-                  <div className={`flex items-center justify-center space-x-2 px-3 py-1 rounded-full border ${getTrafficLightBgClass(review.rating)}`}>
-                    <span className="text-lg">{getTrafficLightEmoji(review.rating)}</span>
-                    <span className="text-xs font-medium">{getTrafficLightText(review.rating)}</span>
-                  </div>
-                </td>
-                <td className="px-4 py-2 border">
-                  {new Date(review.createdAt).toLocaleDateString()}
-                </td>
-                <td className="px-4 py-2 border text-center">
-                  <button
-                    onClick={() => handleToggleVisibility(review.reviewId, review.isHidden)}
-                    className={`px-2 py-1 rounded text-xs text-white transition-colors ${
-                      review.isHidden 
-                        ? 'bg-gray-500 hover:bg-gray-600' 
-                        : 'bg-green-500 hover:bg-green-600'
-                    }`}
-                  >
-                    {review.isHidden ? '숨김' : '공개'}
-                  </button>
-                </td>
-                <td className="px-4 py-2 border text-center">
-                  {review.reportCount || 0}
-                </td>
-                <td className="px-4 py-2 border text-center">
-                  <button 
-                    className="text-blue-600 underline"
-                    onClick={() => {
-                      console.log('리뷰 상세 버튼 클릭:', review.reviewId);
-                      try {
-                        router.push(`/admin/review-management/list/${review.reviewId}`);
-                      } catch (error) {
-                        console.error('라우터 에러:', error);
-                        window.location.href = `/admin/review-management/list/${review.reviewId}`;
-                      }
-                    }}
-                  >
-                    상세
-                  </button>
-                </td>
+      {/* 데스크탑 표 */}
+      <div className="hidden md:block">
+        <div className="overflow-x-auto w-full">
+          <table className="min-w-[900px] w-full border text-sm">
+            <thead>
+              <tr className="bg-gray-100">
+                <th className="whitespace-nowrap px-2 py-2 text-xs">상품명</th>
+                <th className="whitespace-nowrap px-2 py-2 text-xs">고객명</th>
+                <th className="whitespace-nowrap px-2 py-2 text-xs">판매자명</th>
+                <th className="whitespace-nowrap px-2 py-2 text-xs">내용</th>
+                <th className="whitespace-nowrap px-2 py-2 text-xs">평점</th>
+                <th className="whitespace-nowrap px-2 py-2 text-xs">작성일</th>
+                <th className="whitespace-nowrap px-2 py-2 text-xs">상태</th>
+                <th className="whitespace-nowrap px-2 py-2 text-xs">신고수</th>
+                <th className="whitespace-nowrap px-2 py-2 text-xs">상세/처리</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {reviews?.map(review => (
+                <tr key={review.reviewId} className="hover:bg-gray-50">
+                  <td className="whitespace-nowrap px-2 py-2 text-xs">{review.productName || 'N/A'}</td>
+                  <td className="whitespace-nowrap px-2 py-2 text-xs">{review.customerName}</td>
+                  <td className="whitespace-nowrap px-2 py-2 text-xs">{review.sellerName}</td>
+                  <td className="whitespace-nowrap px-2 py-2 text-xs max-w-xs truncate" title={review.content || review.contentSummary}>
+                    {review.contentSummary || review.content}
+                  </td>
+                  <td className="whitespace-nowrap px-2 py-2 text-xs text-center">
+                    <div className={`flex items-center justify-center space-x-2 px-3 py-1 rounded-full border ${getTrafficLightBgClass(review.rating)}`}>
+                      <span className="text-lg">{getTrafficLightEmoji(review.rating)}</span>
+                      <span className="text-xs font-medium">{getTrafficLightText(review.rating)}</span>
+                    </div>
+                  </td>
+                  <td className="whitespace-nowrap px-2 py-2 text-xs">
+                    {new Date(review.createdAt).toLocaleDateString()}
+                  </td>
+                  <td className="whitespace-nowrap px-2 py-2 text-xs text-center">
+                    <button
+                      onClick={() => handleToggleVisibility(review.reviewId, review.isHidden)}
+                      className={`px-2 py-1 rounded text-xs text-white transition-colors ${
+                        review.isHidden 
+                          ? 'bg-gray-500 hover:bg-gray-600' 
+                          : 'bg-green-500 hover:bg-green-600'
+                      }`}
+                    >
+                      {review.isHidden ? '숨김' : '공개'}
+                    </button>
+                  </td>
+                  <td className="whitespace-nowrap px-2 py-2 text-xs text-center">
+                    {review.reportCount || 0}
+                  </td>
+                  <td className="whitespace-nowrap px-2 py-2 text-xs text-center">
+                    <button 
+                      className="text-blue-600 underline"
+                      onClick={() => {
+                        console.log('리뷰 상세 버튼 클릭:', review.reviewId);
+                        try {
+                          router.push(`/admin/review-management/list/${review.reviewId}`);
+                        } catch (error) {
+                          console.error('라우터 에러:', error);
+                          window.location.href = `/admin/review-management/list/${review.reviewId}`;
+                        }
+                      }}
+                    >
+                      상세
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {totalPages > 1 && (
+          <div className="mt-6 flex justify-center gap-2">
+            <button
+              onClick={() => fetchReviews(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="px-3 py-1 border rounded disabled:opacity-50"
+            >
+              이전
+            </button>
+            <span className="px-3 py-1">
+              {currentPage} / {totalPages}
+            </span>
+            <button
+              onClick={() => fetchReviews(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className="px-3 py-1 border rounded disabled:opacity-50"
+            >
+              다음
+            </button>
+          </div>
+        )}
+
+        {(!reviews || reviews.length === 0) && !loading && (
+          <div className="text-center text-gray-500 mt-8">
+            조회된 리뷰가 없습니다.
+          </div>
+        )}
       </div>
 
-      {totalPages > 1 && (
-        <div className="mt-6 flex justify-center gap-2">
-          <button
-            onClick={() => fetchReviews(currentPage - 1)}
-            disabled={currentPage === 1}
-            className="px-3 py-1 border rounded disabled:opacity-50"
-          >
-            이전
-          </button>
-          <span className="px-3 py-1">
-            {currentPage} / {totalPages}
-          </span>
-          <button
-            onClick={() => fetchReviews(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            className="px-3 py-1 border rounded disabled:opacity-50"
-          >
-            다음
-          </button>
-        </div>
-      )}
-
-      {(!reviews || reviews.length === 0) && !loading && (
-        <div className="text-center text-gray-500 mt-8">
-          조회된 리뷰가 없습니다.
-        </div>
-      )}
+      {/* 모바일 카드형 */}
+      <div className="block md:hidden space-y-4">
+        {reviews?.map((review, idx) => (
+          <div key={review.reviewId} className="bg-white rounded shadow p-4">
+            <div className="font-bold mb-2">상품명: {review.productName || 'N/A'}</div>
+            <div className="mb-1">고객명: {review.customerName}</div>
+            <div className="mb-1">판매자명: {review.sellerName}</div>
+            <div className="mb-1">내용: {review.contentSummary || review.content}</div>
+            <div className="mb-1">작성일: {new Date(review.createdAt).toLocaleDateString()}</div>
+            <div className="mb-1">
+              상태: {review.isHidden ? '숨김' : '공개'}
+              <button
+                className={`ml-2 px-3 py-1 rounded text-white text-xs ${review.isHidden ? 'bg-green-500' : 'bg-gray-500'}`}
+                onClick={() => handleToggleVisibility(review.reviewId, review.isHidden)}
+              >
+                {review.isHidden ? '공개로 변경' : '숨김으로 변경'}
+              </button>
+            </div>
+            <div className="mb-1">신고수: {review.reportCount || 0}</div>
+            <div>
+              <button
+                className="text-blue-600 underline"
+                onClick={() => {
+                  router.push(`/admin/review-management/list/${review.reviewId}`);
+                }}
+              >상세/처리</button>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

@@ -31,6 +31,17 @@ export default function AdminHeader({ title }: { title: string }) {
       minHeight: 56,
       borderBottom: '1px solid #4b5563'
     }}>
+      {/* 햄버거 버튼 (모바일에서만) */}
+      <button
+        className="md:hidden mr-2 text-2xl"
+        aria-label="사이드바 열기"
+        onClick={() => {
+          document.getElementById('mobile-sidebar')?.classList.remove('-translate-x-full');
+          document.getElementById('mobile-sidebar-overlay')?.classList.remove('hidden');
+        }}
+      >
+        ≡
+      </button>
       <h1 style={{ fontWeight: 'bold', fontSize: 20, color: '#e5e7eb' }}>{title}</h1>
       <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
         <AdminNotification />
