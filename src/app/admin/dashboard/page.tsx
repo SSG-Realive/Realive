@@ -2,13 +2,22 @@
 import React, { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { AdminDashboardDTO } from '@/types/admin/admin';
-import { getAdminDashboard } from '@/service/admin/adminService';
+import { getAdminDashboard, getSalesStatistics } from '@/service/admin/adminService';
 import { useRouter } from 'next/navigation';
 import Modal from '@/components/Modal';
 import { useAdminAuthStore } from '@/store/admin/useAdminAuthStore';
-import { Users, UserCheck, UserX, UserPlus } from 'lucide-react';
+import { Users, UserCheck, UserX, UserPlus, Package } from 'lucide-react';
+import apiClient from '@/lib/apiClient';
 
 const DashboardChart = dynamic(() => import('@/components/DashboardChart'), { ssr: false });
+
+interface ProductStats {
+  totalProducts: number;
+  highQualityProducts: number;
+  mediumQualityProducts: number;
+  lowQualityProducts: number;
+  categoryStats: { [key: string]: number };
+}
 
 const StatCard = ({ title, value, unit }: { title: string; value: string | number; unit?: string }) => (
   <div className="bg-white/50 p-6 rounded-xl">
@@ -34,10 +43,13 @@ const MemberStatusItem = ({ icon, label, value, iconBgColor }: { icon: React.Rea
 
 const AdminDashboardPage = () => {
   const [dashboardData, setDashboardData] = useState<AdminDashboardDTO | null>(null);
+  const [productStats, setProductStats] = useState<ProductStats | null>(null);
   const [loading, setLoading] = useState(true);
+  const [salesLoading, setSalesLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [periodType, setPeriodType] = useState<'DAILY' | 'MONTHLY'>('DAILY');
   const [showModal, setShowModal] = useState(false);
+  const [monthlySalesData, setMonthlySalesData] = useState<any[]>([]);
   const router = useRouter();
 
   useEffect(() => {
@@ -100,9 +112,103 @@ const AdminDashboardPage = () => {
     }
   };
 
+  const fetchProductStats = async () => {
+    try {
+      const token = localStorage.getItem('adminToken');
+      
+      // 전체 상품 통계
+      const allProductsRes = await apiClient.get('/admin/products?size=1000', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      const allProducts = allProductsRes.data.dtoList || [];
+      
+      console.log('상품 데이터:', allProducts);
+      console.log('첫 번째 상품:', allProducts[0]);
+      
+      // 상태별 통계 계산
+      const highQualityProducts = allProducts.filter((p: any) => p.status === "상").length;
+      const mediumQualityProducts = allProducts.filter((p: any) => p.status === "중").length;
+      const lowQualityProducts = allProducts.filter((p: any) => p.status === "하").length;
+      
+      console.log('상태별 통계:', {
+        highQualityProducts,
+        mediumQualityProducts,
+        lowQualityProducts,
+        total: allProducts.length
+      });
+      
+      // 카테고리별 통계 계산
+      const categoryStats: { [key: string]: number } = {};
+      allProducts.forEach((product: any) => {
+        const category = product.categoryName || '기타';
+        categoryStats[category] = (categoryStats[category] || 0) + 1;
+      });
+      
+      const statsData = {
+        totalProducts: allProducts.length,
+        highQualityProducts,
+        mediumQualityProducts,
+        lowQualityProducts,
+        categoryStats
+      };
+      
+      console.log('최종 상품 통계:', statsData);
+      setProductStats(statsData);
+    } catch (error) {
+      console.error('상품 통계 조회 실패:', error);
+    }
+  };
+
+  // periodType이 바뀔 때 실행되는 useEffect
   useEffect(() => {
-    fetchDashboardData();
+    const fetchData = async () => {
+      // periodType이 바뀔 때 sales chart만 로딩 상태로 설정
+      setSalesLoading(true);
+      
+      if (periodType === 'DAILY') {
+        await fetchDashboardData();
+      } else { // MONTHLY
+        // 다른 차트 데이터도 월간 기준으로 업데이트
+        await fetchDashboardData(); 
+        
+        const endDate = new Date();
+        const startDate = new Date();
+        startDate.setMonth(endDate.getMonth() - 5);
+        const start = startDate.toISOString().split('T')[0];
+        const end = endDate.toISOString().split('T')[0];
+        
+        try {
+          const data = await getSalesStatistics(start, end);
+          setMonthlySalesData(data?.data || []);
+        } catch (error) {
+          console.error('월간 매출 데이터 조회 실패:', error);
+          setMonthlySalesData([]);
+        }
+      }
+      setSalesLoading(false);
+    };
+
+    if (!loading) { // 첫 페이지 로딩이 아닐 때만 실행
+      fetchData();
+    }
   }, [periodType]);
+
+  // 첫 페이지 로딩
+  useEffect(() => {
+    const initializeData = async () => {
+      await fetchDashboardData();
+      await fetchProductStats();
+    };
+    
+    initializeData();
+  }, []);
+
+  useEffect(() => {
+    if (productStats) {
+      console.log('차트에 전달하는 상품 데이터:', productStats);
+    }
+  }, [productStats]);
 
   if (loading) {
     return (
@@ -123,7 +229,7 @@ const AdminDashboardPage = () => {
   }
 
   return (
-    <div>
+    <div className="w-full max-w-full min-h-screen bg-gray-50 overflow-x-hidden">
       <Modal
         isOpen={showModal}
         onClose={() => setShowModal(false)}
@@ -160,7 +266,7 @@ const AdminDashboardPage = () => {
           </div>
         </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         <div className="lg:col-span-2 p-6 rounded-2xl shadow-lg flex flex-col justify-between" style={{ backgroundColor: '#EDE7E3' }}>
           <div>
             <h3 className="text-xl font-bold text-stone-800 mb-1">주요 현황 요약</h3>
@@ -209,30 +315,87 @@ const AdminDashboardPage = () => {
             />
           </div>
         </div>
-        
+
+        {/* 상품 통계 요약 */}
+        {productStats && (
+          <div className="bg-white p-6 rounded-2xl shadow-lg">
+            <h3 className="text-xl font-bold text-gray-800 mb-2">상품 현황</h3>
+            <div className="divide-y divide-gray-100">
+              <MemberStatusItem 
+                icon={<Package size={20} />}
+                label="전체 상품"
+                value={productStats.totalProducts}
+                iconBgColor="bg-blue-500"
+              />
+              <MemberStatusItem 
+                icon={<Package size={20} />}
+                label="상"
+                value={productStats.highQualityProducts}
+                iconBgColor="bg-green-500"
+              />
+              <MemberStatusItem 
+                icon={<Package size={20} />}
+                label="중"
+                value={productStats.mediumQualityProducts}
+                iconBgColor="bg-yellow-500"
+              />
+              <MemberStatusItem 
+                icon={<Package size={20} />}
+                label="하"
+                value={productStats.lowQualityProducts}
+                iconBgColor="bg-red-500"
+              />
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
         <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-white p-6 rounded-2xl shadow-lg">
             <h3 className="text-xl font-bold text-gray-800 mb-4">매출 추이</h3>
             <div style={{ height: '350px' }}>
-              <DashboardChart data={dashboardData} type="sales" />
+              {salesLoading ? (
+                <div className="flex items-center justify-center h-full">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-800"></div>
+                </div>
+              ) : (
+                <DashboardChart
+                  data={periodType === 'MONTHLY' ? monthlySalesData : dashboardData}
+                  type="sales"
+                  periodType={periodType}
+                />
+              )}
             </div>
           </div>
           <div className="bg-white p-6 rounded-2xl shadow-lg">
             <h3 className="text-xl font-bold text-gray-800 mb-4">회원 통계</h3>
             <div style={{ height: '350px' }}>
               <DashboardChart data={dashboardData} type="member" />
-          </div>
+            </div>
           </div>
           <div className="bg-white p-6 rounded-2xl shadow-lg">
             <h3 className="text-xl font-bold text-gray-800 mb-4">경매 통계</h3>
             <div style={{ height: '350px' }}>
               <DashboardChart data={dashboardData} type="auction" />
-        </div>
+            </div>
           </div>
           <div className="bg-white p-6 rounded-2xl shadow-lg">
             <h3 className="text-xl font-bold text-gray-800 mb-4">리뷰 통계</h3>
             <div style={{ height: '350px' }}>
               <DashboardChart data={dashboardData} type="review" />
+            </div>
+          </div>
+          <div className="bg-white p-6 rounded-2xl shadow-lg">
+            <h3 className="text-xl font-bold text-gray-800 mb-4">상품 품질 분포</h3>
+            <div style={{ height: '350px' }}>
+              {productStats && <DashboardChart data={productStats} type="product" />}
+            </div>
+          </div>
+          <div className="bg-white p-6 rounded-2xl shadow-lg">
+            <h3 className="text-xl font-bold text-gray-800 mb-4">카테고리별 상품 분포</h3>
+            <div style={{ height: '350px' }}>
+              {productStats && <DashboardChart data={productStats} type="category" />}
             </div>
           </div>
         </div>

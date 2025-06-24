@@ -21,9 +21,9 @@ interface Props {
 
 export default function CategoryDropdown({ onCategorySelect }: Props) {
     const [categories, setCategories] = useState<CategoryGroup[]>([]);
-    const [hoveredId, setHoveredId] = useState<number | null>(null); // 1차 → 2차용
-    const [allHover, setAllHover] = useState(false); // ALL 드롭다운 열림 여부
-    const [hoveredFirstId, setHoveredFirstId] = useState<number | null>(null); // ALL 내 1차 선택
+    const [hoveredId, setHoveredId] = useState<number | null>(null);
+    const [hoveredFirstId, setHoveredFirstId] = useState<number | null>(null);
+    const [allOpen, setAllOpen] = useState(false);
     const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     useEffect(() => {
@@ -56,113 +56,120 @@ export default function CategoryDropdown({ onCategorySelect }: Props) {
         }
     };
 
-    // ✅ ALL hover 진입
-    const handleHoverIn = () => {
-        if (timeoutRef.current) clearTimeout(timeoutRef.current);
-        setHoveredId(null); // ✅ 기존 1차 드롭다운 닫기
-        setAllHover(true);
-    };
-
-    // ✅ ALL hover 이탈
-    const handleHoverOut = () => {
-        timeoutRef.current = setTimeout(() => {
-            setAllHover(false);
-            setHoveredFirstId(null);
-        }, 200);
-    };
-
-    // ✅ 1차 hover 진입
-    const handle1DepthEnter = (id: number | null) => {
-        if (timeoutRef.current) clearTimeout(timeoutRef.current);
-        setAllHover(false); // ✅ ALL 드롭다운 닫기
-        setHoveredId(id);
-    };
-
-    // ✅ 1차 hover 이탈
-    const handle1DepthLeave = () => {
-        timeoutRef.current = setTimeout(() => setHoveredId(null), 200);
-    };
+    const isMobile = () =>
+        typeof window !== 'undefined' && window.innerWidth < 768;
 
     return (
-        <div className="flex gap-6 px-4 py-2 bg-white text-sm font-bold relative z-50">
-            {/* ✅ ALL 항목: 2단 드롭다운 */}
-            <div
-                className="relative"
-                onMouseEnter={handleHoverIn}
-                onMouseLeave={handleHoverOut}
-            >
-                <span className="block px-2 py-1 cursor-pointer">ALL</span>
-
-                {allHover && (
-                    <div className="absolute top-full left-0 mt-1 bg-white shadow-md rounded z-50 min-w-[180px]">
-                        {/* 1차 카테고리 목록 */}
-                        <ul className="py-2">
-                            {categories.map((group) => (
-                                <li
-                                    key={group.id}
-                                    onMouseEnter={() => setHoveredFirstId(group.id)}
-                                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer relative"
-                                >
-                                    {group.name}
-
-                                    {/* 2차 카테고리 */}
-                                    {hoveredFirstId === group.id &&
-                                        group.subCategories.length > 0 && (
-                                            <ul className="absolute top-0 left-full ml-2 bg-white shadow-md rounded z-50 min-w-[160px] py-2">
-                                                {group.subCategories.map((sub) => (
-                                                    <li
-                                                        key={sub.id}
-                                                        onClick={() => goToCategory(sub.id)}
-                                                        className="px-4 py-2 hover:bg-gray-100 cursor-pointer whitespace-nowrap"
-                                                    >
-                                                        {sub.name}
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        )}
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                )}
-            </div>
-
-            {/* ✅ 기존 1차 → 2차 드롭다운 */}
-            {categories.map((cat) => (
+        <div className="overflow-x-auto md:overflow-visible whitespace-nowrap no-scrollbar px-4 py-0 bg-transparent backdrop-blur-none text-sm relative z-50 mb-0">
+            <div className="inline-flex items-center gap-4 w-full">
+                {/* ✅ ALL */}
                 <div
-                    key={cat.id}
                     className="relative"
-                    onMouseEnter={() => handle1DepthEnter(cat.id)}
-                    onMouseLeave={handle1DepthLeave}
+                    onMouseEnter={() => {
+                        if (!isMobile()) {
+                            if (timeoutRef.current) clearTimeout(timeoutRef.current);
+                            setAllOpen(true);
+                            setHoveredId(null);
+                        }
+                    }}
+                    onMouseLeave={() => {
+                        if (!isMobile()) {
+                            timeoutRef.current = setTimeout(() => setAllOpen(false), 150);
+                        }
+                    }}
                 >
-                    <span
-                        className="block px-2 py-1 cursor-pointer"
-                        onClick={() => goToCategory(cat.id)}
-                    >
-                        {cat.name}
-                    </span>
+          <span
+              className="inline-block px-2 pt-1 pb-1 cursor-pointer text-base font-semibold tracking-tight text-gray-800"
+              onClick={() => goToCategory(null)}
+          >
+            ALL
+          </span>
 
-                    {hoveredId === cat.id && cat.subCategories.length > 0 && (
-                        <div
-                            className="absolute top-full left-0 mt-1 bg-white shadow-lg rounded z-50 min-w-[160px]"
-                            onMouseEnter={() => handle1DepthEnter(cat.id)}
-                            onMouseLeave={handle1DepthLeave}
-                        >
-                            <ul className="py-2">
-                                {cat.subCategories.map((sub) => (
-                                    <li
-                                        key={sub.id}
-                                        onClick={() => goToCategory(sub.id)}
-                                        className="px-4 py-2 hover:bg-gray-100 whitespace-nowrap cursor-pointer"
-                                    >
-                                        {sub.name}
-                                    </li>
-                                ))}
+                    {!isMobile() && allOpen && (
+                        <div className="absolute top-full left-0 mt-1 bg-[rgba(255,255,255,0.85)] backdrop-blur-sm shadow-md rounded z-50 min-w-[180px] py-2">
+                            <ul>
+                                {categories.map((group) => {
+                                    const isGroupOpen = hoveredFirstId === group.id;
+
+                                    return (
+                                        <li
+                                            key={group.id}
+                                            className="px-4 py-2 hover:bg-gray-100 cursor-pointer relative font-semibold"
+                                            onMouseEnter={() => setHoveredFirstId(group.id)}
+                                        >
+                                            {group.name}
+
+                                            {isGroupOpen && group.subCategories.length > 0 && (
+                                                <ul className="absolute top-0 left-full ml-2 bg-[rgba(255,255,255,0.85)] backdrop-blur-sm shadow-md rounded z-50 min-w-[160px] py-2">
+                                                    {group.subCategories.map((sub) => (
+                                                        <li
+                                                            key={sub.id}
+                                                            onClick={() => goToCategory(sub.id)}
+                                                            className="px-4 py-2 hover:bg-gray-100 cursor-pointer whitespace-nowrap font-medium"
+                                                        >
+                                                            {sub.name}
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            )}
+                                        </li>
+                                    );
+                                })}
                             </ul>
                         </div>
                     )}
                 </div>
-            ))}
+
+                {/* ✅ Divider */}
+                <div className="w-px h-6 bg-gray-300 self-center" />
+
+                {/* ✅ 일반 카테고리 */}
+                {categories.map((cat) => {
+                    const isOpen = hoveredId === cat.id;
+
+                    return (
+                        <div
+                            key={cat.id}
+                            className="relative"
+                            onMouseEnter={() => {
+                                if (!isMobile()) {
+                                    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+                                    setHoveredId(cat.id);
+                                    setAllOpen(false);
+                                }
+                            }}
+                            onMouseLeave={() => {
+                                if (!isMobile()) {
+                                    timeoutRef.current = setTimeout(() => setHoveredId(null), 150);
+                                }
+                            }}
+                        >
+              <span
+                  className="inline-block px-2 pt-1 pb-1 cursor-pointer text-base font-semibold tracking-tight text-gray-800"
+                  onClick={() => goToCategory(cat.id)}
+              >
+                {cat.name}
+              </span>
+
+                            {!isMobile() && isOpen && cat.subCategories.length > 0 && (
+                                <div className="absolute top-full left-0 mt-1 bg-[rgba(255,255,255,0.85)] backdrop-blur-sm shadow-lg rounded z-50 min-w-[160px] py-2">
+                                    <ul>
+                                        {cat.subCategories.map((sub) => (
+                                            <li
+                                                key={sub.id}
+                                                onClick={() => goToCategory(sub.id)}
+                                                className="px-4 py-2 hover:bg-gray-100 whitespace-nowrap cursor-pointer font-medium"
+                                            >
+                                                {sub.name}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
+                        </div>
+                    );
+                })}
+            </div>
         </div>
     );
 }

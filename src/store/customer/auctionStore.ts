@@ -86,9 +86,9 @@ export const useAuctionStore = create<AuctionState>()(
           return;
         }
 
-        const requestPage = page + 1;
+        
         console.log('Store: API 호출 시작', { 
-          requestPage, 
+          pageToFetch: page,
           category: category || 'All',
           currentItemsCount: get().auctions.length 
         });
@@ -98,8 +98,8 @@ export const useAuctionStore = create<AuctionState>()(
         try {
           // API URL 구성 - 공개 API 사용
           const url = category
-            ? `/api/public/auctions?page=${requestPage}&category=${encodeURIComponent(category)}`
-            : `/api/public/auctions?page=${requestPage}`;
+            ? `/customer/auctions?page=${page}&category=${encodeURIComponent(category)}`
+            : `/customer/auctions?page=${page}`;
 
           console.log('Store: API URL', url);
 
@@ -121,7 +121,7 @@ export const useAuctionStore = create<AuctionState>()(
 
               return {
                 auctions: [...state.auctions, ...filteredNewData],
-                page: requestPage,
+                page: state.page + 1,
                 hasNext: !isLast,
                 error: null,
               };

@@ -53,43 +53,68 @@ export default function PenaltyListPage() {
   }
 
   return (
-    <div className="p-8">
-      <h2 className="text-2xl font-bold mb-6">사용자 패널티 목록</h2>
-        <input
-          type="text"
-          placeholder="사용자/사유 검색"
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-        className="border rounded px-3 py-2 mb-4"
-        />
-      <table className="min-w-full border text-sm">
-        <thead>
-          <tr className="bg-gray-100">
-            <th className="px-2 py-1">번호</th>
-            <th className="px-2 py-1">User</th>
-            <th className="px-2 py-1">사유</th>
-            <th className="px-2 py-1">일자</th>
-            <th className="px-2 py-1">View</th>
-          </tr>
-        </thead>
-        <tbody>
+    <div className="w-full max-w-full min-h-screen bg-gray-50 p-2 sm:p-6 overflow-x-auto">
+      <div className="w-full max-w-full">
+        {/* 데스크탑 표 */}
+        <div className="hidden md:block">
+          <h2 className="text-2xl font-bold mb-6">사용자 패널티 목록</h2>
+          <input
+            type="text"
+            placeholder="사용자/사유 검색"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            className="border rounded px-3 py-2 mb-4"
+          />
+          <div className="overflow-x-auto w-full">
+            <table className="min-w-[900px] w-full border text-sm">
+              <thead>
+                <tr className="bg-gray-100">
+                  <th className="whitespace-nowrap px-2 py-2 text-xs">번호</th>
+                  <th className="whitespace-nowrap px-2 py-2 text-xs">User</th>
+                  <th className="whitespace-nowrap px-2 py-2 text-xs">사유</th>
+                  <th className="whitespace-nowrap px-2 py-2 text-xs">일자</th>
+                  <th className="whitespace-nowrap px-2 py-2 text-xs">View</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filtered.map((p, idx) => (
+                  <tr key={p.id}>
+                    <td className="whitespace-nowrap px-2 py-2 text-xs">{idx + 1}</td>
+                    <td className="whitespace-nowrap px-2 py-2 text-xs">{getCustomerName(p.customerId)}</td>
+                    <td className="whitespace-nowrap px-2 py-2 text-xs">{p.reason}</td>
+                    <td className="whitespace-nowrap px-2 py-2 text-xs">{p.date}</td>
+                    <td className="whitespace-nowrap px-2 py-2 text-xs"><a href={`/admin/customers/penalty/${p.id}`}>View</a></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <button
+            className="mt-4 px-4 py-2 bg-red-500 text-white rounded"
+            onClick={() => router.push('/admin/customers/penalty/register')}
+          >
+            사용자 패널티 등록
+          </button>
+        </div>
+        {/* 모바일 카드형 */}
+        <div className="block md:hidden space-y-4">
           {filtered.map((p, idx) => (
-            <tr key={p.id}>
-              <td className="px-2 py-1" style={{ textAlign: 'center' }}>{idx + 1}</td>
-              <td className="px-2 py-1">{getCustomerName(p.customerId)}</td>
-              <td className="px-2 py-1">{p.reason}</td>
-              <td className="px-2 py-1">{p.date}</td>
-              <td className="px-2 py-1"><a href={`/admin/customers/penalty/${p.id}`}>View</a></td>
-            </tr>
+            <div key={p.id || idx} className="bg-white rounded shadow p-4">
+              <div className="font-bold mb-2">번호: {idx + 1}</div>
+              <div className="mb-1">User: {getCustomerName(p.customerId)}</div>
+              <div className="mb-1">사유: {p.reason}</div>
+              <div>
+                <button
+                  className="text-blue-600 underline"
+                  onClick={() => router.push(`/admin/customers/penalty/${p.id}`)}
+                >
+                  상세 보기
+                </button>
+              </div>
+            </div>
           ))}
-        </tbody>
-      </table>
-      <button
-        className="mt-4 px-4 py-2 bg-red-500 text-white rounded"
-        onClick={() => router.push('/admin/customers/penalty/register')}
-      >
-        사용자 패널티 등록
-      </button>
+        </div>
+      </div>
     </div>
   );
 }

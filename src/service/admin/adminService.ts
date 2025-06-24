@@ -114,3 +114,13 @@ export async function adminLogin(email: string, password: string): Promise<Admin
     throw error;
   }
 }
+
+export async function getMonthlySummariesForPeriod(startDate: string, endDate: string) {
+  try {
+    const response = await adminApi.get(`/admin/stats/monthly-summaries-for-period?startDate=${startDate}&endDate=${endDate}`);
+    return response.data?.data || [];
+  } catch (error) {
+    console.error('Failed to fetch monthly summaries for period:', error);
+    throw error;
+  }
+}

@@ -1,7 +1,7 @@
 // src/app/seller/signup/page.tsx
 'use client';
 
-import { useState, ChangeEvent, FormEvent } from 'react';
+import { useState, ChangeEvent, FormEvent, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { signup } from '../../../service/seller/signupService';
 
@@ -15,6 +15,13 @@ const SellerSignup: React.FC = () => {
   const [bankAccountFile, setBankAccountFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+
+  useEffect(() => {
+    document.body.classList.add('seller-signup');
+    return () => {
+      document.body.classList.remove('seller-signup');
+    };
+  }, []);
 
   const handleFileChange = (
     e: ChangeEvent<HTMLInputElement>,
