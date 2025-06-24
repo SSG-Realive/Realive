@@ -46,12 +46,14 @@ public class SellerQna extends BaseTimeEntity {
     private String answer;
 
     // 답변 여부 (true: 답변 완료)
+    @Builder.Default
     private boolean isAnswered = false;
 
     // 답변 작성 시간 (있을 경우)
     @Column(name = "answered_at")
     private LocalDateTime answeredAt;
 
+    @Builder.Default
     @Column(name = "is_active")
     private boolean isActive = true;
     

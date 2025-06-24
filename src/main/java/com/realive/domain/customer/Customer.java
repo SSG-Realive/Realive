@@ -46,11 +46,13 @@ public class Customer {
     //이메일 인증 여부
     //만약 이메일 인증 구현하면 소셜로그인, 이메일 인증한사람만 true
     //만약에 구현 안 할시 그냥 전부 true로 바꿔주면 됨
+    @Builder.Default
     @Column(name = "is_verified")
     private Boolean isVerified = false;
     
     //디폴트 true
     //탈퇴 여부
+    @Builder.Default
     @Column(name = "is_active")
     private Boolean isActive = true;
 
@@ -65,6 +67,7 @@ public class Customer {
     }
 
     //디폴트 0
+    @Builder.Default
     @Column(name = "penalty_score")
     private Integer penaltyScore = 0;
  
