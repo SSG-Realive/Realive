@@ -15,20 +15,25 @@ interface ProductStats {
 }
 
 interface DashboardChartProps {
-  data: AdminDashboardDTO | ProductStats;
+  data: AdminDashboardDTO | ProductStats | any[];
   type: 'member' | 'sales' | 'auction' | 'review' | 'product' | 'category';
+  periodType?: 'DAILY' | 'MONTHLY';
 }
 
-const DashboardChart: React.FC<DashboardChartProps> = ({ data, type }) => {
-  if (!data) {
+const DashboardChart: React.FC<DashboardChartProps> = ({ data, type, periodType = 'DAILY' }) => {
+  if (!data || (Array.isArray(data) && data.length === 0)) {
     return <div className="text-gray-500 text-center py-4">데이터가 없습니다.</div>;
   }
   
   const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#AF19FF", "#FF4560"];
 
   // 타입 가드 함수
-  const isAdminDashboard = (data: AdminDashboardDTO | ProductStats): data is AdminDashboardDTO => {
-    return 'memberSummaryStats' in data;
+  const isAdminDashboard = (data: AdminDashboardDTO | ProductStats | any[]): data is AdminDashboardDTO => {
+    return !Array.isArray(data) && 'memberSummaryStats' in data;
+  };
+
+  const isProductStats = (data: AdminDashboardDTO | ProductStats | any[]): data is ProductStats => {
+    return !Array.isArray(data) && 'highQualityProducts' in data;
   };
 
   const baseOptions: ApexOptions = {
@@ -92,42 +97,86 @@ const DashboardChart: React.FC<DashboardChartProps> = ({ data, type }) => {
   ] : [];
 
   // 판매 통계 차트
-  const salesOptions: ApexOptions = {
-    ...baseOptions,
-    chart: { ...baseOptions.chart, type: 'area' },
-    colors: [COLORS[1]],
-    xaxis: {
-      categories: isAdminDashboard(data) ? data.productLog?.salesWithCommissions?.map((sale: any) => 
-        new Date(sale.salesLog.soldAt).toLocaleDateString()
-      ) || [] : [],
-    },
-    yaxis: {
-      title: {
-        text: '판매액 (원)',
-        style: {
-            color: '#aaa'
+  let salesOptions: ApexOptions;
+  let salesSeries: any[] = [];
+
+  if (type === 'sales' && periodType === 'MONTHLY' && Array.isArray(data)) {
+    // 월별 데이터 객체 배열 처리
+    salesOptions = {
+      ...baseOptions,
+      chart: { ...baseOptions.chart, type: 'area' },
+      colors: [COLORS[1]],
+      xaxis: {
+        categories: data.map((d: any) => d.month),
+      },
+      yaxis: {
+        title: {
+          text: '판매액 (원)',
+          style: { color: '#aaa' }
         }
       },
-    },
-    stroke: {
-      curve: 'smooth',
-      width: 3
-    },
-    fill: {
-      type: 'gradient',
-      gradient: {
-        shadeIntensity: 1,
-        opacityFrom: 0.7,
-        opacityTo: 0.3,
-        stops: [0, 90, 100]
+      stroke: { curve: 'smooth', width: 3 },
+      fill: {
+        type: 'gradient',
+        gradient: { shadeIntensity: 1, opacityFrom: 0.7, opacityTo: 0.3, stops: [0, 90, 100] }
       }
-    },
-  };
-
-  const salesSeries = isAdminDashboard(data) ? [{
-    name: '판매액',
-    data: data.productLog?.salesWithCommissions?.map((sale: any) => sale.salesLog.totalPrice) || [],
-  }] : [];
+    };
+    salesSeries = [{
+      name: '월간 판매액',
+      data: data.map((d: any) => d.totalSalesAmount),
+    }];
+  } else if (type === 'sales' && isAdminDashboard(data)) {
+    // 기존 일간/기존 데이터 처리
+    salesOptions = {
+      ...baseOptions,
+      chart: { ...baseOptions.chart, type: 'area' },
+      colors: [COLORS[1]],
+      xaxis: {
+        categories: data.productLog?.salesWithCommissions?.map((sale: any) => {
+          const date = new Date(sale.salesLog.soldAt);
+          if (periodType === 'MONTHLY') {
+            return `${date.getFullYear()}. ${date.getMonth() + 1}.`;
+          }
+          return date.toLocaleDateString();
+        }) || [],
+      },
+      yaxis: {
+        title: {
+          text: '판매액 (원)',
+          style: { color: '#aaa' }
+        }
+      },
+      stroke: { curve: 'smooth', width: 3 },
+      fill: {
+        type: 'gradient',
+        gradient: { shadeIntensity: 1, opacityFrom: 0.7, opacityTo: 0.3, stops: [0, 90, 100] }
+      }
+    };
+    salesSeries = [{
+      name: '판매액',
+      data: data.productLog?.salesWithCommissions?.map((sale: any) => sale.salesLog.totalPrice) || [],
+    }];
+  } else {
+    // 기본값
+    salesOptions = {
+      ...baseOptions,
+      chart: { ...baseOptions.chart, type: 'area' },
+      colors: [COLORS[1]],
+      xaxis: { categories: [] },
+      yaxis: {
+        title: {
+          text: '판매액 (원)',
+          style: { color: '#aaa' }
+        }
+      },
+      stroke: { curve: 'smooth', width: 3 },
+      fill: {
+        type: 'gradient',
+        gradient: { shadeIntensity: 1, opacityFrom: 0.7, opacityTo: 0.3, stops: [0, 90, 100] }
+      }
+    };
+    salesSeries = [];
+  }
 
   // 경매 통계 차트
   const auctionOptions: ApexOptions = {
@@ -233,15 +282,13 @@ const DashboardChart: React.FC<DashboardChartProps> = ({ data, type }) => {
     }
   };
 
-  const productSeries = !isAdminDashboard(data) ? [
+  const productSeries = isProductStats(data) ? [
     data.highQualityProducts,
     data.mediumQualityProducts,
     data.lowQualityProducts,
   ] : [];
 
-  console.log('상품 시리즈 데이터:', productSeries);
-
-  const categoryLabels = !isAdminDashboard(data) ? Object.keys(data.categoryStats) : [];
+  const categoryLabels = isProductStats(data) ? Object.keys(data.categoryStats) : [];
 
   // 카테고리별 분포 차트
   const categoryOptions: ApexOptions = {
@@ -302,7 +349,7 @@ const DashboardChart: React.FC<DashboardChartProps> = ({ data, type }) => {
     }
   };
 
-  const categorySeries = !isAdminDashboard(data) ? [{
+  const categorySeries = isProductStats(data) ? [{
     name: '상품 수',
     data: Object.values(data.categoryStats)
   }] : [];
@@ -317,6 +364,10 @@ const DashboardChart: React.FC<DashboardChartProps> = ({ data, type }) => {
   };
 
   const selectedChart = chartMap[type];
+
+  if (!selectedChart.options) {
+    return <div className="text-gray-500 text-center py-4">데이터가 없습니다.</div>;
+  }
 
   return (
     <ReactApexChart 
