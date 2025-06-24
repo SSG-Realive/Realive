@@ -54,6 +54,9 @@ public class ProductSearchImpl implements ProductSearch {
 
         BooleanBuilder builder = new BooleanBuilder();
 
+        // 🚩 활성 상품만 조회 (고객용 필수 조건)
+        builder.and(product.active.eq(true));
+
         String keyword = requestDTO.getKeyword();
         String[] types = requestDTO.getType() != null ? requestDTO.getType().split("") : new String[]{};
 

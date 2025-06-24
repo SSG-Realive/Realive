@@ -20,6 +20,4 @@ public interface ProductRepositoryCustom {
      * @return 조건에 맞는 상품 목록 (페이징 처리된 결과)
      */
     Page<Product> searchProducts(ProductSearchCondition condition, Long sellerId);
-
-    Page<Product> searchVisibleProducts(CustomerProductSearchCondition condition);
 }
