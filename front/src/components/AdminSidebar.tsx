@@ -119,7 +119,7 @@ export default function AdminSidebar() {
           <Accordion open={productOpen}>
             <ul style={{ listStyle: 'none', padding: 0, margin: 0, marginLeft: 28, borderLeft: '1px solid #4b5563' }}>
                <li className="w-full"><Link href="/admin/products/list" className="block w-full text-lg px-6 py-4 pl-2 rounded hover:bg-teal-600 transition-colors md:text-base md:px-3 md:py-2 md:pl-6" style={getSubLinkStyle('/admin/products/list')}>전체 상품 조회</Link></li>
-               <li className="w-full"><Link href="/admin/owned-products" className="block w-full text-lg px-6 py-4 pl-2 rounded hover:bg-teal-600 transition-colors md:text-base md:px-3 md:py-2 md:pl-6" style={getSubLinkStyle('/admin/owned-products')}>전체 상품 조회</Link></li>
+               <li className="w-full"><Link href="/admin/owned-products" className="block w-full text-lg px-6 py-4 pl-2 rounded hover:bg-teal-600 transition-colors md:text-base md:px-3 md:py-2 md:pl-6" style={getSubLinkStyle('/admin/owned-products')}>관리자 상품 조회</Link></li>
             </ul>
           </Accordion>
           <li className="my-2">
