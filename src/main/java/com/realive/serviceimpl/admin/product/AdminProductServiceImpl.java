@@ -57,22 +57,22 @@ public class AdminProductServiceImpl implements AdminProductService {
     @Override
     @Transactional
     public AdminProductDTO purchaseProduct(AdminPurchaseRequestDTO requestDTO, Integer adminId) {
-        log.info("관리자 상품 매입 처리 시작: adminId={}, productId={}, price={}", 
-            adminId, requestDTO.getProductId(), requestDTO.getPurchasePrice());
+        log.info("관리자 상품 매입 처리 시작: adminId={}, productId={}, price={}",
+                adminId, requestDTO.getProductId(), requestDTO.getPurchasePrice());
 
         // 1. 관리자 존재 확인
         Admin admin = adminRepository.findById(adminId)
-            .orElseThrow(() -> new NoSuchElementException("존재하지 않는 관리자입니다."));
+                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 관리자입니다."));
 
         // 2. 상품 존재 여부 확인
         Product product = productRepository.findById(requestDTO.getProductId().longValue())
-            .orElseThrow(() -> new NoSuchElementException("상품을 찾을 수 없습니다."));
+                .orElseThrow(() -> new NoSuchElementException("상품을 찾을 수 없습니다."));
 
         // 3. 매입 가격 검증 (상품 가격 이상이어야 함)
         if (requestDTO.getPurchasePrice() < product.getPrice()) {
             throw new IllegalStateException(
-                String.format("매입 가격(%d원)이 상품 가격(%d원)보다 낮습니다. 상품 가격 이상으로 매입해주세요.", 
-                    requestDTO.getPurchasePrice(), product.getPrice())
+                    String.format("매입 가격(%d원)이 상품 가격(%d원)보다 낮습니다. 상품 가격 이상으로 매입해주세요.",
+                            requestDTO.getPurchasePrice(), product.getPrice())
             );
         }
 
@@ -107,39 +107,39 @@ public class AdminProductServiceImpl implements AdminProductService {
 
         // 9. AdminProduct 생성
         AdminProduct adminProduct = AdminProduct.builder()
-            .productId(requestDTO.getProductId())
-            .purchasePrice(requestDTO.getPurchasePrice())
-            .purchasedAt(LocalDateTime.now())
-            .isAuctioned(false)
-            .build();
+                .productId(requestDTO.getProductId())
+                .purchasePrice(requestDTO.getPurchasePrice())
+                .purchasedAt(LocalDateTime.now())
+                .isAuctioned(false)
+                .build();
 
         // 10. AdminProduct 저장
         AdminProduct savedAdminProduct = adminProductRepository.save(adminProduct);
         log.info("관리자 상품 매입 완료: adminProductId={}", savedAdminProduct.getId());
 
         return AdminProductDTO.fromEntity(savedAdminProduct, product,
-            productImageRepository.findFirstByProductIdAndIsThumbnailTrueAndMediaType(product.getId(), MediaType.IMAGE)
-                .map(ProductImage::getUrl)
-                .orElse(null));
+                productImageRepository.findFirstByProductIdAndIsThumbnailTrueAndMediaType(product.getId(), MediaType.IMAGE)
+                        .map(ProductImage::getUrl)
+                        .orElse(null));
     }
 
     @Override
     public AdminProductDTO getAdminProduct(Integer productId) {
         AdminProduct adminProduct = adminProductRepository.findByProductId(productId)
-            .orElseThrow(() -> new NoSuchElementException("관리자 상품을 찾을 수 없습니다."));
+                .orElseThrow(() -> new NoSuchElementException("관리자 상품을 찾을 수 없습니다."));
 
         Product product = productRepository.findById(productId.longValue())
                 .orElse(null);
 
         return AdminProductDTO.fromEntity(adminProduct, product,
-            productImageRepository.findFirstByProductIdAndIsThumbnailTrueAndMediaType(product.getId(), MediaType.IMAGE)
-                .map(ProductImage::getUrl)
-                .orElse(null));
+                productImageRepository.findFirstByProductIdAndIsThumbnailTrueAndMediaType(product.getId(), MediaType.IMAGE)
+                        .map(ProductImage::getUrl)
+                        .orElse(null));
     }
 
     @Override
     public Page<AdminProductDTO> getAllAdminProducts(Pageable pageable, String categoryFilter, Boolean isAuctioned) {
-        log.info("관리자 물품 목록 조회 요청 - Pageable: {}, Category: {}, IsAuctioned: {}", 
+        log.info("관리자 물품 목록 조회 요청 - Pageable: {}, Category: {}, IsAuctioned: {}",
                 pageable, categoryFilter, isAuctioned);
 
         Specification<AdminProduct> spec = (root, query, criteriaBuilder) -> {
@@ -173,7 +173,7 @@ public class AdminProductServiceImpl implements AdminProductService {
     @Override
     public Optional<AdminProductDTO> getAdminProductDetails(Integer adminProductId) {
         log.info("관리자 물품 상세 정보 조회 요청 - AdminProductId: {}", adminProductId);
-    
+
         return adminProductRepository.findById(adminProductId)
                 .map(adminProduct -> {
                     Product product = productRepository.findById(adminProduct.getProductId().longValue()).orElse(null);
@@ -188,7 +188,7 @@ public class AdminProductServiceImpl implements AdminProductService {
     @Override
     public PageResponseDTO<ProductListDTO> getAdminProducts(ProductSearchCondition condition) {
         log.info("관리자 물품 목록 조회 - 조건: {}", condition);
-        
+
         // 1. AdminProduct 목록 조회 (페이징 없이)
         Specification<AdminProduct> spec = (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
@@ -224,13 +224,10 @@ public class AdminProductServiceImpl implements AdminProductService {
             return cb.and(predicates.toArray(new Predicate[0]));
         };
 
-        // 2. AdminProduct ID 목록 조회
+        // 2. AdminProduct 목록 조회
         List<AdminProduct> adminProducts = adminProductRepository.findAll(spec);
-        List<Long> productIds = adminProducts.stream()
-                .map(adminProduct -> adminProduct.getProductId().longValue())
-                .toList();
 
-        if (productIds.isEmpty()) {
+        if (adminProducts.isEmpty()) {
             return PageResponseDTO.<ProductListDTO>withAll()
                     .pageRequestDTO(condition)
                     .dtoList(new ArrayList<>())
@@ -238,37 +235,43 @@ public class AdminProductServiceImpl implements AdminProductService {
                     .build();
         }
 
-        // 3. Product 정보 조회
-        List<Product> allProducts = productRepository.findAllByIdIn(productIds);
-        
+        // 3. AdminProduct를 AdminProductDTO로 변환
+        List<AdminProductDTO> adminProductDTOs = convertToAdminProductDTOs(adminProducts);
+
         // 4. createdAt 기준으로 정렬
-        allProducts.sort((p1, p2) -> p2.getCreatedAt().compareTo(p1.getCreatedAt()));
-        
+        adminProductDTOs.sort((p1, p2) -> p2.getPurchasedAt().compareTo(p1.getPurchasedAt()));
+
         // 5. 페이징 처리
         int start = (condition.getPage() - 1) * condition.getSize();
-        int end = Math.min(start + condition.getSize(), allProducts.size());
-        List<Product> products = allProducts.subList(start, end);
+        int end = Math.min(start + condition.getSize(), adminProductDTOs.size());
+        List<AdminProductDTO> pagedDTOs = adminProductDTOs.subList(start, end);
 
-        // 6. 썸네일 이미지 매핑
-        List<Object[]> rows = productImageRepository.findThumbnailUrlsByProductIds(
-            products.stream().map(Product::getId).toList(), 
-            MediaType.IMAGE
-        );
-        Map<Long, String> imageMap = rows.stream()
-                .collect(Collectors.toMap(
-                        row -> (Long) row[0],
-                        row -> (String) row[1]
-                ));
-
-        // 7. DTO 변환
-        List<ProductListDTO> dtoList = products.stream()
-                .map(product -> ProductListDTO.from(product, imageMap.get(product.getId())))
+        // 6. AdminProductDTO를 ProductListDTO로 변환
+        List<ProductListDTO> dtoList = pagedDTOs.stream()
+                .map(adminProductDTO -> {
+                    // AdminProductDTO의 정보를 ProductListDTO로 매핑
+                    return ProductListDTO.builder()
+                            .id(adminProductDTO.getProductId().longValue())
+                            .name(adminProductDTO.getProductName())
+                            .description(adminProductDTO.getProductDescription())
+                            .price(adminProductDTO.getPurchasePrice())
+                            .stock(1) // 관리자 매입 상품은 1개씩
+                            .status(adminProductDTO.getProductStatus()) // 실제 상품 상태 사용
+                            .isActive(true)
+                            .categoryName("관리자 매입")
+                            .imageThumbnailUrl(adminProductDTO.getImageThumbnailUrl())
+                            .createdAt(adminProductDTO.getPurchasedAt())
+                            .purchasePrice(adminProductDTO.getPurchasePrice())
+                            .purchasedAt(adminProductDTO.getPurchasedAt().toString())
+                            .isAuctioned(adminProductDTO.isAuctioned())
+                            .build();
+                })
                 .collect(Collectors.toList());
 
         return PageResponseDTO.<ProductListDTO>withAll()
                 .pageRequestDTO(condition)
                 .dtoList(dtoList)
-                .total(allProducts.size())
+                .total(adminProductDTOs.size())
                 .build();
     }
 
@@ -292,16 +295,16 @@ public class AdminProductServiceImpl implements AdminProductService {
         Map<Long, String> thumbnailUrlMap = productImageRepository.findThumbnailUrlsByProductIds(productIds, MediaType.IMAGE)
                 .stream()
                 .collect(Collectors.toMap(
-                    row -> (Long) row[0],
-                    row -> (String) row[1]
+                        row -> (Long) row[0],
+                        row -> (String) row[1]
                 ));
 
         // 4. DTO 변환
         return adminProducts.stream()
                 .map(adminProduct -> {
                     Product product = productMap.get(adminProduct.getProductId().longValue());
-                    String thumbnailUrl = product != null ? 
-                        thumbnailUrlMap.get(product.getId()) : null;
+                    String thumbnailUrl = product != null ?
+                            thumbnailUrlMap.get(product.getId()) : null;
                     return AdminProductDTO.fromEntity(adminProduct, product, thumbnailUrl);
                 })
                 .collect(Collectors.toList());

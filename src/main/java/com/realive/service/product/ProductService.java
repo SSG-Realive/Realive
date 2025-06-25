@@ -42,11 +42,6 @@ public interface ProductService {
     ProductResponseDTO getProductDetail(Long productId, Long sellerId);
 
     /**
-     * 구매자 전용 상품 목록 조회
-     */
-    PageResponseDTO<ProductListDTO> getVisibleProducts(CustomerProductSearchCondition condition);
-
-    /**
      * 관리자용 전체 상품 목록 조회
      * - 모든 판매자의 상품을 조회
      * - 필터링: 카테고리, 상태, 활성화 여부, 가격 범위, 키워드 검색

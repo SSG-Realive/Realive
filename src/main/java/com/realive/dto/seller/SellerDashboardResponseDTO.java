@@ -33,4 +33,10 @@ public class SellerDashboardResponseDTO {
 
     // 진행 중인 주문 수
     private long inProgressOrderCount;
+
+    // 새로 추가되는 필드들
+    private SellerSalesStatsDTO salesStats;
+    private long totalCustomers; // 단골 손님
+    private double averageRating;
+    private long totalReviews;
 }
