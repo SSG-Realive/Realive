@@ -4,76 +4,340 @@
 
 import SellerHeader from '@/components/seller/SellerHeader';
 import SellerLayout from '@/components/layouts/SellerLayout';
-import { getDashboard } from '@/service/seller/sellerService';
-import { SellerDashboardResponse } from '@/types/seller/dashboard/sellerDashboardResponse';
+import { getDashboard, getSalesStatistics, getDailySalesTrend, getMonthlySalesTrend } from '@/service/seller/sellerService';
+import { SellerDashboardResponse, SellerSalesStatsDTO, DailySalesDTO, MonthlySalesDTO } from '@/types/seller/dashboard/sellerDashboardResponse';
 import { useEffect, useState } from 'react';
 import useSellerAuthGuard from '@/hooks/useSellerAuthGuard';
+import dynamic from 'next/dynamic';
+import { TrendingUp, Users, Star, DollarSign, Package, MessageCircle, ShoppingCart, BarChart3 } from 'lucide-react';
+
+// ApexCharts를 동적으로 import (SSR 문제 방지)
+const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
 export default function SellerDashboardPage() {
-  const checking = useSellerAuthGuard(); // ✅ 인증 확인 시작
+  const checking = useSellerAuthGuard();
   const [dashboard, setDashboard] = useState<SellerDashboardResponse | null>(null);
+  const [salesStats, setSalesStats] = useState<SellerSalesStatsDTO | null>(null);
+  const [dailyTrend, setDailyTrend] = useState<DailySalesDTO[]>([]);
+  const [monthlyTrend, setMonthlyTrend] = useState<MonthlySalesDTO[]>([]);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
 
   useEffect(() => {
-    // 💡 checking이 true이면(인증 확인 중이면) 아무것도 하지 않습니다.
     if (checking) {
       return;
     }
 
-    const fetchDashboard = async () => {
+    const fetchDashboardData = async () => {
       try {
-        // ✅ checking이 false가 된 후에야 API를 호출하므로 안전합니다.
-        const data = await getDashboard();
-        setDashboard(data);
+        setLoading(true);
+        
+        // 기본 대시보드 데이터
+        const dashboardData = await getDashboard();
+        setDashboard(dashboardData);
+
+        // 최근 30일 기준으로 통계 데이터
+        const endDate = new Date().toISOString().split('T')[0];
+        const startDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+
+        // 판매 통계
+        const statsData = await getSalesStatistics(startDate, endDate);
+        setSalesStats(statsData);
+
+        // 일별 추이 (최근 30일)
+        const dailyData = await getDailySalesTrend(startDate, endDate);
+        setDailyTrend(dailyData);
+
+        // 월별 추이 (최근 6개월)
+        const endMonthDate = new Date();
+        const startMonthDate = new Date();
+        startMonthDate.setMonth(endMonthDate.getMonth() - 5);
+        startMonthDate.setDate(1); // 각 월의 1일로 맞추기
+        const startMonthStr = startMonthDate.toISOString().split('T')[0];
+        const endMonthStr = endMonthDate.toISOString().split('T')[0];
+        const monthlyData = await getMonthlySalesTrend(startMonthStr, endMonthStr);
+        setMonthlyTrend(monthlyData);
+
       } catch (err) {
         console.error('대시보드 정보 가져오기 실패', err);
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchDashboard();
-  }, [checking]); // 💡 의존성 배열에 checking을 추가하여, 상태 변경 시 재실행되도록 합니다.
+    fetchDashboardData();
+  }, [checking]);
 
-  // 인증 확인 중이거나, 데이터가 아직 없으면 로딩 UI를 표시합니다.
-  // 로딩 중에도 헤더/레이아웃을 보여주어 깜빡임을 방지합니다.
-  if (checking || !dashboard) {
+  // 최근 6개월 yearMonth 배열 생성
+  const months = [];
+  const now = new Date();
+  for (let i = 5; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    months.push(d.toISOString().slice(0, 7)); // 'YYYY-MM'
+  }
+  // monthlyTrend를 yearMonth 기준으로 매칭, 없으면 0원
+  const monthlyTrendFilled = months.map(month => {
+    const found = monthlyTrend.find(item => item.yearMonth === month);
+    return found || { yearMonth: month, orderCount: 0, revenue: 0 };
+  });
+
+  // 일별 매출 차트 옵션
+  const dailyChartOptions = {
+    chart: {
+      type: 'area' as const,
+      toolbar: {
+        show: false
+      }
+    },
+    dataLabels: {
+      enabled: false
+    },
+    stroke: {
+      curve: 'smooth' as const,
+      width: 2
+    },
+    colors: ['#3B82F6'],
+    fill: {
+      type: 'gradient' as const,
+      gradient: {
+        shadeIntensity: 1,
+        opacityFrom: 0.7,
+        opacityTo: 0.2,
+        stops: [0, 90, 100]
+      }
+    },
+    xaxis: {
+      categories: dailyTrend.map(item => item.date),
+      labels: {
+        style: {
+          colors: '#6B7280'
+        }
+      }
+    },
+    yaxis: {
+      labels: {
+        style: {
+          colors: '#6B7280'
+        },
+        formatter: (value: number) => `${value.toLocaleString()}원`
+      }
+    },
+    tooltip: {
+      y: {
+        formatter: (value: number) => `${value.toLocaleString()}원`
+      }
+    }
+  };
+
+  const dailyChartSeries = [
+    {
+      name: '일별 매출',
+      data: dailyTrend.map(item => item.revenue)
+    }
+  ];
+
+  // 월별 매출 차트 옵션
+  const monthlyChartOptions = {
+    chart: {
+      type: 'bar' as const,
+      toolbar: {
+        show: false
+      }
+    },
+    colors: ['#10B981'],
+    plotOptions: {
+      bar: {
+        borderRadius: 4,
+        horizontal: false,
+      }
+    },
+    dataLabels: {
+      enabled: false
+    },
+    xaxis: {
+      categories: monthlyTrendFilled.map(item => item.yearMonth),
+      labels: {
+        style: {
+          colors: '#6B7280'
+        }
+      }
+    },
+    yaxis: {
+      labels: {
+        style: {
+          colors: '#6B7280'
+        },
+        formatter: (value: number) => `${value.toLocaleString()}원`
+      }
+    },
+    tooltip: {
+      y: {
+        formatter: (value: number) => `${value.toLocaleString()}원`
+      }
+    }
+  };
+
+  const monthlyChartSeries = [
+    {
+      name: '월별 매출',
+      data: monthlyTrendFilled.map(item => item.revenue)
+    }
+  ];
+
+  if (checking || loading) {
     return (
-      <>
-        <SellerHeader />
-        <SellerLayout>
-          <main className="p-8 w-full">
-            <h1 className="text-2xl font-bold mb-6">판매자 대시보드</h1>
-            <div>로딩 중...</div>
-          </main>
-        </SellerLayout>
-      </>
+      <SellerLayout>
+        <main>
+          <h1 className="text-xl md:text-2xl font-bold mb-4">판매자 대시보드</h1>
+          <div className="flex items-center justify-center py-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <span className="ml-3 text-gray-600">로딩 중...</span>
+          </div>
+        </main>
+      </SellerLayout>
     );
   }
 
   return (
-    <>
-      <SellerHeader />
-      <SellerLayout>
-        <main className="p-8 w-full">
-          <h1 className="text-2xl font-bold mb-6">판매자 대시보드</h1>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <section className="bg-white p-6 rounded-lg shadow-sm">
-              <h2 className="text-gray-600 text-sm font-semibold mb-2">등록 상품 수</h2>
-              <p className="text-2xl font-bold text-gray-800">{dashboard.totalProductCount}개</p>
+    <SellerLayout>
+      <main className="space-y-6">
+        <h1 className="text-xl md:text-2xl font-bold mb-6">판매자 대시보드</h1>
+        
+        {/* 기본 통계 카드들 */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+          <section className="bg-white p-4 md:p-6 rounded-lg shadow-sm border">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-gray-600 text-sm font-semibold mb-2">등록 상품 수</h2>
+                <p className="text-xl md:text-2xl font-bold text-gray-800">{dashboard?.totalProductCount || 0}개</p>
+              </div>
+              <Package className="w-8 h-8 text-blue-500" />
+            </div>
+          </section>
+          
+          <section className="bg-white p-4 md:p-6 rounded-lg shadow-sm border">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-gray-600 text-sm font-semibold mb-2">미답변 문의</h2>
+                <p className="text-xl md:text-2xl font-bold text-red-500">{dashboard?.unansweredQnaCount || 0}건</p>
+              </div>
+              <MessageCircle className="w-8 h-8 text-red-500" />
+            </div>
+          </section>
+          
+          <section className="bg-white p-4 md:p-6 rounded-lg shadow-sm border">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-gray-600 text-sm font-semibold mb-2">진행 중인 주문</h2>
+                <p className="text-xl md:text-2xl font-bold text-blue-500">{dashboard?.inProgressOrderCount || 0}건</p>
+              </div>
+              <ShoppingCart className="w-8 h-8 text-blue-500" />
+            </div>
+          </section>
+          
+          <section className="bg-white p-4 md:p-6 rounded-lg shadow-sm border">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-gray-600 text-sm font-semibold mb-2">누적 고객 수</h2>
+                <p className="text-xl md:text-2xl font-bold text-green-600">{dashboard?.totalCustomers || 0}명</p>
+              </div>
+              <Users className="w-8 h-8 text-green-600" />
+            </div>
+          </section>
+        </div>
+
+        {/* 판매 통계 카드들 */}
+        {salesStats && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+            <section className="bg-white p-4 md:p-6 rounded-lg shadow-sm border">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-gray-600 text-sm font-semibold mb-2">총 주문 수</h2>
+                  <p className="text-xl md:text-2xl font-bold text-indigo-600">{salesStats.totalOrders.toLocaleString()}건</p>
+                </div>
+                <BarChart3 className="w-8 h-8 text-indigo-600" />
+              </div>
             </section>
-            <section className="bg-white p-6 rounded-lg shadow-sm">
-              <h2 className="text-gray-600 text-sm font-semibold mb-2">미답변 문의 수</h2>
-              <p className="text-2xl font-bold text-red-500">{dashboard.unansweredQnaCount}건</p>
+            
+            <section className="bg-white p-4 md:p-6 rounded-lg shadow-sm border">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-gray-600 text-sm font-semibold mb-2">총 매출</h2>
+                  <p className="text-xl md:text-2xl font-bold text-green-600">{salesStats.totalRevenue.toLocaleString()}원</p>
+                </div>
+                <DollarSign className="w-8 h-8 text-green-600" />
+              </div>
             </section>
-            <section className="bg-white p-6 rounded-lg shadow-sm">
-              <h2 className="text-gray-600 text-sm font-semibold mb-2">오늘 등록된 상품</h2>
-              <p className="text-2xl font-bold text-gray-800">{dashboard.todayProductCount}개</p>
-            </section>
-            <section className="bg-white p-6 rounded-lg shadow-sm">
-              <h2 className="text-gray-600 text-sm font-semibold mb-2">진행 중인 주문</h2>
-              <p className="text-2xl font-bold text-blue-500">{dashboard.inProgressOrderCount}건</p>
+            
+            <section className="bg-white p-4 md:p-6 rounded-lg shadow-sm border">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-gray-600 text-sm font-semibold mb-2">판매자 등급</h2>
+                  <p className="text-xl md:text-2xl font-bold" style={{color: dashboard?.sellerRating === 'GREEN' ? '#22c55e' : dashboard?.sellerRating === 'YELLOW' ? '#eab308' : '#ef4444'}}>
+                    {dashboard?.sellerRating === 'GREEN' && '🟢 초록'}
+                    {dashboard?.sellerRating === 'YELLOW' && '🟡 노랑'}
+                    {dashboard?.sellerRating === 'RED' && '🔴 빨강'}
+                    {!dashboard?.sellerRating && '등급 없음'}
+                  </p>
+                </div>
+                <span className="text-3xl">
+                  {dashboard?.sellerRating === 'GREEN' && '🟢'}
+                  {dashboard?.sellerRating === 'YELLOW' && '🟡'}
+                  {dashboard?.sellerRating === 'RED' && '🔴'}
+                  {!dashboard?.sellerRating && '❔'}
+                </span>
+              </div>
             </section>
           </div>
-        </main>
-      </SellerLayout>
-    </>
+        )}
+
+        {/* 차트 섹션 */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* 일별 매출 추이 */}
+          <section className="bg-white p-4 md:p-6 rounded-lg shadow-sm border">
+            <h2 className="text-lg font-semibold mb-4 flex items-center">
+              <TrendingUp className="w-5 h-5 mr-2 text-blue-500" />
+              일별 매출 추이 (최근 30일)
+            </h2>
+            {dailyTrend.length > 0 ? (
+              <Chart
+                options={dailyChartOptions}
+                series={dailyChartSeries}
+                type="area"
+                height={300}
+              />
+            ) : (
+              <div className="flex items-center justify-center h-64 text-gray-500">
+                데이터가 없습니다
+              </div>
+            )}
+          </section>
+
+          {/* 월별 매출 추이 */}
+          <section className="bg-white p-4 md:p-6 rounded-lg shadow-sm border">
+            <h2 className="text-lg font-semibold mb-4 flex items-center">
+              <BarChart3 className="w-5 h-5 mr-2 text-green-500" />
+              월별 매출 추이
+            </h2>
+            {monthlyTrend.length > 0 ? (
+              <Chart
+                options={monthlyChartOptions}
+                series={monthlyChartSeries}
+                type="bar"
+                height={300}
+              />
+            ) : (
+              <div className="flex items-center justify-center h-64 text-gray-500">
+                데이터가 없습니다
+              </div>
+            )}
+          </section>
+        </div>
+      </main>
+    </SellerLayout>
   );
 }

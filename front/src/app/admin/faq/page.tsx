@@ -120,7 +120,7 @@ export default function AdminFAQPage() {
                 <option value="unanswered">미답변</option>
               </select>
             </div>
-            <div>
+    <div>
               <label htmlFor="categoryFilter" className="block text-sm font-medium text-gray-700 mb-2">
                 카테고리
               </label>
@@ -137,7 +137,7 @@ export default function AdminFAQPage() {
               </select>
             </div>
           </div>
-        </div>
+      </div>
 
         {/* 데스크탑 표 */}
         <div className="hidden md:block">
@@ -167,8 +167,8 @@ export default function AdminFAQPage() {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
                       액션
                     </th>
-                  </tr>
-                </thead>
+          </tr>
+        </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
                   {paginatedFAQ.map((faq, idx) => (
                     <tr key={faq.id} className="hover:bg-gray-50">
@@ -210,10 +210,10 @@ export default function AdminFAQPage() {
                           </button>
                         </div>
                       </td>
-                    </tr>
+          </tr>
                   ))}
-                </tbody>
-              </table>
+        </tbody>
+      </table>
             </div>
           </div>
         </div>

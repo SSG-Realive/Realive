@@ -6,13 +6,15 @@ import Link from 'next/link';
 import Image from 'next/image';
 
 import { useAuthStore } from '@/store/customer/authStore';
+import { useCartStore } from '@/store/customer/useCartStore';
+import { fetchCartList } from '@/service/customer/cartService';
 import { fetchMyProfile } from '@/service/customer/customerService';
-import SearchBar from './SearchBar';
 import { requestLogout } from '@/service/customer/logoutService';
-import CategoryDropdown from './CategoryDropdown';
 
-// 아이콘
+import SearchBar from './SearchBar';
+import CategoryDropdown from './CategoryDropdown';
 import { UserCircle, ShoppingCart } from 'lucide-react';
+import { FaRegHeart } from 'react-icons/fa'; // ✅ 통일
 
 interface NavbarProps {
     onSearch?: (keyword: string) => void;
@@ -26,17 +28,16 @@ export default function Navbar({ onSearch, onCategorySelect }: NavbarProps) {
     const { logout: clearAuthState } = useAuthStore();
 
     const { isAuthenticated, logout, userName, setUserName } = useAuthStore();
+    const { itemCount } = useCartStore();
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => setMounted(true), []);
 
-    if (
-        pathname === '/login' ||
-        pathname === '/customer/member/login' ||
-        pathname === '/seller/login'
-    ) {
-        return null;
-    }
+    useEffect(() => {
+        if (mounted && isAuthenticated()) {
+            fetchCartList();
+        }
+    }, [mounted, isAuthenticated]);
 
     useEffect(() => {
         if (mounted && isAuthenticated() && !userName) {
@@ -59,6 +60,15 @@ export default function Navbar({ onSearch, onCategorySelect }: NavbarProps) {
         }
     };
 
+    // 로그인/회원가입 페이지에서는 Navbar 숨김
+    if (
+        pathname === '/login' ||
+        pathname === '/customer/member/login' ||
+        pathname === '/seller/login'
+    ) {
+        return null;
+    }
+
     return (
         <nav className="w-full sticky top-0 z-50 bg-white/85 backdrop-blur-sm">
             <div className="w-full px-4 py-3 space-y-4">
@@ -70,8 +80,7 @@ export default function Navbar({ onSearch, onCategorySelect }: NavbarProps) {
                             alt="Realive 로고"
                             width={120}
                             height={30}
-                            className="object-contain"
-                            priority
+                            className="object-contain drop-shadow-sm"
                         />
                     </Link>
 
@@ -88,9 +97,20 @@ export default function Navbar({ onSearch, onCategorySelect }: NavbarProps) {
                                     <Link href="/customer/mypage" className="hover:text-gray-800" title="My Page">
                                         <UserCircle size={20} />
                                     </Link>
-                                    <Link href="/customer/cart" className="hover:text-gray-800" title="Cart">
-                                        <ShoppingCart size={20} />
+
+                                    <Link href="/customer/mypage/wishlist" className="hover:text-gray-800" title="찜한 상품">
+                                        <FaRegHeart className="w-5 h-5 text-gray-500" />
                                     </Link>
+
+                                    <Link href="/customer/cart" className="relative hover:text-gray-800" title="Cart">
+                                        <ShoppingCart size={20} />
+                                        {itemCount > 0 && (
+                                            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                        {itemCount}
+                      </span>
+                                        )}
+                                    </Link>
+
                                     <button onClick={handleLogout} className="hover:text-red-500 text-xs">
                                         LOGOUT
                                     </button>
@@ -109,10 +129,12 @@ export default function Navbar({ onSearch, onCategorySelect }: NavbarProps) {
                     )}
                 </div>
 
-                {/* ✅ PC 카테고리 */}
-                <div className="hidden md:block mt-4">
-                    <CategoryDropdown onCategorySelect={onCategorySelect} />
-                </div>
+                {/* ✅ PC 카테고리 (메인 페이지에서만) */}
+                {pathname.startsWith('/main') && (
+                    <div className="hidden md:block mt-4">
+                        <CategoryDropdown onCategorySelect={onCategorySelect} />
+                    </div>
+                )}
 
                 {/* ✅ 모바일 헤더 */}
                 <div className="flex items-center justify-between md:hidden">
@@ -134,9 +156,20 @@ export default function Navbar({ onSearch, onCategorySelect }: NavbarProps) {
                                     <Link href="/customer/mypage" title="My Page">
                                         <UserCircle size={20} />
                                     </Link>
-                                    <Link href="/customer/cart" title="Cart">
-                                        <ShoppingCart size={20} />
+
+                                    <Link href="/customer/mypage/wishlist" title="찜한 상품">
+                                        <FaRegHeart className="w-5 h-5 text-gray-500" />
                                     </Link>
+
+                                    <Link href="/customer/cart" className="relative" title="Cart">
+                                        <ShoppingCart size={20} />
+                                        {itemCount > 0 && (
+                                            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                        {itemCount}
+                      </span>
+                                        )}
+                                    </Link>
+
                                     <button onClick={handleLogout} className="hover:text-red-500 text-xs">
                                         LOGOUT
                                     </button>
@@ -160,10 +193,12 @@ export default function Navbar({ onSearch, onCategorySelect }: NavbarProps) {
                     <SearchBar onSearch={onSearch} />
                 </div>
 
-                {/* ✅ 모바일 카테고리 */}
-                <div className="block md:hidden mt-4">
-                    <CategoryDropdown onCategorySelect={onCategorySelect} />
-                </div>
+                {/* ✅ 모바일 카테고리 (메인 페이지에서만) */}
+                {pathname.startsWith('/main') && (
+                    <div className="block md:hidden mt-4">
+                        <CategoryDropdown onCategorySelect={onCategorySelect} />
+                    </div>
+                )}
             </div>
         </nav>
     );

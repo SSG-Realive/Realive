@@ -18,6 +18,11 @@ export default function SellerQnaPage() {
     const [page, setPage] = useState(0);
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
+    const [sidebarOpen, setSidebarOpen] = useState(false);
+
+    const toggleSidebar = () => {
+        setSidebarOpen(!sidebarOpen);
+    };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -39,64 +44,88 @@ export default function SellerQnaPage() {
 
     return (
         <>
-            <SellerHeader/>
+            <div className="hidden">
+            <SellerHeader toggleSidebar={toggleSidebar} />
+            </div>
             <SellerLayout> {/* ✅ 명시적 적용 */}
-                <div className="max-w-xl mx-auto py-10">
-                    <h1 className="text-2xl font-semibold mb-6">판매자 QnA 목록</h1>
+                <div className="flex-1 w-full h-full px-4 py-8 bg-gray-100">
+                    <h1 className="text-xl md:text-2xl font-bold mb-4 md:mb-6">판매자 QnA 목록</h1>
 
-                    <div className="flex justify-end mb-4">
+                    <div className="flex justify-end mb-4 md:mb-6">
                         <button
                             onClick={() => router.push('/seller/qna/new')}
-                            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+                            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                         >
                             QnA 등록
                         </button>
                     </div>
 
                     {loading ? (
-                        <p className="text-gray-500">로딩 중...</p>
+                        <div className="flex items-center justify-center py-8">
+                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                            <span className="ml-3 text-gray-600">로딩 중...</span>
+                        </div>
                     ) : error ? (
-                        <p className="text-red-500">{error}</p>
+                        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                            <p className="text-red-600">{error}</p>
+                        </div>
                     ) : (
-                        <ul>
+                        <div className="grid gap-4">
                             {Array.isArray(qnaList) && qnaList.length > 0 ? (
                                 qnaList.map((qna) => (
-                                    <li
+                                    <div
                                         key={qna.id}
                                         onClick={() => router.push(`/seller/qna/${qna.id}`)}
-                                        className="mb-2 border p-3 rounded hover:bg-gray-50 cursor-pointer"
+                                        className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition-all cursor-pointer"
                                     >
-                                        <div className="font-medium">{qna.title}</div>
-                                        <div className="text-sm text-gray-600">
+                                        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                                            <div className="flex-1">
+                                                <h3 className="font-semibold text-lg text-gray-800 mb-2">{qna.title}</h3>
+                                                <div className="flex items-center gap-2">
+                                                    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                                                        qna.isAnswered 
+                                                            ? 'bg-green-100 text-green-800' 
+                                                            : 'bg-red-100 text-red-800'
+                                                    }`}>
                                             {qna.isAnswered ? '✅ 답변 완료' : '❌ 미답변'}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div className="text-sm text-gray-500">
+                                                클릭하여 상세보기
+                                            </div>
                                         </div>
-                                    </li>
+                                    </div>
                                 ))
                             ) : (
-                                <li className="text-gray-400">등록된 질문이 없습니다.</li>
+                                <div className="bg-white border border-gray-200 rounded-lg p-8 text-center">
+                                    <p className="text-gray-500 text-lg">등록된 질문이 없습니다.</p>
+                                </div>
                             )}
-                        </ul>
+                        </div>
                     )}
 
-                    <div className="mt-4 flex gap-2 justify-center items-center">
+                    {totalPages > 1 && (
+                        <div className="mt-6 flex gap-2 justify-center items-center">
                         <button
                             onClick={() => setPage((p) => Math.max(p - 1, 0))}
                             disabled={page === 0}
-                            className="px-3 py-1 border rounded disabled:opacity-50"
+                                className="px-3 py-2 border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                         >
                             이전
                         </button>
-                        <span className="text-sm">
+                            <span className="text-sm px-4 py-2 bg-white border border-gray-300 rounded-md">
                         {page + 1} / {totalPages}
                     </span>
                         <button
                             onClick={() => setPage((p) => Math.min(p + 1, totalPages - 1))}
                             disabled={page >= totalPages - 1}
-                            className="px-3 py-1 border rounded disabled:opacity-50"
+                                className="px-3 py-2 border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                         >
                             다음
                         </button>
                     </div>
+                    )}
                 </div>
             </SellerLayout>
         </>

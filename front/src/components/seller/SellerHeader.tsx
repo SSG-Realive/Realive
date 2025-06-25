@@ -9,7 +9,11 @@ import { useEffect, useState } from 'react';
 import { useSellerAuthStore } from '@/store/seller/useSellerAuthStore';
 import { requestSellerLogout } from '@/service/seller/logoutService'; // 정확한 로그아웃 서비스 함수
 
-export default function SellerHeader() {
+interface SellerHeaderProps {
+  toggleSidebar?: () => void;
+}
+
+export default function SellerHeader({ toggleSidebar }: SellerHeaderProps) {
     const router = useRouter();
     const [name, setName] = useState<string>('');
 
@@ -51,43 +55,35 @@ export default function SellerHeader() {
     };
 
     return (
-        <header
-            style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                padding: '1rem 2rem',
-                borderBottom: '1px solid #ddd',
-                marginBottom: '2rem',
-            }}
-        >
-            <Link
-                href="/seller/dashboard"
-                style={{ fontSize: '1.25rem', fontWeight: 'bold', textDecoration: 'none', color: '#333' }}
-            >
-                Realive
-            </Link>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                {/* ✨ 토큰이 있을 때만 이름과 로그아웃 버튼을 보여줍니다. */}
+        <header className="flex items-center justify-between px-8 py-3 bg-white border-b">
+            <div className="flex items-center gap-3">
+                {toggleSidebar && (
+                    <button
+                        onClick={toggleSidebar}
+                        className="block lg:hidden text-2xl text-gray-500 hover:text-green-500"
+                        style={{ background: 'none', border: 'none' }}
+                    >
+                        ☰
+                    </button>
+                )}
+                <Link href="/seller/dashboard" className="text-2xl font-extrabold text-gray-900 tracking-tight">
+                    Realive
+                </Link>
+            </div>
+            <div className="flex items-center gap-6">
                 {accessToken ? (
                     <>
-                        <span style={{ fontSize: '1rem', color: '#333' }}>{name}님</span>
+                        <span className="font-semibold text-gray-700">{name}님</span>
                         <button
                             onClick={handleLogout}
-                            style={{
-                                background: 'none',
-                                border: 'none',
-                                color: '#333',
-                                fontSize: '1rem',
-                                cursor: 'pointer',
-                            }}
+                            className="text-gray-500 hover:text-blue-600 font-semibold transition-colors"
+                            style={{ background: 'none', border: 'none', fontSize: '1rem', cursor: 'pointer' }}
                         >
                             로그아웃
                         </button>
                     </>
                 ) : (
-                    <Link href="/seller/login" style={{ fontSize: '1rem', color: '#333' }}>
+                    <Link href="/seller/login" className="font-semibold text-gray-500 hover:text-blue-600 transition-colors">
                         로그인
                     </Link>
                 )}
