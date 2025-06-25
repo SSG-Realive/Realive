@@ -33,10 +33,21 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const title = found ? found.title : '';
   return (
     <div style={{ display: 'flex' }}>
-      <AdminSidebar />
-      <div style={{ flex: 1, background: '#f3f4f6' }}>
+      {/* 데스크탑용 사이드바 */}
+      <div className="hidden md:block">
+        <div className="fixed left-0 top-0 h-screen w-[220px] z-40 bg-gray-900">
+          <AdminSidebar />
+        </div>
+      </div>
+      {/* 모바일 오버레이용 사이드바 */}
+      <div id="mobile-sidebar-overlay" className="fixed inset-0 z-40 bg-black bg-opacity-40 hidden md:hidden" onClick={() => { document.getElementById('mobile-sidebar')?.classList.add('-translate-x-full'); document.getElementById('mobile-sidebar-overlay')?.classList.add('hidden'); }} />
+      <div id="mobile-sidebar" className="fixed top-0 left-0 h-full w-full max-w-xs bg-gray-900 text-gray-200 z-50 p-6 transition-transform duration-300 -translate-x-full md:hidden">
+        <button className="absolute top-4 right-4 text-white text-2xl" onClick={() => { document.getElementById('mobile-sidebar')?.classList.add('-translate-x-full'); document.getElementById('mobile-sidebar-overlay')?.classList.add('hidden'); }}>×</button>
+        <AdminSidebar />
+      </div>
+      <div className="flex-1 w-full min-h-screen bg-gray-100 ml-[220px]">
         <AdminHeader title={title} />
-        <main style={{ padding: '24px' }}>{children}</main>
+        <main className="p-6">{children}</main>
       </div>
     </div>
   );

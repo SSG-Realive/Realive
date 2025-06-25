@@ -224,13 +224,10 @@ public class AdminProductServiceImpl implements AdminProductService {
             return cb.and(predicates.toArray(new Predicate[0]));
         };
 
-        // 2. AdminProduct ID 목록 조회
+        // 2. AdminProduct 목록 조회
         List<AdminProduct> adminProducts = adminProductRepository.findAll(spec);
-        List<Long> productIds = adminProducts.stream()
-                .map(adminProduct -> adminProduct.getProductId().longValue())
-                .toList();
-
-        if (productIds.isEmpty()) {
+        
+        if (adminProducts.isEmpty()) {
             return PageResponseDTO.<ProductListDTO>withAll()
                     .pageRequestDTO(condition)
                     .dtoList(new ArrayList<>())
@@ -238,37 +235,43 @@ public class AdminProductServiceImpl implements AdminProductService {
                     .build();
         }
 
-        // 3. Product 정보 조회
-        List<Product> allProducts = productRepository.findAllByIdIn(productIds);
+        // 3. AdminProduct를 AdminProductDTO로 변환
+        List<AdminProductDTO> adminProductDTOs = convertToAdminProductDTOs(adminProducts);
         
         // 4. createdAt 기준으로 정렬
-        allProducts.sort((p1, p2) -> p2.getCreatedAt().compareTo(p1.getCreatedAt()));
+        adminProductDTOs.sort((p1, p2) -> p2.getPurchasedAt().compareTo(p1.getPurchasedAt()));
         
         // 5. 페이징 처리
         int start = (condition.getPage() - 1) * condition.getSize();
-        int end = Math.min(start + condition.getSize(), allProducts.size());
-        List<Product> products = allProducts.subList(start, end);
+        int end = Math.min(start + condition.getSize(), adminProductDTOs.size());
+        List<AdminProductDTO> pagedDTOs = adminProductDTOs.subList(start, end);
 
-        // 6. 썸네일 이미지 매핑
-        List<Object[]> rows = productImageRepository.findThumbnailUrlsByProductIds(
-            products.stream().map(Product::getId).toList(), 
-            MediaType.IMAGE
-        );
-        Map<Long, String> imageMap = rows.stream()
-                .collect(Collectors.toMap(
-                        row -> (Long) row[0],
-                        row -> (String) row[1]
-                ));
-
-        // 7. DTO 변환
-        List<ProductListDTO> dtoList = products.stream()
-                .map(product -> ProductListDTO.from(product, imageMap.get(product.getId())))
+        // 6. AdminProductDTO를 ProductListDTO로 변환
+        List<ProductListDTO> dtoList = pagedDTOs.stream()
+                .map(adminProductDTO -> {
+                    // AdminProductDTO의 정보를 ProductListDTO로 매핑
+                    return ProductListDTO.builder()
+                            .id(adminProductDTO.getProductId().longValue())
+                            .name(adminProductDTO.getProductName())
+                            .description(adminProductDTO.getProductDescription())
+                            .price(adminProductDTO.getPurchasePrice())
+                            .stock(1) // 관리자 매입 상품은 1개씩
+                            .status(adminProductDTO.getProductStatus()) // 실제 상품 상태 사용
+                            .isActive(true)
+                            .categoryName("관리자 매입")
+                            .imageThumbnailUrl(adminProductDTO.getImageThumbnailUrl())
+                            .createdAt(adminProductDTO.getPurchasedAt())
+                            .purchasePrice(adminProductDTO.getPurchasePrice())
+                            .purchasedAt(adminProductDTO.getPurchasedAt().toString())
+                            .isAuctioned(adminProductDTO.isAuctioned())
+                            .build();
+                })
                 .collect(Collectors.toList());
 
         return PageResponseDTO.<ProductListDTO>withAll()
                 .pageRequestDTO(condition)
                 .dtoList(dtoList)
-                .total(allProducts.size())
+                .total(adminProductDTOs.size())
                 .build();
     }
 

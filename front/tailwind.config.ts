@@ -1,14 +1,21 @@
-import type { Config } from 'tailwindcss'
+// tailwind.config.ts
+import type { Config } from 'tailwindcss';
 
 const config: Config = {
   content: [
     './src/pages/**/*.{js,ts,jsx,tsx}',
     './src/components/**/*.{js,ts,jsx,tsx}',
+    './src/app/**/*.{js,ts,jsx,tsx}', // Next.js 앱 라우팅 구조를 사용하는 경우
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        arita: ['"AritaBuri-SemiBold"', 'serif'],
+        gmarket: ['"GmarketSansMedium"', 'sans-serif'],
+      },
+    },
   },
   plugins: [],
-}
+};
 
-export default config
+export default config;

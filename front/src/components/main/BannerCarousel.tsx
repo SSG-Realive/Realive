@@ -6,53 +6,52 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
 const bannerImages = [
-  '/images/배너1.jpg',
-  '/images/배너2.jpg',
-  '/images/배너3.jpg',
+  '/images/banner1.jpg',
+  '/images/banner2.jpg',
+  '/images/banner3.jpg',
 ];
 
 const CustomArrow = ({
-  onClick,
-  direction,
-}: {
-  onClick?: () => void;
-  direction: 'left' | 'right';
+                         onClick,
+                         direction,
+                     }: {
+    onClick?: () => void;
+    direction: 'left' | 'right';
 }) => {
-  return (
-    <div
-      onClick={onClick}
-      className={`absolute top-1/2 z-20 transform -translate-y-1/2 bg-black bg-opacity-50 text-white text-2xl w-10 h-10 flex items-center justify-center rounded-full cursor-pointer ${
-        direction === 'left' ? 'left-3' : 'right-3'
-      }`}
-    >
-      {direction === 'left' ? '<' : '>'}
-    </div>
-  );
+    return (
+        <div
+            onClick={onClick}
+            className={`absolute top-1/2 z-20 transform -translate-y-1/2 bg-black bg-opacity-50 text-white text-2xl w-10 h-10 flex items-center justify-center rounded-full cursor-pointer ${
+                direction === 'left' ? 'left-3' : 'right-3'
+            }`}
+        >
+            {direction === 'left' ? '<' : '>'}
+        </div>
+    );
 };
 
 export default function BannerCarousel() {
-  const settings = {
-    dots: true,
-    dotsClass: 'slick-dots custom-dots',
-    infinite: true,
-    speed: 500,
-    autoplay: true,
-    autoplaySpeed: 3000,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    prevArrow: <CustomArrow direction="left" />,
-    nextArrow: <CustomArrow direction="right" />,
-  };
+    const settings = {
+        dots: true,
+        dotsClass: 'slick-dots custom-dots',
+        infinite: true,
+        speed: 500,
+        autoplay: true,
+        autoplaySpeed: 3000,
+        slidesToShow: 1,
+        slidesToScroll: 1,
+        prevArrow: <CustomArrow direction="left" />,
+        nextArrow: <CustomArrow direction="right" />,
+    };
 
-  return (
-    <>
-      <style>{`
+    return (
+        <>
+            <style>{`
         .custom-dots {
-          position: static !important; /* 이미지 내부 말고 아래로 */
+          position: static !important;
           display: flex !important;
           justify-content: center;
           margin-top: 16px;
-          padding: 0;
           gap: 8px;
         }
         .custom-dots li {
@@ -71,27 +70,28 @@ export default function BannerCarousel() {
           background: #333;
         }
 
-        /* 기본 slick 화살표 숨기기 (우리가 직접 만들었으므로) */
+        .slick-slide > div {
+          height: 100%;
+        }
+
         .slick-prev, .slick-next {
           display: none !important;
         }
       `}</style>
 
-      <div className="w-[75vw] max-w-5xl mx-auto relative">
-        <div className="relative">
-          <Slider {...settings}>
-            {bannerImages.map((src, index) => (
-              <div key={index}>
-                <img
-                  src={src}
-                  alt={`배너 ${index + 1}`}
-                  className="w-full h-[300px] object-cover rounded-xl"
-                />
-              </div>
-            ))}
-          </Slider>
-        </div>
-      </div>
-    </>
-  );
+            <div className="w-full h-[280px] md:h-[420px] lg:h-[560px] relative overflow-hidden">
+                <Slider {...settings}>
+                    {bannerImages.map((src, index) => (
+                        <div key={index}>
+                            <img
+                                src={src}
+                                alt={`배너 ${index + 1}`}
+                                className="w-full h-full object-cover"
+                            />
+                        </div>
+                    ))}
+                </Slider>
+            </div>
+        </>
+    );
 }

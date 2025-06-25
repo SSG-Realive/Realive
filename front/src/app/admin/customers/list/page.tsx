@@ -133,8 +133,8 @@ const CustomerListPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-7xl mx-auto">
+    <div className="w-full max-w-full min-h-screen bg-gray-50 p-2 sm:p-6 overflow-x-auto">
+      <div className="w-full max-w-full">
         {/* 헤더 */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -185,123 +185,145 @@ const CustomerListPage: React.FC = () => {
           </div>
         </div>
 
-        {/* 테이블 */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-          {loading ? (
-            <div className="flex items-center justify-center py-12">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
-              <span className="ml-3 text-gray-600">데이터를 불러오는 중...</span>
-            </div>
-          ) : error ? (
-            <div className="flex items-center justify-center py-12">
-              <div className="text-center">
-                <div className="text-red-500 text-lg mb-2">오류가 발생했습니다</div>
-                <div className="text-gray-600 mb-4">{error}</div>
+        {/* 데스크탑 표 */}
+        <div className="hidden md:block">
+          {/* 테이블 */}
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+            {loading ? (
+              <div className="flex items-center justify-center py-12">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
+                <span className="ml-3 text-gray-600">데이터를 불러오는 중...</span>
+              </div>
+            ) : error ? (
+              <div className="flex items-center justify-center py-12">
+                <div className="text-center">
+                  <div className="text-red-500 text-lg mb-2">오류가 발생했습니다</div>
+                  <div className="text-gray-600 mb-4">{error}</div>
+                  <button
+                    onClick={fetchCustomers}
+                    className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  >
+                    다시 시도
+                  </button>
+                </div>
+              </div>
+            ) : filteredCustomers.length === 0 ? (
+              <div className="flex items-center justify-center py-12">
+                <div className="text-center">
+                  <div className="text-gray-500 text-lg mb-2">고객이 없습니다</div>
+                  <div className="text-gray-400 text-sm">
+                    {search || status ? '검색 조건을 변경해보세요.' : '등록된 고객이 없습니다.'}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-16">
+                        번호
+                      </th>
+                      <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-16">
+                        프로필
+                      </th>
+                      <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-32">
+                        이름
+                      </th>
+                      <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-48">
+                        이메일
+                      </th>
+                      <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-24">
+                        상태
+                      </th>
+                      <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-24">
+                        액션
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {filteredCustomers.map((customer, index) => (
+                      <tr key={customer.id} className="hover:bg-gray-50 transition-colors">
+                        <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-900">
+                          {index + 1}
+                        </td>
+                        <td className="px-3 py-4 whitespace-nowrap text-center">
+                          <div className="flex justify-center items-center w-full">
+                            <img
+                              src={customer.image || '/images/default-profile.svg'}
+                              alt={`${customer.name}의 프로필`}
+                              className="h-8 w-8 rounded-full object-cover border-2 border-gray-200 mx-auto"
+                              onError={(e) => {
+                                (e.currentTarget as HTMLImageElement).src = '/images/placeholder.png';
+                              }}
+                            />
+                          </div>
+                        </td>
+                        <td className="px-3 py-4 whitespace-nowrap">
+                          <div className="text-sm font-medium text-gray-900 truncate max-w-[120px]" title={customer.name}>
+                            {customer.name}
+                          </div>
+                        </td>
+                        <td className="px-3 py-4 whitespace-nowrap">
+                          <div className="text-sm text-gray-900 truncate max-w-[180px]" title={customer.email}>
+                            {customer.email}
+                          </div>
+                        </td>
+                        <td className="px-3 py-4 whitespace-nowrap text-center">
+                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                            customer.is_active
+                              ? 'bg-green-100 text-green-800'
+                              : 'bg-red-100 text-red-800'
+                          }`}>
+                            {customer.is_active ? '활성' : '정지'}
+                          </span>
+                        </td>
+                        <td className="px-3 py-4 whitespace-nowrap text-center">
+                          <button
+                            onClick={() => handleToggleActive(customer)}
+                            disabled={updatingId === customer.id}
+                            className={`inline-flex items-center px-3 py-1 border border-transparent text-xs font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors ${
+                              customer.is_active
+                                ? 'bg-red-600 hover:bg-red-700 focus:ring-red-500 text-white'
+                                : 'bg-green-600 hover:bg-green-700 focus:ring-green-500 text-white'
+                            } ${updatingId === customer.id ? 'opacity-50 cursor-not-allowed' : ''}`}
+                          >
+                            {updatingId === customer.id ? (
+                              <>
+                                <div className="animate-spin rounded-full h-3 w-3 border-b border-white mr-1"></div>
+                                처리중
+                              </>
+                            ) : (
+                              customer.is_active ? '정지' : '복구'
+                            )}
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </div>
+        {/* 모바일 카드형 */}
+        <div className="block md:hidden space-y-4">
+          {filteredCustomers.map((customer, idx) => (
+            <div key={customer.id} className="bg-white rounded shadow p-4">
+              <div className="font-bold mb-2">번호: {idx + 1}</div>
+              <div className="mb-1">이름: {customer.name}</div>
+              <div className="mb-1">이메일: {customer.email}</div>
+              <div className="mb-1">상태: {customer.is_active ? '활성' : '비활성'}</div>
+              <div>
                 <button
-                  onClick={fetchCustomers}
-                  className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className={`px-3 py-1 rounded text-white mt-2 ${customer.is_active ? 'bg-green-500' : 'bg-gray-500'}`}
+                  onClick={() => handleToggleActive(customer)}
                 >
-                  다시 시도
+                  {customer.is_active ? '비활성화' : '활성화'}
                 </button>
               </div>
             </div>
-          ) : filteredCustomers.length === 0 ? (
-            <div className="flex items-center justify-center py-12">
-              <div className="text-center">
-                <div className="text-gray-500 text-lg mb-2">고객이 없습니다</div>
-                <div className="text-gray-400 text-sm">
-                  {search || status ? '검색 조건을 변경해보세요.' : '등록된 고객이 없습니다.'}
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-16">
-                      번호
-                    </th>
-                    <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-16">
-                      프로필
-                    </th>
-                    <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-32">
-                      이름
-                    </th>
-                    <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-48">
-                      이메일
-                    </th>
-                    <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-24">
-                      상태
-                    </th>
-                    <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-24">
-                      액션
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {filteredCustomers.map((customer, index) => (
-                    <tr key={customer.id} className="hover:bg-gray-50 transition-colors">
-                      <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {index + 1}
-                      </td>
-                      <td className="px-3 py-4 whitespace-nowrap text-center">
-                        <div className="flex justify-center items-center w-full">
-                          <img
-                            src={customer.image || '/images/default-profile.svg'}
-                            alt={`${customer.name}의 프로필`}
-                            className="h-8 w-8 rounded-full object-cover border-2 border-gray-200 mx-auto"
-                            onError={(e) => {
-                              (e.currentTarget as HTMLImageElement).src = '/images/placeholder.png';
-                            }}
-                          />
-                        </div>
-                      </td>
-                      <td className="px-3 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900 truncate max-w-[120px]" title={customer.name}>
-                          {customer.name}
-                        </div>
-                      </td>
-                      <td className="px-3 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900 truncate max-w-[180px]" title={customer.email}>
-                          {customer.email}
-                        </div>
-                      </td>
-                      <td className="px-3 py-4 whitespace-nowrap text-center">
-                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                          customer.is_active
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-red-100 text-red-800'
-                        }`}>
-                          {customer.is_active ? '활성' : '정지'}
-                        </span>
-                      </td>
-                      <td className="px-3 py-4 whitespace-nowrap text-center">
-                        <button
-                          onClick={() => handleToggleActive(customer)}
-                          disabled={updatingId === customer.id}
-                          className={`inline-flex items-center px-3 py-1 border border-transparent text-xs font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors ${
-                            customer.is_active
-                              ? 'bg-red-600 hover:bg-red-700 focus:ring-red-500 text-white'
-                              : 'bg-green-600 hover:bg-green-700 focus:ring-green-500 text-white'
-                          } ${updatingId === customer.id ? 'opacity-50 cursor-not-allowed' : ''}`}
-                        >
-                          {updatingId === customer.id ? (
-                            <>
-                              <div className="animate-spin rounded-full h-3 w-3 border-b border-white mr-1"></div>
-                              처리중
-                            </>
-                          ) : (
-                            customer.is_active ? '정지' : '복구'
-                          )}
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
+          ))}
         </div>
       </div>
     </div>

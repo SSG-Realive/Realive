@@ -6,8 +6,18 @@ import com.realive.dto.product.ProductListDTO;
 import com.realive.dto.product.ProductRequestDTO;
 import com.realive.dto.product.ProductResponseDTO;
 import com.realive.dto.product.ProductSearchCondition;
+import com.realive.dto.product.MonthlyProductRegistrationDTO;
+import com.realive.dto.product.DailyProductRegistrationDTO;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import java.time.LocalDateTime;
+import java.time.YearMonth;
+import java.time.LocalDate;
 
 public interface ProductService {
 
@@ -42,14 +52,23 @@ public interface ProductService {
     ProductResponseDTO getProductDetail(Long productId, Long sellerId);
 
     /**
-     * 구매자 전용 상품 목록 조회
-     */
-    PageResponseDTO<ProductListDTO> getVisibleProducts(CustomerProductSearchCondition condition);
-
-    /**
      * 관리자용 전체 상품 목록 조회
      * - 모든 판매자의 상품을 조회
      * - 필터링: 카테고리, 상태, 활성화 여부, 가격 범위, 키워드 검색
      */
     PageResponseDTO<ProductListDTO> getAllProductsForAdmin(ProductSearchCondition condition);
+
+    /**
+     * 월별 상품 등록 통계 조회
+     * - 지정된 기간 동안의 월별 상품 등록 수를 조회
+     * - 관리자 대시보드용
+     */
+    List<MonthlyProductRegistrationDTO> getMonthlyProductRegistrationStats(int months);
+
+    /**
+     * 일별 상품 등록 통계 조회
+     * - 지정된 기간 동안의 일별 상품 등록 수를 조회
+     * - 관리자 대시보드용
+     */
+    List<DailyProductRegistrationDTO> getDailyProductRegistrationStats(int days);
 }

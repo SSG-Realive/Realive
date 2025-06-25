@@ -1,17 +1,38 @@
-@import "tailwindcss/preflight";   /* 이전 @tailwind base */
-@import "tailwindcss/utilities";   /* 이전 @tailwind utilities */
+@import "tailwindcss/preflight";   /* 초기화 */
+@import "tailwindcss/utilities";   /* Tailwind 유틸리티 */
 @import "tw-animate-css";          /* 애니메이션 라이브러리 */
 @import "tailwindcss";
-@import "tw-animate-css";
 
+/* ✅ 폰트 import */
+@import url('https://cdn.jsdelivr.net/npm/gmarket-sans@1.2.1/style.css');
 
+@font-face {
+  font-family: 'AritaBuri-SemiBold';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2107@1.0/AritaBuri-SemiBold.woff')
+  format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* ✅ 스크롤바 제거 */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ✅ 커스텀 다크모드 variant */
 @custom-variant dark (&:is(.dark *));
 
+/* ✅ 커스텀 테마 변수 */
 @theme inline {
+  --font-sans: 'GmarketSansMedium', sans-serif;
+  --font-title: 'AritaBuri-SemiBold', serif;
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -116,11 +137,86 @@
   --sidebar-ring: oklch(0.551 0.027 264.364);
 }
 
+/* ✅ 폰트 적용 */
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
+    font-family: 'GmarketSansMedium', sans-serif;
   }
+
+  h1, h2, h3, h4, h5 {
+    font-family: 'AritaBuri-SemiBold', serif;
+  }
+}
+
+/* 판매자 로그인/회원가입 - 밝고 모던한 블루 포인트 디자인 */
+body.seller-login,
+body.seller-signup {
+  background: linear-gradient(135deg, #e0e7ff 0%, #f7fafc 100%) !important;
+  min-height: 100vh;
+  color: #222 !important;
+  font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
+}
+body.seller-login > div,
+body.seller-signup > div {
+  background: #fff !important;
+  border-radius: 24px;
+  box-shadow: 0 8px 32px rgba(37,99,235,0.08);
+  padding: 2.5rem 2rem !important;
+  max-width: 420px;
+  margin: 4rem auto !important;
+}
+body.seller-login h1,
+body.seller-signup h1 {
+  color: #2563eb !important;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+body.seller-login label,
+body.seller-signup label {
+  color: #2563eb !important;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  display: block;
+}
+body.seller-login input,
+body.seller-signup input {
+  background: #f1f5f9 !important;
+  color: #222 !important;
+  border: 1.5px solid #c7d2fe !important;
+  border-radius: 8px;
+  padding: 0.75rem 1rem !important;
+  margin-bottom: 1.25rem !important;
+  width: 100% !important;
+  font-size: 1rem;
+  transition: border 0.2s;
+}
+body.seller-login input:focus,
+body.seller-signup input:focus {
+  border: 1.5px solid #2563eb !important;
+  outline: none;
+}
+body.seller-login button,
+body.seller-signup button {
+  background: linear-gradient(90deg, #2563eb 60%, #60a5fa 100%) !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  padding: 0.9rem 0 !important;
+  width: 100% !important;
+  margin-top: 1rem;
+  box-shadow: 0 2px 8px rgba(37,99,235,0.08);
+  transition: background 0.2s;
+}
+body.seller-login button:hover,
+body.seller-signup button:hover {
+  background: #1d4ed8 !important;
 }

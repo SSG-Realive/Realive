@@ -21,6 +21,7 @@ public class ProductListDTO {
 
     private Long id;                   // 상품 ID
     private String name;               // 상품명
+    private String description;        // 상품 설명
     private int price;                 // 가격
     private String status;             // 상태 (상, 중, 하)
     private boolean isActive;          // 판매 여부
@@ -32,11 +33,17 @@ public class ProductListDTO {
     private Long sellerId;             // 판매자 ID
     private int stock;                 // 재고
     private LocalDateTime createdAt;   // 등록일
+    
+    // 관리자 매입 상품 관련 필드
+    private Integer purchasePrice;     // 매입가
+    private String purchasedAt;        // 매입일 (문자열로 변환)
+    private Boolean isAuctioned;       // 경매 등록 여부
 
     public static ProductListDTO from(Product product, String imageUrl) {
         return ProductListDTO.builder()
                 .id(product.getId())
                 .name(product.getName())
+                .description(product.getDescription())
                 .price(product.getPrice())
                 .status(product.getStatus().name())  // enum 처리
                 .isActive(product.isActive())

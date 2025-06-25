@@ -114,3 +114,55 @@ export async function adminLogin(email: string, password: string): Promise<Admin
     throw error;
   }
 }
+
+export async function getMonthlySummariesForPeriod(startDate: string, endDate: string) {
+  try {
+    const response = await adminApi.get(`/admin/stats/monthly-summaries-for-period?startDate=${startDate}&endDate=${endDate}`);
+    return response.data?.data || [];
+  } catch (error) {
+    console.error('Failed to fetch monthly summaries for period:', error);
+    throw error;
+  }
+}
+
+// 상품 품질별 통계 조회
+export async function getProductQualityStats() {
+  try {
+    const response = await adminApi.get('/admin/products?size=1000');
+    const products = response.data.dtoList || [];
+    
+    const stats = {
+      high: products.filter((p: any) => p.status === "상").length,
+      medium: products.filter((p: any) => p.status === "중").length,
+      low: products.filter((p: any) => p.status === "하").length,
+      total: products.length
+    };
+    
+    return stats;
+  } catch (error) {
+    console.error('상품 품질별 통계 조회 실패:', error);
+    throw error;
+  }
+}
+
+// 월별 상품 등록 통계 조회
+export async function getMonthlyProductRegistrationStats(months: number = 6) {
+  try {
+    const response = await adminApi.get(`/admin/products/monthly-stats?months=${months}`);
+    return response.data;
+  } catch (error) {
+    console.error('월별 상품 등록 통계 조회 실패:', error);
+    throw error;
+  }
+}
+
+// 일별 상품 등록 통계 조회
+export async function getDailyProductRegistrationStats(days: number = 30) {
+  try {
+    const response = await adminApi.get(`/admin/products/daily-stats?days=${days}`);
+    return response.data;
+  } catch (error) {
+    console.error('일별 상품 등록 통계 조회 실패:', error);
+    throw error;
+  }
+}

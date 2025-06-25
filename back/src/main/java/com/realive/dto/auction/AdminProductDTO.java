@@ -20,6 +20,7 @@ public class AdminProductDTO {
     private LocalDateTime purchasedAt;
     private boolean auctioned;
     private String imageThumbnailUrl;
+    private String productStatus; // 상품 상태 (상/중/하)
 
     public static AdminProductDTO fromEntity(AdminProduct adminProduct, Product product, String imageThumbnailUrl) {
         if (adminProduct == null) return null;
@@ -34,7 +35,8 @@ public class AdminProductDTO {
 
         if (product != null) {
             builder.productName(product.getName())
-                    .productDescription(product.getDescription());
+                    .productDescription(product.getDescription())
+                    .productStatus(product.getStatus().name());
         }
         return builder.build();
     }
