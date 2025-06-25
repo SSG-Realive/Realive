@@ -79,15 +79,15 @@ export default function QnaManagementPage() {
               <label htmlFor="search" className="block text-sm font-medium text-gray-700 mb-2">
                 검색
               </label>
-              <input
+        <input
                 id="search"
-                type="text"
+          type="text"
                 placeholder="제목 또는 작성자로 검색"
-                value={search}
-                onChange={e => setSearch(e.target.value)}
+          value={search}
+          onChange={e => setSearch(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-              />
-            </div>
+        />
+      </div>
             <div className="sm:w-48">
               <label htmlFor="answeredFilter" className="block text-sm font-medium text-gray-700 mb-2">
                 답변 상태
@@ -134,8 +134,8 @@ export default function QnaManagementPage() {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
                       액션
                     </th>
-                  </tr>
-                </thead>
+          </tr>
+        </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
                   {paginatedQna.map((q, idx) => (
                     <tr key={q.id} className="hover:bg-gray-50">
@@ -163,13 +163,13 @@ export default function QnaManagementPage() {
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        <button 
+                <button 
                           className="text-blue-600 hover:text-blue-900 underline" 
-                          onClick={() => router.push(`/admin/qna-management/${q.id}`)}
-                        >
-                          상세
-                        </button>
-                      </td>
+                  onClick={() => router.push(`/admin/qna-management/${q.id}`)}
+                >
+                  상세
+                </button>
+              </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <div className="flex space-x-2">
                           <button className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-xs">
@@ -179,11 +179,11 @@ export default function QnaManagementPage() {
                             삭제
                           </button>
                         </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
             </div>
           </div>
         </div>

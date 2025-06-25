@@ -1,7 +1,6 @@
-
 import { sellerApi } from '@/lib/apiClient';
 import { useSellerAuthStore } from '@/store/seller/useSellerAuthStore';
-import { SellerDashboardResponse } from '@/types/seller/dashboard/sellerDashboardResponse';
+import { SellerDashboardResponse, SellerSalesStatsDTO, DailySalesDTO, MonthlySalesDTO } from '@/types/seller/dashboard/sellerDashboardResponse';
 import { LoginResponse } from '@/types/seller/login/loginResponse';
 
 
@@ -45,6 +44,22 @@ export async function updateProfile(data: SellerUpdateRequest): Promise<void> {
 
 export async function getDashboard() : Promise<SellerDashboardResponse> {
   const response = await sellerApi.get('/seller/dashboard');
+  return response.data;
+}
+
+// 새로운 판매 통계 API 함수들
+export async function getSalesStatistics(startDate: string, endDate: string): Promise<SellerSalesStatsDTO> {
+  const response = await sellerApi.get(`/seller/dashboard/sales-stats?startDate=${startDate}&endDate=${endDate}`);
+  return response.data;
+}
+
+export async function getDailySalesTrend(startDate: string, endDate: string): Promise<DailySalesDTO[]> {
+  const response = await sellerApi.get(`/seller/dashboard/daily-sales-trend?startDate=${startDate}&endDate=${endDate}`);
+  return response.data;
+}
+
+export async function getMonthlySalesTrend(startDate: string, endDate: string): Promise<MonthlySalesDTO[]> {
+  const response = await sellerApi.get(`/seller/dashboard/monthly-sales-trend?startDate=${startDate}&endDate=${endDate}`);
   return response.data;
 }
 

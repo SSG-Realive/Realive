@@ -43,13 +43,12 @@ export default function AuctionManagementPage() {
   }
 
   const filteredAuctions = auctions.filter(a => 
-    a.name.includes(auctionSearch) || 
-    a.productName.includes(auctionSearch) || 
-    a.sellerName.includes(auctionSearch)
+    (a.name?.includes(auctionSearch) || false) || 
+    (a.adminProduct?.productName?.includes(auctionSearch) || false)
   );
   const filteredBids = bids.filter(b => 
-    b.customerName.includes(bidSearch) || 
-    b.auctionName.includes(bidSearch)
+    (b.customerName?.includes(bidSearch) || false) || 
+    (b.auctionName?.includes(bidSearch) || false)
   );
 
   if (loading) {
@@ -91,7 +90,7 @@ export default function AuctionManagementPage() {
             {filteredAuctions.slice(0, 5).map(a => (
               <tr key={a.id}>
                 <td className="px-2 py-1">{a.name}</td>
-                <td className="px-2 py-1">{a.sellerName}</td>
+                <td className="px-2 py-1">{a.adminProduct?.productName || 'N/A'}</td>
                 <td className="px-2 py-1">
                   {a.status === 'ACTIVE' ? '진행중' : a.status === 'ENDED' ? '종료' : '취소됨'}
                 </td>

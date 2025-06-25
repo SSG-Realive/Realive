@@ -22,6 +22,11 @@ export default function SellerMePage() {
   const [password, setPassword] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true); // 로딩 상태는 true로 시작
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
 
   // ▼▼▼ 이 useEffect를 추가합니다 ▼▼▼
   useEffect(() => {
@@ -81,9 +86,11 @@ export default function SellerMePage() {
   if (checking || loading) {
     return (
         <>
-          <SellerHeader />
+          <div className="hidden">
+            <SellerHeader toggleSidebar={toggleSidebar} />
+          </div>
           <SellerLayout>
-            <div className="p-8">로딩 중...</div>
+            <div className="p-4 sm:p-8">로딩 중...</div>
           </SellerLayout>
         </>
     );
@@ -91,31 +98,86 @@ export default function SellerMePage() {
 
   return (
       <>
-        <SellerHeader />
+        <div className="hidden">
+          <SellerHeader toggleSidebar={toggleSidebar} />
+        </div>
         <SellerLayout>
-          <div style={{ maxWidth: 500, margin: '0 auto', padding: '2rem' }}>
-            <h1>판매자 정보 수정</h1>
-            <form onSubmit={handleSubmit}>
-              {/* ... (나머지 JSX는 기존과 동일) ... */}
-              <div style={{ marginBottom: '1rem' }}>
-                <label htmlFor="email">이메일 (수정 불가)</label>
-                <input id="email" type="email" value={email} disabled style={{ width: '100%', padding: '0.5rem', marginTop: '0.25rem', backgroundColor: '#f5f5f5' }}/>
-              </div>
-              <div style={{ marginBottom: '1rem' }}>
-                <label htmlFor="name">이름</label>
-                <input id="name" type="text" value={name} onChange={(e) => setName(e.target.value)} required style={{ width: '100%', padding: '0.5rem', marginTop: '0.25rem' }}/>
-              </div>
-              <div style={{ marginBottom: '1rem' }}>
-                <label htmlFor="phone">전화번호</label>
-                <input id="phone" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} required style={{ width: '100%', padding: '0.5rem', marginTop: '0.25rem' }}/>
-              </div>
-              <div style={{ marginBottom: '1rem' }}>
-                <label htmlFor="password">새 비밀번호 (변경 시에만 입력)</label>
-                <input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="비밀번호를 변경하려면 입력하세요" style={{ width: '100%', padding: '0.5rem', marginTop: '0.25rem' }}/>
-              </div>
-              {error && (<p style={{ color: 'red', marginBottom: '1rem' }}>{error}</p>)}
-              <button type="submit" style={{ width: '100%', padding: '0.75rem', backgroundColor: '#333', color: '#fff', border: 'none', cursor: 'pointer' }}>수정하기</button>
-            </form>
+          <div className="max-w-2xl mx-auto p-4 sm:p-6">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
+              <h1 className="text-xl sm:text-2xl font-bold mb-6 text-gray-900">판매자 정보 수정</h1>
+              
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div>
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                    이메일 (수정 불가)
+                  </label>
+                  <input 
+                    id="email" 
+                    type="email" 
+                    value={email} 
+                    disabled 
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-500 cursor-not-allowed"
+                  />
+                </div>
+                
+                <div>
+                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+                    이름
+                  </label>
+                  <input 
+                    id="name" 
+                    type="text" 
+                    value={name} 
+                    onChange={(e) => setName(e.target.value)} 
+                    required 
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="이름을 입력하세요"
+                  />
+                </div>
+                
+                <div>
+                  <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+                    전화번호
+                  </label>
+                  <input 
+                    id="phone" 
+                    type="tel" 
+                    value={phone} 
+                    onChange={(e) => setPhone(e.target.value)} 
+                    required 
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="전화번호를 입력하세요"
+                  />
+                </div>
+                
+                <div>
+                  <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                    새 비밀번호 (변경 시에만 입력)
+                  </label>
+                  <input 
+                    id="password" 
+                    type="password" 
+                    value={password} 
+                    onChange={(e) => setPassword(e.target.value)} 
+                    placeholder="비밀번호를 변경하려면 입력하세요" 
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+                
+                {error && (
+                  <div className="bg-red-50 border border-red-200 rounded-md p-3">
+                    <p className="text-red-600 text-sm">{error}</p>
+                  </div>
+                )}
+                
+                <button 
+                  type="submit" 
+                  className="w-full bg-gray-800 hover:bg-gray-900 text-white py-3 px-4 rounded-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+                >
+                  수정하기
+                </button>
+              </form>
+            </div>
           </div>
         </SellerLayout>
       </>

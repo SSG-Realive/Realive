@@ -23,7 +23,7 @@ export default function ProductDetailPage() {
     useEffect(() => {
         if (checking) return;
 
-        const token = useSellerAuthStore.getState().token;
+        const token = useSellerAuthStore.getState().accessToken;
         if (!token) {
             router.push('/seller/login');
             return;
@@ -64,46 +64,75 @@ export default function ProductDetailPage() {
         router.push(`/seller/products/${productId}/edit`);
     };
 
-    if (checking) return <div className="p-8">인증 확인 중...</div>;
+    if (checking) return <div className="p-4 sm:p-8">인증 확인 중...</div>;
     if (loading) return <div className="p-4">로딩 중...</div>;
     if (error) return <div className="p-4 text-red-600">{error}</div>;
     if (!product) return <div className="p-4">상품 정보를 불러올 수 없습니다.</div>;
 
     return (
         <>
+            <div className="hidden">
             <SellerHeader />
+            </div>
             <SellerLayout>
-                <div className="max-w-3xl mx-auto p-6">
-                    <h1 className="text-2xl font-bold mb-4">{product.name}</h1>
-                    <p className="mb-2">상품 설명: {product.description}</p>
-                    <p className="mb-2">가격: {product.price.toLocaleString()}원</p>
-                    <p className="mb-2">재고: {product.stock}</p>
-                    <p className="mb-2">크기: {product.width} x {product.depth} x {product.height}</p>
-                    <p className="mb-2">상태: {product.status}</p>
-                    <p className="mb-2">활성화 여부: {product.active ? '활성' : '비활성'}</p>
-                    <p className="mb-2">카테고리 : {product.categoryName}</p>
+                <div className="max-w-3xl mx-auto p-4 sm:p-6">
+                    <h1 className="text-xl sm:text-2xl font-bold mb-4 break-words">{product.name}</h1>
+                    
+                    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 mb-6">
+                        <h2 className="text-lg font-semibold mb-4 text-gray-900">상품 정보</h2>
+                        <div className="space-y-3">
+                            <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                                <span className="text-sm font-medium text-gray-600 min-w-[80px]">상품 설명:</span>
+                                <span className="text-gray-900 break-words">{product.description}</span>
+                            </div>
+                            <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                                <span className="text-sm font-medium text-gray-600 min-w-[80px]">가격:</span>
+                                <span className="text-gray-900 font-semibold">{product.price.toLocaleString()}원</span>
+                            </div>
+                            <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                                <span className="text-sm font-medium text-gray-600 min-w-[80px]">재고:</span>
+                                <span className="text-gray-900">{product.stock}개</span>
+                            </div>
+                            <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                                <span className="text-sm font-medium text-gray-600 min-w-[80px]">크기:</span>
+                                <span className="text-gray-900">{product.width} x {product.depth} x {product.height}</span>
+                            </div>
+                            <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                                <span className="text-sm font-medium text-gray-600 min-w-[80px]">상태:</span>
+                                <span className="text-gray-900">{product.status}</span>
+                            </div>
+                            <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                                <span className="text-sm font-medium text-gray-600 min-w-[80px]">활성화:</span>
+                                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                                    product.isActive 
+                                        ? 'bg-green-100 text-green-800' 
+                                        : 'bg-red-100 text-red-800'
+                                }`}>
+                                    {product.isActive ? '활성' : '비활성'}
+                                </span>
+                            </div>
+                            <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                                <span className="text-sm font-medium text-gray-600 min-w-[80px]">카테고리:</span>
+                                <span className="text-gray-900">{product.categoryName}</span>
+                            </div>
+                        </div>
+                    </div>
 
-                    <h2 className="mt-6 font-semibold">배송 정보</h2>
-                    {product.deliveryPolicy ? (
-                        <ul className="list-disc list-inside ml-4">
-                            <li>유형: {product.deliveryPolicy.type}</li>
-                            <li>비용: {product.deliveryPolicy.cost}원</li>
-                            <li>지역 제한: {product.deliveryPolicy.regionLimit}</li>
-                        </ul>
-                    ) : (
+                    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 mb-6">
+                        <h2 className="text-lg font-semibold mb-4 text-gray-900">배송 정보</h2>
                         <p className="text-gray-600">배송 정보가 없습니다.</p>
-                    )}
+                    </div>
 
-                    <div className="flex gap-4 mt-8">
+                    <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                         <button
                             onClick={handleEdit}
-                            className="bg-blue-600 text-white px-4 py-2 rounded"
+                            className="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 sm:py-2 rounded-lg font-medium transition-colors"
                         >
                             수정하기
                         </button>
                         <button
                             onClick={handleDelete}
-                            className="bg-red-600 text-white px-4 py-2 rounded"
+                            className="flex-1 sm:flex-none bg-red-600 hover:bg-red-700 text-white px-4 py-3 sm:py-2 rounded-lg font-medium transition-colors"
                         >
                             삭제하기
                         </button>

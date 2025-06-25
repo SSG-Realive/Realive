@@ -19,9 +19,14 @@ export default function ProductListPage() {
   const [products, setProducts] = useState<ProductListItem[]>([]);
   const [totalPages, setTotalPages] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const [keyword, setKeyword] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
+
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
 
   useEffect(() => {
     if (checking) return;
@@ -60,37 +65,52 @@ export default function ProductListPage() {
     router.push('/seller/products/new');
   };
 
-    if (checking) return <div className="p-8">인증 확인 중...</div>; // ✅ 인증 확인 중 UI 
+    if (checking) return (
+      <div className="w-full max-w-full min-h-screen overflow-x-hidden bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">인증 확인 중...</p>
+        </div>
+      </div>
+    ); // ✅ 인증 확인 중 UI 
   return (
     <>
-      <SellerHeader />
+      <div className="hidden">
+      <SellerHeader toggleSidebar={toggleSidebar} />
+      </div>
       <SellerLayout>
-        <div className="max-w-5xl mx-auto p-6">
-          <h1 className="text-2xl font-bold mb-4">내 상품 목록</h1>
+        <div className="flex-1 w-full h-full px-4 py-8 bg-gray-100">
+          <h1 className="text-xl md:text-2xl font-bold mb-4 md:mb-6">내 상품 목록</h1>
 
           {/* 🔍 검색 필터 */}
-          <div className="flex gap-4 mb-4">
+          <div className="flex flex-col md:flex-row gap-3 md:gap-4 mb-4 md:mb-6">
             <input
               type="text"
               placeholder="상품명 검색"
               value={keyword}
               onChange={(e) => setKeyword(e.target.value)}
-              className="border p-2 w-1/3"
+              className="flex-1 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="border p-2 w-1/4"
+              className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">전체 상태</option>
               <option value="상">상</option>
               <option value="중">중</option>
               <option value="하">하</option>
             </select>
-            <button onClick={handleSearch} className="bg-blue-600 text-white px-4 py-2 rounded">
+            <button 
+              onClick={handleSearch} 
+              className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+            >
               검색
             </button>
-            <button onClick={handleRegisterClick} className="ml-auto bg-green-600 text-white px-4 py-2 rounded">
+            <button 
+              onClick={handleRegisterClick} 
+              className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors"
+            >
               상품 등록
             </button>
           </div>
@@ -98,34 +118,44 @@ export default function ProductListPage() {
           {/* 📋 목록 */}
           <div className="grid gap-4">
             {products.map((product) => (
-              <div key={product.id} className="border p-4 rounded">
-                <h2 className="font-semibold">{product.name}</h2>
-                <p>가격: {product.price.toLocaleString()}원</p>
-                <p>상태: {product.status}</p>
+              <div key={product.id} className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow">
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                  <div className="flex-1">
+                    <h2 className="font-semibold text-lg text-gray-800 mb-2">{product.name}</h2>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-sm text-gray-600">
+                      <p>가격: <span className="font-medium">{product.price.toLocaleString()}원</span></p>
+                      <p>상태: <span className="font-medium">{product.status}</span></p>
+                    </div>
+                  </div>
                 <button
                   onClick={() => router.push(`/seller/products/${product.id}`)}
-                  className="mt-2 px-4 py-1 bg-blue-600 text-white rounded"
+                    className="w-full md:w-auto bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                 >
                   상세 보기
                 </button>
+                </div>
               </div>
             ))}
           </div>
 
           {/* 페이지네이션 */}
+          {totalPages > 1 && (
           <div className="flex justify-center mt-6 space-x-2">
             {Array.from({ length: totalPages }, (_, i) => (
               <button
                 key={i + 1}
                 onClick={() => goToPage(i + 1)}
-                className={`px-3 py-1 border rounded ${
-                  currentPage === i + 1 ? 'bg-blue-600 text-white' : 'bg-white text-gray-800'
-                }`}
+                  className={`px-3 py-2 border rounded-md text-sm ${
+                    currentPage === i + 1 
+                      ? 'bg-blue-600 text-white border-blue-600' 
+                      : 'bg-white text-gray-800 border-gray-300 hover:bg-gray-50'
+                  } focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors`}
               >
                 {i + 1}
               </button>
             ))}
           </div>
+          )}
         </div>
       </SellerLayout>
     </>
