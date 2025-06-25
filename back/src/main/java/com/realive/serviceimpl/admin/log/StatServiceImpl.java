@@ -537,6 +537,37 @@ public class StatServiceImpl implements StatService {
         return salesLogRepository.getSellerSalesDetailsForPeriod(startDate, endDate);
     }
 
+    @Override
+    public List<MonthlySalesSummaryDTO> getMonthlySummariesForPeriod(LocalDate startDate, LocalDate endDate) {
+        log.info("getMonthlySummariesForPeriod 호출됨 - 기간: {} ~ {}", startDate, endDate);
+
+        // Repository에서 월별 데이터 조회
+        List<Object[]> rawData = salesLogRepository.getMonthlySummariesForPeriodRaw(startDate, endDate);
+
+        List<MonthlySalesSummaryDTO> monthlySummaries = new ArrayList<>();
+
+        for (Object[] row : rawData) {
+            Integer year = (Integer) row[0];
+            Integer month = (Integer) row[1];
+            Long salesCount = (Long) row[2];
+            Long salesAmount = (Long) row[3];
+            Long quantity = (Long) row[4];
+
+            YearMonth yearMonth = YearMonth.of(year, month);
+
+            MonthlySalesSummaryDTO summary = MonthlySalesSummaryDTO.builder()
+                    .month(yearMonth)
+                    .totalSalesCount(salesCount != null ? salesCount.intValue() : 0)
+                    .totalSalesAmount(salesAmount != null ? salesAmount.intValue() : 0)
+                    .totalQuantity(quantity != null ? quantity.intValue() : 0)
+                    .build();
+
+            monthlySummaries.add(summary);
+        }
+
+        return monthlySummaries;
+    }
+
     // --- Helper methods for generating trend data (Mock 데이터 생성용) ---
     private <T> List<DateBasedValueDTO<T>> generateDateBasedTrend(LocalDate startDate, LocalDate endDate, java.util.function.Supplier<T> valueSupplier) {
         List<DateBasedValueDTO<T>> trend = new ArrayList<>();

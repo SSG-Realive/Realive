@@ -57,22 +57,22 @@ public class AdminProductServiceImpl implements AdminProductService {
     @Override
     @Transactional
     public AdminProductDTO purchaseProduct(AdminPurchaseRequestDTO requestDTO, Integer adminId) {
-        log.info("관리자 상품 매입 처리 시작: adminId={}, productId={}, price={}", 
-            adminId, requestDTO.getProductId(), requestDTO.getPurchasePrice());
+        log.info("관리자 상품 매입 처리 시작: adminId={}, productId={}, price={}",
+                adminId, requestDTO.getProductId(), requestDTO.getPurchasePrice());
 
         // 1. 관리자 존재 확인
         Admin admin = adminRepository.findById(adminId)
-            .orElseThrow(() -> new NoSuchElementException("존재하지 않는 관리자입니다."));
+                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 관리자입니다."));
 
         // 2. 상품 존재 여부 확인
         Product product = productRepository.findById(requestDTO.getProductId().longValue())
-            .orElseThrow(() -> new NoSuchElementException("상품을 찾을 수 없습니다."));
+                .orElseThrow(() -> new NoSuchElementException("상품을 찾을 수 없습니다."));
 
         // 3. 매입 가격 검증 (상품 가격 이상이어야 함)
         if (requestDTO.getPurchasePrice() < product.getPrice()) {
             throw new IllegalStateException(
-                String.format("매입 가격(%d원)이 상품 가격(%d원)보다 낮습니다. 상품 가격 이상으로 매입해주세요.", 
-                    requestDTO.getPurchasePrice(), product.getPrice())
+                    String.format("매입 가격(%d원)이 상품 가격(%d원)보다 낮습니다. 상품 가격 이상으로 매입해주세요.",
+                            requestDTO.getPurchasePrice(), product.getPrice())
             );
         }
 
@@ -107,39 +107,39 @@ public class AdminProductServiceImpl implements AdminProductService {
 
         // 9. AdminProduct 생성
         AdminProduct adminProduct = AdminProduct.builder()
-            .productId(requestDTO.getProductId())
-            .purchasePrice(requestDTO.getPurchasePrice())
-            .purchasedAt(LocalDateTime.now())
-            .isAuctioned(false)
-            .build();
+                .productId(requestDTO.getProductId())
+                .purchasePrice(requestDTO.getPurchasePrice())
+                .purchasedAt(LocalDateTime.now())
+                .isAuctioned(false)
+                .build();
 
         // 10. AdminProduct 저장
         AdminProduct savedAdminProduct = adminProductRepository.save(adminProduct);
         log.info("관리자 상품 매입 완료: adminProductId={}", savedAdminProduct.getId());
 
         return AdminProductDTO.fromEntity(savedAdminProduct, product,
-            productImageRepository.findFirstByProductIdAndIsThumbnailTrueAndMediaType(product.getId(), MediaType.IMAGE)
-                .map(ProductImage::getUrl)
-                .orElse(null));
+                productImageRepository.findFirstByProductIdAndIsThumbnailTrueAndMediaType(product.getId(), MediaType.IMAGE)
+                        .map(ProductImage::getUrl)
+                        .orElse(null));
     }
 
     @Override
     public AdminProductDTO getAdminProduct(Integer productId) {
         AdminProduct adminProduct = adminProductRepository.findByProductId(productId)
-            .orElseThrow(() -> new NoSuchElementException("관리자 상품을 찾을 수 없습니다."));
+                .orElseThrow(() -> new NoSuchElementException("관리자 상품을 찾을 수 없습니다."));
 
         Product product = productRepository.findById(productId.longValue())
                 .orElse(null);
 
         return AdminProductDTO.fromEntity(adminProduct, product,
-            productImageRepository.findFirstByProductIdAndIsThumbnailTrueAndMediaType(product.getId(), MediaType.IMAGE)
-                .map(ProductImage::getUrl)
-                .orElse(null));
+                productImageRepository.findFirstByProductIdAndIsThumbnailTrueAndMediaType(product.getId(), MediaType.IMAGE)
+                        .map(ProductImage::getUrl)
+                        .orElse(null));
     }
 
     @Override
     public Page<AdminProductDTO> getAllAdminProducts(Pageable pageable, String categoryFilter, Boolean isAuctioned) {
-        log.info("관리자 물품 목록 조회 요청 - Pageable: {}, Category: {}, IsAuctioned: {}", 
+        log.info("관리자 물품 목록 조회 요청 - Pageable: {}, Category: {}, IsAuctioned: {}",
                 pageable, categoryFilter, isAuctioned);
 
         Specification<AdminProduct> spec = (root, query, criteriaBuilder) -> {
@@ -173,7 +173,7 @@ public class AdminProductServiceImpl implements AdminProductService {
     @Override
     public Optional<AdminProductDTO> getAdminProductDetails(Integer adminProductId) {
         log.info("관리자 물품 상세 정보 조회 요청 - AdminProductId: {}", adminProductId);
-    
+
         return adminProductRepository.findById(adminProductId)
                 .map(adminProduct -> {
                     Product product = productRepository.findById(adminProduct.getProductId().longValue()).orElse(null);
@@ -188,7 +188,7 @@ public class AdminProductServiceImpl implements AdminProductService {
     @Override
     public PageResponseDTO<ProductListDTO> getAdminProducts(ProductSearchCondition condition) {
         log.info("관리자 물품 목록 조회 - 조건: {}", condition);
-        
+
         // 1. AdminProduct 목록 조회 (페이징 없이)
         Specification<AdminProduct> spec = (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
@@ -226,7 +226,6 @@ public class AdminProductServiceImpl implements AdminProductService {
 
         // 2. AdminProduct 목록 조회
         List<AdminProduct> adminProducts = adminProductRepository.findAll(spec);
-        
         if (adminProducts.isEmpty()) {
             return PageResponseDTO.<ProductListDTO>withAll()
                     .pageRequestDTO(condition)
@@ -237,10 +236,10 @@ public class AdminProductServiceImpl implements AdminProductService {
 
         // 3. AdminProduct를 AdminProductDTO로 변환
         List<AdminProductDTO> adminProductDTOs = convertToAdminProductDTOs(adminProducts);
-        
+
         // 4. createdAt 기준으로 정렬
         adminProductDTOs.sort((p1, p2) -> p2.getPurchasedAt().compareTo(p1.getPurchasedAt()));
-        
+
         // 5. 페이징 처리
         int start = (condition.getPage() - 1) * condition.getSize();
         int end = Math.min(start + condition.getSize(), adminProductDTOs.size());
@@ -295,16 +294,16 @@ public class AdminProductServiceImpl implements AdminProductService {
         Map<Long, String> thumbnailUrlMap = productImageRepository.findThumbnailUrlsByProductIds(productIds, MediaType.IMAGE)
                 .stream()
                 .collect(Collectors.toMap(
-                    row -> (Long) row[0],
-                    row -> (String) row[1]
+                        row -> (Long) row[0],
+                        row -> (String) row[1]
                 ));
 
         // 4. DTO 변환
         return adminProducts.stream()
                 .map(adminProduct -> {
                     Product product = productMap.get(adminProduct.getProductId().longValue());
-                    String thumbnailUrl = product != null ? 
-                        thumbnailUrlMap.get(product.getId()) : null;
+                    String thumbnailUrl = product != null ?
+                            thumbnailUrlMap.get(product.getId()) : null;
                     return AdminProductDTO.fromEntity(adminProduct, product, thumbnailUrl);
                 })
                 .collect(Collectors.toList());
