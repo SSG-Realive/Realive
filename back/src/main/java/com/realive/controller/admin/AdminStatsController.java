@@ -459,6 +459,38 @@ public class AdminStatsController {
         }
     }
 
+    @Operation(summary = "기간별 월별 판매 요약 리스트 조회",
+            description = "지정된 기간 동안의 월별 판매 요약 정보를 리스트로 조회합니다.")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "조회 성공",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = MonthlySalesSummaryDTOListApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "500", description = "서버 내부 오류",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiResponse.class)))
+    })
+    @GetMapping("/monthly-summaries-for-period")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<ApiResponse<List<MonthlySalesSummaryDTO>>> getMonthlySummariesForPeriod(
+            @Parameter(description = "조회 시작일 (YYYY-MM-DD)", required = true)
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @Parameter(description = "조회 종료일 (YYYY-MM-DD)", required = true)
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+
+        log.info("GET /api/admin/stats/monthly-summaries-for-period - startDate: {}, endDate: {}", startDate, endDate);
+
+        try {
+            List<MonthlySalesSummaryDTO> summaries = statService.getMonthlySummariesForPeriod(startDate, endDate);
+            if (summaries == null || summaries.isEmpty()) {
+                return ResponseEntity.ok(ApiResponse.success("해당 기간의 월별 판매 요약 데이터가 없습니다.", Collections.emptyList()));
+            }
+            return ResponseEntity.ok(ApiResponse.success(summaries));
+        } catch (Exception e) {
+            log.error("기간별 월별 판매 요약 조회 중 오류 발생 - 기간: {} ~ {}", startDate, endDate, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), "서버 내부 오류가 발생했습니다."));
+        }
+    }
+
     // --- ApiResponse의 Schema 정의를 위한 내부 정적 클래스 ---
     private static class AdminDashboardDTOApiResponse extends ApiResponse<AdminDashboardDTO> {}
     private static class SalesPeriodStatsDTOApiResponse extends ApiResponse<SalesPeriodStatsDTO> {}
@@ -472,4 +504,5 @@ public class AdminStatsController {
     private static class CategorySalesSummaryDTOListApiResponse extends ApiResponse<List<CategorySalesSummaryDTO>> {}
     private static class DailySalesSummaryDTOListApiResponse extends ApiResponse<List<DailySalesSummaryDTO>> {}
     private static class MapApiResponse extends ApiResponse<Map<String,Object>>{}
+    private static class MonthlySalesSummaryDTOListApiResponse extends ApiResponse<List<MonthlySalesSummaryDTO>> {}
 }

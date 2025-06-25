@@ -18,5 +18,12 @@ export default function SellerIndexPage() {
     }
   }, [router]);
 
-  return <div className="p-8">이동 중...</div>;
+  return (
+    <div className="w-full max-w-full min-h-screen overflow-x-hidden bg-gray-50 flex items-center justify-center">
+      <div className="text-center p-8">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+        <p className="text-gray-600 text-lg">이동 중...</p>
+      </div>
+    </div>
+  );
 }

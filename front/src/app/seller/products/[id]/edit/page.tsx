@@ -42,11 +42,6 @@ export default function ProductEditPage() {
                 // form 세팅
                 setForm({
                     ...productData,
-                    deliveryPolicy: productData.deliveryPolicy ?? {
-                        type: '무료배송',
-                        cost: 0,
-                        regionLimit: ''
-                    }
                 });
 
                 // parentCategoryId state 에만 유지
@@ -74,7 +69,7 @@ export default function ProductEditPage() {
             setForm({
                 ...form,
                 stock: newStock,
-                active: newStock === 0 ? false : form.active,  // 🚩 재고가 0이면 active false 강제 설정
+                isActive: newStock === 0 ? false : form.isActive,  // 🚩 재고가 0이면 isActive false 강제 설정
             });
         } else {
             setForm({ ...form, [name]: value });
@@ -101,7 +96,7 @@ export default function ProductEditPage() {
         formData.append('depth', String(form.depth || 0));
         formData.append('height', String(form.height || 0));
         formData.append('status', form.status);
-        formData.append('active', String(form.active));
+        formData.append('active', String(form.isActive));
         formData.append('categoryId', String(form.categoryId)); // ✅ categoryId 만 서버 전송
 
         // 이미지
@@ -109,13 +104,6 @@ export default function ProductEditPage() {
         if (videoThumbnail) formData.append('videoThumbnail', videoThumbnail);
         if (subImages) {
             Array.from(subImages).forEach((file) => formData.append('subImages', file));
-        }
-
-        // 배송 정책
-        if (form.deliveryPolicy) {
-            formData.append('deliveryPolicy.type', form.deliveryPolicy.type);
-            formData.append('deliveryPolicy.cost', String(form.deliveryPolicy.cost));
-            formData.append('deliveryPolicy.regionLimit', form.deliveryPolicy.regionLimit);
         }
 
         try {
@@ -139,7 +127,7 @@ export default function ProductEditPage() {
         setForm(form ? { ...form, categoryId: subCategoryId } : null);
     };
 
-    if (checking) return <div className="p-8">인증 확인 중...</div>;
+    if (checking) return <div className="p-4 sm:p-8">인증 확인 중...</div>;
     if (loading) return <div className="p-4">로딩 중...</div>;
     if (error) return <div className="p-4 text-red-600">{error}</div>;
     if (!form) return <div className="p-4">상품 정보를 불러올 수 없습니다.</div>;
@@ -149,19 +137,25 @@ export default function ProductEditPage() {
 
     return (
         <>
+            <div className="hidden">
             <SellerHeader />
+            </div>
             <SellerLayout>
-                <div style={{ maxWidth: 700, margin: '0 auto', padding: '2rem' }}>
-                    <h1 className="text-xl font-bold mb-4">상품 수정</h1>
+                <div className="max-w-4xl mx-auto p-4 sm:p-6">
+                    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
+                        <h1 className="text-xl sm:text-2xl font-bold mb-6 text-gray-900">상품 수정</h1>
 
-                    <form onSubmit={handleSubmit} encType="multipart/form-data">
+                        <form onSubmit={handleSubmit} encType="multipart/form-data" className="space-y-6">
                         {/* 카테고리 선택 */}
-                        <div className="mb-4">
-                            <label>카테고리 (1차)</label>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                        카테고리 (1차)
+                                    </label>
                             <select
                                 value={parentCategoryIdState}
                                 onChange={handleParentCategoryChange}
-                                className="w-full p-2 border mt-1"
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                 required
                             >
                                 <option value="">-- 선택 --</option>
@@ -171,12 +165,14 @@ export default function ProductEditPage() {
                             </select>
                         </div>
 
-                        <div className="mb-4">
-                            <label>카테고리 (2차)</label>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                        카테고리 (2차)
+                                    </label>
                             <select
                                 value={form.categoryId || ''}
                                 onChange={handleSubCategoryChange}
-                                className="w-full p-2 border mt-1"
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                 required
                             >
                                 <option value="">-- 선택 --</option>
@@ -185,54 +181,129 @@ export default function ProductEditPage() {
                                 ))}
                             </select>
                         </div>
+                            </div>
+
                         {/* 상품명 */}
-                        <div className="mb-4">
-                            <label>상품명</label>
-                            <input name="name" value={form.name} onChange={handleChange} required className="w-full p-2 border mt-1" />
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    상품명
+                                </label>
+                                <input 
+                                    name="name" 
+                                    value={form.name} 
+                                    onChange={handleChange} 
+                                    required 
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                    placeholder="상품명을 입력하세요"
+                                />
                         </div>
 
                         {/* 가격 */}
-                        <div className="mb-4">
-                            <label>가격</label>
-                            <input type="number" name="price" value={form.price} onChange={handleChange} required className="w-full p-2 border mt-1" />
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    가격
+                                </label>
+                                <input 
+                                    type="number" 
+                                    name="price" 
+                                    value={form.price} 
+                                    onChange={handleChange} 
+                                    required 
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                    placeholder="가격을 입력하세요"
+                                />
                         </div>
 
                         {/* 상품 설명 */}
-                        <div className="mb-4">
-                            <label>상품 설명</label>
-                            <textarea name="description" value={form.description} onChange={handleChange} required className="w-full p-2 border mt-1" rows={5} />
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    상품 설명
+                                </label>
+                                <textarea 
+                                    name="description" 
+                                    value={form.description} 
+                                    onChange={handleChange} 
+                                    required 
+                                    rows={5}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
+                                    placeholder="상품 설명을 입력하세요"
+                                />
                         </div>
 
                         {/* 재고 */}
-                        <div className="mb-4">
-                            <label>재고</label>
-                            <input type="number" name="stock" value={form.stock} onChange={handleChange} required className="w-full p-2 border mt-1" />
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    재고
+                                </label>
+                                <input 
+                                    type="number" 
+                                    name="stock" 
+                                    value={form.stock} 
+                                    onChange={handleChange} 
+                                    required 
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                    placeholder="재고 수량을 입력하세요"
+                                />
                         </div>
 
                         {/* 크기 */}
-                        <div className="mb-4">
-                            <label>가로 (Width)</label>
-                            <input type="number" name="width" value={form.width} onChange={handleChange} required className="w-full p-2 border mt-1" />
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                        가로 (Width)
+                                    </label>
+                                    <input 
+                                        type="number" 
+                                        name="width" 
+                                        value={form.width} 
+                                        onChange={handleChange} 
+                                        required 
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                        placeholder="가로"
+                                    />
                         </div>
 
-                        <div className="mb-4">
-                            <label>세로 (Depth)</label>
-                            <input type="number" name="depth" value={form.depth} onChange={handleChange} required className="w-full p-2 border mt-1" />
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                        세로 (Depth)
+                                    </label>
+                                    <input 
+                                        type="number" 
+                                        name="depth" 
+                                        value={form.depth} 
+                                        onChange={handleChange} 
+                                        required 
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                        placeholder="세로"
+                                    />
                         </div>
 
-                        <div className="mb-4">
-                            <label>높이 (Height)</label>
-                            <input type="number" name="height" value={form.height} onChange={handleChange} required className="w-full p-2 border mt-1" />
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                        높이 (Height)
+                                    </label>
+                                    <input 
+                                        type="number" 
+                                        name="height" 
+                                        value={form.height} 
+                                        onChange={handleChange} 
+                                        required 
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                        placeholder="높이"
+                                    />
+                                </div>
                         </div>
 
                         {/* 상태 */}
-                        <div className="mb-4">
-                            <label>상품 상태</label>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    상품 상태
+                                </label>
                             <select
                                 name="status"
                                 value={form.status}
                                 onChange={handleChange}
-                                className="w-full p-2 border mt-1"
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                 required
                             >
                                 <option value="상">상</option>
@@ -242,91 +313,86 @@ export default function ProductEditPage() {
                         </div>
 
                         {/* 활성화 여부 */}
-                        <div className="mb-4">
-                            <label className="mr-2">활성화 여부</label>
+                            <div className="flex items-center">
                             <input
                                 type="checkbox"
-                                checked={form.active}
+                                    id="active"
+                                    checked={form.isActive}
                                 disabled={form.stock === 0}  // 재고가 0이면 체크박스 비활성화
                                 onChange={(e) => {
                                     if (form.stock === 0 && e.target.checked) {
                                         alert('재고가 0인 상태에서는 상품을 활성화할 수 없습니다.');
                                         return;  // 체크 방지
                                     }
-                                    setForm({ ...form, active: e.target.checked });
+                                        setForm({ ...form, isActive: e.target.checked });
                                 }}
+                                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                             />
+                                <label htmlFor="active" className="ml-2 block text-sm text-gray-700">
+                                    활성화 여부
+                                </label>
                         </div>
 
                         {/* 썸네일 및 서브 이미지 */}
-                        <div className="mb-4">
-                            <label>대표 이미지</label>{form?.imageThumbnailUrl && (
+                            <div className="space-y-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                        대표 이미지
+                                    </label>
+                                    {form?.imageThumbnailUrl && (
                                 <div className="mb-2 text-sm text-gray-600">
                                     현재 등록된 파일명: {form.imageThumbnailUrl.split('/').pop()}
                                 </div>
                             )}
-                            <input type="file" accept="image/*" onChange={(e) => setImageThumbnail(e.target.files?.[0] || null)} required={form?.imageThumbnailUrl ? false : true} className="w-full p-2 border mt-1" />
-                        </div>
-
-                        <div className="mb-4">
-                            <label>대표 영상</label>
-                            <input type="file" accept="video/*" onChange={(e) => setVideoThumbnail(e.target.files?.[0] || null)} className="w-full p-2 border mt-1" />
-                        </div>
-
-                        <div className="mb-4">
-                            <label>서브 이미지</label>
-                            <input type="file" accept="image/*" multiple onChange={(e) => setSubImages(e.target.files)} className="w-full p-2 border mt-1" />
-                        </div>
-
-                        {/* 배송 정책 */}
-                        {form.deliveryPolicy && (
-                            <>
-                                <div className="mb-4">
-                                    <label>배송 방식</label>
-                                    <select
-                                        name="deliveryPolicy.type"
-                                        value={form.deliveryPolicy.type}
-                                        onChange={(e) =>
-                                            setForm({ ...form, deliveryPolicy: { ...form.deliveryPolicy, type: e.target.value as any } })
-                                        }
-                                        className="w-full p-2 border mt-1"
-                                    >
-                                        <option value="무료배송">무료배송</option>
-                                        <option value="유료배송">유료배송</option>
-                                    </select>
-                                </div>
-
-                                <div className="mb-4">
-                                    <label>배송비</label>
-                                    <input
-                                        type="number"
-                                        name="deliveryPolicy.cost"
-                                        value={form.deliveryPolicy.cost}
-                                        onChange={(e) =>
-                                            setForm({ ...form, deliveryPolicy: { ...form.deliveryPolicy, cost: Number(e.target.value) } })
-                                        }
-                                        className="w-full p-2 border mt-1"
+                                    <input 
+                                        type="file" 
+                                        accept="image/*" 
+                                        onChange={(e) => setImageThumbnail(e.target.files?.[0] || null)} 
+                                        required={form?.imageThumbnailUrl ? false : true} 
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 file:mr-4 file:py-1 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
                                     />
                                 </div>
 
-                                <div className="mb-4">
-                                    <label>지역 제한</label>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                        대표 영상
+                                    </label>
                                     <input
-                                        name="deliveryPolicy.regionLimit"
-                                        value={form.deliveryPolicy.regionLimit}
-                                        onChange={(e) =>
-                                            setForm({ ...form, deliveryPolicy: { ...form.deliveryPolicy, regionLimit: e.target.value } })
-                                        }
-                                        className="w-full p-2 border mt-1"
+                                        type="file" 
+                                        accept="video/*" 
+                                        onChange={(e) => setVideoThumbnail(e.target.files?.[0] || null)} 
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 file:mr-4 file:py-1 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
                                     />
                                 </div>
-                            </>
-                        )}
 
-                        {error && <p className="text-red-500 mb-2">{error}</p>}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                        서브 이미지
+                                    </label>
+                                    <input
+                                        type="file" 
+                                        accept="image/*" 
+                                        multiple 
+                                        onChange={(e) => setSubImages(e.target.files)} 
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 file:mr-4 file:py-1 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                                    />
+                                </div>
+                            </div>
 
-                        <button type="submit" className="w-full bg-blue-600 text-white py-2 mt-2">수정하기</button>
+                            {error && (
+                                <div className="bg-red-50 border border-red-200 rounded-md p-3">
+                                    <p className="text-red-600 text-sm">{error}</p>
+                                </div>
+                            )}
+
+                            <button 
+                                type="submit" 
+                                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg font-medium transition-colors"
+                            >
+                                수정하기
+                            </button>
                     </form>
+                    </div>
                 </div>
             </SellerLayout>
         </>

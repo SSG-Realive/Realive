@@ -102,7 +102,7 @@ export default function DeliveryDetailPage() {
         }
     };
 
-    if (checking) return <div className="p-8">인증 확인 중...</div>;
+    if (checking) return <div className="p-4 sm:p-8">인증 확인 중...</div>;
     if (loading) return <div className="p-4">로딩 중...</div>;
     if (error) return <div className="p-4 text-red-600">{error}</div>;
     if (!delivery) return <div className="p-4">배송 정보를 불러올 수 없습니다.</div>;
@@ -113,78 +113,132 @@ export default function DeliveryDetailPage() {
 
     return (
         <SellerLayout>
-            <div className="max-w-xl mx-auto p-4">
-                <h1 className="text-xl font-bold mb-4">배송 상세 정보</h1>
+            <div className="max-w-2xl mx-auto p-4 sm:p-6">
+                <h1 className="text-xl sm:text-2xl font-bold mb-6 text-gray-900">배송 상세 정보</h1>
 
-                <div className="mb-4"><strong>주문 ID:</strong> {delivery.orderId}</div>
-                <div className="mb-4"><strong>구매자 ID:</strong> {delivery.buyerId}</div>
-                <div className="mb-4"><strong>상품명:</strong> {delivery.productName}</div>
-                <div className="mb-4"><strong>현재 배송 상태:</strong> {delivery.deliveryStatus}</div>
-                <div className="mb-4"><strong>배송 시작일:</strong> {delivery.startDate ?? '-'}</div>
-                <div className="mb-4"><strong>배송 완료일:</strong> {delivery.completeDate ?? '-'}</div>
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 mb-6">
+                    <h2 className="text-lg font-semibold mb-4 text-gray-900">주문 정보</h2>
+                    <div className="space-y-3">
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                            <span className="text-sm font-medium text-gray-600 min-w-[100px]">주문 ID:</span>
+                            <span className="text-gray-900 font-mono">{delivery.orderId}</span>
+                        </div>
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                            <span className="text-sm font-medium text-gray-600 min-w-[100px]">구매자 ID:</span>
+                            <span className="text-gray-900">{delivery.buyerId}</span>
+                        </div>
+                        <div className="flex flex-col sm:flex-row sm:items-start gap-2">
+                            <span className="text-sm font-medium text-gray-600 min-w-[100px]">상품명:</span>
+                            <span className="text-gray-900 break-words">{delivery.productName}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 mb-6">
+                    <h2 className="text-lg font-semibold mb-4 text-gray-900">배송 정보</h2>
+                    <div className="space-y-3">
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                            <span className="text-sm font-medium text-gray-600 min-w-[100px]">현재 상태:</span>
+                            <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                                delivery.deliveryStatus === 'DELIVERY_COMPLETED' 
+                                    ? 'bg-green-100 text-green-800'
+                                    : delivery.deliveryStatus === 'CANCELLED'
+                                    ? 'bg-red-100 text-red-800'
+                                    : 'bg-blue-100 text-blue-800'
+                            }`}>
+                                {delivery.deliveryStatus}
+                            </span>
+                        </div>
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                            <span className="text-sm font-medium text-gray-600 min-w-[100px]">배송 시작일:</span>
+                            <span className="text-gray-900">{delivery.startDate ?? '-'}</span>
+                        </div>
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                            <span className="text-sm font-medium text-gray-600 min-w-[100px]">배송 완료일:</span>
+                            <span className="text-gray-900">{delivery.completeDate ?? '-'}</span>
+                        </div>
+                    </div>
+                </div>
 
                 {nextStatusOptions.length > 0 && (
-                    <div className="mb-4">
-                        <label>배송 상태 변경:</label>
-                        <select
-                            value={newStatus}
-                            onChange={(e) => setNewStatus(e.target.value)}
-                            className="w-full p-2 border mt-1"
-                        >
-                            {nextStatusOptions.map((status) => (
-                                <option key={status} value={status}>
-                                    {status}
-                                </option>
-                            ))}
-                        </select>
+                    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 mb-6">
+                        <h2 className="text-lg font-semibold mb-4 text-gray-900">배송 상태 변경</h2>
+                        <div className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    새로운 배송 상태
+                                </label>
+                                <select
+                                    value={newStatus}
+                                    onChange={(e) => setNewStatus(e.target.value)}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                >
+                                    {nextStatusOptions.map((status) => (
+                                        <option key={status} value={status}>
+                                            {status}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            {(delivery.deliveryStatus === 'DELIVERY_IN_PROGRESS' || newStatus === 'DELIVERY_IN_PROGRESS') && (
+                                <>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                                            송장 번호
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={trackingNumber}
+                                            onChange={(e) => setTrackingNumber(e.target.value)}
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                            placeholder="송장 번호를 입력하세요"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                                            택배사
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={carrier}
+                                            onChange={(e) => setCarrier(e.target.value)}
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                            placeholder="택배사명을 입력하세요"
+                                        />
+                                    </div>
+                                </>
+                            )}
+                        </div>
                     </div>
                 )}
 
-                {(delivery.deliveryStatus === 'DELIVERY_IN_PROGRESS' || newStatus === 'DELIVERY_IN_PROGRESS') && (
-                    <>
-                        <div className="mb-4">
-                            <label>송장 번호:</label>
-                            <input
-                                type="text"
-                                value={trackingNumber}
-                                onChange={(e) => setTrackingNumber(e.target.value)}
-                                className="w-full p-2 border mt-1"
-                            />
-                        </div>
-                        <div className="mb-4">
-                            <label>택배사:</label>
-                            <input
-                                type="text"
-                                value={carrier}
-                                onChange={(e) => setCarrier(e.target.value)}
-                                className="w-full p-2 border mt-1"
-                            />
-                        </div>
-                    </>
-                )}
-
-                {/* 🚩 상태 변경 버튼 */}
-                <button
-                    onClick={handleStatusChange}
-                    className={`w-full py-2 ${isFinalState ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'} text-white`}
-                    disabled={isFinalState}
-                >
-                    {delivery.deliveryStatus === 'DELIVERY_COMPLETED'
-                        ? '배송 완료됨'
-                        : delivery.deliveryStatus === 'CANCELLED'
-                        ? '배송 취소됨'
-                        : '배송 상태 변경'}
-                </button>
-
-                {/* 🚩 배송 취소 버튼 (INIT 전용) */}
-                {delivery.deliveryStatus === 'INIT' && (
+                <div className="space-y-3">
                     <button
-                        onClick={handleCancel}
-                        className="w-full mt-4 bg-red-600 text-white py-2 hover:bg-red-700"
+                        onClick={handleStatusChange}
+                        className={`w-full py-3 px-4 rounded-lg font-medium transition-colors ${
+                            isFinalState 
+                                ? 'bg-gray-400 cursor-not-allowed text-white' 
+                                : 'bg-blue-600 hover:bg-blue-700 text-white'
+                        }`}
+                        disabled={isFinalState}
                     >
-                        배송 취소하기
+                        {delivery.deliveryStatus === 'DELIVERY_COMPLETED'
+                            ? '배송 완료됨'
+                            : delivery.deliveryStatus === 'CANCELLED'
+                            ? '배송 취소됨'
+                            : '배송 상태 변경'}
                     </button>
-                )}
+
+                    {delivery.deliveryStatus === 'INIT' && (
+                        <button
+                            onClick={handleCancel}
+                            className="w-full bg-red-600 hover:bg-red-700 text-white py-3 px-4 rounded-lg font-medium transition-colors"
+                        >
+                            배송 취소하기
+                        </button>
+                    )}
+                </div>
             </div>
         </SellerLayout>
     );
