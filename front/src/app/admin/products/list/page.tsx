@@ -40,6 +40,8 @@ interface Product {
   status: "상" | "중" | "하";
   productImage: string;
   productImages?: string[];
+  description?: string;
+  sellerName?: string;
 }
 
 interface Category {
@@ -271,10 +273,23 @@ export default function ProductManagementPage() {
   const handlePurchase = async (productId: number, purchasePrice: number, quantity: number) => {
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await apiClient.post('/admin/products/purchase', {
+      
+      // 디버깅 로그 추가
+      console.log('매입 요청 데이터:', {
+        productId,
+        purchasePrice,
+        quantity,
+        purchasePriceType: typeof purchasePrice
+      });
+      
+      const requestData = {
         productId: productId,
         purchasePrice: purchasePrice
-      }, {
+      };
+      
+      console.log('전송할 데이터:', requestData);
+      
+      const response = await apiClient.post('/admin/products/purchase', requestData, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
@@ -289,6 +304,7 @@ export default function ProductManagementPage() {
       }
     } catch (error: any) {
       console.error("매입 처리 중 오류:", error);
+      console.error("오류 응답:", error.response?.data);
       
       let errorMessage = "매입 처리 중 오류가 발생했습니다.";
       if (error.response?.data?.message) {
@@ -553,15 +569,6 @@ export default function ProductManagementPage() {
                     >
                       <Eye className="w-4 h-4" />
                       상세 보기
-                    </button>
-                  </div>
-                  <div className="flex gap-2">
-                    <button
-                        onClick={() => handleQuickView(product)}
-                        className="flex-1 bg-blue-600 text-white py-2 px-3 rounded-md hover:bg-blue-700 transition-colors flex items-center justify-center gap-1 text-sm"
-                    >
-                      <Eye className="w-4 h-4" />
-                      매입 하기
                     </button>
                   </div>
                 </div>
