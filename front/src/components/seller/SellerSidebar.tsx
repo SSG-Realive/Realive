@@ -32,9 +32,11 @@ const SellerSidebar: FC<SellerSidebarProps & { className?: string }> = ({ onClos
     }
   };
   return (
-    <aside className={className + " bg-[#f1f1f2] min-h-screen border-r"}>
-      <div className="px-6 py-10">
-        <h1 className="text-xl font-extrabold mb-10 text-white tracking-tight">판매자센터</h1>
+    <aside className={className + " bg-[#4b3a2f] min-h-screen border-r border-[#3e2f23] shadow-lg"}>
+      <div className="px-6 pt-8 pb-10">
+        <Link href="/seller/dashboard">
+          <span className="text-2xl font-extrabold mb-10 text-[#e9dec7] tracking-tight block hover:text-[#bfa06a] transition-colors">Realive</span>
+        </Link>
         <nav>
           <ul className="space-y-1">
             {menuItems.map((item) => {
@@ -45,8 +47,8 @@ const SellerSidebar: FC<SellerSidebarProps & { className?: string }> = ({ onClos
                     <div
                       className={`flex items-center px-5 py-3 rounded-lg font-medium transition-colors duration-200 text-base ${
                         isActive
-                          ? "bg-white border-l-4 border-black text-gray-900 font-semibold"
-                          : "text-white hover:bg-gray-200 active:bg-gray-300"
+                          ? "bg-[#bfa06a] border-l-4 border-[#3e2f23] text-[#4b3a2f] font-semibold shadow-sm"
+                          : "text-[#e9dec7] hover:bg-[#bfa06a] active:bg-[#4b3a2f] hover:text-[#4b3a2f]"
                       }`}
                     >
                       <span>{item.label}</span>

@@ -78,13 +78,13 @@ const SellerSignup: React.FC = () => {
   };
 
   return (
-    <div className="w-full max-w-full min-h-screen overflow-x-hidden bg-gray-50 flex items-center justify-center px-4 py-8">
+    <div className="w-full max-w-full min-h-screen overflow-x-hidden bg-[#a89f91] flex items-center justify-center px-4 py-8">
       <div className="w-full max-w-md mx-auto">
-        <div className="bg-white rounded-lg shadow-md p-6 md:p-8">
-          <h1 className="text-2xl font-bold text-center mb-6 text-gray-800">판매자 회원가입</h1>
+        <div className="bg-[#e9dec7] rounded-lg shadow-md p-6 md:p-8 border border-[#bfa06a]">
+          <h1 className="text-2xl font-bold text-center mb-6 text-[#5b4636]">판매자 회원가입</h1>
           <form onSubmit={handleSubmit} encType="multipart/form-data" className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="email" className="block text-sm font-medium text-[#5b4636] mb-1">
                 이메일
               </label>
               <input
@@ -93,13 +93,12 @@ const SellerSignup: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-[#bfa06a] rounded-md focus:outline-none focus:ring-2 focus:ring-[#bfa06a] bg-[#e9dec7] text-[#5b4636] placeholder-[#bfa06a]"
                 placeholder="이메일을 입력하세요"
               />
             </div>
-
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="password" className="block text-sm font-medium text-[#5b4636] mb-1">
                 비밀번호
               </label>
               <input
@@ -109,13 +108,12 @@ const SellerSignup: React.FC = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 minLength={6}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-[#bfa06a] rounded-md focus:outline-none focus:ring-2 focus:ring-[#bfa06a] bg-[#e9dec7] text-[#5b4636] placeholder-[#bfa06a]"
                 placeholder="비밀번호를 입력하세요 (최소 6자)"
               />
             </div>
-
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="name" className="block text-sm font-medium text-[#5b4636] mb-1">
                 판매자 이름
               </label>
               <input
@@ -124,13 +122,12 @@ const SellerSignup: React.FC = () => {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-[#bfa06a] rounded-md focus:outline-none focus:ring-2 focus:ring-[#bfa06a] bg-[#e9dec7] text-[#5b4636] placeholder-[#bfa06a]"
                 placeholder="판매자 이름을 입력하세요"
               />
             </div>
-
             <div>
-              <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="phone" className="block text-sm font-medium text-[#5b4636] mb-1">
                 전화번호
               </label>
               <input
@@ -139,13 +136,12 @@ const SellerSignup: React.FC = () => {
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-[#bfa06a] rounded-md focus:outline-none focus:ring-2 focus:ring-[#bfa06a] bg-[#e9dec7] text-[#5b4636] placeholder-[#bfa06a]"
                 placeholder="전화번호를 입력하세요"
               />
             </div>
-
             <div>
-              <label htmlFor="businessNumber" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="businessNumber" className="block text-sm font-medium text-[#5b4636] mb-1">
                 사업자등록번호
               </label>
               <input
@@ -154,13 +150,12 @@ const SellerSignup: React.FC = () => {
                 value={businessNumber}
                 onChange={(e) => setBusinessNumber(e.target.value)}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-[#bfa06a] rounded-md focus:outline-none focus:ring-2 focus:ring-[#bfa06a] bg-[#e9dec7] text-[#5b4636] placeholder-[#bfa06a]"
                 placeholder="사업자등록번호를 입력하세요"
               />
             </div>
-
             <div>
-              <label htmlFor="businessLicense" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="businessLicense" className="block text-sm font-medium text-[#5b4636] mb-1">
                 사업자등록증 업로드
               </label>
               <input
@@ -169,12 +164,11 @@ const SellerSignup: React.FC = () => {
                 accept=".jpg,.jpeg,.png,.pdf"
                 onChange={(e) => handleFileChange(e, setBusinessLicenseFile)}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent file:mr-4 file:py-1 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                className="w-full px-3 py-2 border border-[#bfa06a] rounded-md focus:outline-none focus:ring-2 focus:ring-[#bfa06a] bg-[#e9dec7] text-[#5b4636] file:mr-4 file:py-1 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-[#bfa06a] file:text-[#4b3a2f] hover:file:bg-[#5b4636] hover:file:text-[#e9dec7]"
               />
             </div>
-
             <div>
-              <label htmlFor="bankAccountCopy" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="bankAccountCopy" className="block text-sm font-medium text-[#5b4636] mb-1">
                 통장사본 업로드
               </label>
               <input
@@ -183,19 +177,17 @@ const SellerSignup: React.FC = () => {
                 accept=".jpg,.jpeg,.png,.pdf"
                 onChange={(e) => handleFileChange(e, setBankAccountFile)}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent file:mr-4 file:py-1 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                className="w-full px-3 py-2 border border-[#bfa06a] rounded-md focus:outline-none focus:ring-2 focus:ring-[#bfa06a] bg-[#e9dec7] text-[#5b4636] file:mr-4 file:py-1 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-[#bfa06a] file:text-[#4b3a2f] hover:file:bg-[#5b4636] hover:file:text-[#e9dec7]"
               />
             </div>
-
             {error && (
-              <div className="bg-red-50 border border-red-200 rounded-md p-3">
-                <p className="text-red-600 text-sm">{error}</p>
+              <div className="bg-[#fbeee0] border border-[#bfa06a] rounded-md p-3">
+                <p className="text-[#b94a48] text-sm">{error}</p>
               </div>
             )}
-
             <button
               type="submit"
-              className="w-full bg-gray-800 text-white py-3 px-4 rounded-md font-medium hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors"
+              className="w-full bg-[#bfa06a] text-[#4b3a2f] py-3 px-4 rounded-md font-medium hover:bg-[#5b4636] hover:text-[#e9dec7] focus:outline-none focus:ring-2 focus:ring-[#bfa06a] focus:ring-offset-2 transition-colors"
             >
               회원가입
             </button>
