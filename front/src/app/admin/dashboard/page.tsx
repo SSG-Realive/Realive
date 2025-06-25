@@ -474,21 +474,21 @@ const AdminDashboardPage = () => {
                 />
                 <MemberStatusItem
                   icon={<Package size={20} />}
-                  label="상품질"
+                  label="상"
                   value={productStats.highQualityProducts}
                   iconBgColor="bg-green-500"
                   percentage={productStats.totalProducts > 0 ? Math.round((productStats.highQualityProducts / productStats.totalProducts) * 100) : 0}
                 />
                 <MemberStatusItem
                   icon={<Package size={20} />}
-                  label="중품질"
+                  label="중"
                   value={productStats.mediumQualityProducts}
                   iconBgColor="bg-yellow-500"
                   percentage={productStats.totalProducts > 0 ? Math.round((productStats.mediumQualityProducts / productStats.totalProducts) * 100) : 0}
                 />
                 <MemberStatusItem
                   icon={<Package size={20} />}
-                  label="하품질"
+                  label="하"
                   value={productStats.lowQualityProducts}
                   iconBgColor="bg-red-500"
                   percentage={productStats.totalProducts > 0 ? Math.round((productStats.lowQualityProducts / productStats.totalProducts) * 100) : 0}
