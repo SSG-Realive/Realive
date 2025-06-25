@@ -10,9 +10,10 @@ import {
 } from '@/service/seller/sellerSettlementService';
 import { SellerSettlementResponse } from '@/types/seller/sellersettlement/sellerSettlement';
 import useSellerAuthGuard from '@/hooks/useSellerAuthGuard';
+import { DollarSign, TrendingUp, Percent, CreditCard, Calendar, Search, RefreshCw } from 'lucide-react';
 
 export default function SellerSettlementPage() {
-    useSellerAuthGuard();
+    const checking = useSellerAuthGuard();
 
     const router = useRouter();
     const [payouts, setPayouts] = useState<SellerSettlementResponse[]>([]);
@@ -54,141 +55,147 @@ export default function SellerSettlementPage() {
     };
 
     useEffect(() => {
-
+        if (checking) return;
         fetchAll(); // 초기 전체 조회
-    }, []);
+    }, [checking]);
+
+    // 통계 계산
+    const totalSettlements = payouts.length;
+    const totalSales = payouts.reduce((sum, item) => sum + item.totalSales, 0);
+    const totalCommission = payouts.reduce((sum, item) => sum + item.totalCommission, 0);
+    const totalPayout = payouts.reduce((sum, item) => sum + item.payoutAmount, 0);
+
+    if (checking || loading) {
+        return (
+            <div className="w-full max-w-full min-h-screen overflow-x-hidden bg-[#a89f91] flex items-center justify-center">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#bfa06a] mx-auto mb-4"></div>
+                    <p className="text-[#5b4636]">정산 정보를 불러오는 중...</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <>
             <div className="hidden">
-            <SellerHeader toggleSidebar={toggleSidebar} />
+                <SellerHeader toggleSidebar={toggleSidebar} />
             </div>
-        <SellerLayout>
-                <div className="flex-1 w-full h-full px-4 py-8 bg-gray-100">
-                    <h1 className="text-xl md:text-2xl font-bold mb-4 md:mb-6">판매자 정산 내역</h1>
+            <SellerLayout>
+                <div className="flex-1 w-full h-full px-4 py-8 bg-[#a89f91]">
+                    <h1 className="text-xl md:text-2xl font-bold mb-6 text-[#5b4636]">정산 관리</h1>
 
-                {/* ✅ 날짜 필터 */}
-                    <div className="mb-4 md:mb-6 flex flex-col md:flex-row items-start md:items-center gap-3">
-                    <input
-                        type="date"
-                        value={filterDate}
-                        onChange={(e) => setFilterDate(e.target.value)}
-                            className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                        <div className="flex gap-2">
-                    <button
-                        onClick={() => fetchFiltered(filterDate)}
-                        disabled={!filterDate}
-                                className="px-4 py-2 border border-gray-300 rounded-md bg-blue-100 hover:bg-blue-200 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
-                    >
-                        날짜 필터 조회
-                    </button>
-                    <button
-                        onClick={() => {
-                            setFilterDate('');
-                            fetchAll();
-                        }}
-                                className="px-4 py-2 border border-gray-300 rounded-md bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors"
-                    >
-                        전체 보기
-                    </button>
-                        </div>
-                </div>
-
-                {/* ✅ 테이블  변경 사항이 있습니다*/}
-                {loading ? (
-                        <div className="flex items-center justify-center py-8">
-                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                            <span className="ml-3 text-gray-600">로딩 중...</span>
-                        </div>
-                ) : error ? (
-                        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                            <p className="text-red-600">{error}</p>
-                        </div>
-                ) : (
-                        <>
-                            {/* 데스크탑 테이블 */}
-                            <div className="hidden md:block bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm">
-                    <div className="overflow-x-auto">
-                                    <table className="min-w-[900px] w-full text-sm text-left">
-                                        <thead className="bg-gray-50 border-b border-gray-200">
-                            <tr>
-                                            <th className="px-4 py-3 font-medium text-gray-700 whitespace-nowrap">정산 기간</th>
-                                            <th className="px-4 py-3 font-medium text-gray-700 whitespace-nowrap">총 매출</th>
-                                            <th className="px-4 py-3 font-medium text-gray-700 whitespace-nowrap">수수료</th>
-                                            <th className="px-4 py-3 font-medium text-gray-700 whitespace-nowrap">지급액</th>
-                                            <th className="px-4 py-3 font-medium text-gray-700 whitespace-nowrap">처리일시</th>
-                            </tr>
-                            </thead>
-                                        <tbody className="divide-y divide-gray-200">
-                            {payouts.length > 0 ? (
-                                payouts.map((item) => (
-                                                <tr key={item.id} className="hover:bg-gray-50 transition-colors">
-                                                    <td className="px-4 py-3 text-gray-900 whitespace-nowrap">
-                                            {item.periodStart} ~ {item.periodEnd}
-                                        </td>
-                                                    <td className="px-4 py-3 text-gray-900 whitespace-nowrap">{item.totalSales.toLocaleString()}원</td>
-                                                    <td className="px-4 py-3 text-gray-900 whitespace-nowrap">{item.totalCommission.toLocaleString()}원</td>
-                                                    <td className="px-4 py-3 font-semibold text-green-600 whitespace-nowrap">
-                                            {item.payoutAmount.toLocaleString()}원
-                                        </td>
-                                                    <td className="px-4 py-3 text-gray-900 whitespace-nowrap">{item.processedAt}</td>
-                                    </tr>
-                                ))
-                            ) : (
-                                <tr>
-                                                <td colSpan={5} className="text-center text-gray-500 py-8">
-                                        정산 내역이 없습니다.
-                                    </td>
-                                </tr>
-                            )}
-                            </tbody>
-                        </table>
+                    {/* 상단 통계 카드 */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6">
+                        <section className="bg-[#e9dec7] p-4 md:p-6 rounded-lg shadow-sm border border-[#bfa06a] flex items-center justify-between">
+                            <div>
+                                <h2 className="text-[#5b4636] text-sm font-semibold mb-2">총 정산 건수</h2>
+                                <p className="text-xl md:text-2xl font-bold text-[#5b4636]">{totalSettlements}건</p>
+                            </div>
+                            <CreditCard className="w-8 h-8 text-[#bfa06a]" />
+                        </section>
+                        <section className="bg-[#e9dec7] p-4 md:p-6 rounded-lg shadow-sm border border-[#bfa06a] flex items-center justify-between">
+                            <div>
+                                <h2 className="text-[#5b4636] text-sm font-semibold mb-2">총 매출</h2>
+                                <p className="text-xl md:text-2xl font-bold text-[#388e3c]">{totalSales.toLocaleString()}원</p>
+                            </div>
+                            <TrendingUp className="w-8 h-8 text-[#bfa06a]" />
+                        </section>
+                        <section className="bg-[#e9dec7] p-4 md:p-6 rounded-lg shadow-sm border border-[#bfa06a] flex items-center justify-between">
+                            <div>
+                                <h2 className="text-[#5b4636] text-sm font-semibold mb-2">총 수수료</h2>
+                                <p className="text-xl md:text-2xl font-bold text-[#b94a48]">{totalCommission.toLocaleString()}원</p>
+                            </div>
+                            <Percent className="w-8 h-8 text-[#bfa06a]" />
+                        </section>
+                        <section className="bg-[#e9dec7] p-4 md:p-6 rounded-lg shadow-sm border border-[#bfa06a] flex items-center justify-between">
+                            <div>
+                                <h2 className="text-[#5b4636] text-sm font-semibold mb-2">총 지급액</h2>
+                                <p className="text-xl md:text-2xl font-bold text-[#bfa06a]">{totalPayout.toLocaleString()}원</p>
+                            </div>
+                            <DollarSign className="w-8 h-8 text-[#bfa06a]" />
+                        </section>
                     </div>
-                            </div>
 
-                            {/* 모바일 카드형 리스트 */}
-                            <div className="md:hidden grid gap-4">
-                                {payouts.length > 0 ? (
-                                    payouts.map((item) => (
-                                        <div key={item.id} className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
-                                            <div className="space-y-3">
-                                                <div className="flex justify-between items-start">
-                                                    <h3 className="font-semibold text-gray-800">정산 기간</h3>
-                                                    <span className="text-sm text-gray-600">{item.periodStart} ~ {item.periodEnd}</span>
-                                                </div>
-                                                <div className="grid grid-cols-2 gap-3 text-sm">
-                                                    <div>
-                                                        <span className="text-gray-600">총 매출:</span>
-                                                        <span className="ml-2 font-medium">{item.totalSales.toLocaleString()}원</span>
-                                                    </div>
-                                                    <div>
-                                                        <span className="text-gray-600">수수료:</span>
-                                                        <span className="ml-2 font-medium">{item.totalCommission.toLocaleString()}원</span>
-                                                    </div>
-                                                </div>
-                                                <div className="pt-2 border-t border-gray-100">
-                                                    <div className="flex justify-between items-center">
-                                                        <span className="text-gray-600">지급액:</span>
-                                                        <span className="font-semibold text-green-600 text-lg">{item.payoutAmount.toLocaleString()}원</span>
-                                                    </div>
-                                                    <div className="text-xs text-gray-500 mt-1">
-                                                        처리일시: {item.processedAt}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ))
-                                ) : (
-                                    <div className="bg-white border border-gray-200 rounded-lg p-8 text-center">
-                                        <p className="text-gray-500 text-lg">정산 내역이 없습니다.</p>
-                                    </div>
-                                )}
-                            </div>
-                        </>
-                )}
-            </div>
-        </SellerLayout>
+                    {/* 날짜 필터 */}
+                    <div className="flex flex-col md:flex-row gap-3 md:gap-4 mb-6 items-center">
+                        <div className="flex items-center gap-2 flex-1">
+                            <Calendar className="w-5 h-5 text-[#bfa06a]" />
+                            <input
+                                type="date"
+                                value={filterDate}
+                                onChange={(e) => setFilterDate(e.target.value)}
+                                className="flex-1 border border-[#bfa06a] rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#bfa06a] bg-[#e9dec7] text-[#5b4636]"
+                            />
+                        </div>
+                        <button
+                            onClick={() => fetchFiltered(filterDate)}
+                            disabled={!filterDate}
+                            className="flex items-center gap-2 bg-[#bfa06a] text-[#4b3a2f] px-4 py-2 rounded-md hover:bg-[#5b4636] hover:text-[#e9dec7] disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            <Search className="w-4 h-4" />
+                            날짜 필터
+                        </button>
+                        <button
+                            onClick={() => {
+                                setFilterDate('');
+                                fetchAll();
+                            }}
+                            className="flex items-center gap-2 bg-[#5b4636] text-[#e9dec7] px-4 py-2 rounded-md hover:bg-[#bfa06a] hover:text-[#4b3a2f]"
+                        >
+                            <RefreshCw className="w-4 h-4" />
+                            전체 보기
+                        </button>
+                    </div>
+
+                    {/* 정산 리스트 */}
+                    {error ? (
+                        <div className="bg-[#fbeee0] border border-[#bfa06a] rounded-lg p-4">
+                            <p className="text-[#b94a48]">{error}</p>
+                        </div>
+                    ) : payouts.length === 0 ? (
+                        <div className="bg-[#e9dec7] border border-[#bfa06a] rounded-lg p-8 text-center">
+                            <CreditCard className="w-12 h-12 text-[#bfa06a] mx-auto mb-4" />
+                            <p className="text-[#bfa06a] text-lg">정산 내역이 없습니다.</p>
+                        </div>
+                    ) : (
+                        <div className="overflow-x-auto bg-[#e9dec7] rounded-lg shadow-sm border border-[#bfa06a]">
+                            <table className="min-w-full divide-y divide-[#bfa06a]">
+                                <thead className="bg-[#e9dec7]">
+                                    <tr>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-[#bfa06a] uppercase tracking-wider">정산 기간</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-[#bfa06a] uppercase tracking-wider">총 매출</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-[#bfa06a] uppercase tracking-wider">수수료</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-[#bfa06a] uppercase tracking-wider">지급액</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-[#bfa06a] uppercase tracking-wider">처리일시</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="bg-[#e9dec7] divide-y divide-[#bfa06a]">
+                                    {payouts.map((item) => (
+                                        <tr key={item.id} className="hover:bg-[#bfa06a] transition-colors">
+                                            <td className="px-6 py-4 whitespace-nowrap font-medium text-[#5b4636]">
+                                                {item.periodStart} ~ {item.periodEnd}
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-[#5b4636]">
+                                                {item.totalSales.toLocaleString()}원
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-[#b94a48]">
+                                                {item.totalCommission.toLocaleString()}원
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap font-semibold text-[#388e3c]">
+                                                {item.payoutAmount.toLocaleString()}원
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-[#5b4636]">
+                                                {item.processedAt}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    )}
+                </div>
+            </SellerLayout>
         </>
     );
 }

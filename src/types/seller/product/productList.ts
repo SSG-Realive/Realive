@@ -8,4 +8,5 @@ export interface ProductListItem {
     categoryName: string;
     parentCategoryName: string | null;
     sellerName: string;
+    stock: number;
 }

@@ -46,13 +46,13 @@ export default function SellerLoginPage() {
   };
 
   return (
-    <div className="w-full max-w-full min-h-screen overflow-x-hidden bg-gray-50 flex items-center justify-center px-4">
+    <div className="w-full max-w-full min-h-screen overflow-x-hidden bg-[#a89f91] flex items-center justify-center px-4">
       <div className="w-full max-w-md mx-auto">
-        <div className="bg-white rounded-lg shadow-md p-6 md:p-8">
-          <h1 className="text-2xl font-bold text-center mb-6 text-gray-800">판매자 로그인</h1>
+        <div className="bg-[#e9dec7] rounded-lg shadow-md p-6 md:p-8 border border-[#bfa06a]">
+          <h1 className="text-2xl font-bold text-center mb-6 text-[#5b4636]">판매자 로그인</h1>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="email" className="block text-sm font-medium text-[#5b4636] mb-1">
                 이메일
               </label>
               <input 
@@ -61,12 +61,12 @@ export default function SellerLoginPage() {
                 value={email} 
                 onChange={(e) => setEmail(e.target.value)} 
                 required 
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-[#bfa06a] rounded-md focus:outline-none focus:ring-2 focus:ring-[#bfa06a] bg-[#e9dec7] text-[#5b4636] placeholder-[#bfa06a]"
                 placeholder="이메일을 입력하세요"
               />
             </div>
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="password" className="block text-sm font-medium text-[#5b4636] mb-1">
                 비밀번호
               </label>
               <input 
@@ -75,24 +75,24 @@ export default function SellerLoginPage() {
                 value={password} 
                 onChange={(e) => setPassword(e.target.value)} 
                 required 
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-[#bfa06a] rounded-md focus:outline-none focus:ring-2 focus:ring-[#bfa06a] bg-[#e9dec7] text-[#5b4636] placeholder-[#bfa06a]"
                 placeholder="비밀번호를 입력하세요"
               />
             </div>
             {error && (
-              <p className="text-red-500 text-sm bg-red-50 p-3 rounded-md border border-red-200">
+              <p className="text-[#b94a48] text-sm bg-[#fbeee0] p-3 rounded-md border border-[#bfa06a]">
                 {error}
               </p>
             )}
             <button 
               type="submit" 
-              className="w-full bg-blue-600 text-white py-3 px-4 rounded-md font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+              className="w-full bg-[#bfa06a] text-[#4b3a2f] py-3 px-4 rounded-md font-medium hover:bg-[#5b4636] hover:text-[#e9dec7] focus:outline-none focus:ring-2 focus:ring-[#bfa06a] focus:ring-offset-2 transition-colors"
             >
               로그인
             </button>
             <Link
               href="/seller/signup"
-              className="block w-full mt-4 py-3 px-4 rounded-md border-2 border-blue-600 bg-white text-blue-600 font-medium text-center hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+              className="block w-full mt-4 py-3 px-4 rounded-md border-2 border-[#bfa06a] bg-[#e9dec7] text-[#5b4636] font-medium text-center hover:bg-[#bfa06a] hover:text-[#e9dec7] focus:outline-none focus:ring-2 focus:ring-[#bfa06a] focus:ring-offset-2 transition-colors"
             >
               회원가입
             </Link>
