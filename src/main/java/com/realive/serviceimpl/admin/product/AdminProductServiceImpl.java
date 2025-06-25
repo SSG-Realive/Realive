@@ -226,7 +226,6 @@ public class AdminProductServiceImpl implements AdminProductService {
 
         // 2. AdminProduct 목록 조회
         List<AdminProduct> adminProducts = adminProductRepository.findAll(spec);
-
         if (adminProducts.isEmpty()) {
             return PageResponseDTO.<ProductListDTO>withAll()
                     .pageRequestDTO(condition)

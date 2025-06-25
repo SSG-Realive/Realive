@@ -42,6 +42,24 @@ public interface ProductRepository extends JpaRepository<Product, Long>, Product
             @Param("startOfDay") LocalDateTime startOfDay,
             @Param("endOfDay") LocalDateTime endOfDay);
 
+    // 🚩 월별 상품 등록 통계
+    @Query("SELECT YEAR(p.createdAt) as year, MONTH(p.createdAt) as month, COUNT(p) as count " +
+           "FROM Product p " +
+           "WHERE p.createdAt >= :startDate AND p.createdAt < :endDate " +
+           "GROUP BY YEAR(p.createdAt), MONTH(p.createdAt) " +
+           "ORDER BY year, month")
+    List<Object[]> getMonthlyProductRegistrationStats(@Param("startDate") LocalDateTime startDate,
+                                                      @Param("endDate") LocalDateTime endDate);
+
+    // 🚩 일별 상품 등록 통계
+    @Query("SELECT DATE(p.createdAt) as date, COUNT(p) as count " +
+           "FROM Product p " +
+           "WHERE p.createdAt >= :startDate AND p.createdAt < :endDate " +
+           "GROUP BY DATE(p.createdAt) " +
+           "ORDER BY date")
+    List<Object[]> getDailyProductRegistrationStats(@Param("startDate") LocalDateTime startDate,
+                                                    @Param("endDate") LocalDateTime endDate);
+
     // 🚩 PESSIMISTIC LOCK 재고 차감용
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT p FROM Product p WHERE p.id = :productId")

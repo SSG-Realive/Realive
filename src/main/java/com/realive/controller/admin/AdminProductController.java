@@ -8,6 +8,8 @@ import com.realive.dto.common.ApiResponse;
 import com.realive.dto.page.PageResponseDTO;
 import com.realive.dto.product.ProductListDTO;
 import com.realive.dto.product.ProductSearchCondition;
+import com.realive.dto.product.MonthlyProductRegistrationDTO;
+import com.realive.dto.product.DailyProductRegistrationDTO;
 import com.realive.security.AdminPrincipal;
 import com.realive.service.product.ProductService;
 import com.realive.service.admin.product.AdminProductService;
@@ -113,6 +115,30 @@ public class AdminProductController {
     public ResponseEntity<Void> deactivateProduct(@PathVariable Long productId) {
         adminProductService.deactivateProduct(productId);
         return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * 월별 상품 등록 통계 조회
+     * - 지정된 개월 수만큼의 월별 상품 등록 수를 조회
+     */
+    @GetMapping("/products/monthly-stats")
+    public ResponseEntity<List<MonthlyProductRegistrationDTO>> getMonthlyProductStats(
+            @RequestParam(defaultValue = "6") int months) {
+        log.info("월별 상품 등록 통계 조회 요청 - 개월 수: {}", months);
+        List<MonthlyProductRegistrationDTO> stats = productService.getMonthlyProductRegistrationStats(months);
+        return ResponseEntity.ok(stats);
+    }
+
+    /**
+     * 일별 상품 등록 통계 조회
+     * - 지정된 일 수만큼의 일별 상품 등록 수를 조회
+     */
+    @GetMapping("/products/daily-stats")
+    public ResponseEntity<List<DailyProductRegistrationDTO>> getDailyProductStats(
+            @RequestParam(defaultValue = "30") int days) {
+        log.info("일별 상품 등록 통계 조회 요청 - 일 수: {}", days);
+        List<DailyProductRegistrationDTO> stats = productService.getDailyProductRegistrationStats(days);
+        return ResponseEntity.ok(stats);
     }
 
     // 예외 처리 (선택)

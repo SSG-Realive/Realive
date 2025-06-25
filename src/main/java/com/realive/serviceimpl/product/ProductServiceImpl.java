@@ -30,6 +30,10 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.LocalDateTime;
+import java.time.YearMonth;
+import java.time.LocalDate;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -329,5 +333,68 @@ public class ProductServiceImpl implements ProductService {
                                 .dtoList(dtoList)
                                 .total((int) result.getTotalElements())
                                 .build();
+        }
+
+        public MonthlyProductRegistrationDTO getMonthlyProductRegistrationDTO(YearMonth yearMonth) {
+                // Implementation of the method
+                // This method should return a MonthlyProductRegistrationDTO object
+                // based on the given YearMonth
+                return null; // Placeholder return, actual implementation needed
+        }
+
+        @Override
+        public List<MonthlyProductRegistrationDTO> getMonthlyProductRegistrationStats(int months) {
+                log.info("월별 상품 등록 통계 조회 - 개월 수: {}", months);
+                
+                // 현재 날짜로부터 지정된 개월 수만큼 이전 날짜 계산
+                LocalDateTime endDate = LocalDateTime.now();
+                LocalDateTime startDate = endDate.minusMonths(months);
+                
+                // Repository에서 월별 통계 조회
+                List<Object[]> monthlyStats = productRepository.getMonthlyProductRegistrationStats(startDate, endDate);
+                
+                // Object[]를 DTO로 변환
+                return monthlyStats.stream()
+                        .map(stat -> {
+                                Integer year = (Integer) stat[0];
+                                Integer month = (Integer) stat[1];
+                                Long countLong = (Long) stat[2];  // Long으로 받기
+                                Integer count = countLong.intValue();  // Integer로 변환
+                                
+                                YearMonth yearMonth = YearMonth.of(year, month);
+                                
+                                return MonthlyProductRegistrationDTO.builder()
+                                        .yearMonth(yearMonth)
+                                        .count(count)
+                                        .build();
+                        })
+                        .collect(Collectors.toList());
+        }
+
+        @Override
+        public List<DailyProductRegistrationDTO> getDailyProductRegistrationStats(int days) {
+                log.info("일별 상품 등록 통계 조회 - 일 수: {}", days);
+                
+                // 현재 날짜로부터 지정된 일 수만큼 이전 날짜 계산
+                LocalDateTime endDate = LocalDateTime.now();
+                LocalDateTime startDate = endDate.minusDays(days);
+                
+                // Repository에서 일별 통계 조회
+                List<Object[]> dailyStats = productRepository.getDailyProductRegistrationStats(startDate, endDate);
+                
+                // Object[]를 DTO로 변환
+                return dailyStats.stream()
+                        .map(stat -> {
+                                java.sql.Date sqlDate = (java.sql.Date) stat[0];
+                                LocalDate date = sqlDate.toLocalDate();  // java.sql.Date를 LocalDate로 변환
+                                Long countLong = (Long) stat[1];  // Long으로 받기
+                                Integer count = countLong.intValue();  // Integer로 변환
+                                
+                                return DailyProductRegistrationDTO.builder()
+                                        .date(date)
+                                        .count(count)
+                                        .build();
+                        })
+                        .collect(Collectors.toList());
         }
 }
