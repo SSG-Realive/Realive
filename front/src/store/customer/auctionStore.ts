@@ -26,7 +26,7 @@ interface ApiResponse<T> {
 
 interface PaginatedAuctionResponse {
   content: Auction[];
-  totalPages: number;
+  Pages: number;
   number: number;  // 현재 페이지(0부터 시작)
   last: boolean;   // 마지막 페이지 여부
 }

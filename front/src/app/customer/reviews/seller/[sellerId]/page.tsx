@@ -1,8 +1,8 @@
 // app/customer/reviews/seller/[sellerId]/page.tsx
 
 import React from 'react';
-import Navbar from "@/components/customer/Navbar";
-import Sidebar from "@/components/Sidebar";
+import Navbar from "@/components/customer/common/Navbar";
+import Sidebar from "@/components/seller/SellerSidebar";
 import Link from 'next/link';
 import {ReviewListResponseDTO} from "@/types/reviews/reviewListResponseDTO";
 import {ReviewResponseDTO} from "@/types/reviews/reviewResponseDTO";

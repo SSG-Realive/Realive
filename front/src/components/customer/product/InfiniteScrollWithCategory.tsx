@@ -31,7 +31,7 @@ export default function InfiniteScrollWithCategory() {
     const [page, setPage] = useState(1);
     const loader = useRef<HTMLDivElement | null>(null);
 
-    const ITEMS_PER_PAGE = 20;
+    const ITEMS_PER_PAGE = 10;
 
     const getFilteredProducts = () => {
         return selectedCategory === '전체'

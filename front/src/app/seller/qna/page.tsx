@@ -130,7 +130,7 @@ export default function SellerQnaPage() {
                             </div>
                             <div className="flex items-center gap-2">
                                 <button
-                                    onClick={() => router.push('/seller/qna/new')}
+                                    onClick={() => router.push('/seller/admin-qna')}
                                     className="bg-[#bfa06a] text-[#4b3a2f] px-3 py-1.5 rounded hover:bg-[#5b4636] hover:text-[#e9dec7] flex items-center gap-1 text-sm"
                                 >
                                     <Plus className="w-3 h-3" />

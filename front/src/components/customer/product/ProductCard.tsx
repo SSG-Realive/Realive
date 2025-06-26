@@ -6,6 +6,7 @@ import { ProductListDTO } from '@/types/seller/product/product';
 import { FaHeart, FaRegHeart } from 'react-icons/fa';
 import { toggleWishlist } from '@/service/customer/wishlistService';
 import type { WishlistToggleRequest } from '@/types/customer/wishlist/wishlist';
+import ProductImage from '@/components/ProductImage';
 
 export default function ProductCard({
                                       id,
@@ -27,10 +28,10 @@ export default function ProductCard({
           {/* 이미지 영역 */}
           <div className="relative w-full aspect-[1/1] rounded-xl overflow-hidden bg-gray-100">
             {imageThumbnailUrl ? (
-                <img
+                <ProductImage
                     src={imageThumbnailUrl}
                     alt={name}
-                    className="w-full h-full object-cover"
+                    className="w-`full h-full object-cover"
                 />
             ) : (
                 <div className="w-full h-full flex items-center justify-center text-gray-500 text-sm">

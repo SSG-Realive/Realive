@@ -21,3 +21,16 @@ export interface ProductDetail {
     deliveryPolicy: DeliveryPolicy;
 }
 
+export interface FeaturedProductSummary {
+  productId: number;
+  name: string;
+  price: number;
+  imageThumbnailUrl: string;
+}
+
+export interface FeaturedSellerWithProducts {
+  sellerId: number;
+  sellerName: string;
+  products: FeaturedProductSummary[];
+}
+
