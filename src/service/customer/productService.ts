@@ -1,4 +1,5 @@
 import apiClient from '@/lib/apiClient';
+import { FeaturedSellerWithProducts } from '@/types/product';
 import { ProductListDTO } from '@/types/seller/product/product';
 import { ProductDetail } from '@/types/seller/product/product';
 
@@ -41,4 +42,21 @@ export async function fetchRelatedProducts(productId: number): Promise<ProductLi
 export async function fetchPopularProducts(): Promise<ProductListDTO[]> {
     const res = await apiClient.get('/public/items/popular');
     return res.data;
+}
+
+ /* 추천 판매자+상품 목록을 서버에서 가져옵니다.
+ */
+export async function fetchFeaturedSellersWithProducts(
+  candidateSize = 10,
+  sellersPick = 1,
+  productsPerSeller = 3,
+  minReviews = 3
+): Promise<FeaturedSellerWithProducts[]> {
+  const response = await apiClient.get<FeaturedSellerWithProducts[]>(
+    '/public/items/featured-sellers-with-products',
+    {
+      params: { candidateSize, sellersPick, productsPerSeller, minReviews },
+    }
+  );
+  return response.data;
 }

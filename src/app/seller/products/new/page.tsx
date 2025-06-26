@@ -132,16 +132,11 @@ export default function ProductNewPage() {
     const subCategories = categories.filter(cat => cat.parentId === Number(parentCategoryId));
 
     return (
-        <>
-            <div className="hidden">
-                <SellerHeader toggleSidebar={toggleSidebar} />
-            </div>
-            <SellerLayout>
-            <div className="w-full max-w-full min-h-screen overflow-x-hidden bg-gray-50 px-4 md:px-8 py-6">
+        <SellerLayout>
+            <main className="bg-[#a89f91] min-h-screen w-full px-4 py-8">
+                <h1 className="text-2xl font-extrabold mb-8 text-[#5b4636] tracking-wide text-center">상품 등록</h1>
                 <div className="max-w-2xl mx-auto">
-                    <h1 className="text-xl md:text-2xl font-bold mb-4 md:mb-6 text-gray-900">상품 등록</h1>
-
-                    <form onSubmit={handleSubmit} encType="multipart/form-data" className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 md:p-6">
+                    <form onSubmit={handleSubmit} encType="multipart/form-data" className="bg-[#e9dec7] rounded-xl shadow border border-[#bfa06a] p-6 md:p-8">
                         {/* 카테고리 선택 */}
                         <div className="mb-4 md:mb-6">
                             <label className="block text-sm font-medium text-gray-700 mb-2">카테고리 (1차)</label>
@@ -195,7 +190,8 @@ export default function ProductNewPage() {
                                 value={form.price} 
                                 onChange={handleChange} 
                                 required 
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                step="100"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
                                 placeholder="가격을 입력하세요"
                             />
                         </div>
@@ -238,7 +234,8 @@ export default function ProductNewPage() {
                                     value={form.width} 
                                     onChange={handleChange} 
                                     required 
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                    step="5"
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
                                     placeholder="가로"
                                 />
                             </div>
@@ -251,7 +248,8 @@ export default function ProductNewPage() {
                                     value={form.depth} 
                                     onChange={handleChange} 
                                     required 
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                    step="5"
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
                                     placeholder="세로"
                                 />
                             </div>
@@ -264,7 +262,8 @@ export default function ProductNewPage() {
                                     value={form.height} 
                                     onChange={handleChange} 
                                     required 
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                    step="5"
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
                                     placeholder="높이"
                                 />
                             </div>
@@ -393,14 +392,13 @@ export default function ProductNewPage() {
 
                         <button 
                             type="submit" 
-                            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                            className="w-full py-3 rounded-lg font-bold text-white bg-[#5b4636] hover:bg-[#bfa06a] hover:text-[#5b4636] transition"
                         >
                             등록하기
                         </button>
                     </form>
                 </div>
-            </div>
-            </SellerLayout>
-        </>
+            </main>
+        </SellerLayout>
     );
 }

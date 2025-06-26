@@ -70,3 +70,52 @@ export const processCartPaymentApi = async (
     const { data } = await customerApi.post<number>('/customer/cart/payment', requestData);
     return data;
 };
+
+/**
+ * [API] 주문 내역 삭제
+ * DELETE /api/customer/orders
+ * @param orderId 삭제할 주문의 ID
+ * @returns Promise<void>
+ */
+export const deleteOrder = async (orderId: number): Promise<void> => {
+    try {
+        const { status } = await customerApi.delete<void>('/customer/orders', {
+            data: { orderId }
+        });
+
+        if (status !== 204 && status !== 200) {
+            throw new Error(`주문 삭제에 실패했습니다. (HTTP 상태 코드: ${status})`);
+        }
+    } catch (error: any) { // ✨ error 타입을 any로 지정하여 유연하게 처리
+        // error 객체에 response 속성이 있다면, Axios에서 발생한 HTTP 에러로 간주합니다.
+        if (error.response) {
+            // 서버에서 보낸 에러 응답 데이터를 확인합니다.
+            // Spring Boot의 기본 예외 응답은 'message' 필드에 에러 메시지를 담습니다.
+            const serverResponseData = error.response.data;
+
+            // 'message' 필드가 존재하고 문자열이라면 해당 메시지를 사용합니다.
+            if (serverResponseData?.message && typeof serverResponseData.message === 'string') {
+                throw new Error(serverResponseData.message);
+            } else if (error.response.status) {
+                // 특정 HTTP 상태 코드에 따른 일반적인 메시지
+                if (error.response.status === 400) {
+                    throw new Error('잘못된 요청입니다. 입력값을 확인해주세요.');
+                } else if (error.response.status === 403) {
+                    throw new Error('삭제 권한이 없습니다.');
+                } else if (error.response.status === 404) {
+                    throw new Error('해당 주문을 찾을 수 없습니다.');
+                } else if (error.response.status === 409) {
+                    throw new Error('데이터 충돌이 발생했습니다. 다시 시도해주세요.');
+                } else if (error.response.status >= 500) {
+                    // 5xx 서버 에러일 경우, 서버에서 보낸 메시지가 없으면 일반적인 서버 오류 메시지
+                    throw new Error('서버에 문제가 발생했습니다. 잠시 후 다시 시도해주세요.');
+                }
+            }
+            // 그 외 알 수 없는 형태의 서버 응답이라면 일반적인 실패 메시지
+            throw new Error(`주문 삭제 실패: ${error.response.statusText || '알 수 없는 오류'}`);
+
+        }
+        // response 객체가 없는 경우 (네트워크 오류, 요청 취소 등)
+        throw new Error(`네트워크 오류가 발생했습니다: ${error.message || '알 수 없는 오류'}`);
+    }
+};

@@ -5,11 +5,11 @@ import { useState } from 'react';
 
 const categories = [
     { id: null, name: 'ALL' },
-    { id: 1, name: '거실 가구' },
-    { id: 2, name: '침실 가구' },
-    { id: 3, name: '주방·다이닝 가구' },
-    { id: 4, name: '서재·오피스 가구' },
-    { id: 5, name: '기타 가구' },
+    { id: 10, name: '거실 가구' },
+    { id: 20, name: '침실 가구' },
+    { id: 30, name: '주방·다이닝 가구' },
+    { id: 40, name: '서재·오피스 가구' },
+    { id: 50, name: '기타 가구' },
 ];
 
 export default function CategoryFilter({

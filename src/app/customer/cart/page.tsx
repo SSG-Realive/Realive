@@ -144,7 +144,7 @@ export default function CartPage() {
             <Navbar />
             <main className="max-w-4xl mx-auto p-6">
                 <div className="flex justify-between items-center mb-6">
-                    <h1 className="text-2xl font-bold">🛒 장바구니</h1>
+                    <h1 className="text-2xl font-bold">장바구니</h1>
                     {cartItems.length > 0 && (
                         <div className="flex gap-2">
                             {/* ✨ 장바구니 비우기 버튼 추가 (편집 모드와 무관하게 항상 보일 수 있음) */}

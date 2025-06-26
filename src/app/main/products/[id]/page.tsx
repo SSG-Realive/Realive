@@ -10,6 +10,7 @@ import { fetchReviewsBySeller } from '@/service/customer/reviewService';
 import ReviewList from '@/components/customer/review/ReviewList';
 import { ProductDetail, ProductListDTO } from '@/types/seller/product/product';
 import { ReviewResponseDTO } from '@/types/customer/review/review';
+import { FaHeart, FaRegHeart } from 'react-icons/fa';
 
 export default function ProductDetailPage() {
     const { id } = useParams();
@@ -87,7 +88,11 @@ export default function ProductDetailPage() {
             <Navbar />
             <div className="max-w-6xl mx-auto px-4 py-10 grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div>
-                    <img src={product.imageThumbnailUrl || '/default-thumbnail.png'} alt={product.name} className="w-full h-96 object-contain rounded-lg shadow-md" />
+                    <img
+                        src={product.imageThumbnailUrl || '/default-thumbnail.png'}
+                        alt={product.name}
+                        className="w-full h-96 object-contain rounded-lg shadow-md"
+                    />
                 </div>
                 <div>
                     <h1 className="text-2xl font-bold text-black mb-2">{product.name}</h1>
@@ -108,7 +113,10 @@ export default function ProductDetailPage() {
                         <div className="flex items-center justify-between mb-4">
                             <span className="font-semibold text-sm">수량</span>
                             <div className="flex items-center border rounded-md">
-                                <button onClick={() => setQuantity((prev) => Math.max(1, prev - 1))} className="px-3 py-1 text-sm font-bold text-gray-600 hover:bg-gray-100 rounded-l-md">-</button>
+                                <button
+                                    onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}
+                                    className="px-3 py-1 text-sm font-bold text-gray-600 hover:bg-gray-100 rounded-l-md"
+                                >-</button>
                                 <input
                                     type="text"
                                     inputMode="numeric"
@@ -127,7 +135,10 @@ export default function ProductDetailPage() {
                                     }}
                                     className="w-16 text-center border-l border-r py-1 text-sm"
                                 />
-                                <button onClick={() => setQuantity((prev) => Math.min(product.stock, prev + 1))} className="px-3 py-1 text-sm font-bold text-gray-600 hover:bg-gray-100 rounded-r-md">+</button>
+                                <button
+                                    onClick={() => setQuantity((prev) => Math.min(product.stock, prev + 1))}
+                                    className="px-3 py-1 text-sm font-bold text-gray-600 hover:bg-gray-100 rounded-r-md"
+                                >+</button>
                             </div>
                         </div>
                         <div className="flex items-center justify-between text-base font-bold mb-6">
@@ -137,10 +148,14 @@ export default function ProductDetailPage() {
                         <div className="flex space-x-3">
                             <button
                                 onClick={handleToggleWishlist}
-                                className={`w-10 h-10 flex items-center justify-center rounded-full border text-sm ${isWished ? 'bg-gray-700 text-white border-gray-700' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'}`}
                                 disabled={wishlistLoading}
+                                className="w-10 h-10 flex items-center justify-center rounded-full border border-gray-300 bg-white hover:bg-gray-100 transition"
                             >
-                                {isWished ? '❤️' : '🤍'}
+                                {isWished ? (
+                                    <FaHeart className="w-5 h-5 text-red-500" />
+                                ) : (
+                                    <FaRegHeart className="w-5 h-5 text-gray-400" />
+                                )}
                             </button>
                             <button
                                 onClick={handleAddToCart}
@@ -159,7 +174,6 @@ export default function ProductDetailPage() {
                 </div>
             </div>
 
-            {/* 하단 여백 추가 */}
             <div className="max-w-6xl mx-auto px-4 mt-0 pb-52">
                 <div className="mt-2">
                     <h2 className="text-lg font-bold mb-4">판매자 리뷰</h2>
@@ -198,13 +212,18 @@ export default function ProductDetailPage() {
                 <div ref={triggerRef} className="h-10" />
             </div>
 
-            <div className={`fixed bottom-0 left-0 right-0 bg-white border-t p-4 shadow-lg-top transform transition-transform duration-300 ease-in-out ${isFooterSticky ? 'translate-y-0' : 'translate-y-full'} z-20`}>
+            <div
+                className={`fixed bottom-0 left-0 right-0 bg-white border-t p-4 shadow-lg-top transform transition-transform duration-300 ease-in-out ${isFooterSticky ? 'translate-y-0' : 'translate-y-full'} z-20`}
+            >
                 <div className="max-w-4xl mx-auto flex justify-between items-center">
                     <div>
                         <p className="text-sm font-semibold truncate">{product.name}</p>
                         <p className="text-base font-bold text-black">{product.price.toLocaleString()}원</p>
                     </div>
-                    <button onClick={handleAddToCart} className="bg-red-500 text-white font-bold px-8 py-3 rounded-md hover:bg-red-600 transition-colors text-sm">
+                    <button
+                        onClick={handleAddToCart}
+                        className="bg-red-500 text-white font-bold px-8 py-3 rounded-md hover:bg-red-600 transition-colors text-sm"
+                    >
                         바로 주문
                     </button>
                 </div>

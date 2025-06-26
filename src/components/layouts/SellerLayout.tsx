@@ -15,7 +15,7 @@ export default function SellerLayout({ children }: SellerLayoutProps) {
   const toggleSidebar = () => setSidebarOpen((prev) => !prev);
 
   return (
-    <div className="min-h-screen h-screen w-full bg-gray-100 flex flex-col">
+    <div className="min-h-screen h-screen w-full bg-[#a89f91] flex flex-col">
       {/* 헤더: 항상 상단 고정 (fixed 제거!) */}
       <div>
         <SellerHeader toggleSidebar={toggleSidebar} />
@@ -45,7 +45,7 @@ export default function SellerLayout({ children }: SellerLayoutProps) {
           <SellerSidebar className="fixed top-0 left-0 h-screen w-60 flex flex-col z-30" />
         </div>
         {/* 본문: flex-1로 꽉 차게, 데스크탑에서 사이드바만큼 마진 */}
-        <main className="flex-1 w-full min-h-screen px-4 py-8 bg-[#a89f91] lg:ml-60">
+        <main className="flex-1 w-full min-h-screen lg:ml-60">
           {children}
         </main>
       </div>

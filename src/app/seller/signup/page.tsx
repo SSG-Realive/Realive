@@ -78,7 +78,7 @@ const SellerSignup: React.FC = () => {
   };
 
   return (
-    <div className="w-full max-w-full min-h-screen overflow-x-hidden bg-[#a89f91] flex items-center justify-center px-4 py-8">
+    <div className="min-h-screen w-full flex items-center justify-center bg-[#a89f91] px-4 py-8">
       <div className="w-full max-w-md mx-auto">
         <div className="bg-[#e9dec7] rounded-lg shadow-md p-6 md:p-8 border border-[#bfa06a]">
           <h1 className="text-2xl font-bold text-center mb-6 text-[#5b4636]">판매자 회원가입</h1>

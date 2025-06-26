@@ -21,9 +21,6 @@ export default async function IntegratedLoginPage({ searchParams }: LoginPagePro
     <main className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
       <div className="w-full max-w-2xl">
         <div className="text-center mb-10">
-          <h1 className="text-3xl font-bold text-gray-800">
-            Realive 로그인
-          </h1>
           <p className="mt-2 text-gray-600">
             어떤 계정으로 로그인하시겠어요?
           </p>
@@ -39,11 +36,8 @@ export default async function IntegratedLoginPage({ searchParams }: LoginPagePro
                 <User className="h-14 w-14 text-blue-600 group-hover:scale-110 transition-transform" />
               </div>
               <h2 className="text-xl font-semibold text-gray-900">
-                고객으로 로그인
+                고객
               </h2>
-              <p className="mt-2 text-gray-500">
-                쇼핑 및 주문 내역을 확인하세요.
-              </p>
             </div>
           </Link>
 
@@ -55,20 +49,11 @@ export default async function IntegratedLoginPage({ searchParams }: LoginPagePro
                 <Store className="h-14 w-14 text-green-600 group-hover:scale-110 transition-transform" />
               </div>
               <h2 className="text-xl font-semibold text-gray-900">
-                판매자로 로그인
+                판매자
               </h2>
-              <p className="mt-2 text-gray-500">
-                상품을 등록하고 판매를 관리하세요.
-              </p>
             </div>
           </Link>
 
-        </div>
-        
-        <div className="text-center mt-12">
-            <p className="text-sm text-gray-500">
-                계정이 없으신가요? <Link href="/signup" className="font-semibold text-blue-600 hover:underline">회원가입</Link>
-            </p>
         </div>
       </div>
     </main>
