@@ -398,12 +398,6 @@ public class ProductServiceImpl implements ProductService {
                                                         .build();
                                 })
                                 .collect(Collectors.toList());
-
-        public MonthlyProductRegistrationDTO getMonthlyProductRegistrationDTO(YearMonth yearMonth) {
-                // Implementation of the method
-                // This method should return a MonthlyProductRegistrationDTO object
-                // based on the given YearMonth
-                return null; // Placeholder return, actual implementation needed
         }
 
         @Override
