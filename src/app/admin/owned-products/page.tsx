@@ -22,7 +22,36 @@ interface Product {
 interface Category {
   id: number;
   name: string;
+  parentId?: number | null;
+  parent?: Category | null;
 }
+
+// 카테고리 계층 구조 생성 함수
+const buildCategoryHierarchy = (categories: Category[]) => {
+  const categoryMap = new Map<number, Category>();
+  const rootCategories: Category[] = [];
+  const childCategories = new Map<number, Category[]>();
+
+  // 모든 카테고리를 맵에 저장
+  categories.forEach(category => {
+    categoryMap.set(category.id, category);
+  });
+
+  // 상위/하위 카테고리 분류
+  categories.forEach(category => {
+    if (category.parent === null || category.parent === undefined) {
+      rootCategories.push(category);
+    } else {
+      const parentId = category.parent.id;
+      if (!childCategories.has(parentId)) {
+        childCategories.set(parentId, []);
+      }
+      childCategories.get(parentId)!.push(category);
+    }
+  });
+
+  return { rootCategories, childCategories, categoryMap };
+};
 
 export default function AdminOwnedProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -35,6 +64,14 @@ export default function AdminOwnedProductsPage() {
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const [priceRange, setPriceRange] = useState({ min: '', max: '' });
   const [auctionStatus, setAuctionStatus] = useState<string>('all');
+  
+  // 계층형 카테고리 드롭다운을 위한 상태
+  const [selectedParentCategory, setSelectedParentCategory] = useState<number | null>(null);
+  const [categoryHierarchy, setCategoryHierarchy] = useState<{
+    rootCategories: Category[];
+    childCategories: Map<number, Category[]>;
+    categoryMap: Map<number, Category>;
+  } | null>(null);
 
   useEffect(() => {
     fetchCategories();
@@ -48,6 +85,10 @@ export default function AdminOwnedProductsPage() {
         headers: { Authorization: `Bearer ${token}` }
       });
       setCategories(response.data);
+      
+      // 카테고리 계층 구조 생성
+      const hierarchy = buildCategoryHierarchy(response.data || []);
+      setCategoryHierarchy(hierarchy);
     } catch (error) {
       console.error('카테고리 조회 실패:', error);
     }
@@ -90,6 +131,7 @@ export default function AdminOwnedProductsPage() {
     setSelectedCategory(null);
     setPriceRange({ min: '', max: '' });
     setAuctionStatus('all');
+    setSelectedParentCategory(null);
     fetchProducts();
   };
 
@@ -153,7 +195,7 @@ export default function AdminOwnedProductsPage() {
             <h2 className="text-lg font-semibold text-gray-900">필터</h2>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
             {/* 검색어 */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">검색어</label>
@@ -172,39 +214,47 @@ export default function AdminOwnedProductsPage() {
             {/* 카테고리 */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">카테고리</label>
-              <select
-                value={selectedCategory || ''}
-                onChange={(e) => setSelectedCategory(e.target.value ? Number(e.target.value) : null)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              >
-                <option value="">전체 카테고리</option>
-                {categories.map((category) => (
-                  <option key={category.id} value={category.id}>
-                    {category.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* 가격 범위 */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">가격 범위</label>
-              <div className="flex gap-2">
-                <input
-                  type="number"
-                  value={priceRange.min}
-                  onChange={(e) => setPriceRange(prev => ({ ...prev, min: e.target.value }))}
-                  placeholder="최소"
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
-                <span className="self-center text-gray-500">~</span>
-                <input
-                  type="number"
-                  value={priceRange.max}
-                  onChange={(e) => setPriceRange(prev => ({ ...prev, max: e.target.value }))}
-                  placeholder="최대"
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
+              <div className="space-y-2">
+                {/* 상위 카테고리 드롭다운 */}
+                <select
+                  value={selectedParentCategory || ""}
+                  onChange={(e) => {
+                    const parentId = e.target.value ? Number(e.target.value) : null;
+                    setSelectedParentCategory(parentId);
+                    setSelectedCategory(null); // 하위 카테고리 선택 초기화
+                  }}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="">전체 카테고리</option>
+                  {categoryHierarchy?.rootCategories.map(category => (
+                    <option key={category.id} value={category.id}>
+                      {category.name}
+                    </option>
+                  ))}
+                </select>
+                
+                {/* 하위 카테고리 드롭다운 (상위 카테고리 선택 시에만 표시) */}
+                {selectedParentCategory && categoryHierarchy?.childCategories.get(selectedParentCategory) && (
+                  <select
+                    value={selectedCategory || ""}
+                    onChange={(e) => setSelectedCategory(e.target.value ? Number(e.target.value) : null)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-blue-50"
+                  >
+                    <option value="">전체 {categoryHierarchy.categoryMap.get(selectedParentCategory)?.name}</option>
+                    {categoryHierarchy.childCategories.get(selectedParentCategory)?.map(category => (
+                      <option key={category.id} value={category.id}>
+                        {category.name}
+                      </option>
+                    ))}
+                  </select>
+                )}
+                
+                {/* 선택된 카테고리 표시 */}
+                {selectedCategory && (
+                  <div className="text-sm text-blue-600 bg-blue-50 px-3 py-2 rounded-md">
+                    선택된 카테고리: {categories.find(c => c.id === selectedCategory)?.name}
+                  </div>
+                )}
               </div>
             </div>
 
@@ -217,9 +267,31 @@ export default function AdminOwnedProductsPage() {
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
                 <option value="all">전체</option>
-                <option value="true">경매 등록됨</option>
-                <option value="false">경매 미등록</option>
+                <option value="true">경매 등록</option>
+                <option value="false">미등록</option>
               </select>
+            </div>
+          </div>
+
+          {/* 가격 범위 - 별도 행으로 분리 */}
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-2">가격 범위</label>
+            <div className="flex gap-2 max-w-md">
+              <input
+                type="number"
+                value={priceRange.min}
+                onChange={(e) => setPriceRange(prev => ({ ...prev, min: e.target.value }))}
+                placeholder="최소 가격"
+                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+              <span className="self-center text-gray-500">~</span>
+              <input
+                type="number"
+                value={priceRange.max}
+                onChange={(e) => setPriceRange(prev => ({ ...prev, max: e.target.value }))}
+                placeholder="최대 가격"
+                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
             </div>
           </div>
 
