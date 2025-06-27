@@ -109,6 +109,7 @@ public class AdminProductServiceImpl implements AdminProductService {
         AdminProduct adminProduct = AdminProduct.builder()
                 .productId(requestDTO.getProductId())
                 .purchasePrice(requestDTO.getPurchasePrice())
+                .purchasedFromSellerId(seller.getId().intValue())
                 .purchasedAt(LocalDateTime.now())
                 .isAuctioned(false)
                 .build();
@@ -190,42 +191,8 @@ public class AdminProductServiceImpl implements AdminProductService {
         log.info("관리자 물품 목록 조회 - 조건: {}", condition);
 
         // 1. AdminProduct 목록 조회 (페이징 없이)
-        Specification<AdminProduct> spec = (root, query, cb) -> {
-            List<Predicate> predicates = new ArrayList<>();
-
-            // 카테고리 필터
-            if (condition.getCategoryId() != null) {
-                Join<AdminProduct, Product> productJoin = root.join("product", JoinType.INNER);
-                predicates.add(cb.equal(productJoin.get("category").get("id"), condition.getCategoryId()));
-            }
-
-            // 상태 필터
-            if (condition.getStatus() != null) {
-                Join<AdminProduct, Product> productJoin = root.join("product", JoinType.INNER);
-                predicates.add(cb.equal(productJoin.get("status"), condition.getStatus()));
-            }
-
-            // 활성화 여부 필터
-            if (condition.getIsActive() != null) {
-                Join<AdminProduct, Product> productJoin = root.join("product", JoinType.INNER);
-                predicates.add(cb.equal(productJoin.get("active"), condition.getIsActive()));
-            }
-
-            // 가격 범위 필터
-            if (condition.getMinPrice() != null) {
-                Join<AdminProduct, Product> productJoin = root.join("product", JoinType.INNER);
-                predicates.add(cb.greaterThanOrEqualTo(productJoin.get("price"), condition.getMinPrice()));
-            }
-            if (condition.getMaxPrice() != null) {
-                Join<AdminProduct, Product> productJoin = root.join("product", JoinType.INNER);
-                predicates.add(cb.lessThanOrEqualTo(productJoin.get("price"), condition.getMaxPrice()));
-            }
-
-            return cb.and(predicates.toArray(new Predicate[0]));
-        };
-
-        // 2. AdminProduct 목록 조회
-        List<AdminProduct> adminProducts = adminProductRepository.findAll(spec);
+        List<AdminProduct> adminProducts = adminProductRepository.findAll();
+        
         if (adminProducts.isEmpty()) {
             return PageResponseDTO.<ProductListDTO>withAll()
                     .pageRequestDTO(condition)
@@ -234,20 +201,52 @@ public class AdminProductServiceImpl implements AdminProductService {
                     .build();
         }
 
-        // 3. AdminProduct를 AdminProductDTO로 변환
+        // 2. AdminProduct를 AdminProductDTO로 변환
         List<AdminProductDTO> adminProductDTOs = convertToAdminProductDTOs(adminProducts);
 
+        // 3. 필터링 적용
+        List<AdminProductDTO> filteredDTOs = adminProductDTOs.stream()
+                .filter(dto -> {
+                    // 카테고리 필터
+                    if (condition.getCategoryId() != null) {
+                        if (dto.getProductCategoryId() == null || 
+                            !dto.getProductCategoryId().equals(condition.getCategoryId())) {
+                            return false;
+                        }
+                    }
+
+                    // 가격 범위 필터
+                    if (condition.getMinPrice() != null && dto.getPurchasePrice() < condition.getMinPrice()) {
+                        return false;
+                    }
+                    if (condition.getMaxPrice() != null && dto.getPurchasePrice() > condition.getMaxPrice()) {
+                        return false;
+                    }
+
+                    // 키워드 검색 필터
+                    if (condition.getKeyword() != null && !condition.getKeyword().trim().isEmpty()) {
+                        String keyword = condition.getKeyword().toLowerCase();
+                        String productName = dto.getProductName() != null ? dto.getProductName().toLowerCase() : "";
+                        if (!productName.contains(keyword)) {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                })
+                .collect(Collectors.toList());
+
         // 4. createdAt 기준으로 정렬
-        adminProductDTOs.sort((p1, p2) -> p2.getPurchasedAt().compareTo(p1.getPurchasedAt()));
+        filteredDTOs.sort((p1, p2) -> p2.getPurchasedAt().compareTo(p1.getPurchasedAt()));
 
         // 5. 페이징 처리
         int start = (condition.getPage() - 1) * condition.getSize();
-        int end = Math.min(start + condition.getSize(), adminProductDTOs.size());
-        List<AdminProductDTO> pagedDTOs = adminProductDTOs.subList(start, end);
+        int end = Math.min(start + condition.getSize(), filteredDTOs.size());
+        List<AdminProductDTO> pagedDTOs = filteredDTOs.subList(start, end);
 
         // 6. AdminProductDTO를 ProductListDTO로 변환
         List<ProductListDTO> dtoList = pagedDTOs.stream()
-                .map(adminProductDTO -> {
+                .map((AdminProductDTO adminProductDTO) -> {
                     // AdminProductDTO의 정보를 ProductListDTO로 매핑
                     return ProductListDTO.builder()
                             .id(adminProductDTO.getProductId().longValue())
@@ -257,7 +256,8 @@ public class AdminProductServiceImpl implements AdminProductService {
                             .stock(1) // 관리자 매입 상품은 1개씩
                             .status(adminProductDTO.getProductStatus()) // 실제 상품 상태 사용
                             .isActive(true)
-                            .categoryName("관리자 매입")
+                            .categoryName(adminProductDTO.getProductCategoryName() != null ? 
+                                        adminProductDTO.getProductCategoryName() : "관리자 매입")
                             .imageThumbnailUrl(adminProductDTO.getImageThumbnailUrl())
                             .createdAt(adminProductDTO.getPurchasedAt())
                             .purchasePrice(adminProductDTO.getPurchasePrice())
@@ -270,7 +270,7 @@ public class AdminProductServiceImpl implements AdminProductService {
         return PageResponseDTO.<ProductListDTO>withAll()
                 .pageRequestDTO(condition)
                 .dtoList(dtoList)
-                .total(adminProductDTOs.size())
+                .total(filteredDTOs.size())
                 .build();
     }
 

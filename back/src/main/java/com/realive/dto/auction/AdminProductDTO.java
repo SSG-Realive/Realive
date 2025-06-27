@@ -25,6 +25,8 @@ public class AdminProductDTO {
     private boolean auctioned;
     private String imageThumbnailUrl;
     private String productStatus; // 상품 상태 (상/중/하)
+    private Long productCategoryId; // 상품 카테고리 ID
+    private String productCategoryName; // 상품 카테고리명
 
     public static AdminProductDTO fromEntity(AdminProduct adminProduct, Product product, String imageThumbnailUrl) {
         if (adminProduct == null) return null;
@@ -41,6 +43,12 @@ public class AdminProductDTO {
             builder.productName(product.getName())
                     .productDescription(product.getDescription())
                     .productStatus(product.getStatus().name());
+            
+            // 카테고리 정보 추가
+            if (product.getCategory() != null) {
+                builder.productCategoryId(product.getCategory().getId())
+                        .productCategoryName(product.getCategory().getName());
+            }
         }
         return builder.build();
     }

@@ -22,11 +22,10 @@ public class AdminPurchaseRequestDTO {
     private Integer purchasePrice;
 
     // DTO -> Entity
-    public com.realive.domain.auction.AdminProduct toEntity(Integer sellerId) {
+    public com.realive.domain.auction.AdminProduct toEntity() {
         return com.realive.domain.auction.AdminProduct.builder()
                 .productId(this.productId)
                 .purchasePrice(this.purchasePrice)
-                .purchasedFromSellerId(sellerId)
                 .purchasedAt(LocalDateTime.now())
                 .isAuctioned(false)
                 .build();
