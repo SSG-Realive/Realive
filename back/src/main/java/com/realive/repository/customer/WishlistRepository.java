@@ -31,4 +31,17 @@ public interface WishlistRepository extends JpaRepository<Wishlist, Long>  {
     ORDER BY COUNT(w.id) DESC
 """)
     List<Product> findTop6PopularProducts();
+
+    @Query("""
+        SELECT p
+        FROM Wishlist w
+        JOIN w.product p
+        JOIN FETCH p.category c
+        LEFT JOIN FETCH c.parent
+        WHERE w.customer.id = :customerId
+        ORDER BY w.created DESC
+    """)
+        List<Product> findWishlistProductsWithCategory(@Param("customerId") Long customerId);
+
+
 }

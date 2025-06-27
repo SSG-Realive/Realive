@@ -1,6 +1,7 @@
 // src/main/java/com/realive/service/admin/logs/StatService.java
 package com.realive.service.admin.logs;
 
+import com.realive.dto.admin.review.SellerRankingDTO;
 import com.realive.dto.logs.AdminDashboardDTO;
 import com.realive.dto.logs.salessum.CategorySalesSummaryDTO;
 import com.realive.dto.logs.salessum.DailySalesSummaryDTO;
@@ -14,6 +15,9 @@ import java.time.YearMonth;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * 관리자 대시보드 및 통계 관련 서비스 인터페이스입니다.
@@ -181,6 +185,16 @@ public interface StatService {
     List<DailySalesSummaryDTO> getDailySummariesForPeriod(LocalDate startDate, LocalDate endDate);
     List<SellerSalesDetailDTO> getSellerSalesDetailsForPeriod(LocalDate startDate, LocalDate endDate);
 
+    /**
+     * 최소 리뷰 수(minReviews) 이상인 판매자를 대상으로
+     * 평균 평점 내림차순, 리뷰 개수 내림차순으로 페이징된 랭킹 정보를 조회합니다.
+     *
+     * @param minReviews 최소 리뷰 수
+     * @param pageable   페이징 및 정렬 정보
+     * @return 랭킹 정보가 담긴 Page of SellerRankingDTO
+     */
+    Page<SellerRankingDTO> getRanking(long minReviews, Pageable pageable);
+  
     /**
      * 특정 기간 동안의 월별 판매 요약 정보 리스트를 조회합니다.
      *

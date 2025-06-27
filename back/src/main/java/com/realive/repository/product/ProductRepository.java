@@ -67,5 +67,21 @@ public interface ProductRepository extends JpaRepository<Product, Long>, Product
 
     // 관련 상품 추천
     List<Product> findTop6ByCategoryIdAndIdNotAndActiveTrue(Long categoryId, Long excludeProductId);
+
+    /**
+     * 특정 판매자 ID의 상품 중에서 랜덤으로 count개를 선택해 반환합니다.
+     *
+     * @param sellerId 판매자 ID
+     * @param count    조회할 랜덤 상품 개수
+     * @return 랜덤으로 선택된 상품 리스트
+     */
+    @Query(
+      value = "SELECT * FROM products p WHERE p.seller_id = :sellerId ORDER BY RANDOM() LIMIT :count",
+      nativeQuery = true
+    )
+    List<Product> findRandomProductsBySellerId(
+      @Param("sellerId") Long sellerId,
+      @Param("count") int count
+    );
 }
 
