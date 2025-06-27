@@ -9,5 +9,6 @@ public interface ReviewCRUDService {
     ReviewResponseDTO updateReview(Long reviewId, ReviewUpdateRequestDTO requestDTO, Long customerId);
     void deleteReview(Long reviewId, Long customerId);
 
-    boolean checkReviewExistence(Long orderId, Long customerId);
+    boolean checkReviewExistence(Long orderId, Long customerId, Long sellerId);
+
 }

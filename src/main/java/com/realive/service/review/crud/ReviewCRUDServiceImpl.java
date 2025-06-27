@@ -145,7 +145,7 @@ public class ReviewCRUDServiceImpl implements ReviewCRUDService {
     }
 
     @Override
-    public boolean checkReviewExistence(Long orderId, Long customerId) {
-        return reviewRepository.findByOrderIdAndCustomerId(orderId, customerId).isPresent();
+    public boolean checkReviewExistence(Long orderId, Long customerId, Long sellerId) {
+        return reviewRepository.findByOrderIdAndCustomerIdAndSellerId(orderId, customerId, sellerId).isPresent();
     }
 }

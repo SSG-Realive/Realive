@@ -1,6 +1,8 @@
 package com.realive.repository.review;
 
 import com.realive.domain.review.SellerReview;
+import com.realive.dto.admin.review.SellerRankingDTO;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -107,4 +109,25 @@ public interface SellerReviewRepository extends JpaRepository<SellerReview, Long
      * @return 해당 판매자가 받은 모든 리뷰 리스트
      */
     List<SellerReview> findAllBySellerId(Long sellerId); // SellerReview 엔티티의 'seller' 필드 기준
+
+        /**
+     * 판매자별 평균 평점 내림차순, 리뷰 개수 내림차순으로 페이징된 랭킹을 조회합니다.
+     * 리뷰 수가 minReviews 미만인 판매자는 제외합니다.
+     */
+    @Query("""
+    SELECT new com.realive.dto.admin.review.SellerRankingDTO(
+        sr.seller.id,
+        sr.seller.name,
+        AVG(sr.rating),
+        COUNT(sr)
+    )
+    FROM SellerReview sr
+    GROUP BY sr.seller.id, sr.seller.name
+    HAVING COUNT(sr) >= :minReviews
+    ORDER BY AVG(sr.rating) DESC, COUNT(sr) DESC
+""")
+Page<SellerRankingDTO> findSellerRankings(
+    @Param("minReviews") long minReviews,
+    Pageable pageable
+);
 }

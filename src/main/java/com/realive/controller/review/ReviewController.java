@@ -10,9 +10,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/reviews")
@@ -22,6 +25,33 @@ public class ReviewController {
 
     private final ReviewCRUDService reviewCRUDService;
     private final ReviewViewService reviewViewService;
+
+
+    // ✅ 리뷰 작성시 중복 체크
+    @GetMapping("/check-exists")
+    public ResponseEntity<?> checkReviewExists(
+            @RequestParam Long orderId,
+            @RequestParam Long sellerId,
+            @AuthenticationPrincipal CustomerPrincipal userDetails
+    ) {
+        try {
+            if (orderId == null || sellerId == null) {
+                return ResponseEntity.badRequest().body("orderId와 sellerId는 필수입니다.");
+            }
+            if (userDetails == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
+            }
+
+            Long customerId = userDetails.getId();
+            boolean exists = reviewCRUDService.checkReviewExistence(orderId, sellerId, customerId);
+            log.info("checkReviewExistence 결과 - orderId: {}, sellerId: {}, customerId: {}, exists: {}", orderId, sellerId, customerId, exists);
+            return ResponseEntity.ok(Map.of("exists", exists));
+        } catch (Exception e) {
+            e.printStackTrace();  // 로그 기록
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("status", 500, "code", "INTERNAL_SERVER_ERROR", "message", "서버 오류가 발생했습니다"));
+        }
+    }
 
     // ✅ 리뷰 생성
     @PostMapping
@@ -82,4 +112,8 @@ public class ReviewController {
         Page<MyReviewResponseDTO> result = reviewViewService.getMyReviewList(customerId, pageable);
         return ResponseEntity.ok(result);
     }
+
+
+
+
 }

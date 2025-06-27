@@ -7,6 +7,7 @@ import com.realive.domain.logs.PayoutLog;
 import com.realive.domain.logs.PenaltyLog;
 import com.realive.domain.logs.SalesLog;
 import com.realive.domain.seller.Seller;
+import com.realive.dto.admin.review.SellerRankingDTO;
 import com.realive.dto.logs.AdminDashboardDTO;
 import com.realive.dto.logs.CommissionLogDTO;
 import com.realive.dto.logs.PayoutLogDTO;
@@ -26,6 +27,7 @@ import com.realive.repository.logs.PayoutLogRepository;
 import com.realive.repository.logs.PenaltyLogRepository;
 import com.realive.repository.logs.SalesLogRepository;
 import com.realive.repository.product.ProductRepository;
+import com.realive.repository.review.SellerReviewRepository;
 import com.realive.repository.seller.SellerRepository;
 // import com.realive.repository.user.UserRepository;
 
@@ -36,6 +38,9 @@ import com.realive.dto.logs.stats.*;
 import com.realive.service.admin.logs.StatService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -69,6 +74,7 @@ public class StatServiceImpl implements StatService {
     private final CommissionLogRepository commissionLogRepository;
     private final SellerRepository sellerRepository;
     private final CustomerRepository customerRepository;
+    private final SellerReviewRepository reviewRepository;
 
     @Override
     public AdminDashboardDTO getAdminDashboard(LocalDate date, String periodType) {
@@ -590,4 +596,13 @@ public class StatServiceImpl implements StatService {
         }
         return trend;
     }
+    
+    //Seller Ranking
+    @Override
+    public Page<SellerRankingDTO> getRanking(long minReviews, Pageable pageable) {
+        return reviewRepository.findSellerRankings(minReviews, pageable);
+    }
+
+    
+    
 }

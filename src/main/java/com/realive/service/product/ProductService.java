@@ -2,6 +2,7 @@ package com.realive.service.product;
 
 import com.realive.dto.page.PageResponseDTO;
 import com.realive.dto.product.CustomerProductSearchCondition;
+import com.realive.dto.product.FeaturedSellerProductsResponseDTO;
 import com.realive.dto.product.ProductListDTO;
 import com.realive.dto.product.ProductRequestDTO;
 import com.realive.dto.product.ProductResponseDTO;
@@ -59,6 +60,21 @@ public interface ProductService {
     PageResponseDTO<ProductListDTO> getAllProductsForAdmin(ProductSearchCondition condition);
 
     /**
+     * 추천용: 후보 상위 candidateSize명 중 sellersPick명 랜덤 추출,
+     * 각 셀러당 productsPerSeller개 랜덤 상품을 뽑아 DTO로 반환
+     *
+     * @param candidateSize      판매자 후보 풀 크기
+     * @param sellersPick        최종 선택할 판매자 수
+     * @param productsPerSeller  한 판매자당 뽑을 상품 개수
+     * @param minReviews         최소 리뷰 수
+     * @return 추천용 셀러+상품 DTO 리스트
+     */
+    List<FeaturedSellerProductsResponseDTO> getFeaturedSellersWithProducts(
+        int candidateSize,
+        int sellersPick,
+        int productsPerSeller,
+        long minReviews
+    );
      * 월별 상품 등록 통계 조회
      * - 지정된 기간 동안의 월별 상품 등록 수를 조회
      * - 관리자 대시보드용

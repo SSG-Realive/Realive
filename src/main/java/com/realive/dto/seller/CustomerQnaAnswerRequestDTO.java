@@ -1,4 +1,4 @@
-package com.realive.dto.admin.user;
+package com.realive.dto.seller;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
