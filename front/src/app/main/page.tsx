@@ -183,7 +183,7 @@ export default function CustomerHomePage() {
                         <SectionWithSubCategoryButtons title="기타 가구" categoryId={50} limit={5} />
                         <div className="text-right mt-2 max-w-screen-xl mx-auto px-2 sm:px-0">
                             <Link href="/main?category=50" className="text-sm text-black font-semibold hover:underline">
-                                more
+                                moren
                             </Link>
                         </div>
                     </div>
