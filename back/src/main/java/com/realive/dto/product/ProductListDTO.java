@@ -2,7 +2,6 @@ package com.realive.dto.product;
 
 import com.realive.domain.product.Category;
 import com.realive.domain.product.Product;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

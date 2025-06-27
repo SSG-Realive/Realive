@@ -14,24 +14,24 @@ import com.realive.domain.product.Product;
 import com.realive.dto.cart.CartItemAddRequestDTO;
 import com.realive.dto.cart.CartItemResponseDTO;
 import com.realive.dto.cart.CartItemUpdateRequestDTO;
-import com.realive.dto.order.PayRequestDTO; // PayRequestDTO 사용
-import com.realive.dto.order.ProductQuantityDTO; // ProductQuantityDTO 사용
-import com.realive.dto.payment.TossPaymentApproveRequestDTO; // TossPaymentApproveRequestDTO 추가
+import com.realive.dto.order.PayRequestDTO;
+import com.realive.dto.order.ProductQuantityDTO;
+import com.realive.dto.payment.TossPaymentApproveRequestDTO;
 import com.realive.dto.product.ProductResponseDTO;
 import com.realive.repository.cart.CartItemRepository;
 import com.realive.repository.customer.CustomerRepository;
+import com.realive.repository.customer.productview.ProductViewRepository;
 import com.realive.repository.order.OrderDeliveryRepository;
 import com.realive.repository.order.OrderItemRepository;
 import com.realive.repository.order.OrderRepository;
 import com.realive.repository.product.DeliveryPolicyRepository;
 import com.realive.repository.product.ProductRepository;
-import com.realive.repository.customer.productview.ProductViewRepository;
-import com.realive.service.payment.PaymentService; // PaymentService 추가
+import com.realive.service.payment.PaymentService;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.transaction.annotation.Transactional; // Spring의 @Transactional 사용 권장
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;

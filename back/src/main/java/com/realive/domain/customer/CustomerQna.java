@@ -1,10 +1,8 @@
 package com.realive.domain.customer;
 
 import com.realive.domain.common.BaseTimeEntity;
-import com.realive.domain.customer.Customer;
 import com.realive.domain.product.Product;
 import com.realive.domain.seller.Seller;
-
 import jakarta.persistence.*;
 import lombok.*;
 

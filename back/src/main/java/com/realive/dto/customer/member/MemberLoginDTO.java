@@ -1,17 +1,17 @@
 package com.realive.dto.customer.member;
 
+import com.realive.domain.customer.SignupMethod;
+import jakarta.validation.constraints.NotBlank;
 import lombok.ToString;
-
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
-import com.realive.domain.customer.SignupMethod;
-
-import jakarta.validation.constraints.NotBlank;
-
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 // [Customer] 로그인DTO
 

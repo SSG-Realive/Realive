@@ -1,7 +1,6 @@
 package com.realive.dto.product;
 
 import com.realive.dto.page.PageRequestDTO;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

@@ -1,7 +1,6 @@
 package com.realive.dto.sellercategory;
 
 import com.realive.domain.product.Category;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

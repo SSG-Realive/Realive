@@ -2,13 +2,11 @@ package com.realive.config;
 
 import com.realive.security.AdminJwtAuthenticationFilter;
 import com.realive.security.SellerJwtAuthenticationFilter;
-import com.realive.security.customer.CustomerJwtAuthenticationFilter;
 import com.realive.security.customer.CustomAuthorizationRequestResolver;
 import com.realive.security.customer.CustomLoginSuccessHandler;
-
+import com.realive.security.customer.CustomerJwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
@@ -32,7 +30,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.Arrays;
 import java.util.List;
 
 @EnableWebSecurity

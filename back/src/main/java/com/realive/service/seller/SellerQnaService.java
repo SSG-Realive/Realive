@@ -1,6 +1,9 @@
 package com.realive.service.seller;
 
-import com.realive.dto.sellerqna.*;
+import com.realive.dto.sellerqna.SellerQnaDetailResponseDTO;
+import com.realive.dto.sellerqna.SellerQnaRequestDTO;
+import com.realive.dto.sellerqna.SellerQnaResponseDTO;
+import com.realive.dto.sellerqna.SellerQnaUpdateRequestDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

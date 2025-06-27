@@ -1,6 +1,8 @@
 package com.realive.dto.bid;
 
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+
 import java.time.LocalDateTime;
 
 // 입찰 이력 DTO

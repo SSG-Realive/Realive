@@ -1,13 +1,14 @@
 package com.realive.service.admin.user;
 
 
-import com.realive.dto.admin.user.CustomerDetailDTO; // 추가
-import com.realive.dto.admin.user.SellerDetailDTO;   // 추가
+import com.realive.dto.admin.user.CustomerDetailDTO;
+import com.realive.dto.admin.user.SellerDetailDTO;
 import com.realive.dto.admin.user.UserManagementListItemDTO;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.dao.DataIntegrityViolationException; // 추가
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
 import java.util.Optional;
 
 public interface AdminUserService {

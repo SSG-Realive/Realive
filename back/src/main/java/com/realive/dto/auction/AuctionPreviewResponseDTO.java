@@ -1,7 +1,9 @@
 package com.realive.dto.auction;
 
 import com.realive.domain.common.enums.AuctionStatus;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+
 import java.time.LocalDateTime;
 
 // 경매 미리보기 응답 DTO

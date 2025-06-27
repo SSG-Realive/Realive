@@ -2,7 +2,11 @@ package com.realive.dto.auction;
 
 import com.realive.domain.auction.AdminProduct;
 import com.realive.domain.product.Product;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.time.LocalDateTime;
 
 // 경매 상품 정보 응답

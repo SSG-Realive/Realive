@@ -1,7 +1,6 @@
 package com.realive.domain.product;
 
 import com.realive.domain.common.enums.MediaType;
-
 import jakarta.persistence.*;
 import lombok.*;
 

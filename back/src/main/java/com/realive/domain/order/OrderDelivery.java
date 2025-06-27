@@ -3,11 +3,7 @@ package com.realive.domain.order;
 import com.realive.domain.common.BaseTimeEntity;
 import com.realive.domain.common.enums.DeliveryStatus;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 

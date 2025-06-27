@@ -1,6 +1,5 @@
 package com.realive.dto.auction;
 
-import com.realive.domain.auction.Auction;
 import lombok.Builder;
 import lombok.Getter;
 

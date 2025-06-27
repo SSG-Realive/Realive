@@ -1,13 +1,8 @@
 package com.realive.domain.review;
 
-import com.realive.domain.common.BaseTimeEntity; // BaseTimeEntity 임포트
-import com.realive.domain.review.SellerReview;
+import com.realive.domain.common.BaseTimeEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
 @Data
 @Entity

@@ -1,9 +1,9 @@
 package com.realive.dto.qna;
 
-import java.time.LocalDateTime;
-
 import lombok.Builder;
 import lombok.Data;
+
+import java.time.LocalDateTime;
 
 // QnA 상세 조회를 위한 DTO
 

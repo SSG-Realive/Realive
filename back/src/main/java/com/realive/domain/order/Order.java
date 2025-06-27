@@ -1,7 +1,7 @@
 package com.realive.domain.order;
 
-import com.realive.domain.customer.Customer;
 import com.realive.domain.common.enums.OrderStatus;
+import com.realive.domain.customer.Customer;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

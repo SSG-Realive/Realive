@@ -2,9 +2,9 @@ package com.realive.service.review.crud;
 
 import com.realive.domain.customer.Customer;
 import com.realive.domain.order.Order;
+import com.realive.domain.review.SellerReview;
 import com.realive.domain.review.SellerReviewImage;
 import com.realive.domain.seller.Seller;
-import com.realive.domain.review.SellerReview;
 import com.realive.dto.review.ReviewCreateRequestDTO;
 import com.realive.dto.review.ReviewResponseDTO;
 import com.realive.dto.review.ReviewUpdateRequestDTO;

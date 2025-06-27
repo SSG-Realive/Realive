@@ -1,7 +1,6 @@
 package com.realive.service.payment;
 
 import com.realive.domain.payment.Payment;
-import com.realive.domain.order.Order; // Order를 리턴할 수도 있으므로 필요
 import com.realive.dto.payment.TossPaymentApproveRequestDTO;
 
 // 결제 관련 비즈니스 로직을 정의하는 인터페이스

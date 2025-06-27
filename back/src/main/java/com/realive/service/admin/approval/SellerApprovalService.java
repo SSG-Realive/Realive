@@ -1,8 +1,8 @@
 package com.realive.service.admin.approval;
 
 
-import com.realive.dto.admin.approval.PendingSellerDTO; // 새로 만든 DTO 사용
-import com.realive.dto.seller.SellerResponseDTO; // 승인/거부 결과 응답용 (또는 PendingSellerDTO 재활용 가능)
+import com.realive.dto.admin.approval.PendingSellerDTO;
+import com.realive.dto.seller.SellerResponseDTO;
 
 import java.util.List;
 

@@ -1,10 +1,6 @@
 package com.realive.service.order;
 
-import com.realive.domain.common.enums.DeliveryStatus;
-import com.realive.domain.common.enums.DeliveryType;
-import com.realive.domain.common.enums.MediaType;
-import com.realive.domain.common.enums.OrderStatus;
-import com.realive.domain.common.enums.PaymentType;
+import com.realive.domain.common.enums.*;
 import com.realive.domain.customer.Customer;
 import com.realive.domain.order.Order;
 import com.realive.domain.order.OrderDelivery;
@@ -12,7 +8,7 @@ import com.realive.domain.order.OrderItem;
 import com.realive.domain.product.DeliveryPolicy;
 import com.realive.domain.product.Product;
 import com.realive.dto.order.*;
-import com.realive.dto.payment.TossPaymentApproveRequestDTO; // 추가
+import com.realive.dto.payment.TossPaymentApproveRequestDTO;
 import com.realive.repository.customer.CustomerRepository;
 import com.realive.repository.order.OrderDeliveryRepository;
 import com.realive.repository.order.OrderItemRepository;
@@ -20,23 +16,18 @@ import com.realive.repository.order.OrderRepository;
 import com.realive.repository.product.DeliveryPolicyRepository;
 import com.realive.repository.product.ProductImageRepository;
 import com.realive.repository.product.ProductRepository;
-import com.realive.service.payment.PaymentService; // 추가
-import jakarta.transaction.Transactional; // jakarta.transaction.Transactional로 변경 (Spring의 @Transactional과 혼동 주의)
+import com.realive.service.payment.PaymentService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException; // WebClient 예외 처리용
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 

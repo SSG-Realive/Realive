@@ -1,18 +1,16 @@
 package com.realive.event;
 
-import java.util.List;
-
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.event.TransactionPhase;
-import org.springframework.transaction.event.TransactionalEventListener;
-
 import com.realive.domain.common.enums.SellerFileType;
 import com.realive.domain.seller.Seller;
 import com.realive.domain.seller.SellerDocument;
 import com.realive.repository.seller.SellerDocumentRepository;
 import com.realive.service.common.FileUploadService;
-
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
+
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor

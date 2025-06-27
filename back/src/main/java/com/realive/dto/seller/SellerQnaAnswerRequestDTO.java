@@ -1,6 +1,9 @@
 package com.realive.dto.seller;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * 판매자 QnA 답변 등록 요청 DTO

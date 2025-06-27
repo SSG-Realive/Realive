@@ -1,7 +1,7 @@
 package com.realive.dto.order;
 
-import jakarta.validation.constraints.Min; // 추가
-import jakarta.validation.constraints.NotNull; // 추가
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

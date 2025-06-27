@@ -1,14 +1,10 @@
 package com.realive.domain.payment;
 
 import com.realive.domain.common.BaseTimeEntity;
-import com.realive.domain.common.enums.PaymentStatus; // 새로 만든 PaymentStatus 임포트
+import com.realive.domain.common.enums.PaymentStatus;
 import com.realive.domain.order.Order;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
