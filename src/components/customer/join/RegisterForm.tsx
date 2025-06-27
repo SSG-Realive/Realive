@@ -20,8 +20,13 @@ import { Button } from "@/components/ui/button";
 import Link from 'next/link';
 
 import { GenderWithUnselected, MemberJoinDTO } from '@/types/customer/signup';
+import AddressInput from './AddressInput';
 
-export default function RegisterForm() {
+interface Props {
+  onSuccess: () => void;
+}
+
+export default function RegisterForm({ onSuccess }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get('redirectTo') || '/';
@@ -71,7 +76,11 @@ export default function RegisterForm() {
         body: JSON.stringify(payload),
       });
 
+      console.log('res.ok:', res.ok);
+      console.log('res.status:', res.status);
+
       const data = await res.json();
+      console.log('응답 data:', data);
 
       if (!res.ok || !data.success) {
         alert(data.message || '회원가입 실패');
@@ -80,17 +89,29 @@ export default function RegisterForm() {
 
       alert('회원가입 성공!');
 
-      if (data.accessToken && data.email && data.name) {
+      if (data.token) {
+        console.log('setAuth 호출 전');
         setAuth({
-          id: data.id,
-          accessToken: data.accessToken,        // 'token' → 'accessToken' 변경
-          refreshToken: null,                    // 새 필드, 없으면 null로 처리
-          email: data.email,
-          userName: data.name,
+          id: data.id || 0,
+          accessToken: data.token,
+          refreshToken: null,
+          email: formData.email,
+          userName: formData.name,
           temporaryUser: false,
         });
-    }
-      router.push(redirectTo);
+        console.log('setAuth 호출 후');
+      }
+
+      // onSuccess 호출을 먼저 하고, 약간의 지연 후 리다이렉트
+      console.log('onSuccess 호출!');
+      onSuccess();
+      
+      // 상태 업데이트가 완료될 시간을 주기 위해 setTimeout 사용
+      setTimeout(() => {
+        console.log('router.push 호출 시도!', redirectTo);
+        router.push(redirectTo);
+      }, 100);
+
     } catch (err) {
       console.error('회원가입 오류:', err);
       alert('회원가입 처리 중 오류가 발생했습니다.');
@@ -133,7 +154,11 @@ export default function RegisterForm() {
             {/* 주소 */}
             <div className="grid gap-2">
               <Label htmlFor="address">주소</Label>
-              <Input id="address" name="address" value={formData.address || ""} onChange={handleChange} />
+              <AddressInput
+                onAddressChange={(fullAddress) =>
+                  setFormData((prev) => ({ ...prev, address: fullAddress }))
+                }
+              />
             </div>
             {/* 생년월일 */}
             <div className="grid gap-2">

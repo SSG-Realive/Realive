@@ -16,6 +16,7 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
+import AddressInput from './AddressInput';
 
 interface Props {
   email: string;
@@ -122,11 +123,8 @@ export default function SocialSignupForm({ email, token, onSuccess }: Props) {
             </div>
             <div className="grid gap-2">
               <Label htmlFor="address">주소</Label>
-              <Input
-                id="address"
-                name="address"
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
+              <AddressInput
+                onAddressChange={(fullAddress) => setAddress(fullAddress)}
               />
             </div>
             <div className="grid gap-2">
