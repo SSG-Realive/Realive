@@ -150,35 +150,67 @@ export default function DirectOrderPage() {
             return;
         }
 
-        // PayRequestDTO의 새로운 구조에 맞춰 데이터 구성
-        const payRequestDTO: PayRequestDTO = {
-            receiverName: shippingInfo.receiverName,
-            phone: shippingInfo.phone,
-            deliveryAddress: shippingInfo.address, // ✨ deliveryAddress로 필드명 변경
-            paymentMethod: paymentMethod, // ✨ 엄격한 유니온 타입 사용
-
-            // 토스페이먼츠 관련 필드 (실제 토스페이먼츠 연동 시 채워져야 함)
-            paymentKey: "TEMP_PAYMENT_KEY_" + Date.now(), // ✨ 임시 값
-            tossOrderId: "TEMP_ORDER_ID_" + Date.now(), // ✨ 임시 값
-            amount: totalPaymentAmount, // ✨ 최종 결제 금액
-
-            // 단일 상품 결제이므로 productId와 quantity를 사용
-            productId: productInfo.productId,
-            quantity: productInfo.quantity,
-            // orderItems는 단일 상품 결제 시에는 필요 없음
-        };
-
-        try {
-            const orderId = await processDirectPaymentApi(payRequestDTO);
-            alert(`결제가 성공적으로 완료되었습니다! 주문 번호: ${orderId}`);
-            router.push(`/customer/orders/complete/${orderId}`);
-        } catch (error: any) {
-            console.error('결제 처리 중 오류 발생:', error);
-            if (error.response && error.response.data && error.response.data.message) {
-                alert(`결제 실패: ${error.response.data.message}`);
-            } else {
-                alert('결제 처리 중 알 수 없는 오류가 발생했습니다.');
+        // 토스페이먼츠 결제 위젯에서 결제 요청
+        if (paymentWidgetRef.current) {
+            try {
+                const orderId = `direct_${productInfo.productId}_${Date.now()}`;
+                
+                await paymentWidgetRef.current.requestPayment({
+                    orderId: orderId,
+                    orderName: `${productInfo.name} ${productInfo.quantity}개`,
+                    customerName: shippingInfo.receiverName,
+                    customerEmail: userProfile.email || 'customer@example.com',
+                    successUrl: process.env.NEXT_PUBLIC_TOSS_SUCCESS_URL || `${window.location.origin}/customer/orders/success`,
+                    failUrl: process.env.NEXT_PUBLIC_TOSS_FAIL_URL || `${window.location.origin}/customer/orders/fail`,
+                });
+            } catch (error: any) {
+                console.error('결제 요청 오류:', error);
+                
+                // 결제 승인 처리
+                if (error.paymentKey && error.orderId && error.amount) {
+                    await processPaymentApproval(error.paymentKey, error.orderId, error.amount);
+                } else {
+                    alert('결제 처리 중 오류가 발생했습니다.');
+                }
             }
+        }
+    };
+
+    const processPaymentApproval = async (paymentKey: string, orderId: string, amount: number) => {
+        try {
+            // PayRequestDTO의 새로운 구조에 맞춰 데이터 구성
+            const payRequestDTO: PayRequestDTO = {
+                receiverName: shippingInfo.receiverName,
+                phone: shippingInfo.phone,
+                deliveryAddress: shippingInfo.address,
+                paymentMethod: paymentMethod,
+                paymentKey: paymentKey,
+                tossOrderId: orderId,
+                amount: amount,
+                productId: productInfo.productId,
+                quantity: productInfo.quantity,
+            };
+
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/customer/orders/direct-payment`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('customerToken')}`
+                },
+                body: JSON.stringify(payRequestDTO),
+            });
+
+            if (!response.ok) {
+                throw new Error('결제 승인 처리에 실패했습니다.');
+            }
+
+            const result = await response.json();
+            alert('결제가 성공적으로 완료되었습니다!');
+            router.push('/customer/orders');
+            
+        } catch (error) {
+            console.error('결제 승인 처리 오류:', error);
+            alert('결제 승인 처리 중 오류가 발생했습니다.');
         }
     };
 
