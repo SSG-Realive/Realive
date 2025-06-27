@@ -1,18 +1,13 @@
 package com.realive.service.admin.auction;
 
-import com.realive.dto.auction.AuctionCreateRequestDTO;
-import com.realive.dto.auction.AuctionResponseDTO;
-import com.realive.dto.auction.AuctionCancelResponseDTO;
-import com.realive.dto.auction.AuctionUpdateRequestDTO;
-import com.realive.dto.auction.AuctionWinResponseDTO;
-import com.realive.dto.auction.AuctionPaymentRequestDTO;
+import com.realive.dto.auction.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.access.AccessDeniedException; // 명시적 import
+import org.springframework.security.access.AccessDeniedException;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.List;
 
 public interface AuctionService {
 

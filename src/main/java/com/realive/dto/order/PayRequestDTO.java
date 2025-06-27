@@ -1,15 +1,15 @@
 package com.realive.dto.order;
 
-import com.realive.domain.common.enums.PaymentType; // PaymentType Enum 임포트
-import jakarta.validation.Valid; // @Valid 어노테이션 추가 (orderItems에 적용)
+import com.realive.domain.common.enums.PaymentType;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty; // List에 항목이 비어있지 않아야 할 경우
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive; // 수량이 양수여야 할 경우
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import java.util.List;
 
 @Data

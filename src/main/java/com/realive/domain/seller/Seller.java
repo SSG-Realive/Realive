@@ -1,11 +1,10 @@
 package com.realive.domain.seller;
 
-import java.time.LocalDateTime;
-
 import com.realive.domain.common.BaseTimeEntity;
-
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.time.LocalDateTime;
 
 /**
  * 판매자(Seller) 엔티티 클래스

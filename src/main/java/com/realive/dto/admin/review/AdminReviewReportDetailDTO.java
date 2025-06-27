@@ -1,9 +1,9 @@
 package com.realive.dto.admin.review;
 
 import com.realive.domain.common.enums.ReviewReportStatus;
-// import com.realive.dto.admin.review.AdminSellerReviewDetailDTO; // 신고된 리뷰 상세 정보 DTO
 import lombok.Builder;
 import lombok.Getter;
+
 import java.time.LocalDateTime;
 
 @Getter

@@ -72,6 +72,12 @@ public class AdminProductController {
             @AuthenticationPrincipal AdminPrincipal adminPrincipal) {
         log.info("관리자 상품 매입 요청 - adminId: {}, productId: {}, price: {}",
                 adminPrincipal.getAdmin().getId(), requestDTO.getProductId(), requestDTO.getPurchasePrice());
+        
+        // 디버깅을 위한 상세 로그 추가
+        log.info("받은 DTO 데이터: productId={}, purchasePrice={}, purchasePriceType={}",
+                requestDTO.getProductId(), 
+                requestDTO.getPurchasePrice(), 
+                requestDTO.getPurchasePrice() != null ? requestDTO.getPurchasePrice().getClass().getSimpleName() : "null");
 
         try {
             AdminProductDTO response = adminProductService.purchaseProduct(

@@ -2,9 +2,10 @@
 package com.realive.dto.common;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.NoArgsConstructor;     // <<< 추가
-import lombok.AccessLevel;         // <<< 추가
+import lombok.NoArgsConstructor;
+
 import java.time.LocalDateTime;
 
 @Getter

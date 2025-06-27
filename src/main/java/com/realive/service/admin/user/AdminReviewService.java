@@ -2,10 +2,11 @@
 package com.realive.service.admin.user;
 
 import com.realive.domain.common.enums.ReviewReportStatus;
-import com.realive.dto.admin.review.*; // AdminSellerReviewListItemDTO, UpdateReviewVisibilityRequestDTO 등 DTO 포함
+import com.realive.dto.admin.review.*;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
 import java.util.Optional;
 
 /**

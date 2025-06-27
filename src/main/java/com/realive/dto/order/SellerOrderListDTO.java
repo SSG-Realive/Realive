@@ -1,14 +1,13 @@
 package com.realive.dto.order;
 
-import java.time.LocalDateTime;
-
 import com.realive.domain.common.enums.DeliveryStatus;
 import com.realive.domain.common.enums.DeliveryType;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 
 @Data
 @Builder

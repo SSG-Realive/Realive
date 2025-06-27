@@ -1,8 +1,5 @@
 package com.realive.service.customer;
 
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
 import com.realive.domain.customer.Customer;
 import com.realive.domain.customer.SignupMethod;
 import com.realive.dto.customer.member.MemberJoinDTO;
@@ -11,10 +8,11 @@ import com.realive.dto.customer.member.MemberReadDTO;
 import com.realive.exception.DuplicateEmailException;
 import com.realive.repository.customer.CustomerRepository;
 import com.realive.security.customer.JwtTokenProvider;
-
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
 // [Customer] 회원가입 및 탈퇴, 회원정보 Service
 

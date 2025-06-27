@@ -1,6 +1,8 @@
 package com.realive.dto.auction;
 
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+
 import java.util.Map;
 
 // 경매 현황 및 통계 응답 DTO

@@ -3,21 +3,17 @@ package com.realive.service.admin.logs;
 
 import com.realive.dto.admin.review.SellerRankingDTO;
 import com.realive.dto.logs.AdminDashboardDTO;
-import com.realive.dto.logs.salessum.CategorySalesSummaryDTO;
-import com.realive.dto.logs.salessum.DailySalesSummaryDTO;
-import com.realive.dto.logs.salessum.MonthlySalesLogDetailListDTO;
-import com.realive.dto.logs.salessum.MonthlySalesSummaryDTO;
-import com.realive.dto.logs.salessum.SalesLogDetailListDTO;
+import com.realive.dto.logs.salessum.*;
 import com.realive.dto.logs.stats.*;
+import com.realive.dto.logs.stats.SellerSalesDetailDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 /**
  * 관리자 대시보드 및 통계 관련 서비스 인터페이스입니다.

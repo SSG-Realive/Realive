@@ -1,8 +1,7 @@
 package com.realive.dto.cart;
 
 import com.realive.domain.customer.CartItem;
-// import com.realive.domain.product.Product; // 더 이상 Product 엔티티를 직접 받지 않음
-import com.realive.dto.product.ProductResponseDTO; // ProductResponseDto 임포트
+import com.realive.dto.product.ProductResponseDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

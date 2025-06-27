@@ -1,9 +1,9 @@
 package com.realive.dto.customer.member;
 
+import lombok.Data;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-
-import lombok.Data;
 
 // [Customer] 회원정보 조회DTO
 

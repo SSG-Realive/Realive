@@ -2,13 +2,9 @@ package com.realive.domain.review;
 
 
 import com.realive.domain.common.BaseTimeEntity;
-import com.realive.domain.common.enums.ReviewReportStatus; // 생성한 Enum import
+import com.realive.domain.common.enums.ReviewReportStatus;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Table(name = "review_reports")

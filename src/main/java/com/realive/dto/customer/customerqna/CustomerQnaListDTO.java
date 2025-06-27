@@ -1,9 +1,9 @@
 package com.realive.dto.customer.customerqna;
 
-import java.time.LocalDateTime;
-
 import lombok.Builder;
 import lombok.Data;
+
+import java.time.LocalDateTime;
 
 // [Customer] 내 Q&A 조회DTO
 

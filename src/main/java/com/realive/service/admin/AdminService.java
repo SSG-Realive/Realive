@@ -1,7 +1,11 @@
 package com.realive.service.admin;
 
 import com.realive.domain.admin.Admin;
-import com.realive.dto.admin.*;
+import com.realive.dto.admin.AdminLoginRequestDTO;
+import com.realive.dto.admin.AdminLoginResponseDTO;
+import com.realive.dto.admin.AdminReadDTO;
+import com.realive.dto.admin.AdminRegisterRequestDTO;
+
 import java.util.Optional;
 
 public interface AdminService {

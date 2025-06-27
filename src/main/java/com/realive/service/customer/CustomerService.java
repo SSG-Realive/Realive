@@ -1,13 +1,11 @@
 package com.realive.service.customer;
 
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.realive.domain.customer.Customer;
 import com.realive.repository.customer.CustomerRepository;
-
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 // [Customer] 회원 정보 조회 Service
 @Service

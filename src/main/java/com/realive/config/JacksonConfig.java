@@ -5,12 +5,12 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary; // ✨ Primary import
+import org.springframework.context.annotation.Primary;
 
 @Configuration
 public class JacksonConfig {
 
-    @Primary // ✨ 이 어노테이션이 핵심입니다.
+    @Primary
     @Bean
     public ObjectMapper objectMapper() {
         ObjectMapper mapper = new ObjectMapper();

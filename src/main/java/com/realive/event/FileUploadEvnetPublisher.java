@@ -1,12 +1,10 @@
 package com.realive.event;
 
+import com.realive.domain.seller.Seller;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
-
-import com.realive.domain.seller.Seller;
-
-import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor

@@ -4,6 +4,7 @@ package com.realive.dto.logs.stats;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
 import java.time.YearMonth;
 
 @Getter

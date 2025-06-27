@@ -2,11 +2,7 @@ package com.realive.dto.auction;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -26,11 +22,10 @@ public class AdminPurchaseRequestDTO {
     private Integer purchasePrice;
 
     // DTO -> Entity
-    public com.realive.domain.auction.AdminProduct toEntity(Integer sellerId) {
+    public com.realive.domain.auction.AdminProduct toEntity() {
         return com.realive.domain.auction.AdminProduct.builder()
                 .productId(this.productId)
                 .purchasePrice(this.purchasePrice)
-                .purchasedFromSellerId(sellerId)
                 .purchasedAt(LocalDateTime.now())
                 .isAuctioned(false)
                 .build();

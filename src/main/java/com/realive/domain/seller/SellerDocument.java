@@ -2,7 +2,6 @@ package com.realive.domain.seller;
 
 import com.realive.domain.common.BaseTimeEntity;
 import com.realive.domain.common.enums.SellerFileType;
-
 import jakarta.persistence.*;
 import lombok.*;
 
