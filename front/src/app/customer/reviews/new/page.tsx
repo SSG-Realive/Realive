@@ -23,6 +23,26 @@ function ReviewPage() {
 
     const [alreadyReviewed, setAlreadyReviewed] = useState<boolean | null>(null); // 중복 여부
 
+    // 토큰을 안전하게 가져오고 파싱하는 함수
+    const getAccessToken = () => {
+        let pureAccessToken = null;
+        try {
+            const storedData = localStorage.getItem('auth-storage'); // 'auth-storage' 키 사용
+            console.log('localStorage에서 가져온 raw 데이터 (auth-storage):', storedData);
+
+            if (storedData) {
+                const parsedData = JSON.parse(storedData); // JSON 문자열 파싱
+                // JSON 구조가 {"state":{"accessToken":"..."}} 형태라고 가정합니다.
+                pureAccessToken = parsedData?.state?.accessToken;
+            }
+        } catch (e) {
+            console.error('localStorage 데이터 파싱 오류:', e);
+            pureAccessToken = null; // 파싱 실패 시 토큰 없음으로 처리
+        }
+        console.log('추출된 순수 JWT Access Token:', pureAccessToken);
+        return pureAccessToken;
+    };
+
     // 초기 로딩 및 리뷰 중복 체크
     useEffect(() => {
         if (orderIdParam && sellerIdParam) {
@@ -31,23 +51,43 @@ function ReviewPage() {
             setOrderId(parsedOrderId);
             setSellerId(parsedSellerId);
 
+            // Access Token 가져오기
+            const accessToken = getAccessToken(); // 함수 호출
+
+            const headers: Record<string, string> = {
+                'Content-Type': 'application/json', // 명시적 Content-Type
+            };
+
+            if (accessToken) {
+                headers.Authorization = `Bearer ${accessToken}`; // 순수 Access Token 사용
+            }
+            console.log('최종 요청 헤더:', headers);
+
             // 중복 체크 API 호출
             axios
-                .get('/api/reviews/check-exists', {
+                .get('http://localhost:8080/api/customer/reviews/check-exists', {
                     params: {
                         orderId: parsedOrderId,
                         sellerId: parsedSellerId,
                     },
+                    withCredentials: true,
+                    headers: headers,
                 })
                 .then((res) => {
                     setAlreadyReviewed(res.data.exists);
                 })
                 .catch((err) => {
                     console.error('중복 체크 실패:', err);
-                    setAlreadyReviewed(null); // 오류 시 판단 유보
+                    setAlreadyReviewed(null);
+                    console.error('상세 에러 객체:', err);
+                    // 401 Unauthorized 에러라면 로그인 페이지로 리디렉션 등을 고려할 수 있습니다.
+                    if (axios.isAxiosError(err) && err.response?.status === 401) {
+                        alert('로그인이 필요하거나 세션이 만료되었습니다.');
+                        router.push('/login'); // 로그인 페이지 경로로 변경하세요.
+                    }
                 });
         }
-    }, [orderIdParam, sellerIdParam]);
+    }, [orderIdParam, sellerIdParam, router]); // router를 의존성 배열에 추가
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files) return;
@@ -56,12 +96,24 @@ function ReviewPage() {
 
     const uploadImages = async () => {
         const urls: string[] = [];
+        const accessToken = getAccessToken(); // 이미지 업로드 시에도 토큰 필요
+
         for (const file of images) {
             const formData = new FormData();
             formData.append('file', file);
             try {
+                const uploadHeaders: Record<string, string> = {
+                    'Content-Type': 'multipart/form-data',
+                };
+                if (accessToken) {
+                    uploadHeaders.Authorization = `Bearer ${accessToken}`;
+                }
+
+                // 주의: /api/uploads가 Next.js rewrites 규칙에 의해 백엔드로 전달되거나
+                // Next.js API Route로 직접 처리되는지 확인해야 합니다.
+                // 만약 백엔드로 직접 보내야 한다면 'http://localhost:8080/uploads'로 변경하세요.
                 const res = await axios.post('/api/uploads', formData, {
-                    headers: { 'Content-Type': 'multipart/form-data' },
+                    headers: uploadHeaders,
                 });
                 urls.push(res.data.url);
             } catch (err) {
@@ -87,12 +139,35 @@ function ReviewPage() {
                 content,
                 imageUrls: uploadedUrls,
             };
-            await axios.post('/api/reviews', payload);
+
+            const accessToken = getAccessToken(); // 리뷰 등록 시에도 토큰 필요
+
+            const submitHeaders: Record<string, string> = {
+                'Content-Type': 'application/json',
+            };
+            if (accessToken) {
+                submitHeaders.Authorization = `Bearer ${accessToken}`;
+            }
+
+            // 주의: /api/reviews가 Next.js rewrites 규칙에 의해 백엔드로 전달되거나
+            // Next.js API Route로 직접 처리되는지 확인해야 합니다.
+            // 이전 에러에서 /api/reviews/check-exists를 'http://localhost:8080/api/reviews/check-exists'로 변경하여 해결했으므로,
+            // 여기도 'http://localhost:8080/api/reviews'로 변경하는 것이 일관성 있습니다.
+            await axios.post('http://localhost:8080/api/customer/reviews', payload, { // <-- 이 부분을 직접 백엔드 주소로 변경
+                headers: submitHeaders,
+            });
             setMessage('리뷰가 성공적으로 등록되었습니다.');
             router.push('/customer/reviews/my');
         } catch (error) {
             console.error('리뷰 등록 실패:', error);
             setMessage('리뷰 등록 중 오류가 발생했습니다.');
+            if (axios.isAxiosError(error) && error.response) {
+                console.error('리뷰 등록 백엔드 응답 데이터:', error.response.data);
+                if (error.response.status === 401) {
+                    alert('로그인이 필요하거나 세션이 만료되었습니다.');
+                    router.push('/login'); // 로그인 페이지 경로로 변경하세요.
+                }
+            }
         } finally {
             setLoading(false);
         }

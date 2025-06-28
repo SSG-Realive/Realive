@@ -1,9 +1,9 @@
 
 import React from 'react';
-import Navbar from "@/components/customer/Navbar";
-import Sidebar from "@/components/Sidebar";
+import Navbar from "@/components/customer/common/Navbar";
+import Sidebar from "@/components/seller/SellerSidebar";
 import { ReviewResponseDTO } from "@/types/reviews/reviewResponseDTO";
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 
 // params 객체는 Next.js의 Dynamic Routes에서 경로 변수를 받습니다.
 async function ReviewIdPage({ params }: { params: { reviewId: string } }) {

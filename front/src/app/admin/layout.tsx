@@ -45,7 +45,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <button className="absolute top-4 right-4 text-white text-2xl" onClick={() => { document.getElementById('mobile-sidebar')?.classList.add('-translate-x-full'); document.getElementById('mobile-sidebar-overlay')?.classList.add('hidden'); }}>×</button>
       <AdminSidebar />
       </div>
-      <div className="flex-1 w-full min-h-screen bg-gray-100 ml-[220px]">
+      <div className="flex-1 w-full min-w-0 min-h-screen bg-gray-100 md:ml-[220px] overflow-x-auto">
         <AdminHeader title={title} />
         <main className="p-6">{children}</main>
       </div>

@@ -47,7 +47,7 @@ export default function BottomInspirationSlider() {
 
     return (
         <div className="w-full bg-white py-10">
-            <div className="max-w-screen-xl mx-auto px-4">
+            <div className="relative w-full overflow-visible max-w-screen-xl mx-auto px-4">
                 <Slider {...settings}>
                     {inspirationImages.map((src, idx) => (
                         <div key={idx} className="px-2">
@@ -55,7 +55,15 @@ export default function BottomInspirationSlider() {
                                 <img
                                     src={src}
                                     alt={`인테리어 ${idx + 1}`}
-                                    className="w-full h-48 object-cover"
+                                    className="
+                    w-full
+                    h-auto
+                    aspect-[4/3]
+                    object-cover
+                    max-h-[140px]      // ✅ 모바일 기준 기본 높이
+                    sm:max-h-[180px]   // ✅ 태블릿 이상
+                    md:max-h-[220px]   // ✅ 데스크탑 이상
+                  "
                                 />
                             </div>
                         </div>

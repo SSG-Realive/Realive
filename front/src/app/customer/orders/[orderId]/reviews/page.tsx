@@ -4,8 +4,8 @@ import React, { useState, useEffect, FormEvent } from 'react';
 import { useRouter } from 'next/router';
 import { ReviewCreateRequestDTO } from "@/types/reviews/reviewCreateRequestDTO";
 import { ReviewResponseDTO } from "@/types/reviews/reviewResponseDTO";
-import Navbar from "@/components/customer/Navbar";
-import Sidebar from "@/components/Sidebar";
+import Navbar from "@/components/customer/common/Navbar";
+import Sidebar from "@/components/seller/SellerSidebar";
 
 const NewReviewPage = () => {
     const router = useRouter();

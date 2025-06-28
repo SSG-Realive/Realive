@@ -58,7 +58,7 @@ const StatCard = ({ title, value, unit, icon, color, trend }: {
   color: string;
   trend?: { value: number; isPositive: boolean };
 }) => (
-  <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-all duration-200">
+  <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-all duration-200 w-full max-w-full min-w-0 overflow-x-auto">
     <div className="flex items-center justify-between">
       <div>
         <p className="text-sm font-medium text-gray-600 mb-1">{title}</p>
@@ -327,7 +327,9 @@ const AdminDashboardPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 py-8 w-full">
+        {/* 로그인 성공 모달 */}
+        {showModal && (
         <Modal
           isOpen={showModal}
           onClose={() => setShowModal(false)}
@@ -335,16 +337,14 @@ const AdminDashboardPage = () => {
           message="관리자 페이지에 오신 것을 환영합니다!"
           type="success"
         />
+        )}
 
         {/* 헤더 섹션 */}
         <div className="mb-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">관리자 대시보드</h1>
-              <p className="text-gray-600">실시간 현황과 통계를 한눈에 확인하세요</p>
-            </div>
-            <div className="flex items-center space-x-4">
-              <div className="bg-white rounded-lg px-4 py-2 shadow-sm border">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between items-start w-full">
+            <h1 className="text-3xl font-bold text-gray-900 mb-2 whitespace-nowrap">관리자 대시보드</h1>
+            <div className="flex flex-col sm:flex-row items-end sm:items-center gap-2 sm:gap-4 w-auto sm:w-auto mt-4 sm:mt-0 self-end sm:self-auto">
+              <div className="bg-white rounded-lg px-4 py-2 shadow-sm border w-full sm:w-auto">
                 <div className="text-sm text-gray-500">마지막 업데이트</div>
                 <div className="text-sm font-medium text-gray-900">
                   {new Date().toLocaleDateString('ko-KR', {
@@ -355,10 +355,10 @@ const AdminDashboardPage = () => {
                   })}
                 </div>
               </div>
-              <div className="flex gap-2 bg-white p-1 rounded-lg shadow-sm border">
+              <div className="flex gap-2 bg-white p-1 rounded-lg shadow-sm border w-full sm:w-auto">
                 <button
                   onClick={() => setPeriodType('DAILY')}
-                  className={`px-3 py-1.5 rounded-md text-sm font-semibold transition-colors ${
+                  className={`px-3 py-1.5 rounded-md text-sm font-semibold transition-colors w-full sm:w-auto ${
                     periodType === 'DAILY'
                     ? 'bg-blue-600 text-white'
                     : 'text-gray-600 hover:bg-gray-100'
@@ -368,7 +368,7 @@ const AdminDashboardPage = () => {
                 </button>
                 <button
                   onClick={() => setPeriodType('MONTHLY')}
-                  className={`px-3 py-1.5 rounded-md text-sm font-semibold transition-colors ${
+                  className={`px-3 py-1.5 rounded-md text-sm font-semibold transition-colors w-full sm:w-auto ${
                     periodType === 'MONTHLY'
                     ? 'bg-blue-600 text-white'
                     : 'text-gray-600 hover:bg-gray-100'
@@ -382,7 +382,7 @@ const AdminDashboardPage = () => {
         </div>
 
         {/* 메인 통계 카드 그리드 */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 w-full">
           <StatCard
             title="총 주문"
             value={dashboardData.salesSummaryStats?.totalOrdersInPeriod || 0}
