@@ -63,14 +63,12 @@ public class SellerJwtAuthenticationFilter extends OncePerRequestFilter {
 
     }
     
-   @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        String uri = request.getRequestURI();
-        
-        log.info("[SellerJwtFilter] shouldNotFilter 검사. URI: {}", uri);
-        boolean shouldNotFilter = !uri.startsWith("/api/seller/");
-        log.info("필터 실행 여부 (false여야 실행됨): {}", !shouldNotFilter);
-        
-        return shouldNotFilter;
-    }
+  @Override
+protected boolean shouldNotFilter(HttpServletRequest request) {
+    String path = request.getRequestURI().substring(request.getContextPath().length());
+    // /api/seller/** 만 필터 “실행”, 나머지는 모두 skip
+    boolean skip = !path.startsWith("/api/seller/");
+    log.info("[SellerJwtFilter] skip: {}", skip);   // true = 건너뜀
+    return skip;
+}
 }
