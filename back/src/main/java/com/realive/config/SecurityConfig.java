@@ -147,7 +147,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/public/**", "/api/auth/**","/api/auctions/**").permitAll()
+                        .requestMatchers("/api/public/**", "/api/auth/**").permitAll()
                         .requestMatchers("/api/oauth2/**").permitAll()
                         .requestMatchers("/api/customer/update-info").hasAnyAuthority("ROLE_CUSTOMER", "ROLE_USER")
                         .requestMatchers("/api/customer/**").hasAnyAuthority("ROLE_CUSTOMER", "ROLE_USER")
