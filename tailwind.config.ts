@@ -10,8 +10,7 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        arita: ['"AritaBuri-SemiBold"', 'serif'],
-        gmarket: ['"GmarketSansMedium"', 'sans-serif'],
+        minhye: ['"Minhye"', 'serif'],
       },
     },
   },

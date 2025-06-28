@@ -13,8 +13,8 @@ import { requestLogout } from '@/service/customer/logoutService';
 
 import SearchBar from './SearchBar';
 import CategoryDropdown from './CategoryDropdown';
-import { UserCircle, ShoppingCart } from 'lucide-react';
-import { FaRegHeart } from 'react-icons/fa'; // ✅ 통일
+import { UserCircle, ShoppingCart, LogOut } from 'lucide-react';
+import { FaRegHeart } from 'react-icons/fa';
 
 interface NavbarProps {
     onSearch?: (keyword: string) => void;
@@ -27,7 +27,7 @@ export default function Navbar({ onSearch, onCategorySelect }: NavbarProps) {
     const searchParams = useSearchParams();
     const { logout: clearAuthState } = useAuthStore();
 
-    const { isAuthenticated, logout, userName, setUserName } = useAuthStore();
+    const { isAuthenticated, userName, setUserName } = useAuthStore();
     const { itemCount } = useCartStore();
     const [mounted, setMounted] = useState(false);
 
@@ -60,7 +60,6 @@ export default function Navbar({ onSearch, onCategorySelect }: NavbarProps) {
         }
     };
 
-    // 로그인/회원가입 페이지에서는 Navbar 숨김
     if (
         pathname === '/login' ||
         pathname === '/customer/member/login' ||
@@ -111,8 +110,21 @@ export default function Navbar({ onSearch, onCategorySelect }: NavbarProps) {
                                         )}
                                     </Link>
 
-                                    <button onClick={handleLogout} className="hover:text-red-500 text-xs">
+                                    {/* ✅ PC: 텍스트 버튼만 */}
+                                    <button
+                                        onClick={handleLogout}
+                                        className="hidden md:block text-xs hover:text-red-500"
+                                    >
                                         LOGOUT
+                                    </button>
+
+                                    {/* ✅ 모바일: 아이콘만 */}
+                                    <button
+                                        onClick={handleLogout}
+                                        title="로그아웃"
+                                        className="block md:hidden hover:text-red-500 min-w-[24px]"
+                                    >
+                                        <LogOut size={20} />
                                     </button>
                                 </>
                             ) : (
@@ -129,7 +141,7 @@ export default function Navbar({ onSearch, onCategorySelect }: NavbarProps) {
                     )}
                 </div>
 
-                {/* ✅ PC 카테고리 (메인 페이지에서만) */}
+                {/* ✅ PC 카테고리 */}
                 {pathname.startsWith('/main') && (
                     <div className="hidden md:block mt-4">
                         <CategoryDropdown onCategorySelect={onCategorySelect} />
@@ -170,8 +182,13 @@ export default function Navbar({ onSearch, onCategorySelect }: NavbarProps) {
                                         )}
                                     </Link>
 
-                                    <button onClick={handleLogout} className="hover:text-red-500 text-xs">
-                                        LOGOUT
+                                    {/* ✅ 모바일: 아이콘만 */}
+                                    <button
+                                        onClick={handleLogout}
+                                        title="로그아웃"
+                                        className="block md:hidden hover:text-red-500 min-w-[24px]"
+                                    >
+                                        <LogOut size={20} />
                                     </button>
                                 </>
                             ) : (
@@ -193,7 +210,7 @@ export default function Navbar({ onSearch, onCategorySelect }: NavbarProps) {
                     <SearchBar onSearch={onSearch} />
                 </div>
 
-                {/* ✅ 모바일 카테고리 (메인 페이지에서만) */}
+                {/* ✅ 모바일 카테고리 */}
                 {pathname.startsWith('/main') && (
                     <div className="block md:hidden mt-4">
                         <CategoryDropdown onCategorySelect={onCategorySelect} />

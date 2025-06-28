@@ -12,6 +12,7 @@ import useSellerAuthGuard from '@/hooks/useSellerAuthGuard';
 import dynamic from 'next/dynamic';
 import { TrendingUp, Users, Star, DollarSign, Package, MessageCircle, ShoppingCart, BarChart3, Gavel, Armchair } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { format } from 'date-fns';
 
 // ApexCharts를 동적으로 import (SSR 문제 방지)
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
@@ -25,6 +26,8 @@ export default function SellerDashboardPage() {
   const [monthlyTrend, setMonthlyTrend] = useState<MonthlySalesDTO[]>([]);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [chartFilter, setChartFilter] = useState<'daily' | 'monthly'>('daily');
+  const [lastUpdated, setLastUpdated] = useState<string>('');
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -65,6 +68,7 @@ export default function SellerDashboardPage() {
         const monthlyData = await getMonthlySalesTrend(startMonthStr, endMonthStr);
         setMonthlyTrend(monthlyData);
 
+        setLastUpdated(format(new Date(), 'M월 d일 a h:mm'));
       } catch (err) {
         console.error('대시보드 정보 가져오기 실패', err);
       } finally {
@@ -208,7 +212,32 @@ export default function SellerDashboardPage() {
   return (
     <SellerLayout>
       <main className="bg-[#a89f91] min-h-screen w-full px-4 py-8">
-        <h1 className="text-2xl font-extrabold mb-8 text-[#5b4636] tracking-wide">판매자 대시보드</h1>
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
+          <h1 className="text-2xl font-extrabold text-[#5b4636] tracking-wide mb-4 md:mb-0">판매자 대시보드</h1>
+          <div className="flex items-center gap-3">
+            <span className="text-xs text-[#5b4636] bg-[#e9dec7] rounded px-3 py-1 border border-[#bfa06a]">마지막 업데이트<br />{lastUpdated}</span>
+            <button
+              onClick={() => setChartFilter('daily')}
+              className={`px-3 py-1 text-sm font-medium rounded-md transition-colors ${
+                chartFilter === 'daily'
+                  ? 'bg-[#bfa06a] text-white'
+                  : 'bg-[#d4c4a8] text-[#5b4636] hover:bg-[#c4b498]'
+              }`}
+            >
+              일간
+            </button>
+            <button
+              onClick={() => setChartFilter('monthly')}
+              className={`px-3 py-1 text-sm font-medium rounded-md transition-colors ${
+                chartFilter === 'monthly'
+                  ? 'bg-[#bfa06a] text-white'
+                  : 'bg-[#d4c4a8] text-[#5b4636] hover:bg-[#c4b498]'
+              }`}
+            >
+              월간
+            </button>
+          </div>
+        </div>
         {/* 상단 카드 레이아웃 */}
         <div className="flex flex-col lg:flex-row gap-6 mb-8">
           {/* 좌측: 신호등 카드(크게) */}
@@ -222,61 +251,78 @@ export default function SellerDashboardPage() {
           </div>
           {/* 우측: 나머지 카드들 */}
           <div className="flex-[2] grid grid-cols-1 md:grid-cols-2 gap-6">
-            <section
-              className="bg-[#e9dec7] p-6 rounded-xl shadow border border-[#bfa06a] flex items-center justify-between cursor-pointer transition hover:scale-[1.03] hover:shadow-lg"
-              onClick={() => router.push('/seller/products')}
-            >
-              <div>
-                <h2 className="text-[#5b4636] text-sm font-semibold mb-2">총 등록 상품</h2>
-                <p className="text-xl md:text-2xl font-bold text-[#5b4636]">{dashboard?.totalProductCount ?? 0}개</p>
-              </div>
-              <Armchair className="w-8 h-8 text-[#bfa06a]" />
-            </section>
-            <section className="bg-[#e9dec7] p-6 rounded-xl shadow border border-[#bfa06a] flex items-center gap-4">
-              <DollarSign className="w-10 h-10 text-[#bfa06a]" />
-              <div>
-                <h2 className="text-[#5b4636] text-sm font-semibold mb-1">총 매출</h2>
-                <p className="text-2xl font-extrabold text-[#388e3c]">{salesStats?.totalRevenue?.toLocaleString() ?? 0}원</p>
-              </div>
-            </section>
-            <section
-              className="bg-[#e9dec7] p-6 rounded-xl shadow border border-[#bfa06a] flex items-center gap-4 cursor-pointer transition hover:scale-[1.03] hover:shadow-lg"
-              onClick={() => router.push('/seller/orders')}
-            >
-              <Gavel className="w-10 h-10 text-[#bfa06a]" />
-              <div>
-                <h2 className="text-[#5b4636] text-sm font-semibold mb-1">총 주문 수</h2>
-                <p className="text-2xl font-extrabold text-[#5b4636]">{salesStats?.totalOrders?.toLocaleString() ?? 0}건</p>
-              </div>
-            </section>
-            <section
-              className="bg-[#e9dec7] p-6 rounded-xl shadow border border-[#bfa06a] flex items-center gap-4 cursor-pointer transition hover:scale-[1.03] hover:shadow-lg"
-              onClick={() => router.push('/seller/qna')}
-            >
-              <MessageCircle className="w-10 h-10 text-[#bfa06a]" />
-              <div>
-                <h2 className="text-[#5b4636] text-sm font-semibold mb-1">미답변 문의</h2>
-                <p className="text-2xl font-extrabold text-[#bfa06a]">{dashboard?.unansweredQnaCount ?? 0}건</p>
-              </div>
-            </section>
-          </div>
+          <section
+            className="bg-[#e9dec7] p-6 rounded-xl shadow border border-[#bfa06a] flex items-center justify-between cursor-pointer transition hover:scale-[1.03] hover:shadow-lg"
+            onClick={() => router.push('/seller/products')}
+          >
+            <div>
+              <h2 className="text-[#5b4636] text-sm font-semibold mb-2">총 등록 상품</h2>
+              <p className="text-xl md:text-2xl font-bold text-[#5b4636]">{dashboard?.totalProductCount ?? 0}개</p>
+            </div>
+            <Armchair className="w-8 h-8 text-[#bfa06a]" />
+          </section>
+          <section className="bg-[#e9dec7] p-6 rounded-xl shadow border border-[#bfa06a] flex items-center gap-4">
+            <DollarSign className="w-10 h-10 text-[#bfa06a]" />
+            <div>
+              <h2 className="text-[#5b4636] text-sm font-semibold mb-1">총 매출</h2>
+              <p className="text-2xl font-extrabold text-[#388e3c]">{salesStats?.totalRevenue?.toLocaleString() ?? 0}원</p>
+            </div>
+          </section>
+          <section
+            className="bg-[#e9dec7] p-6 rounded-xl shadow border border-[#bfa06a] flex items-center gap-4 cursor-pointer transition hover:scale-[1.03] hover:shadow-lg"
+            onClick={() => router.push('/seller/orders')}
+          >
+            <Gavel className="w-10 h-10 text-[#bfa06a]" />
+            <div>
+              <h2 className="text-[#5b4636] text-sm font-semibold mb-1">총 주문 수</h2>
+              <p className="text-2xl font-extrabold text-[#5b4636]">{salesStats?.totalOrders?.toLocaleString() ?? 0}건</p>
+            </div>
+          </section>
+          <section
+            className="bg-[#e9dec7] p-6 rounded-xl shadow border border-[#bfa06a] flex items-center gap-4 cursor-pointer transition hover:scale-[1.03] hover:shadow-lg"
+            onClick={() => router.push('/seller/qna')}
+          >
+            <MessageCircle className="w-10 h-10 text-[#bfa06a]" />
+            <div>
+              <h2 className="text-[#5b4636] text-sm font-semibold mb-1">미답변 문의</h2>
+              <p className="text-2xl font-extrabold text-[#bfa06a]">{dashboard?.unansweredQnaCount ?? 0}건</p>
+            </div>
+          </section>
+        </div>
         </div>
         
         {/* 차트 영역 */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
           <section className="bg-[#e9dec7] p-6 rounded-xl shadow border border-[#bfa06a]">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold text-[#5b4636]">일별 매출 추이</h3>
+              <h3 className="text-lg font-bold text-[#5b4636]">매출 추이</h3>
               <BarChart3 className="w-7 h-7 text-[#bfa06a] hover:text-[#388e3c] transition-colors duration-150 cursor-pointer" />
             </div>
+            {chartFilter === 'daily' ? (
             <Chart options={{...dailyChartOptions, colors: ['#bfa06a']}} series={dailyChartSeries} type="area" height={260} />
+            ) : (
+              <Chart options={{...monthlyChartOptions, colors: ['#bfa06a']}} series={monthlyChartSeries} type="bar" height={260} />
+            )}
           </section>
           <section className="bg-[#e9dec7] p-6 rounded-xl shadow border border-[#bfa06a]">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold text-[#5b4636]">월별 매출 추이</h3>
+              <h3 className="text-lg font-bold text-[#5b4636]">주문 통계</h3>
               <BarChart3 className="w-7 h-7 text-[#bfa06a] hover:text-[#388e3c] transition-colors duration-150 cursor-pointer" />
             </div>
-            <Chart options={{...monthlyChartOptions, colors: ['#bfa06a']}} series={monthlyChartSeries} type="bar" height={260} />
+            <div className="grid grid-cols-2 gap-4">
+              <div className="text-center p-4 bg-[#d4c4a8] rounded-lg">
+                <p className="text-sm text-[#5b4636] mb-1">오늘 주문</p>
+                <p className="text-xl font-bold text-[#388e3c]">
+                  {dailyTrend.length > 0 ? dailyTrend[dailyTrend.length - 1]?.orderCount || 0 : 0}건
+                </p>
+              </div>
+              <div className="text-center p-4 bg-[#d4c4a8] rounded-lg">
+                <p className="text-sm text-[#5b4636] mb-1">이번 달 주문</p>
+                <p className="text-xl font-bold text-[#388e3c]">
+                  {monthlyTrendFilled.length > 0 ? monthlyTrendFilled[monthlyTrendFilled.length - 1]?.orderCount || 0 : 0}건
+                </p>
+              </div>
+            </div>
           </section>
         </div>
         {/* 최근 인기 경매/판매 TOP3 등 추가 섹션은 필요시 확장 */}

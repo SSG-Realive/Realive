@@ -67,17 +67,7 @@ export default function MiddleBannerCarousel({
                                     <img
                                         src={item.src}
                                         alt={`하단 배너 ${index + 1}`}
-                                        className="
-                                            w-full
-                                            h-[180px]        // 모바일
-                                            sm:h-[260px]     // 태블릿
-                                            md:h-[320px]     // 일반 태블릿 이상
-                                            lg:h-[380px]     // 데스크탑
-                                            xl:h-[420px]     // 큰 데스크탑
-                                            object-cover
-                                            rounded-lg
-                                            cursor-pointer
-                                        "
+                                        className="w-full h-auto aspect-[4/1] object-cover rounded-lg cursor-pointer"
                                     />
                                 </Link>
                             </div>

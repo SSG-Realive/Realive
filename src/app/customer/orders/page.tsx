@@ -126,8 +126,9 @@ export default function OrderListPage() {
     }
 
     return (
-        <div className="container order-list-page">
+        <div>
             <Navbar/>
+        <div className="container order-list-page">
             <h1>주문 내역</h1>
 
             <div className="order-list-container">
@@ -141,7 +142,7 @@ export default function OrderListPage() {
                         </div>
                         <div className="order-card-content">
                             {order.orderItems.map((item) => (
-                                <div key={item.orderItemId} className="order-item">
+                                <div key={`${order.orderId}-${item.orderItemId}`} className="order-item">
                                     <div className="item-info">
                                         <p className="item-name">{item.productName}</p>
                                         <p className="item-details">
@@ -236,6 +237,7 @@ export default function OrderListPage() {
                 </div>
             )}
         </div>
+        </div>
     );
 }
 
@@ -245,7 +247,7 @@ function OrderListSkeleton(): React.ReactElement {
             <h1>주문 내역</h1>
             <div className="space-y-4">
                 {[...Array(3)].map((_, i) => (
-                    <div key={i} className="skeleton-card">
+                    <div key={`skeleton-${i}`} className="skeleton-card">
                         <div className="skeleton-header">
                             <div className="skeleton-line" style={{ width: '50%', height: '24px' }}></div>
                         </div>

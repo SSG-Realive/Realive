@@ -72,7 +72,7 @@ export default function AdminFAQPage() {
 
   return (
     <div className="w-full max-w-full min-h-screen bg-gray-50 p-2 sm:p-6 overflow-x-auto">
-      <div className="w-full max-w-full">
+      <div className="w-full max-w-full min-w-0">
         {/* 헤더 */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">

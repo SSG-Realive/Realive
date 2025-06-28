@@ -3,18 +3,13 @@
 @import "tw-animate-css";          /* 애니메이션 라이브러리 */
 @import "tailwindcss";
 
-/* ✅ 폰트 import */
-@import url('https://cdn.jsdelivr.net/npm/gmarket-sans@1.2.1/style.css');
-
 @font-face {
-  font-family: 'AritaBuri-SemiBold';
-  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2107@1.0/AritaBuri-SemiBold.woff')
-  format('woff');
+  font-family: 'Minhye';
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2105_2@1.0/Minhye.woff') format('woff');
   font-weight: normal;
   font-style: normal;
 }
 
-/* ✅ 스크롤바 제거 */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
@@ -23,13 +18,12 @@
   scrollbar-width: none;
 }
 
-/* ✅ 커스텀 다크모드 variant */
 @custom-variant dark (&:is(.dark *));
 
-/* ✅ 커스텀 테마 변수 */
 @theme inline {
   --font-sans: 'GmarketSansMedium', sans-serif;
   --font-title: 'AritaBuri-SemiBold', serif;
+  --font-minhye: 'Minhye', serif;
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -137,23 +131,32 @@
   --sidebar-ring: oklch(0.551 0.027 264.364);
 }
 
-/* ✅ 폰트 적용 */
 @layer base {
+  html {
+    font-size: 20px; /* ✅ 기본 크기 키우기 (기본은 보통 16px) */
+  }
+
   * {
     @apply border-border outline-ring/50;
   }
 
   body {
-    @apply bg-background text-foreground font-sans;
-    font-family: 'GmarketSansMedium', sans-serif;
+    @apply bg-background text-foreground font-minhye;
+    font-family: 'Minhye', serif;
+    line-height: 1.6; /* ✅ 글자 커지면 줄간격도 넉넉하게 */
   }
 
   h1, h2, h3, h4, h5 {
-    font-family: 'AritaBuri-SemiBold', serif;
+    font-family: 'Minhye', serif;
+    line-height: 1.2;
+  }
+
+  input, textarea, select, button {
+    font-family: 'Pretendard', 'Noto Sans KR', sans-serif !important;
   }
 }
 
-/* 판매자 로그인/회원가입 - 밝고 모던한 블루 포인트 디자인 */
+/* 로그인/회원가입 전용 스타일 */
 body.seller-login,
 body.seller-signup {
   background: #a89f91 !important;
@@ -225,23 +228,34 @@ body.seller-signup button:hover {
   width: 4px;
   height: 4px;
 }
-
 .custom-scrollbar::-webkit-scrollbar-track {
   background: transparent;
 }
-
 .custom-scrollbar::-webkit-scrollbar-thumb {
   background: transparent;
 }
-
 .custom-scrollbar {
-  scrollbar-width: thin; /* Firefox */
+  scrollbar-width: thin;
   scrollbar-color: transparent transparent;
 }
 
-html, body {
+html, body, #__next {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  height: auto;
   overflow-x: hidden;
-  max-width: 100vw;
+  overflow-y: auto;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+.dropdown-menu {
+  max-height: 300px;
+  overflow-y: auto;
 }
 
 .chatbot-button {
