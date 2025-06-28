@@ -20,4 +20,9 @@ public class CustomerQnaDetailDTO {
     private LocalDateTime updatedAt;   
     private LocalDateTime answeredAt;   // 답변 작성일 (nullable)
 
+    // 판매자용 추가 필드들
+    private String customerName;        // 추가: 고객 이름
+    private String productName;         // 추가: 상품 이름
+    private Long productId;             // 추가: 상품 ID
+
 }

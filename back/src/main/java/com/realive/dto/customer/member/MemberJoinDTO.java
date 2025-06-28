@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -39,5 +40,10 @@ public class MemberJoinDTO {
 
     @NotNull(message = "성별을 입력해주세요.")
     private Gender gender; 
+
+      // ✅ 이메일 인증 코드를 받을 필드를 추가합니다.
+    @NotBlank(message = "이메일 인증 코드를 입력해주세요.")
+    @Size(min = 6, max = 6, message = "인증 코드는 6자리입니다.")
+    private String verificationCode;
 
 }
