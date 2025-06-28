@@ -16,7 +16,7 @@ import com.realive.dto.page.PageResponseDTO;
 import com.realive.dto.product.FeaturedSellerProductsResponseDTO;
 import com.realive.dto.product.ProductListDTO;
 import com.realive.dto.product.ProductResponseDTO;
-import com.realive.service.customer.CustomerQnaService;
+//import com.realive.service.customer.CustomerQnaService;
 import com.realive.service.customer.ProductViewService;
 import com.realive.service.product.ProductService;
 
@@ -32,7 +32,7 @@ import lombok.extern.log4j.Log4j2;
 public class ProductViewController {
 
     private final ProductViewService productViewService;
-    private final CustomerQnaService customerQnaService;
+//    private final CustomerQnaService customerQnaService;
     private final ProductService productService;
 
     // 상품 목록 조회 with 검색
@@ -55,14 +55,14 @@ public class ProductViewController {
         return ResponseEntity.ok(productDetail);
     }
 
-    // 상품 Q&A 목록 조회
-    @GetMapping("/qna/{productId}")
-    public ResponseEntity<List<CustomerQnaListDTO>> getProductQnaList(@PathVariable("productId") Long productId) {
-
-        List<CustomerQnaListDTO> qnaLists = customerQnaService.listProductQnaWith(productId);
-        return ResponseEntity.ok(qnaLists);
-
-    }
+//    // 상품 Q&A 목록 조회
+//    @GetMapping("/qna/{productId}")
+//    public ResponseEntity<List<CustomerQnaListDTO>> getProductQnaList(@PathVariable("productId") Long productId) {
+//
+//        List<CustomerQnaListDTO> qnaLists = customerQnaService.listProductQnaWith(productId);
+//        return ResponseEntity.ok(qnaLists);
+//
+//    }
 
     // 관련 상품 추천
     @GetMapping("/{id}/related")
