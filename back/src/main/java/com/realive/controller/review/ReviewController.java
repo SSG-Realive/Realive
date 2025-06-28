@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/reviews")
+@RequestMapping("/api/customer/reviews")
 @Log4j2
 @RequiredArgsConstructor
 public class ReviewController {
@@ -43,8 +43,8 @@ public class ReviewController {
             }
 
             Long customerId = userDetails.getId();
-            boolean exists = reviewCRUDService.checkReviewExistence(orderId, sellerId, customerId);
-            log.info("checkReviewExistence 결과 - orderId: {}, sellerId: {}, customerId: {}, exists: {}", orderId, sellerId, customerId, exists);
+            boolean exists = reviewCRUDService.checkReviewExistence(orderId, customerId, sellerId);
+            log.info("checkReviewExistence 결과 - orderId: {}, customerId: {}, sellerId: {}, exists: {}", orderId, customerId, sellerId, exists);
             return ResponseEntity.ok(Map.of("exists", exists));
         } catch (Exception e) {
             e.printStackTrace();  // 로그 기록
