@@ -1,0 +1,327 @@
+package com.realive.serviceimpl.admin.product;
+
+import com.realive.domain.admin.Admin;
+import com.realive.domain.auction.AdminProduct;
+import com.realive.domain.common.enums.MediaType;
+import com.realive.domain.product.Product;
+import com.realive.domain.product.ProductImage;
+import com.realive.domain.seller.Seller;
+import com.realive.dto.admin.ProductDetailDTO;
+import com.realive.dto.auction.AdminPurchaseRequestDTO;
+import com.realive.dto.auction.AdminProductDTO;
+import com.realive.dto.page.PageResponseDTO;
+import com.realive.dto.product.ProductListDTO;
+import com.realive.dto.product.ProductSearchCondition;
+import com.realive.repository.admin.AdminRepository;
+import com.realive.repository.auction.AdminProductRepository;
+import com.realive.repository.product.ProductImageRepository;
+import com.realive.repository.product.ProductRepository;
+import com.realive.service.admin.product.AdminProductService;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.Predicate;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+@Slf4j
+@Service
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
+public class AdminProductServiceImpl implements AdminProductService {
+
+    private final AdminProductRepository adminProductRepository;
+    private final ProductRepository productRepository;
+    private final AdminRepository adminRepository;
+    private final ProductImageRepository productImageRepository;
+
+    @Override
+    @Transactional
+    public AdminProductDTO purchaseProduct(AdminPurchaseRequestDTO requestDTO, Integer adminId) {
+        log.info("관리자 상품 매입 처리 시작: adminId={}, productId={}, price={}",
+                adminId, requestDTO.getProductId(), requestDTO.getPurchasePrice());
+
+        // 1. 관리자 존재 확인
+        Admin admin = adminRepository.findById(adminId)
+                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 관리자입니다."));
+
+        // 2. 상품 존재 여부 확인
+        Product product = productRepository.findById(requestDTO.getProductId().longValue())
+                .orElseThrow(() -> new NoSuchElementException("상품을 찾을 수 없습니다."));
+
+        // 3. 매입 가격 검증 (상품 가격 이상이어야 함)
+        if (requestDTO.getPurchasePrice() < product.getPrice()) {
+            throw new IllegalStateException(
+                    String.format("매입 가격(%d원)이 상품 가격(%d원)보다 낮습니다. 상품 가격 이상으로 매입해주세요.",
+                            requestDTO.getPurchasePrice(), product.getPrice())
+            );
+        }
+
+        // 4. 상품 상태 확인
+        if (!product.isActive()) {
+            throw new IllegalStateException("비활성화된 상품은 매입할 수 없습니다.");
+        }
+
+        // 5. 상품 수량 확인
+        if (product.getStock() <= 0) {
+            throw new IllegalStateException("재고가 없는 상품은 매입할 수 없습니다.");
+        }
+
+        // 6. 판매자 확인
+        Seller seller = product.getSeller();
+        if (seller == null) {
+            throw new IllegalStateException("판매자 정보가 없는 상품입니다.");
+        }
+
+        // 7. 이미 매입된 상품인지 확인
+        if (adminProductRepository.findByProductId(requestDTO.getProductId()).isPresent()) {
+            throw new IllegalStateException("이미 매입된 상품입니다.");
+        }
+
+        // 8. 판매자의 상품 수량 감소
+        product.setStock(product.getStock() - 1);
+        if (product.getStock() == 0) {
+            product.setActive(false);
+        }
+        productRepository.save(product);
+
+
+        // 9. AdminProduct 생성
+        AdminProduct adminProduct = AdminProduct.builder()
+                .productId(requestDTO.getProductId())
+                .purchasePrice(requestDTO.getPurchasePrice())
+                .purchasedFromSellerId(seller.getId().intValue())
+                .purchasedAt(LocalDateTime.now())
+                .isAuctioned(false)
+                .build();
+
+        // 10. AdminProduct 저장
+        AdminProduct savedAdminProduct = adminProductRepository.save(adminProduct);
+        log.info("관리자 상품 매입 완료: adminProductId={}", savedAdminProduct.getId());
+
+        return AdminProductDTO.fromEntity(savedAdminProduct, product,
+                productImageRepository.findFirstByProductIdAndIsThumbnailTrueAndMediaType(product.getId(), MediaType.IMAGE)
+                        .map(ProductImage::getUrl)
+                        .orElse(null));
+    }
+
+    @Override
+    public AdminProductDTO getAdminProduct(Integer productId) {
+        AdminProduct adminProduct = adminProductRepository.findByProductId(productId)
+                .orElseThrow(() -> new NoSuchElementException("관리자 상품을 찾을 수 없습니다."));
+
+        Product product = productRepository.findById(productId.longValue())
+                .orElse(null);
+
+        return AdminProductDTO.fromEntity(adminProduct, product,
+                productImageRepository.findFirstByProductIdAndIsThumbnailTrueAndMediaType(product.getId(), MediaType.IMAGE)
+                        .map(ProductImage::getUrl)
+                        .orElse(null));
+    }
+
+    @Override
+    public Page<AdminProductDTO> getAllAdminProducts(Pageable pageable, String categoryFilter, Boolean isAuctioned) {
+        log.info("관리자 물품 목록 조회 요청 - Pageable: {}, Category: {}, IsAuctioned: {}",
+                pageable, categoryFilter, isAuctioned);
+
+        Specification<AdminProduct> spec = (root, query, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            // 카테고리 필터
+            if (StringUtils.hasText(categoryFilter)) {
+                try {
+                    Join<AdminProduct, Product> productJoin = root.join("product", JoinType.INNER);
+                    predicates.add(criteriaBuilder.equal(productJoin.get("categoryName"), categoryFilter));
+                    log.debug("Applying category filter: {}", categoryFilter);
+                } catch (Exception e) {
+                    log.warn("카테고리 필터링 중 오류 발생: {}", e.getMessage());
+                }
+            }
+
+            // 경매 등록 여부 필터
+            if (isAuctioned != null) {
+                predicates.add(criteriaBuilder.equal(root.get("auctioned"), isAuctioned));
+                log.debug("Applying auctioned filter: {}", isAuctioned);
+            }
+
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        };
+
+        Page<AdminProduct> adminProductPage = adminProductRepository.findAll(spec, pageable);
+        List<AdminProductDTO> adminProductDTOs = convertToAdminProductDTOs(adminProductPage.getContent());
+        return new PageImpl<>(adminProductDTOs, pageable, adminProductPage.getTotalElements());
+    }
+
+    @Override
+    public Optional<AdminProductDTO> getAdminProductDetails(Integer adminProductId) {
+        log.info("관리자 물품 상세 정보 조회 요청 - AdminProductId: {}", adminProductId);
+
+        return adminProductRepository.findById(adminProductId)
+                .map(adminProduct -> {
+                    Product product = productRepository.findById(adminProduct.getProductId().longValue()).orElse(null);
+                    String thumbnailUrl = product != null ?
+                            productImageRepository.findFirstByProductIdAndIsThumbnailTrueAndMediaType(product.getId(), MediaType.IMAGE)
+                                    .map(ProductImage::getUrl)
+                                    .orElse(null) : null;
+                    return AdminProductDTO.fromEntity(adminProduct, product, thumbnailUrl);
+                });
+    }
+
+    @Override
+    public PageResponseDTO<ProductListDTO> getAdminProducts(ProductSearchCondition condition) {
+        log.info("관리자 물품 목록 조회 - 조건: {}", condition);
+
+        // 1. AdminProduct 목록 조회 (페이징 없이)
+        List<AdminProduct> adminProducts = adminProductRepository.findAll();
+        
+        if (adminProducts.isEmpty()) {
+            return PageResponseDTO.<ProductListDTO>withAll()
+                    .pageRequestDTO(condition)
+                    .dtoList(new ArrayList<>())
+                    .total(0)
+                    .build();
+        }
+
+        // 2. AdminProduct를 AdminProductDTO로 변환
+        List<AdminProductDTO> adminProductDTOs = convertToAdminProductDTOs(adminProducts);
+
+        // 3. 필터링 적용
+        List<AdminProductDTO> filteredDTOs = adminProductDTOs.stream()
+                .filter(dto -> {
+                    // 카테고리 필터
+                    if (condition.getCategoryId() != null) {
+                        if (dto.getProductCategoryId() == null || 
+                            !dto.getProductCategoryId().equals(condition.getCategoryId())) {
+                            return false;
+                        }
+                    }
+
+                    // 가격 범위 필터
+                    if (condition.getMinPrice() != null && dto.getPurchasePrice() < condition.getMinPrice()) {
+                        return false;
+                    }
+                    if (condition.getMaxPrice() != null && dto.getPurchasePrice() > condition.getMaxPrice()) {
+                        return false;
+                    }
+
+                    // 키워드 검색 필터
+                    if (condition.getKeyword() != null && !condition.getKeyword().trim().isEmpty()) {
+                        String keyword = condition.getKeyword().toLowerCase();
+                        String productName = dto.getProductName() != null ? dto.getProductName().toLowerCase() : "";
+                        if (!productName.contains(keyword)) {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                })
+                .collect(Collectors.toList());
+
+        // 4. createdAt 기준으로 정렬
+        filteredDTOs.sort((p1, p2) -> p2.getPurchasedAt().compareTo(p1.getPurchasedAt()));
+
+        // 5. 페이징 처리
+        int start = (condition.getPage() - 1) * condition.getSize();
+        int end = Math.min(start + condition.getSize(), filteredDTOs.size());
+        List<AdminProductDTO> pagedDTOs = filteredDTOs.subList(start, end);
+
+        // 6. AdminProductDTO를 ProductListDTO로 변환
+        List<ProductListDTO> dtoList = pagedDTOs.stream()
+                .map((AdminProductDTO adminProductDTO) -> {
+                    // AdminProductDTO의 정보를 ProductListDTO로 매핑
+                    return ProductListDTO.builder()
+                            .id(adminProductDTO.getProductId().longValue())
+                            .name(adminProductDTO.getProductName())
+                            .description(adminProductDTO.getProductDescription())
+                            .price(adminProductDTO.getPurchasePrice())
+                            .stock(1) // 관리자 매입 상품은 1개씩
+                            .status(adminProductDTO.getProductStatus()) // 실제 상품 상태 사용
+                            .isActive(true)
+                            .categoryName(adminProductDTO.getProductCategoryName() != null ? 
+                                        adminProductDTO.getProductCategoryName() : "관리자 매입")
+                            .imageThumbnailUrl(adminProductDTO.getImageThumbnailUrl())
+                            .createdAt(adminProductDTO.getPurchasedAt())
+                            .purchasePrice(adminProductDTO.getPurchasePrice())
+                            .purchasedAt(adminProductDTO.getPurchasedAt().toString())
+                            .isAuctioned(adminProductDTO.isAuctioned())
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+        return PageResponseDTO.<ProductListDTO>withAll()
+                .pageRequestDTO(condition)
+                .dtoList(dtoList)
+                .total(filteredDTOs.size())
+                .build();
+    }
+
+    // DTO 변환 헬퍼 메소드
+    private List<AdminProductDTO> convertToAdminProductDTOs(List<AdminProduct> adminProducts) {
+        if (adminProducts == null || adminProducts.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        // 1. 필요한 모든 Product ID 수집
+        List<Long> productIds = adminProducts.stream()
+                .map(adminProduct -> adminProduct.getProductId().longValue())
+                .distinct()
+                .collect(Collectors.toList());
+
+        // 2. Product 정보 일괄 조회
+        Map<Long, Product> productMap = productRepository.findAllByIdIn(productIds).stream()
+                .collect(Collectors.toMap(Product::getId, p -> p, (p1, p2) -> p1));
+
+        // 3. 썸네일 URL 일괄 조회
+        Map<Long, String> thumbnailUrlMap = productImageRepository.findThumbnailUrlsByProductIds(productIds, MediaType.IMAGE)
+                .stream()
+                .collect(Collectors.toMap(
+                        row -> (Long) row[0],
+                        row -> (String) row[1]
+                ));
+
+        // 4. DTO 변환
+        return adminProducts.stream()
+                .map(adminProduct -> {
+                    Product product = productMap.get(adminProduct.getProductId().longValue());
+                    String thumbnailUrl = product != null ?
+                            thumbnailUrlMap.get(product.getId()) : null;
+                    return AdminProductDTO.fromEntity(adminProduct, product, thumbnailUrl);
+                })
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public ProductDetailDTO getProductDetails(Long productId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new EntityNotFoundException("Product not found"));
+        return ProductDetailDTO.from(product, null);
+    }
+
+    @Override
+    @Transactional
+    public void deactivateProduct(Long productId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new EntityNotFoundException("Product not found"));
+        product.setActive(false);
+        productRepository.save(product);
+    }
+} 

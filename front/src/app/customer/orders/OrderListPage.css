@@ -1,0 +1,388 @@
+/* src/app/customer/orders/OrderListPage.css */
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+.order-list-page h1 {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 24px;
+}
+
+/* 카드 레이아웃 */
+/* Card layout */
+.order-list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.order-card {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background-color: #ffffff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.order-card-header,
+.order-card-content,
+.order-card-footer {
+    padding: 16px;
+}
+
+.order-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.order-date {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.order-status {
+    font-size: 14px;
+    color: #6b7280;
+    /* 상태별 색상 추가 예시 (선택 사항) */
+    /* Example of adding colors by status (optional) */
+    /*
+    &.PAYMENT_COMPLETED { color: #22c55e; }
+    &.ORDER_RECEIVED { color: #f59e0b; }
+    &.DELIVERY_COMPLETED { color: #10b981; }
+    &.PAYMENT_CANCELED, &.PURCHASE_CANCELED { color: #ef4444; }
+    */
+}
+
+.order-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #f3f4f6;
+}
+.order-item:last-child {
+    border-bottom: none;
+}
+
+.item-name {
+    font-weight: 600;
+}
+
+.item-details {
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.order-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f9fafb;
+    border-top: 1px solid #e5e7eb;
+    padding: 16px; /* 기존 패딩 유지 */
+    /* Keep existing padding */
+}
+
+/* 버튼들을 감싸는 div에 대한 스타일 */
+/* Styles for the div wrapping the buttons */
+.order-actions {
+    display: flex;
+    gap: 12px; /* 버튼들 사이의 간격 */
+    /* Gap between buttons */
+}
+
+.total-price {
+    font-weight: bold;
+}
+
+/* 버튼 */
+/* Button */
+.button-outline {
+    padding: 8px 16px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background-color: white;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s ease-in-out; /* 부드러운 전환 효과 추가 */
+    /* Add smooth transition effect */
+}
+.button-outline:hover {
+    background-color: #f9fafb;
+    border-color: #9ca3af; /* hover 시 테두리 색상 변경 */
+    /* Change border color on hover */
+}
+.button-outline:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.button-primary {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    background-color: #3b82f6;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out; /* 부드러운 전환 효과 추가 */
+    /* Add smooth transition effect */
+}
+.button-primary:hover {
+    background-color: #2563eb;
+}
+.button-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* 새로 추가: 삭제 버튼 스타일 */
+/* Newly added: Delete button style */
+.button-delete {
+    border-color: #ef4444; /* red-500 */
+    color: #ef4444;
+}
+
+.button-delete:hover {
+    background-color: #fef2f2; /* red-50 */
+    border-color: #dc2626; /* red-600 */
+    color: #dc2626;
+}
+
+/* 페이지네이션 */
+/* Pagination */
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 32px;
+}
+
+.page-button {
+    padding: 8px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background-color: white;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.page-button.active {
+    background-color: #3b82f6;
+    color: white;
+    border-color: #3b82f6;
+}
+
+.page-button:hover:not(:disabled):not(.active) { /* 활성화되지 않은 버튼에만 hover 적용 */
+    /* Apply hover only to non-active buttons */
+    background-color: #e0e7ff; /* blue-100 */
+    border-color: #60a5fa; /* blue-400 */
+}
+
+.page-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* 기타 UI */
+/* Other UI */
+.notice-section {
+    text-align: center;
+    padding: 32px;
+    border: 1px solid #d1d5db; /* 경계선 추가 */
+    /* Add border */
+    border-radius: 8px;
+    background-color: #f9fafb;
+    margin-top: 24px;
+}
+.notice-section h2 {
+    font-size: 24px;
+    margin-bottom: 12px;
+    color: #374151;
+}
+.notice-section p {
+    color: #6b7280;
+    margin-bottom: 16px;
+}
+.error-alert {
+    border: 1px solid #f87171;
+    background-color: #fef2f2;
+    color: #991b1b;
+    padding: 16px;
+    border-radius: 8px;
+    text-align: center;
+    margin-top: 24px;
+}
+.error-alert strong {
+    font-weight: bold;
+    font-size: 18px;
+    display: block; /* 텍스트 분리 */
+    /* Separate text */
+    margin-bottom: 8px;
+}
+
+/* 스켈레톤 UI */
+/* Skeleton UI */
+.skeleton-card {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 16px;
+    background-color: #ffffff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+.skeleton-line {
+    background-color: #e5e7eb;
+    border-radius: 4px;
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+.skeleton-header .skeleton-line {
+    width: 60%;
+    height: 20px;
+}
+.skeleton-content .skeleton-line {
+    height: 16px;
+    width: 80%;
+}
+.skeleton-content .skeleton-item:nth-child(even) .skeleton-line {
+    width: 70%;
+}
+.skeleton-footer .skeleton-line {
+    width: 40%;
+    height: 20px;
+}
+.skeleton-header, .skeleton-content, .skeleton-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 8px 0;
+}
+.skeleton-footer {
+    align-items: flex-end;
+}
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: .5; }
+}
+
+/* --- 모달 관련 CSS 추가 --- */
+/* --- Modal related CSS added --- */
+.modal-overlay {
+    position: fixed; /* 뷰포트에 고정 */
+    /* Fixed to viewport */
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6); /* 어두운 배경 */
+    /* Dark background */
+    display: flex;
+    justify-content: center; /* 가로 중앙 정렬 */
+    /* Horizontal center alignment */
+    align-items: center; /* 세로 중앙 정렬 */
+    /* Vertical center alignment */
+    z-index: 1000; /* 다른 콘텐츠 위에 표시 */
+    /* Display above other content */
+    animation: fadeIn 0.3s ease-out forwards;
+}
+
+.modal-content {
+    background-color: #ffffff;
+    padding: 32px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 400px; /* 최대 너비 설정 */
+    /* Set maximum width */
+    text-align: center;
+    transform: scale(0.95);
+    animation: zoomIn 0.3s ease-out forwards;
+}
+
+.modal-content h2 {
+    font-size: 22px;
+    font-weight: bold;
+    color: #1f2937;
+    margin-bottom: 16px;
+}
+
+.modal-content p {
+    font-size: 16px;
+    color: #4b5563;
+    margin-bottom: 24px;
+    line-height: 1.5;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+}
+
+/* 에러 모달 전용 스타일 */
+/* Error modal specific styles */
+.modal-content.modal-error h2 {
+    color: #dc2626; /* red-600 */
+}
+
+/* 모달 애니메이션 */
+/* Modal animation */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes zoomIn {
+    from { transform: scale(0.95); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+/* 모바일 반응형 */
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .container {
+        padding: 16px;
+    }
+    .order-list-page h1 {
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+    .order-card-header,
+    .order-card-content,
+    .order-card-footer {
+        padding: 12px;
+    }
+    .order-date {
+        font-size: 16px;
+    }
+    .button-outline, .button-primary {
+        width: auto; /* 모바일에서 버튼 너비 100% */
+        /* Button width 100% on mobile */
+        margin-top: 0;
+    }
+    .order-card-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    .pagination-container {
+        flex-wrap: wrap;
+    }
+    .modal-content {
+        padding: 24px;
+    }
+
+    /* 모바일에서 버튼 액션 그룹의 너비를 100%로 설정 */
+    /* Set the width of the button action group to 100% on mobile */
+    .order-actions {
+        width: 100%;
+        justify-content: flex-end; /* 모바일에서 버튼들을 오른쪽으로 정렬 */
+        /* Align buttons to the right on mobile */
+        gap: 8px; /* 모바일 버튼 간격 조정 */
+        /* Adjust mobile button spacing */
+    }
+}
