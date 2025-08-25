@@ -1,0 +1,105 @@
+server:
+  port: 8080
+  address: 0.0.0.0
+  servlet:
+    context-path:
+
+spring:
+  main:
+    allow-circular-references: true
+  config:
+    import: optional:file:.env.properties
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${GMAIL_USERNAME} # 구글 이메일 주소
+    password: ${GMAIL_APP_PASSWORD} # 구글 앱 비밀번호
+    properties:
+      mail.smtp:
+        auth: true
+        starttls.enable: true
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: ${DB_DRIVER}
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 2
+      idle-timeout: 30000
+      max-lifetime: 1800000
+      connection-timeout: 2000
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+    open-in-view: false
+
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-id: ${KAKAO_CLIENT_ID}
+            
+            scope:
+              - account_email
+              - profile_nickname
+            authorization-grant-type: authorization_code
+            redirect-uri: ${KAKAO_REDIRECT_URI}
+            client-name: Kakao
+           
+        provider:
+          kakao:
+            authorization-uri: ${KAKAO_AUTH_URI}
+            token-uri: ${KAKAO_TOKEN_URI}
+            user-info-uri: ${KAKAO_USER_INFO_URI}
+            user-name-attribute: id
+
+jwt:
+  secret: ${JWT_SECRET}
+  expiration: ${JWT_EXPIRATION}
+
+file:
+  upload-dir: ./uploads
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+    com.realive: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    org.hibernate.type.descriptor.jdbc.JdbcType: TRACE
+
+toss:
+  secret-key: ${TOSS_SECRET_KEY} # 실제 secret key로 변경해야 합니다.
+  api-url: https://api.tosspayments.com
+
+openai:
+  api:
+    key: ${OPEN_AI_KEY}
+  model: ${OPEN_AI_MODEL}
+
+#aws
+cloud:
+  aws:
+    credentials:
+      access-key: ${AWS_ACCESS_KEY}
+      secret-key: ${AWS_SECRET_KEY}
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
+
+aws:
+  s3:
+    bucket: realive-upload-images
